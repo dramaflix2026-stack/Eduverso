@@ -88,3 +88,31 @@
 .intro p{margin-bottom:17px}
 .section-heading{margin-top:28px}
 }
+
+/* Eduverso: mobile-first study tools and exercise readability */
+.fraction-material-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;align-items:start}
+.fraction-material-item{min-width:0}
+.fraction-material-item>button{min-height:145px;width:100%;gap:7px;padding:18px}
+.fraction-material-item>button strong{font-size:17px;line-height:1.3}
+.fraction-material-item>button small{font-size:13px;line-height:1.45}
+.fraction-material-detail{overflow-wrap:anywhere}
+.fraction-online-question{padding:18px}
+.fraction-online-choices label{cursor:pointer;line-height:1.45}
+.fraction-online-choices label:has(input:checked){border-color:#b99bff;background:#453361}
+.subject-practice fieldset label{font-size:15px;line-height:1.5}
+.subject-practice fieldset input{accent-color:#a584fa;flex-shrink:0}
+.subject-solution{line-height:1.7}
+@media(max-width:760px){
+ .fraction-materials{padding:18px 16px}
+ .fraction-material-grid{grid-template-columns:1fr;gap:10px}
+ .fraction-material-item>button{min-height:0;display:grid;grid-template-columns:36px minmax(0,1fr) auto;align-items:center;column-gap:12px;row-gap:5px;padding:15px}
+ .fraction-material-icon{grid-row:1/3;font-size:24px}
+ .fraction-material-item>button strong{grid-column:2;font-size:16px}
+ .fraction-material-item>button small{grid-column:2;font-size:12px}
+ .fraction-material-arrow{grid-column:3;grid-row:1/3;white-space:nowrap;margin:0;font-size:12px}
+ .fraction-material-detail{padding:15px}
+ .subject-detail{padding:16px}
+ .subject-extras summary{font-size:16px;padding:16px}
+ .subject-practice fieldset{padding:16px 0!important}
+ .subject-practice fieldset label{align-items:flex-start!important}
+}
