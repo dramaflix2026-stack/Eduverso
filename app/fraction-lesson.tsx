@@ -1,5 +1,5 @@
-import FractionMaterials from "./fraction-materials";
 "use client";
+import FractionMaterials from "./fraction-materials";
 import {useEffect,useState} from "react";
 const lessons=[
 {title:"O que são frações?",subtitle:"Entenda as partes de um inteiro",body:"Uma fração representa uma ou mais partes iguais de um inteiro. Divida a figura em partes iguais e escolha quantas deseja destacar.",question:"Em 3/4, o número 4 representa o quê?",options:["As partes selecionadas","O total de partes iguais","O número de figuras"],correct:1,explain:"O 4 é o denominador: ele informa em quantas partes iguais o inteiro foi dividido. O 3 é o numerador: indica quantas partes foram escolhidas."},
