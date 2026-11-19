@@ -32,7 +32,14 @@
 .poster-photo .poster-glow{display:none}
 .poster-photo .poster-bottom{min-height:37%;padding:42px 16px 17px;background:linear-gradient(to bottom,transparent 0%,rgba(10,10,24,.95) 28%,#0a0a18 57%)}
 .poster-photo .poster-bottom strong{position:relative;z-index:2;text-shadow:none}
-.subject-course{max-width:980px;margin:12px auto 60px}
+.subject-course{width:100%;max-width:none;min-width:0;margin:0 0 60px}
+.subject-course .fraction-top{width:100%;align-items:flex-end}
+.subject-course .fraction-top>div:first-child{min-width:0;flex:1}
+.subject-course .fraction-progress{flex:0 0 190px;text-align:right}
+.subject-course .math-modules{width:100%}
+.subject-course .math-module{width:100%}
+.subject-course .subject-lesson{width:100%;box-sizing:border-box;margin-top:32px}
+@media(max-width:700px){.subject-course .fraction-top{align-items:flex-start;flex-direction:column}.subject-course .fraction-progress{flex:none;width:100%;text-align:left}.subject-course .math-modules{gap:12px;margin:20px 0}.subject-course .subject-lesson{margin-top:20px}}
 .subject-course-head{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:24px;border:1px solid #ffffff20;border-radius:20px;background:#19172b}
 .subject-course-head h2{margin:9px 0;font-size:26px}.subject-course-head p{color:#bcb4d0;margin:0;line-height:1.5}
 .subject-menu-button,.subject-pagination button,.subject-list-tabs button{border:1px solid #9876e655;background:#30264c;color:#eee4ff;border-radius:12px;padding:12px 17px;font-weight:700}
