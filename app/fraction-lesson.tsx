@@ -10,8 +10,8 @@ const lessons=[
 ];
 export default function FractionLesson(){
 const [index,setIndex]=useState(0),[den,setDen]=useState(4),[num,setNum]=useState(3),[choice,setChoice]=useState<number|null>(null),[submitted,setSubmitted]=useState(false),[completed,setCompleted]=useState<number[]>([]);
-useEffect(()=>{try{const value=JSON.parse(localStorage.getItem("eduverso-fracoes-progress-v1")||"[]");if(Array.isArray(value))setCompleted(value.filter((x:unknown)=>Number.isInteger(x)&&Number(x)>=0&&Number(x)<6));}catch{}},[]);
-function go(i:number){setIndex(i);setDen([4,5,4,5,4,8][i]);setNum([3,2,2,3,1,3][i]);setChoice(null);setSubmitted(false);window.scrollTo({top:0,behavior:"smooth"})}
+useEffect(()=>{try{const savedIndex=Number(localStorage.getItem("eduverso-fracoes-lesson-v1"));if(Number.isInteger(savedIndex)&&savedIndex>=0&&savedIndex<6){setIndex(savedIndex);setDen([4,5,4,5,4,8][savedIndex]);setNum([3,2,2,3,1,3][savedIndex])}const value=JSON.parse(localStorage.getItem("eduverso-fracoes-progress-v1")||"[]");if(Array.isArray(value))setCompleted(value.filter((x:unknown)=>Number.isInteger(x)&&Number(x)>=0&&Number(x)<6));}catch{}},[]);
+function go(i:number){try{localStorage.setItem("eduverso-fracoes-lesson-v1",String(i))}catch{}setIndex(i);setDen([4,5,4,5,4,8][i]);setNum([3,2,2,3,1,3][i]);setChoice(null);setSubmitted(false);window.scrollTo({top:0,behavior:"smooth"})}
 function check(){if(choice===null)return;setSubmitted(true);if(choice===lessons[index].correct){setCompleted(old=>{const next=Array.from(new Set([...old,index]));try{localStorage.setItem("eduverso-fracoes-progress-v1",JSON.stringify(next))}catch{}return next})}}
 const current=lessons[index],correct=submitted&&choice===current.correct;
 return <section className="fraction-course">
