@@ -66,3 +66,25 @@
 .featured-home p{color:#ded4f3;text-shadow:0 1px 12px #08041599}
 @media(max-width:760px){.featured-home{background-image:url("/images/hero-eduverso/Educação Neon com Globo e Livros.png");background-position:center 59%;background-size:cover;min-height:450px;align-items:flex-start;padding:24px}.featured-home::before{background:linear-gradient(180deg,rgba(12,6,31,.94) 0%,rgba(12,6,31,.8) 30%,rgba(12,6,31,.14) 66%,rgba(12,6,31,.08) 100%)}.featured-home>div:first-child{max-width:100%}.featured-home h2{max-width:360px}.featured-home p{max-width:340px}}
 @media(max-width:470px){.featured-home{min-height:420px;background-position:center 58%}}
+
+
+/* Platform home hero: single headline, compact image and clear navigation. */
+.featured-home-compact{min-height:285px;display:flex;align-items:flex-end;justify-content:flex-start;padding:24px 28px;background:#170b32;isolation:isolate}
+.featured-home-compact::before{background:linear-gradient(90deg,rgba(12,6,31,.22),rgba(12,6,31,.03));z-index:1}
+.featured-compact-art{position:absolute;inset:0;background:url("/images/hero-eduverso/Educação Futurista em Neon Roxo.png") center 57%/cover no-repeat;z-index:0}
+.featured-compact-cta{position:relative;z-index:2;display:inline-flex;align-items:center;justify-content:center;gap:24px;background:#8d6bf4;border:1px solid #c6b2ff;color:white;text-decoration:none;font-size:14px;font-weight:800;padding:15px 23px;border-radius:12px;box-shadow:0 8px 26px #13072c88;transition:background .2s,transform .2s}
+.featured-compact-cta:hover{background:#a286ff;transform:translateY(-2px)}
+.featured-compact-cta:focus-visible{outline:3px solid #fff;outline-offset:3px}
+#disciplinas{scroll-margin-top:95px}
+.mobile-brand{display:none}
+@media(max-width:760px){
+.featured-home-compact{min-height:0;height:clamp(205px,47vw,295px);padding:14px;border-radius:20px;background:#170b32}
+.featured-home-compact .featured-compact-art{background-image:url("/images/hero-eduverso/Educação Neon com Globo e Livros.png");background-position:center 60%;background-size:cover}
+.featured-home-compact::before{background:linear-gradient(180deg,transparent 25%,rgba(9,5,24,.18) 55%,rgba(9,5,24,.7) 100%)}
+.featured-compact-cta{width:100%;padding:12px 18px;font-size:13px}
+.mobile-brand{display:inline;color:#f4efff;font-size:17px;font-weight:850;letter-spacing:-.6px;white-space:nowrap}
+.breadcrumb-current{display:none}
+.breadcrumb-brand{display:none}
+.intro p{margin-bottom:17px}
+.section-heading{margin-top:28px}
+}
