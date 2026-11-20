@@ -794,5 +794,402 @@ const curriculum:Record<string,Lesson[]>={
     "feedback": "Rapidamente modifica o verbo corre."
   }
 ]
+,
+"Pronomes": [
+  {
+    "title": "Pessoas do discurso",
+    "explain": "Pronomes pessoais indicam participantes do discurso: primeira pessoa fala, segunda é interlocutora e terceira é referente. No português brasileiro, você usa concordância de terceira pessoa.",
+    "example": "Eu escrevo; tu escreves; você escreve; nós escrevemos.",
+    "question": "Qual pronome representa a primeira pessoa do plural?",
+    "options": [
+      "eles",
+      "nós",
+      "vocês"
+    ],
+    "correct": 1,
+    "feedback": "Nós inclui quem fala."
+  },
+  {
+    "title": "Pronomes retos e oblíquos",
+    "explain": "Pronomes retos geralmente funcionam como sujeito; oblíquos atuam em outras funções, como complemento verbal. A escolha depende da construção sintática.",
+    "example": "Eu vi o filme; ela me chamou.",
+    "question": "Em 'Ela me chamou', me é:",
+    "options": [
+      "pronome oblíquo",
+      "artigo",
+      "adjetivo"
+    ],
+    "correct": 0,
+    "feedback": "Me funciona como complemento do verbo chamou."
+  },
+  {
+    "title": "Pronomes de tratamento",
+    "explain": "Pronomes de tratamento dirigem-se ao interlocutor e normalmente exigem verbo na terceira pessoa. O grau de formalidade varia conforme a situação comunicativa.",
+    "example": "Você chegou cedo? Vossa Excelência deseja falar?",
+    "question": "Qual forma verbal concorda com 'você'?",
+    "options": [
+      "chegaste",
+      "chegou",
+      "cheguei"
+    ],
+    "correct": 1,
+    "feedback": "Você exige concordância de terceira pessoa."
+  },
+  {
+    "title": "Pronomes possessivos",
+    "explain": "Possessivos expressam relações de posse ou vínculo e concordam em gênero e número com o elemento possuído, não necessariamente com o possuidor.",
+    "example": "Meu livro, minhas anotações, nossos cadernos.",
+    "question": "Qual expressão apresenta concordância adequada?",
+    "options": [
+      "minhas livro",
+      "meus livros",
+      "meu livros"
+    ],
+    "correct": 1,
+    "feedback": "Meus concorda com livros, masculino plural."
+  },
+  {
+    "title": "Pronomes demonstrativos",
+    "explain": "Demonstrativos situam referentes no espaço, no tempo e no texto. Este, esse e aquele podem sinalizar diferentes relações de proximidade e retomada.",
+    "example": "Este caderno aqui; aquele prédio ao longe.",
+    "question": "Qual demonstrativo indica, em geral, maior distância?",
+    "options": [
+      "este",
+      "aquele",
+      "isto"
+    ],
+    "correct": 1,
+    "feedback": "Aquele costuma indicar maior distância do falante e do interlocutor."
+  },
+  {
+    "title": "Pronomes indefinidos",
+    "explain": "Indefinidos referem-se a pessoas ou quantidades de modo impreciso. Alguns variam em gênero e número; outros são invariáveis.",
+    "example": "Alguém ligou; muitos estudantes participaram.",
+    "question": "Qual palavra é pronome indefinido?",
+    "options": [
+      "alguém",
+      "ela",
+      "este"
+    ],
+    "correct": 0,
+    "feedback": "Alguém indica pessoa não identificada."
+  },
+  {
+    "title": "Pronomes interrogativos",
+    "explain": "Pronomes interrogativos introduzem perguntas diretas ou indiretas. Quem, qual, quanto e que podem assumir essa função conforme o contexto.",
+    "example": "Quem chegou? Não sei qual escolher.",
+    "question": "Qual pronome introduz a pergunta '___ chegou?'",
+    "options": [
+      "Quem",
+      "Meu",
+      "Aquele"
+    ],
+    "correct": 0,
+    "feedback": "Quem é pronome interrogativo nessa frase."
+  },
+  {
+    "title": "Pronomes relativos",
+    "explain": "Relativos retomam um antecedente e iniciam oração subordinada adjetiva. Que, quem, cujo, o qual e onde têm usos específicos; cujo exprime posse e não aceita artigo depois.",
+    "example": "O livro que li era ótimo; a autora cujos livros conheço.",
+    "question": "Em 'A escola onde estudo', onde retoma:",
+    "options": [
+      "estudo",
+      "escola",
+      "a"
+    ],
+    "correct": 1,
+    "feedback": "Onde retoma um lugar: escola."
+  },
+  {
+    "title": "Ambiguidade pronominal",
+    "explain": "Pronomes podem gerar ambiguidade quando há mais de um antecedente possível. A revisão deve esclarecer a referência sem comprometer a coesão.",
+    "example": "João falou com Pedro quando ele saiu: 'ele' pode referir-se a ambos.",
+    "question": "Qual revisão elimina a ambiguidade sobre quem saiu?",
+    "options": [
+      "João falou com Pedro quando ele saiu.",
+      "Quando Pedro saiu, João falou com ele.",
+      "Ele saiu quando João falou com Pedro."
+    ],
+    "correct": 1,
+    "feedback": "A oração inicial identifica Pedro como quem saiu."
+  },
+  {
+    "title": "Revisão integrada de pronomes",
+    "explain": "Para classificar um pronome, analise sua função e seu referente na frase. Distinga posse, demonstração, indefinição e retomada relativa.",
+    "example": "Em 'A menina cujo pai chegou', cujo indica relação de posse.",
+    "question": "Qual análise está correta?",
+    "options": [
+      "cujo é pronome relativo de posse",
+      "cujo é artigo definido",
+      "cujo é pronome pessoal reto"
+    ],
+    "correct": 0,
+    "feedback": "Cujo é relativo e estabelece relação possessiva entre antecedentes."
+  }
+],
+"Verbos": [
+  {
+    "title": "Verbo e flexão",
+    "explain": "Verbos exprimem processos, estados e acontecimentos e flexionam-se em pessoa, número, tempo e modo. A identificação do núcleo verbal ajuda a interpretar a oração.",
+    "example": "Nós estudamos diariamente; ontem estudamos também.",
+    "question": "Em 'Eles caminham', o verbo está em qual pessoa?",
+    "options": [
+      "primeira do singular",
+      "terceira do plural",
+      "segunda do singular"
+    ],
+    "correct": 1,
+    "feedback": "Eles exige terceira pessoa do plural."
+  },
+  {
+    "title": "Presente do indicativo",
+    "explain": "O presente do indicativo pode indicar ação atual, habitual, verdade geral ou futuro próximo, conforme o contexto. A forma não determina sozinha o valor temporal.",
+    "example": "A água ferve a 100 °C sob pressão atmosférica padrão; amanhã viajo.",
+    "question": "Qual frase apresenta hábito no presente?",
+    "options": [
+      "Todos os dias leio.",
+      "Ontem li.",
+      "Lerei amanhã."
+    ],
+    "correct": 0,
+    "feedback": "Todos os dias indica ação habitual."
+  },
+  {
+    "title": "Pretérito perfeito e imperfeito",
+    "explain": "O pretérito perfeito apresenta um evento concluído; o imperfeito frequentemente descreve hábitos, estados ou processos em andamento no passado.",
+    "example": "Ontem li o livro; quando criança, lia à noite.",
+    "question": "Qual forma indica hábito no passado?",
+    "options": [
+      "li ontem",
+      "lia sempre",
+      "lerei amanhã"
+    ],
+    "correct": 1,
+    "feedback": "Lia, no contexto, expressa repetição no passado."
+  },
+  {
+    "title": "Pretérito mais-que-perfeito",
+    "explain": "O mais-que-perfeito indica evento anterior a outro evento passado. Na fala, a forma composta com tinha ou havia mais particípio é frequente.",
+    "example": "Quando cheguei, ela já tinha saído.",
+    "question": "Qual evento ocorreu primeiro?",
+    "options": [
+      "a chegada",
+      "a saída dela",
+      "ambos simultaneamente"
+    ],
+    "correct": 1,
+    "feedback": "Tinha saído indica anterioridade à chegada."
+  },
+  {
+    "title": "Futuro do presente e do pretérito",
+    "explain": "O futuro do presente projeta ação posterior; o futuro do pretérito pode expressar hipótese, polidez ou consequência condicionada.",
+    "example": "Amanhã estudarei; eu estudaria se tivesse tempo.",
+    "question": "Qual forma expressa hipótese condicionada?",
+    "options": [
+      "estudaria",
+      "estudei",
+      "estudo"
+    ],
+    "correct": 0,
+    "feedback": "Estudaria é futuro do pretérito em contexto hipotético."
+  },
+  {
+    "title": "Indicativo, subjuntivo e imperativo",
+    "explain": "O indicativo apresenta fatos e certezas relativas; o subjuntivo aparece frequentemente em hipóteses, desejos e possibilidades; o imperativo expressa pedidos ou ordens.",
+    "example": "Se eu pudesse, viajaria; estude para a prova.",
+    "question": "Qual oração emprega subjuntivo?",
+    "options": [
+      "Talvez ele venha.",
+      "Ele vem sempre.",
+      "Ele veio ontem."
+    ],
+    "correct": 0,
+    "feedback": "Venha está no presente do subjuntivo."
+  },
+  {
+    "title": "Infinitivo, gerúndio e particípio",
+    "explain": "Formas nominais não apresentam a mesma flexão temporal das formas finitas. Infinitivo nomeia o processo; gerúndio indica desenvolvimento; particípio aparece em tempos compostos e outras construções.",
+    "example": "Estudar, estudando e estudado são formas nominais.",
+    "question": "Qual palavra está no gerúndio?",
+    "options": [
+      "estudar",
+      "estudando",
+      "estudado"
+    ],
+    "correct": 1,
+    "feedback": "Estudando termina em -ndo e é gerúndio."
+  },
+  {
+    "title": "Locuções e tempos compostos",
+    "explain": "Locuções verbais combinam verbo auxiliar e principal. Em tempos compostos, ter ou haver mais particípio expressa relações temporais; outras locuções marcam aspecto ou modalidade.",
+    "example": "Tenho estudado; vou viajar; estava lendo.",
+    "question": "Em 'Estava lendo', qual é o auxiliar?",
+    "options": [
+      "lendo",
+      "estava",
+      "nenhum"
+    ],
+    "correct": 1,
+    "feedback": "Estava é auxiliar da locução verbal."
+  },
+  {
+    "title": "Voz ativa e passiva",
+    "explain": "Na ativa, o sujeito costuma ser agente; na passiva analítica, o sujeito recebe a ação e o agente pode ser expresso por complemento. Nem todo verbo permite passivização.",
+    "example": "A equipe concluiu o relatório → O relatório foi concluído pela equipe.",
+    "question": "Qual frase está na voz passiva?",
+    "options": [
+      "A equipe analisou os dados.",
+      "Os dados foram analisados.",
+      "A equipe trabalha."
+    ],
+    "correct": 1,
+    "feedback": "Foram analisados é construção passiva."
+  },
+  {
+    "title": "Revisão de valores verbais",
+    "explain": "A interpretação verbal exige observar tempo, modo, aspecto e contexto. Uma mesma forma pode indicar hábito, hipótese ou ação projetada, dependendo do enunciado.",
+    "example": "Se estudasse, compreenderia melhor: hipótese e consequência.",
+    "question": "Qual forma completa 'Se eu ___ tempo, viajaria'?",
+    "options": [
+      "tenho",
+      "tivesse",
+      "terei"
+    ],
+    "correct": 1,
+    "feedback": "Tivesse é pretérito imperfeito do subjuntivo exigido na hipótese."
+  }
+],
+"Preposições e conjunções": [
+  {
+    "title": "Preposição e relação entre termos",
+    "explain": "Preposições ligam palavras ou expressões, estabelecendo relações de origem, destino, posse, meio ou assunto. Sua interpretação depende da construção.",
+    "example": "Saí de casa; fui para a escola; viajei de ônibus.",
+    "question": "Qual palavra é preposição?",
+    "options": [
+      "para",
+      "mas",
+      "ontem"
+    ],
+    "correct": 0,
+    "feedback": "Para relaciona o verbo ir ao destino."
+  },
+  {
+    "title": "Preposições essenciais e acidentais",
+    "explain": "Essenciais funcionam tipicamente como preposições, como de, em e com. Acidentais pertencem a outras classes em certos usos, mas podem assumir função prepositiva.",
+    "example": "Segundo o professor, a atividade será amanhã.",
+    "question": "Em 'Segundo o professor', segundo funciona como:",
+    "options": [
+      "preposição",
+      "numeral ordinal",
+      "verbo"
+    ],
+    "correct": 0,
+    "feedback": "Segundo introduz uma referência de fonte ou conformidade."
+  },
+  {
+    "title": "Contrações e combinações",
+    "explain": "Preposições podem combinar-se ou contrair-se com artigos e pronomes. Em + o forma no; de + a forma da; a + a pode resultar em à quando há crase.",
+    "example": "Voltei da escola; moro no centro.",
+    "question": "Qual expressão resulta de 'em + o'?",
+    "options": [
+      "no",
+      "do",
+      "ao"
+    ],
+    "correct": 0,
+    "feedback": "Em + o forma no."
+  },
+  {
+    "title": "Regência e sentido",
+    "explain": "A preposição exigida por um verbo ou nome é parte da regência. Alterar a preposição pode modificar o sentido ou contrariar a norma-padrão.",
+    "example": "Quem gosta, gosta de algo; quem confia, confia em alguém.",
+    "question": "Complete: 'Ela confia ___ seus colegas'.",
+    "options": [
+      "em",
+      "de",
+      "com"
+    ],
+    "correct": 0,
+    "feedback": "Confiar, nesse sentido, rege a preposição em."
+  },
+  {
+    "title": "Conjunções coordenativas aditivas",
+    "explain": "Conjunções coordenativas ligam elementos de mesma função sintática. E, nem e construções correlativas podem expressar adição.",
+    "example": "Ela leu e resumiu o texto.",
+    "question": "Qual conjunção indica adição?",
+    "options": [
+      "e",
+      "mas",
+      "portanto"
+    ],
+    "correct": 0,
+    "feedback": "E acrescenta uma ação à outra."
+  },
+  {
+    "title": "Conjunções adversativas e alternativas",
+    "explain": "Adversativas exprimem contraste, como mas e porém. Alternativas apresentam escolhas ou alternância, como ou... ou.",
+    "example": "Queria sair, mas chovia; ou estudo, ou descanso.",
+    "question": "Qual conjunção expressa oposição?",
+    "options": [
+      "mas",
+      "ou",
+      "e"
+    ],
+    "correct": 0,
+    "feedback": "Mas introduz contraste."
+  },
+  {
+    "title": "Conjunções conclusivas e explicativas",
+    "explain": "Conclusivas introduzem consequência lógica ou conclusão; explicativas justificam uma afirmação ou ordem. Portanto e pois podem ter valores diferentes conforme a posição e o contexto.",
+    "example": "Estudou; portanto, avançou. Leve casaco, pois está frio.",
+    "question": "Em 'Estudou; portanto, aprendeu', portanto indica:",
+    "options": [
+      "conclusão",
+      "oposição",
+      "alternância"
+    ],
+    "correct": 0,
+    "feedback": "Portanto introduz conclusão."
+  },
+  {
+    "title": "Conjunções subordinativas causais e condicionais",
+    "explain": "Conjunções subordinativas ligam uma oração dependente à principal. Porque pode indicar causa; se pode estabelecer condição.",
+    "example": "Ficamos em casa porque choveu; se chover, ficaremos.",
+    "question": "Qual conjunção indica condição?",
+    "options": [
+      "se",
+      "porque",
+      "embora"
+    ],
+    "correct": 0,
+    "feedback": "Se introduz uma condição."
+  },
+  {
+    "title": "Concessivas, finais e temporais",
+    "explain": "Embora introduz concessão; para que indica finalidade; quando marca referência temporal. Identificar a relação semântica ajuda a interpretar períodos complexos.",
+    "example": "Embora cansada, estudou; estudou para que passasse.",
+    "question": "Em 'Embora chovesse, saímos', há ideia de:",
+    "options": [
+      "concessão",
+      "finalidade",
+      "adição"
+    ],
+    "correct": 0,
+    "feedback": "Embora marca concessão, ou seja, um obstáculo que não impediu a ação."
+  },
+  {
+    "title": "Revisão das relações lógicas",
+    "explain": "Na interpretação de textos, conjunções articulam argumentos e relações entre ideias. Trocar conectivos pode mudar o sentido e comprometer a coerência.",
+    "example": "Não saiu porque estava doente; saiu embora estivesse doente.",
+    "question": "Qual conectivo mantém a ideia de contraste?",
+    "options": [
+      "porém",
+      "porque",
+      "portanto"
+    ],
+    "correct": 0,
+    "feedback": "Porém é adversativo e mantém o contraste."
+  }
+]
 };
 export function getExpandedPortugueseLessons(topic:string):Lesson[]|undefined{return curriculum[topic]}
