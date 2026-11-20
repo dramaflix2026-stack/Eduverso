@@ -2779,5 +2779,666 @@ const curriculum:Record<string,Lesson[]>={
     "feedback": "A adequação depende de quem recebe e do objetivo da mensagem."
   }
 ]
+,
+"Tipologia textual": [
+  {
+    "title": "Tipos textuais e gêneros",
+    "explain": "Tipos textuais são modos de organização linguística, como narração, descrição, exposição, argumentação e injunção. Um mesmo gênero pode combinar vários tipos, com um deles predominante.",
+    "example": "Uma reportagem pode narrar acontecimentos, descrever lugares e explicar dados.",
+    "question": "Qual afirmação é correta?",
+    "options": [
+      "Todo gênero tem um único tipo.",
+      "Um gênero pode combinar diferentes tipos.",
+      "Tipo textual é sinônimo de suporte digital."
+    ],
+    "correct": 1,
+    "feedback": "Os tipos podem coexistir no mesmo gênero."
+  },
+  {
+    "title": "Narração: enredo e acontecimentos",
+    "explain": "A narração organiza acontecimentos em uma sequência temporal ou causal. Costuma apresentar personagens, situação inicial, conflito e desfecho, embora a ordem possa variar.",
+    "example": "'Ao ouvir o alarme, Clara saiu correndo e encontrou a rua alagada' apresenta ações em sequência.",
+    "question": "Qual característica é central na narração?",
+    "options": [
+      "Sequência de acontecimentos",
+      "Lista de regras abstratas",
+      "Definição de um conceito apenas"
+    ],
+    "correct": 0,
+    "feedback": "A narração organiza eventos no tempo."
+  },
+  {
+    "title": "Narrador e foco narrativo",
+    "explain": "O narrador é a voz que conta os acontecimentos. Pode participar da história em primeira pessoa ou narrar em terceira; não deve ser confundido automaticamente com o autor real.",
+    "example": "'Eu abri a janela' usa narrador em primeira pessoa.",
+    "question": "Qual trecho está em primeira pessoa?",
+    "options": [
+      "Ela abriu a janela.",
+      "Eu abri a janela.",
+      "Abriram a janela."
+    ],
+    "correct": 1,
+    "feedback": "O pronome eu indica narrador em primeira pessoa."
+  },
+  {
+    "title": "Tempo e espaço narrativos",
+    "explain": "O tempo pode seguir ordem cronológica ou apresentar retrospectivas; o espaço situa as ações e pode influenciar o conflito. Marcadores temporais e espaciais orientam a leitura.",
+    "example": "'Anos antes, naquele mesmo bairro, tudo começara' desloca a narrativa ao passado.",
+    "question": "Qual expressão sinaliza retrospectiva?",
+    "options": [
+      "Anos antes",
+      "Neste instante",
+      "Daqui a pouco"
+    ],
+    "correct": 0,
+    "feedback": "Anos antes remete a um momento anterior da história."
+  },
+  {
+    "title": "Descrição objetiva e subjetiva",
+    "explain": "A descrição caracteriza pessoas, objetos, ambientes ou situações. Pode priorizar propriedades verificáveis ou impressões pessoais, dependendo da finalidade.",
+    "example": "'A sala mede 20 m²' é objetiva; 'a sala parecia acolhedora' é subjetiva.",
+    "question": "Qual trecho é descritivo objetivo?",
+    "options": [
+      "A casa parecia triste.",
+      "A mesa tinha quatro pés.",
+      "O jardim sorria."
+    ],
+    "correct": 1,
+    "feedback": "Quatro pés é característica observável."
+  },
+  {
+    "title": "Exposição e explicação",
+    "explain": "O tipo expositivo apresenta e esclarece informações, conceitos e relações. É frequente em materiais didáticos e textos de divulgação científica, sem exigir defesa de tese.",
+    "example": "'A fotossíntese transforma energia luminosa em energia química' explica um processo.",
+    "question": "Qual objetivo predomina na exposição?",
+    "options": [
+      "Explicar um conceito",
+      "Dar uma ordem",
+      "Narrar aventura fictícia"
+    ],
+    "correct": 0,
+    "feedback": "A exposição prioriza a apresentação de informações."
+  },
+  {
+    "title": "Argumentação e tese",
+    "explain": "A argumentação busca sustentar uma posição com razões e evidências. Uma tese clara precisa de justificativas relevantes e compatíveis com a conclusão.",
+    "example": "'Bibliotecas públicas devem receber investimento porque ampliam o acesso à leitura'.",
+    "question": "Qual elemento expressa a tese?",
+    "options": [
+      "Bibliotecas devem receber investimento",
+      "Porque amplia o acesso",
+      "A palavra leitura"
+    ],
+    "correct": 0,
+    "feedback": "A primeira proposição apresenta a posição defendida."
+  },
+  {
+    "title": "Injunção e orientação",
+    "explain": "Textos injuntivos orientam ações, procedimentos ou comportamentos, frequentemente com verbos no imperativo ou no infinitivo. São comuns em receitas, manuais e instruções.",
+    "example": "'Misture os ingredientes e asse por vinte minutos'.",
+    "question": "Qual trecho é injuntivo?",
+    "options": [
+      "Misture os ingredientes.",
+      "Os ingredientes estavam frescos.",
+      "A receita é antiga."
+    ],
+    "correct": 0,
+    "feedback": "Misture orienta uma ação do leitor."
+  },
+  {
+    "title": "Diálogo e sequências híbridas",
+    "explain": "Diálogos podem integrar narrativas, entrevistas e roteiros. Textos reais frequentemente combinam descrição, narração e explicação para cumprir sua finalidade.",
+    "example": "Uma crônica descreve a praça e depois narra uma conversa entre moradores.",
+    "question": "Qual análise é adequada?",
+    "options": [
+      "A crônica só pode narrar.",
+      "Tipos textuais podem se combinar.",
+      "Diálogo é sempre artigo de opinião."
+    ],
+    "correct": 1,
+    "feedback": "A combinação de sequências é comum em gêneros reais."
+  },
+  {
+    "title": "Revisão de tipologia textual",
+    "explain": "Para identificar o tipo predominante, observe o propósito do trecho, a organização das informações e os recursos linguísticos, sem depender de uma palavra isolada.",
+    "example": "'Primeiro, desligue o aparelho. Depois, retire o cabo' orienta procedimentos.",
+    "question": "Qual tipo predomina no trecho do exemplo?",
+    "options": [
+      "Injuntivo",
+      "Narrativo",
+      "Descritivo"
+    ],
+    "correct": 0,
+    "feedback": "Os verbos orientam uma sequência de ações."
+  }
+],
+"Variação linguística": [
+  {
+    "title": "Língua e diversidade",
+    "explain": "A língua apresenta variedades legítimas associadas a comunidades, contextos e histórias. A norma-padrão é uma convenção de determinados usos formais, não a única forma de comunicação válida.",
+    "example": "'Nós vamos' e 'a gente vai' são construções presentes no português brasileiro em diferentes contextos.",
+    "question": "Qual afirmação é adequada?",
+    "options": [
+      "Só existe uma variedade legítima.",
+      "A língua varia conforme contexto e comunidade.",
+      "Toda diferença é falta de inteligência."
+    ],
+    "correct": 1,
+    "feedback": "A variação é característica normal das línguas."
+  },
+  {
+    "title": "Variação regional",
+    "explain": "Variedades regionais podem diferir em vocabulário, pronúncia e construções. A mesma realidade pode receber nomes diferentes em regiões distintas.",
+    "example": "Mandioca, aipim e macaxeira são denominações regionais.",
+    "question": "Qual par exemplifica variação regional?",
+    "options": [
+      "mandioca e macaxeira",
+      "sujeito e predicado",
+      "verbo e artigo"
+    ],
+    "correct": 0,
+    "feedback": "Os nomes variam regionalmente para um alimento."
+  },
+  {
+    "title": "Variação social",
+    "explain": "Usos linguísticos também se relacionam a grupos sociais, redes de convivência, escolarização e práticas culturais. Não se deve reduzir essa variação a um julgamento de valor.",
+    "example": "Grupos profissionais empregam vocabulário técnico próprio.",
+    "question": "Qual fenômeno é variação social?",
+    "options": [
+      "Vocabulário especializado de um grupo",
+      "Mudança de estação do ano",
+      "Apenas erros de digitação"
+    ],
+    "correct": 0,
+    "feedback": "Comunidades de prática desenvolvem repertórios próprios."
+  },
+  {
+    "title": "Variação histórica",
+    "explain": "As línguas mudam ao longo do tempo. Formas, sentidos e pronúncias podem surgir, desaparecer ou mudar de função.",
+    "example": "Vossa mercê passou por transformações históricas até você.",
+    "question": "Qual exemplo ilustra mudança histórica?",
+    "options": [
+      "Transformações de vossa mercê em você",
+      "Trocar de assunto no diálogo",
+      "Escolher um título para texto"
+    ],
+    "correct": 0,
+    "feedback": "A forma de tratamento mudou historicamente."
+  },
+  {
+    "title": "Variação situacional e registro",
+    "explain": "O grau de formalidade depende de interlocutores, finalidade, canal e situação. Uma pessoa pode alternar registros sem que isso represente incoerência.",
+    "example": "Uma mensagem a um amigo pode usar abreviações; um requerimento usa linguagem mais formal.",
+    "question": "Qual atitude demonstra adequação linguística?",
+    "options": [
+      "Usar sempre o mesmo registro",
+      "Adaptar linguagem ao interlocutor",
+      "Eliminar toda expressão regional"
+    ],
+    "correct": 1,
+    "feedback": "A escolha de registro considera a situação comunicativa."
+  },
+  {
+    "title": "Oralidade e escrita",
+    "explain": "Fala e escrita possuem recursos e condições de produção diferentes. Hesitações, retomadas e entonação são comuns na fala; textos escritos podem ser revisados e organizados de outras maneiras.",
+    "example": "Na conversa espontânea, pausas ajudam a construir sentidos.",
+    "question": "Qual característica é frequente na oralidade espontânea?",
+    "options": [
+      "Hesitações e reformulações",
+      "Ausência absoluta de contexto",
+      "Revisão editorial obrigatória"
+    ],
+    "correct": 0,
+    "feedback": "A fala espontânea pode incluir pausas e reformulações."
+  },
+  {
+    "title": "Norma-padrão e norma culta",
+    "explain": "Norma-padrão é um conjunto de prescrições convencionais; norma culta refere-se a usos efetivos de falantes escolarizados em contextos monitorados. As duas noções não são idênticas.",
+    "example": "A fala formal real pode diferir de certas prescrições gramaticais.",
+    "question": "Qual afirmação é correta?",
+    "options": [
+      "Norma-padrão e usos reais são sempre idênticos.",
+      "Norma-padrão é referência convencional para certos contextos.",
+      "A norma-padrão elimina a variação."
+    ],
+    "correct": 1,
+    "feedback": "A norma-padrão funciona como referência convencional, não como descrição de todos os usos."
+  },
+  {
+    "title": "Preconceito linguístico",
+    "explain": "Preconceito linguístico ocorre quando variedades ou falantes são desvalorizados por características de sua linguagem. Criticar discriminação não impede ensinar convenções formais necessárias.",
+    "example": "Ridicularizar um sotaque regional é atitude discriminatória.",
+    "question": "Qual atitude evita preconceito linguístico?",
+    "options": [
+      "Ridicularizar sotaques",
+      "Respeitar variedades e ensinar adequação",
+      "Tratar regionalismos como incapacidade"
+    ],
+    "correct": 1,
+    "feedback": "Respeito à diversidade e ensino da norma formal são compatíveis."
+  },
+  {
+    "title": "Gírias e linguagens de grupos",
+    "explain": "Gírias e expressões próprias de grupos cumprem funções de identidade, pertencimento e expressividade. Seu uso depende da situação e do público.",
+    "example": "Uma expressão comum entre amigos pode não ser adequada a um documento oficial.",
+    "question": "Qual análise é adequada?",
+    "options": [
+      "Gírias não comunicam sentidos.",
+      "Gírias podem marcar pertencimento social.",
+      "Gírias só existem na internet."
+    ],
+    "correct": 1,
+    "feedback": "Expressões de grupo podem fortalecer identidade e comunicação."
+  },
+  {
+    "title": "Revisão de adequação",
+    "explain": "Em questões de variação, identifique o contexto, o interlocutor e o efeito de sentido. Diferencie análise linguística de julgamento preconceituoso e reconheça a finalidade da norma solicitada.",
+    "example": "Um candidato adapta seu texto ao registro formal da redação sem desvalorizar a fala cotidiana.",
+    "question": "Qual conduta é mais adequada?",
+    "options": [
+      "Usar registro formal quando exigido e respeitar variedades",
+      "Condenar todo sotaque",
+      "Ignorar o interlocutor"
+    ],
+    "correct": 0,
+    "feedback": "Adequação contextual não exige desvalorizar outras variedades."
+  }
+],
+"Argumentação e repertório": [
+  {
+    "title": "Tese e recorte temático",
+    "explain": "A tese é a posição central defendida; o recorte delimita o problema discutido. Uma tese precisa responder ao tema e permitir desenvolvimento por argumentos.",
+    "example": "Tema: acesso à leitura; tese: bibliotecas comunitárias devem receber apoio público.",
+    "question": "Qual frase é uma tese?",
+    "options": [
+      "A leitura existe em várias sociedades.",
+      "É necessário ampliar bibliotecas públicas para democratizar a leitura.",
+      "Livros são objetos com páginas."
+    ],
+    "correct": 1,
+    "feedback": "A frase defende uma posição clara e discutível."
+  },
+  {
+    "title": "Argumentos e justificativas",
+    "explain": "Argumentos explicam por que uma tese deve ser aceita. Devem ser pertinentes, consistentes e conectados à conclusão; opiniões repetidas sem fundamento não bastam.",
+    "example": "Tese: ampliar transporte público; argumento: isso pode reduzir o número de carros em circulação.",
+    "question": "Qual frase apresenta justificativa?",
+    "options": [
+      "Transporte público é importante porque amplia a mobilidade.",
+      "Transporte público é importante, importante, importante.",
+      "Transporte público tem ônibus."
+    ],
+    "correct": 0,
+    "feedback": "A justificativa conecta uma razão à posição defendida."
+  },
+  {
+    "title": "Dados e evidências",
+    "explain": "Dados estatísticos, estudos e exemplos documentados podem fortalecer argumentos, mas precisam ser verificáveis, contextualizados e corretamente interpretados. Números inventados comprometem a credibilidade.",
+    "example": "Uma pesquisa identificada, com metodologia e período, é mais confiável que 'todo mundo sabe'.",
+    "question": "Qual prática fortalece a argumentação?",
+    "options": [
+      "Inventar percentuais",
+      "Citar fonte verificável e contextualizar dados",
+      "Usar números sem referência"
+    ],
+    "correct": 1,
+    "feedback": "Evidência confiável precisa de fonte e contexto."
+  },
+  {
+    "title": "Repertório sociocultural produtivo",
+    "explain": "Repertório é conhecimento histórico, científico, artístico, jurídico ou filosófico mobilizado para analisar o tema. Não basta citar um nome famoso: a referência precisa contribuir para o argumento.",
+    "example": "Ao discutir cidadania, relacionar um princípio constitucional ao problema concreto torna o repertório produtivo.",
+    "question": "Quando uma referência é produtiva?",
+    "options": [
+      "Quando se conecta à tese e ao argumento",
+      "Quando aparece isolada",
+      "Quando é famosa, mesmo sem relação"
+    ],
+    "correct": 0,
+    "feedback": "A pertinência e a análise tornam o repertório relevante."
+  },
+  {
+    "title": "Argumento de causa e consequência",
+    "explain": "Raciocínio causal relaciona condições e efeitos, mas exige cuidado para não confundir correlação com causalidade. Um bom argumento explica o mecanismo envolvido.",
+    "example": "A falta de iluminação pode reduzir a percepção de segurança em espaços públicos.",
+    "question": "Qual atitude evita erro causal?",
+    "options": [
+      "Explicar o mecanismo e considerar outras causas",
+      "Afirmar causa sem evidência",
+      "Confundir coincidência com prova"
+    ],
+    "correct": 0,
+    "feedback": "A análise causal deve justificar a relação entre fatores."
+  },
+  {
+    "title": "Exemplificação e analogia",
+    "explain": "Exemplos concretizam ideias abstratas; analogias comparam situações para esclarecer relações. Uma analogia não substitui evidência quando os contextos são muito diferentes.",
+    "example": "Um projeto local de coleta seletiva pode exemplificar uma política de sustentabilidade.",
+    "question": "Qual recurso apresenta um caso concreto?",
+    "options": [
+      "Exemplificação",
+      "Ataque pessoal",
+      "Contradição"
+    ],
+    "correct": 0,
+    "feedback": "Exemplificação usa casos para tornar uma ideia mais clara."
+  },
+  {
+    "title": "Contra-argumentação",
+    "explain": "Contra-argumentar envolve reconhecer uma objeção relevante e responder com razões. Isso demonstra análise crítica sem desqualificar pessoas ou distorcer posições contrárias.",
+    "example": "Embora a implantação tenha custo inicial, benefícios de longo prazo podem justificar o investimento.",
+    "question": "Qual trecho introduz uma objeção?",
+    "options": [
+      "Embora a implantação tenha custo inicial",
+      "Portanto, concluo",
+      "Por exemplo, uma escola"
+    ],
+    "correct": 0,
+    "feedback": "Embora apresenta uma ressalva a ser enfrentada."
+  },
+  {
+    "title": "Falácias argumentativas",
+    "explain": "Falácias são raciocínios inadequados que parecem persuasivos. Ataque pessoal, generalização apressada e falso dilema desviam da análise de evidências.",
+    "example": "'Uma pessoa errou, logo todos desse grupo erram' é generalização apressada.",
+    "question": "Qual frase contém generalização apressada?",
+    "options": [
+      "Conheci um caso; portanto, todos são iguais.",
+      "O estudo tem amostra limitada.",
+      "Precisamos avaliar mais dados."
+    ],
+    "correct": 0,
+    "feedback": "Um caso isolado não sustenta conclusão universal."
+  },
+  {
+    "title": "Proposta de intervenção",
+    "explain": "Na redação do ENEM, uma proposta de intervenção consistente pode explicitar agente, ação, meio, finalidade e detalhamento, respeitando os direitos humanos e respondendo ao problema analisado.",
+    "example": "Secretarias municipais podem organizar oficinas em escolas por meio de parcerias para ampliar o acesso à informação.",
+    "question": "Qual elemento indica quem executa a ação?",
+    "options": [
+      "Agente",
+      "Finalidade",
+      "Exemplo"
+    ],
+    "correct": 0,
+    "feedback": "O agente é o responsável pela intervenção."
+  },
+  {
+    "title": "Revisão de parágrafo argumentativo",
+    "explain": "Um parágrafo sólido articula tópico frasal, desenvolvimento, evidência pertinente e ligação com a tese. Na revisão, elimine citações decorativas, saltos lógicos e afirmações sem sustentação.",
+    "example": "'A formação leitora depende de acesso; bibliotecas públicas ampliam esse acesso ao disponibilizar acervos e mediação'.",
+    "question": "Qual revisão melhora um argumento?",
+    "options": [
+      "Adicionar evidência pertinente e explicar sua relação com a tese",
+      "Repetir a tese sem desenvolver",
+      "Inserir citação sem relação com o tema"
+    ],
+    "correct": 0,
+    "feedback": "Argumentos melhoram quando evidências são interpretadas e conectadas à tese."
+  }
+],
+"Escolas literárias": [
+  {
+    "title": "Panorama e contexto histórico",
+    "explain": "Escolas literárias são categorias didáticas que agrupam tendências estéticas em determinados contextos. As fronteiras entre movimentos não são absolutas e autores podem combinar características.",
+    "example": "Barroco, Arcadismo, Romantismo e Realismo surgiram em contextos históricos distintos.",
+    "question": "Qual abordagem é adequada?",
+    "options": [
+      "Considerar obras e contextos",
+      "Tratar períodos como caixas sem exceções",
+      "Ignorar mudanças históricas"
+    ],
+    "correct": 0,
+    "feedback": "A leitura histórica e estética evita classificações mecânicas."
+  },
+  {
+    "title": "Trovadorismo",
+    "explain": "Na literatura medieval em língua galego-portuguesa, cantigas de amor, amigo e satíricas associavam poesia, música e vida social. A voz poética e a relação amorosa variam conforme o tipo.",
+    "example": "Cantigas de amigo frequentemente apresentam eu lírico feminino, embora autores fossem majoritariamente homens.",
+    "question": "Qual característica é associada às cantigas de amigo?",
+    "options": [
+      "Eu lírico frequentemente feminino",
+      "Culto exclusivo à ciência",
+      "Narrador naturalista"
+    ],
+    "correct": 0,
+    "feedback": "A voz feminina é traço recorrente das cantigas de amigo."
+  },
+  {
+    "title": "Humanismo e Classicismo",
+    "explain": "O Humanismo marca transformações culturais e a valorização da experiência humana; o Classicismo retoma modelos greco-romanos, equilíbrio formal e referências mitológicas.",
+    "example": "A poesia de Camões integra o Classicismo português.",
+    "question": "Qual autor é associado ao Classicismo português?",
+    "options": [
+      "Luís de Camões",
+      "Aluísio Azevedo",
+      "Carlos Drummond de Andrade"
+    ],
+    "correct": 0,
+    "feedback": "Camões é referência do Classicismo português."
+  },
+  {
+    "title": "Barroco",
+    "explain": "O Barroco explora contrastes, conflitos espirituais, jogos de linguagem e tensão entre valores terrenos e religiosos. Cultismo e conceptismo são tendências recorrentes.",
+    "example": "Antíteses e paradoxos expressam conflitos frequentes na estética barroca.",
+    "question": "Qual recurso é frequente no Barroco?",
+    "options": [
+      "Antíteses e contrastes",
+      "Objetividade científica exclusiva",
+      "Ausência de conflitos"
+    ],
+    "correct": 0,
+    "feedback": "O contraste é traço expressivo do Barroco."
+  },
+  {
+    "title": "Arcadismo",
+    "explain": "O Arcadismo valoriza idealização da vida campestre, equilíbrio e referências clássicas, frequentemente em oposição ao excesso barroco. O contexto colonial brasileiro influencia suas obras.",
+    "example": "A expressão fugere urbem relaciona-se à valorização da vida afastada da cidade.",
+    "question": "Qual ideal se associa ao Arcadismo?",
+    "options": [
+      "Vida bucólica idealizada",
+      "Industrialização urbana futurista",
+      "Experimentalismo concretista"
+    ],
+    "correct": 0,
+    "feedback": "A vida no campo idealizada é tema recorrente."
+  },
+  {
+    "title": "Romantismo",
+    "explain": "O Romantismo enfatiza subjetividade, sentimento, imaginação e projetos de identidade nacional. No Brasil, suas gerações poéticas e a prosa apresentam diferenças internas.",
+    "example": "Idealização amorosa e nacionalismo aparecem em diversas obras românticas.",
+    "question": "Qual característica é romântica?",
+    "options": [
+      "Subjetividade e idealização",
+      "Imparcialidade documental obrigatória",
+      "Negação completa da emoção"
+    ],
+    "correct": 0,
+    "feedback": "O Romantismo valoriza a expressão subjetiva."
+  },
+  {
+    "title": "Realismo e Naturalismo",
+    "explain": "O Realismo analisa criticamente relações sociais e psicológicas; o Naturalismo frequentemente enfatiza determinismo, ambiente e condições materiais. Ambos se contrapõem a idealizações românticas.",
+    "example": "Machado de Assis é central ao Realismo brasileiro; Aluísio Azevedo ao Naturalismo.",
+    "question": "Qual obra é associada ao Naturalismo brasileiro?",
+    "options": [
+      "O Cortiço",
+      "Iracema",
+      "Marília de Dirceu"
+    ],
+    "correct": 0,
+    "feedback": "O Cortiço, de Aluísio Azevedo, é referência naturalista."
+  },
+  {
+    "title": "Parnasianismo e Simbolismo",
+    "explain": "O Parnasianismo enfatiza trabalho formal e elaboração técnica; o Simbolismo explora musicalidade, sugestão e subjetividade. Os movimentos coexistiram em parte do fim do século XIX.",
+    "example": "Sonoridade e imagens sugestivas são recorrentes na poesia simbolista.",
+    "question": "Qual característica se associa ao Simbolismo?",
+    "options": [
+      "Sugestão e musicalidade",
+      "Descrição científica obrigatória",
+      "Apenas narrativa jornalística"
+    ],
+    "correct": 0,
+    "feedback": "O Simbolismo valoriza sugestão e musicalidade."
+  },
+  {
+    "title": "Pré-Modernismo e Modernismo",
+    "explain": "Pré-Modernismo reúne autores que problematizam o Brasil social e cultural antes de 1922; o Modernismo rompe convenções e experimenta linguagens, com projetos estéticos variados.",
+    "example": "A Semana de Arte Moderna de 1922 tornou-se marco simbólico do Modernismo brasileiro.",
+    "question": "Qual evento é marco do Modernismo brasileiro?",
+    "options": [
+      "Semana de Arte Moderna de 1922",
+      "Independência de 1822",
+      "Proclamação da República de 1889"
+    ],
+    "correct": 0,
+    "feedback": "A Semana de 1922 é marco simbólico do movimento."
+  },
+  {
+    "title": "Revisão comparativa de escolas",
+    "explain": "Compare movimentos por contexto, visão de mundo, linguagem e autores, sem reduzir uma obra inteira a uma etiqueta. Questões podem exigir identificação de permanências e rupturas.",
+    "example": "Romantismo tende à idealização; Realismo frequentemente questiona idealizações; Modernismo experimenta formas.",
+    "question": "Qual associação está correta?",
+    "options": [
+      "Arcadismo — ideal bucólico",
+      "Barroco — ausência de contrastes",
+      "Simbolismo — objetividade científica exclusiva"
+    ],
+    "correct": 0,
+    "feedback": "O ideal bucólico é característico do Arcadismo."
+  }
+],
+"Literatura brasileira": [
+  {
+    "title": "Literatura colonial e Quinhentismo",
+    "explain": "Os primeiros registros escritos da colonização incluem cartas, relatos de viagem e textos de catequese. Sua leitura crítica considera perspectivas coloniais e a presença indígena frequentemente mediada pelos autores.",
+    "example": "A Carta de Pero Vaz de Caminha é documento importante do período inicial da colonização portuguesa.",
+    "question": "Qual texto é associado ao Quinhentismo?",
+    "options": [
+      "Carta de Pero Vaz de Caminha",
+      "Dom Casmurro",
+      "Macunaíma"
+    ],
+    "correct": 0,
+    "feedback": "A carta de Caminha é referência da literatura de informação."
+  },
+  {
+    "title": "Barroco no Brasil",
+    "explain": "No Brasil colonial, a produção barroca reúne poesia e prosa marcadas por contrastes e questões morais e religiosas. Gregório de Matos e Padre Antônio Vieira são referências.",
+    "example": "Sermões de Vieira desenvolvem raciocínio persuasivo e argumentação religiosa.",
+    "question": "Qual autor é associado ao Barroco luso-brasileiro?",
+    "options": [
+      "Padre Antônio Vieira",
+      "Mário de Andrade",
+      "Graciliano Ramos"
+    ],
+    "correct": 0,
+    "feedback": "Vieira é referência da prosa barroca."
+  },
+  {
+    "title": "Arcadismo e Inconfidência",
+    "explain": "O Arcadismo brasileiro se relaciona ao ambiente intelectual do século XVIII, à cultura clássica e a debates da sociedade colonial. Tomás Antônio Gonzaga e Cláudio Manuel da Costa são autores importantes.",
+    "example": "Marília de Dirceu é obra associada a Tomás Antônio Gonzaga.",
+    "question": "Quem escreveu Marília de Dirceu?",
+    "options": [
+      "Tomás Antônio Gonzaga",
+      "Machado de Assis",
+      "Clarice Lispector"
+    ],
+    "correct": 0,
+    "feedback": "A obra é atribuída a Tomás Antônio Gonzaga."
+  },
+  {
+    "title": "Romantismo e identidade nacional",
+    "explain": "O Romantismo brasileiro participa da construção de imagens de nação, natureza e povos indígenas, muitas vezes idealizadas. É importante distinguir representação literária de realidade histórica.",
+    "example": "Iracema, de José de Alencar, integra a prosa indianista.",
+    "question": "Qual obra pertence ao Romantismo brasileiro?",
+    "options": [
+      "Iracema",
+      "O Cortiço",
+      "Vidas Secas"
+    ],
+    "correct": 0,
+    "feedback": "Iracema é romance romântico de José de Alencar."
+  },
+  {
+    "title": "Machado de Assis e Realismo",
+    "explain": "Machado de Assis explora ironia, narradores complexos e crítica das relações sociais. Suas obras frequentemente exigem atenção à confiabilidade do narrador.",
+    "example": "Dom Casmurro apresenta narrativa em primeira pessoa cuja interpretação exige análise crítica.",
+    "question": "Qual autor escreveu Dom Casmurro?",
+    "options": [
+      "Machado de Assis",
+      "Aluísio Azevedo",
+      "Lima Barreto"
+    ],
+    "correct": 0,
+    "feedback": "Dom Casmurro é romance de Machado de Assis."
+  },
+  {
+    "title": "Naturalismo e crítica social",
+    "explain": "O Naturalismo brasileiro investiga tensões sociais e relações entre indivíduo, ambiente e condições materiais, frequentemente com perspectiva determinista.",
+    "example": "O Cortiço representa coletividade urbana e conflitos sociais no fim do século XIX.",
+    "question": "Quem escreveu O Cortiço?",
+    "options": [
+      "Aluísio Azevedo",
+      "José de Alencar",
+      "Manuel Bandeira"
+    ],
+    "correct": 0,
+    "feedback": "Aluísio Azevedo é autor de O Cortiço."
+  },
+  {
+    "title": "Pré-Modernismo e Brasil profundo",
+    "explain": "Autores do Pré-Modernismo abordam desigualdades, regionalidades e tensões da modernização brasileira. A categoria reúne estilos distintos e não constitui escola homogênea.",
+    "example": "Os Sertões, de Euclides da Cunha, examina a Guerra de Canudos em abordagem complexa.",
+    "question": "Quem escreveu Os Sertões?",
+    "options": [
+      "Euclides da Cunha",
+      "Carlos Drummond de Andrade",
+      "Castro Alves"
+    ],
+    "correct": 0,
+    "feedback": "Euclides da Cunha escreveu Os Sertões."
+  },
+  {
+    "title": "Primeira fase modernista",
+    "explain": "A primeira fase modernista brasileira experimenta linguagem, humor, ruptura com convenções e investigação crítica da identidade nacional. Mário e Oswald de Andrade são referências.",
+    "example": "Macunaíma, de Mário de Andrade, explora linguagem e mitos na discussão da identidade brasileira.",
+    "question": "Quem escreveu Macunaíma?",
+    "options": [
+      "Mário de Andrade",
+      "Machado de Assis",
+      "Jorge Amado"
+    ],
+    "correct": 0,
+    "feedback": "Macunaíma é obra de Mário de Andrade."
+  },
+  {
+    "title": "Modernismo de 1930 e poesia moderna",
+    "explain": "A partir de 1930, destacam-se romances sociais e psicológicos e uma poesia de reflexão existencial e histórica. Graciliano Ramos e Carlos Drummond de Andrade representam caminhos diferentes.",
+    "example": "Vidas Secas, de Graciliano Ramos, tematiza seca, pobreza e relações de poder.",
+    "question": "Quem escreveu Vidas Secas?",
+    "options": [
+      "Graciliano Ramos",
+      "José de Alencar",
+      "Gregório de Matos"
+    ],
+    "correct": 0,
+    "feedback": "Vidas Secas é romance de Graciliano Ramos."
+  },
+  {
+    "title": "Literatura contemporânea e diversidade",
+    "explain": "A literatura brasileira contemporânea reúne múltiplas vozes, gêneros e perspectivas sobre identidade, memória, desigualdade e experiências urbanas e rurais. A leitura crítica deve considerar diversidade de autoria e forma.",
+    "example": "Conceição Evaristo articula memória, experiências sociais e invenção literária em sua obra.",
+    "question": "Qual autora é referência da literatura brasileira contemporânea?",
+    "options": [
+      "Conceição Evaristo",
+      "Tomás Antônio Gonzaga",
+      "Pero Vaz de Caminha"
+    ],
+    "correct": 0,
+    "feedback": "Conceição Evaristo é autora contemporânea brasileira."
+  }
+]
 };
 export function getExpandedPortugueseLessons(topic:string):Lesson[]|undefined{return curriculum[topic]}
