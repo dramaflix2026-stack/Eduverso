@@ -1985,5 +1985,402 @@ const curriculum:Record<string,Lesson[]>={
     "feedback": "À tarde é locução; à escola tem fusão; a pé não recebe crase."
   }
 ]
+,
+"Pontuação": [
+  {
+    "title": "Ponto-final e organização",
+    "explain": "O ponto-final encerra enunciados declarativos e ajuda a separar unidades de sentido. Pontuar não é apenas marcar pausas respiratórias: a pontuação organiza relações sintáticas e discursivas.",
+    "example": "O projeto terminou. A equipe apresentou os resultados.",
+    "question": "Qual sinal encerra uma declaração completa?",
+    "options": [
+      "Ponto-final",
+      "Vírgula",
+      "Dois-pontos"
+    ],
+    "correct": 0,
+    "feedback": "O ponto-final marca o encerramento do enunciado declarativo."
+  },
+  {
+    "title": "Vírgula em enumerações",
+    "explain": "A vírgula separa elementos coordenados de uma enumeração quando não estão ligados por conjunção. A presença de e pode alterar a necessidade do sinal.",
+    "example": "Comprei lápis, borracha, caderno e régua.",
+    "question": "Qual frase pontua adequadamente uma enumeração?",
+    "options": [
+      "Comprei lápis borracha, caderno e régua.",
+      "Comprei lápis, borracha, caderno e régua.",
+      "Comprei, lápis borracha caderno."
+    ],
+    "correct": 1,
+    "feedback": "As vírgulas separam os elementos enumerados."
+  },
+  {
+    "title": "Vírgula e vocativo",
+    "explain": "O vocativo chama ou interpela o interlocutor e deve ser isolado por vírgulas, mesmo quando aparece no início ou fim da oração.",
+    "example": "Ana, feche a porta. Feche a porta, Ana.",
+    "question": "Qual frase apresenta vocativo corretamente isolado?",
+    "options": [
+      "Pedro venha aqui.",
+      "Pedro, venha aqui.",
+      "Pedro venha, aqui."
+    ],
+    "correct": 1,
+    "feedback": "Pedro é vocativo e deve ser separado por vírgula."
+  },
+  {
+    "title": "Vírgula e aposto explicativo",
+    "explain": "O aposto explicativo acrescenta informação sobre um termo e costuma vir entre vírgulas ou outros sinais equivalentes. Não se confunde com complemento necessário.",
+    "example": "Machado de Assis, escritor brasileiro, nasceu no Rio de Janeiro.",
+    "question": "Qual frase isola o aposto?",
+    "options": [
+      "Recife capital de Pernambuco é histórica.",
+      "Recife, capital de Pernambuco, é histórica.",
+      "Recife capital, de Pernambuco é histórica."
+    ],
+    "correct": 1,
+    "feedback": "Capital de Pernambuco explica Recife e fica entre vírgulas."
+  },
+  {
+    "title": "Vírgula e adjunto adverbial",
+    "explain": "Adjuntos adverbiais deslocados, sobretudo longos, costumam ser isolados por vírgula. A vírgula pode ser facultativa com adjuntos curtos, conforme a clareza e o estilo.",
+    "example": "Depois de várias horas de estudo, a turma descansou.",
+    "question": "Qual frase marca corretamente o adjunto longo deslocado?",
+    "options": [
+      "Depois de várias horas de estudo, a turma descansou.",
+      "Depois, de várias horas de estudo a turma descansou.",
+      "Depois de várias horas, de estudo a turma descansou."
+    ],
+    "correct": 0,
+    "feedback": "A vírgula delimita o adjunto adverbial antecipado."
+  },
+  {
+    "title": "Vírgula entre sujeito e verbo",
+    "explain": "Em regra, não se separa sujeito do predicado por vírgula. Intercalações explicativas podem aparecer entre vírgulas, mas isso não autoriza uma separação arbitrária.",
+    "example": "Os estudantes atentos resolveram a atividade.",
+    "question": "Qual frase evita separação indevida?",
+    "options": [
+      "Os estudantes, resolveram a atividade.",
+      "Os estudantes resolveram a atividade.",
+      "Os, estudantes resolveram a atividade."
+    ],
+    "correct": 1,
+    "feedback": "Não se coloca vírgula entre sujeito e verbo sem intercalação."
+  },
+  {
+    "title": "Vírgula e orações adjetivas",
+    "explain": "Orações adjetivas explicativas são isoladas por vírgulas; restritivas, em regra, não. A pontuação pode mudar o conjunto de referentes.",
+    "example": "Os alunos que estudaram passaram; Os alunos, que estudaram, passaram.",
+    "question": "Qual frase apresenta oração explicativa?",
+    "options": [
+      "Os livros que comprei chegaram.",
+      "Os livros, que comprei ontem, chegaram.",
+      "Os livros de história chegaram."
+    ],
+    "correct": 1,
+    "feedback": "A oração entre vírgulas acrescenta comentário explicativo."
+  },
+  {
+    "title": "Ponto e vírgula",
+    "explain": "O ponto e vírgula separa unidades coordenadas extensas ou itens complexos, especialmente quando já existem vírgulas internas. Seu uso organiza relações sem encerrar totalmente o período.",
+    "example": "A equipe revisou os dados; o coordenador, o relatório.",
+    "question": "Qual sinal pode separar orações coordenadas extensas?",
+    "options": [
+      "Ponto e vírgula",
+      "Apóstrofo",
+      "Hífen"
+    ],
+    "correct": 0,
+    "feedback": "O ponto e vírgula pode separar orações coordenadas."
+  },
+  {
+    "title": "Dois-pontos, travessão e aspas",
+    "explain": "Dois-pontos introduzem explicação, enumeração ou citação; travessão pode marcar fala ou intercalação; aspas delimitam citações e usos especiais.",
+    "example": "Ela anunciou: 'A prova foi adiada'.",
+    "question": "Qual sinal introduz adequadamente uma enumeração?",
+    "options": [
+      "Dois-pontos",
+      "Ponto de interrogação",
+      "Reticências sempre"
+    ],
+    "correct": 0,
+    "feedback": "Dois-pontos podem anunciar uma enumeração."
+  },
+  {
+    "title": "Revisão de pontuação",
+    "explain": "Revise a estrutura sintática, identifique vocativos e apostos e confira se a vírgula altera o sentido. A escolha de sinais deve apoiar a leitura e a organização do texto.",
+    "example": "Professora, os alunos, que chegaram cedo, já estão na sala.",
+    "question": "Qual frase está corretamente pontuada?",
+    "options": [
+      "Maria, traga o caderno.",
+      "Maria traga, o caderno.",
+      "Maria, traga, o caderno."
+    ],
+    "correct": 0,
+    "feedback": "A vírgula isola o vocativo Maria sem separar verbo e objeto."
+  }
+],
+"Colocação pronominal": [
+  {
+    "title": "Pronomes átonos e posições",
+    "explain": "Pronomes oblíquos átonos podem aparecer antes, depois ou, em condições específicas, no interior do verbo. Essas posições recebem os nomes próclise, ênclise e mesóclise.",
+    "example": "Não me disseram; disseram-me; dir-me-ão.",
+    "question": "Em 'Não me disseram', ocorre:",
+    "options": [
+      "próclise",
+      "ênclise",
+      "mesóclise"
+    ],
+    "correct": 0,
+    "feedback": "Me aparece antes do verbo."
+  },
+  {
+    "title": "Próclise com negação",
+    "explain": "Palavras negativas como não, nunca e jamais costumam atrair o pronome átono na norma-padrão quando não há pausa que altere a estrutura.",
+    "example": "Nunca me avisaram da mudança.",
+    "question": "Qual frase segue a próclise exigida pela negação?",
+    "options": [
+      "Não disseram-me.",
+      "Não me disseram.",
+      "Não disseram me."
+    ],
+    "correct": 1,
+    "feedback": "Não favorece a colocação do pronome antes do verbo."
+  },
+  {
+    "title": "Próclise com relativos",
+    "explain": "Pronomes relativos como que e quem podem atrair pronomes átonos na oração que introduzem.",
+    "example": "O livro que me deram era interessante.",
+    "question": "Qual frase segue a norma-padrão?",
+    "options": [
+      "O livro que deram-me era bom.",
+      "O livro que me deram era bom.",
+      "O livro que deram me era bom."
+    ],
+    "correct": 1,
+    "feedback": "Que, relativo, favorece a próclise."
+  },
+  {
+    "title": "Próclise com conjunções subordinativas",
+    "explain": "Conjunções subordinativas podem atrair o pronome átono, especialmente quando não há pausa entre a conjunção e o verbo.",
+    "example": "Quando me chamarem, responderei.",
+    "question": "Qual opção está adequada?",
+    "options": [
+      "Quando chamarem-me, responderei.",
+      "Quando me chamarem, responderei.",
+      "Quando chamarem me responderei."
+    ],
+    "correct": 1,
+    "feedback": "Quando introduz oração subordinada e atrai me."
+  },
+  {
+    "title": "Ênclise em início de oração formal",
+    "explain": "Na norma-padrão escrita tradicional, evita-se iniciar oração com pronome átono. A ênclise pode ocorrer quando não há elemento atrativo; na fala brasileira, a próclise inicial é frequente.",
+    "example": "Informaram-me sobre o prazo.",
+    "question": "Qual opção segue a norma escrita formal tradicional?",
+    "options": [
+      "Me informaram ontem.",
+      "Informaram-me ontem.",
+      "Informaram me ontem."
+    ],
+    "correct": 1,
+    "feedback": "Informaram-me emprega ênclise no início da oração."
+  },
+  {
+    "title": "Ênclise com imperativo afirmativo",
+    "explain": "No imperativo afirmativo, quando não há elemento atrativo, é comum a ênclise na norma-padrão.",
+    "example": "Entregue-me o documento, por favor.",
+    "question": "Qual forma está adequada?",
+    "options": [
+      "Me entregue o documento, por favor.",
+      "Entregue-me o documento, por favor.",
+      "Entregue me o documento."
+    ],
+    "correct": 1,
+    "feedback": "Entregue-me apresenta ênclise ao imperativo afirmativo."
+  },
+  {
+    "title": "Mesóclise com futuro",
+    "explain": "A mesóclise pode ocorrer com futuro do presente ou do pretérito na norma escrita formal quando não há fator de próclise. É rara na fala brasileira.",
+    "example": "Dir-lhe-ei a verdade; contar-me-ia depois.",
+    "question": "Qual forma apresenta mesóclise?",
+    "options": [
+      "me dirão",
+      "dir-me-ão",
+      "disseram-me"
+    ],
+    "correct": 1,
+    "feedback": "Dir-me-ão insere o pronome no interior da forma verbal futura."
+  },
+  {
+    "title": "Colocação em locuções verbais",
+    "explain": "Em locuções verbais, a posição do pronome depende do auxiliar, do verbo principal, de elementos atrativos e do registro. Algumas posições são aceitas na norma escrita, outras são típicas da fala.",
+    "example": "Não me podem ajudar; podem ajudar-me.",
+    "question": "Qual frase apresenta colocação formal possível?",
+    "options": [
+      "Podem ajudar-me.",
+      "Podem ajudar me.",
+      "Não podem-me ajudar."
+    ],
+    "correct": 0,
+    "feedback": "A ênclise ao infinitivo é possível em locução verbal."
+  },
+  {
+    "title": "Variação entre fala e escrita",
+    "explain": "No português brasileiro, a próclise é muito frequente na fala e em textos informais, inclusive no início da frase. A avaliação deve considerar a norma solicitada e evitar preconceito linguístico.",
+    "example": "Me avisaram ontem é corrente na fala; Avisaram-me é preferido na norma escrita tradicional.",
+    "question": "Qual análise é adequada?",
+    "options": [
+      "A fala brasileira nunca usa próclise.",
+      "A norma formal e a fala podem preferir posições diferentes.",
+      "Toda próclise inicial é impossível na língua."
+    ],
+    "correct": 1,
+    "feedback": "A colocação varia conforme registro e variedade linguística."
+  },
+  {
+    "title": "Revisão de colocação pronominal",
+    "explain": "Identifique primeiro o verbo e o pronome; depois procure palavras atrativas e verifique tempo verbal e registro. Não aplique regras de forma mecânica sem considerar o contexto.",
+    "example": "Jamais me contaram; informar-lhe-ei; avisaram-me.",
+    "question": "Qual frase segue a norma escrita formal?",
+    "options": [
+      "Jamais disseram-me.",
+      "Jamais me disseram.",
+      "Jamais disseram me."
+    ],
+    "correct": 1,
+    "feedback": "Jamais atrai o pronome para antes do verbo."
+  }
+],
+"Semântica": [
+  {
+    "title": "Significado e contexto",
+    "explain": "A semântica estuda os sentidos de palavras, expressões e enunciados. O contexto pode selecionar diferentes interpretações de uma mesma forma.",
+    "example": "Banco pode ser instituição financeira ou assento.",
+    "question": "Em 'Sentei no banco da praça', banco significa:",
+    "options": [
+      "instituição financeira",
+      "assento",
+      "margem de rio obrigatoriamente"
+    ],
+    "correct": 1,
+    "feedback": "O contexto de sentar seleciona o sentido de assento."
+  },
+  {
+    "title": "Denotação e conotação",
+    "explain": "Denotação é o uso mais literal ou referencial; conotação envolve sentidos figurados e associações expressivas.",
+    "example": "O coração bombeia sangue é denotativo; Ela tem coração de pedra é conotativo.",
+    "question": "Qual expressão é conotativa?",
+    "options": [
+      "A água ferveu.",
+      "Ele tem coração de pedra.",
+      "O relógio marcou oito horas."
+    ],
+    "correct": 1,
+    "feedback": "Coração de pedra representa insensibilidade de modo figurado."
+  },
+  {
+    "title": "Sinonímia contextual",
+    "explain": "Sinônimos têm sentidos próximos, mas raramente são intercambiáveis em todos os contextos. O registro, a intensidade e a combinação com outras palavras influenciam a substituição.",
+    "example": "Feliz e contente podem se aproximar em 'Ela está feliz/contente'.",
+    "question": "Qual par apresenta proximidade de sentido?",
+    "options": [
+      "alegre e contente",
+      "claro e escuro",
+      "entrar e sair"
+    ],
+    "correct": 0,
+    "feedback": "Alegre e contente podem ser sinônimos em muitos contextos."
+  },
+  {
+    "title": "Antonímia",
+    "explain": "Antônimos exprimem oposição semântica, que pode ser gradual, complementar ou relacional. Nem toda oposição equivale a simples negação.",
+    "example": "Quente e frio expressam oposição gradual; vivo e morto, oposição mais complementar.",
+    "question": "Qual par é antonímico?",
+    "options": [
+      "alto e baixo",
+      "rápido e veloz",
+      "feliz e contente"
+    ],
+    "correct": 0,
+    "feedback": "Alto e baixo expressam sentidos opostos."
+  },
+  {
+    "title": "Polissemia",
+    "explain": "Polissemia ocorre quando uma mesma palavra apresenta sentidos relacionados entre si. É diferente de homonímia, em que formas coincidem sem relação semântica clara.",
+    "example": "Cabeça do corpo e cabeça da equipe compartilham ideia de posição ou liderança.",
+    "question": "Qual exemplo ilustra polissemia?",
+    "options": [
+      "cabeça do corpo / cabeça da equipe",
+      "casa / mesa",
+      "feliz / alegre"
+    ],
+    "correct": 0,
+    "feedback": "Cabeça apresenta sentidos relacionados em contextos diferentes."
+  },
+  {
+    "title": "Homonímia",
+    "explain": "Homônimos compartilham forma sonora ou escrita, mas apresentam sentidos distintos. Podem ser homógrafos, homófonos ou perfeitos, conforme a coincidência.",
+    "example": "Manga pode designar fruta ou parte de uma camisa.",
+    "question": "Qual palavra exemplifica homonímia?",
+    "options": [
+      "manga",
+      "bonito",
+      "rapidamente"
+    ],
+    "correct": 0,
+    "feedback": "Manga tem sentidos distintos com mesma forma."
+  },
+  {
+    "title": "Paronímia",
+    "explain": "Parônimos têm grafia ou pronúncia semelhantes, mas significados diferentes. A troca indevida pode alterar o sentido de textos formais.",
+    "example": "Descrição é ato de descrever; discrição é reserva ou prudência.",
+    "question": "Qual palavra completa 'Ele agiu com muita ___'?",
+    "options": [
+      "descrição",
+      "discrição",
+      "discreção"
+    ],
+    "correct": 1,
+    "feedback": "Discrição significa reserva ou prudência."
+  },
+  {
+    "title": "Ambiguidade lexical e sintática",
+    "explain": "Ambiguidade surge quando um enunciado admite mais de uma interpretação. Pode resultar de palavra polissêmica, referência pronominal ou estrutura sintática.",
+    "example": "Vi o homem com o telescópio: quem estava com o telescópio?",
+    "question": "Qual revisão esclarece que o observador usou o instrumento?",
+    "options": [
+      "Vi o homem com o telescópio.",
+      "Com o telescópio, observei o homem.",
+      "Vi o homem que estava com o telescópio."
+    ],
+    "correct": 1,
+    "feedback": "A construção explicita que o observador usou o telescópio."
+  },
+  {
+    "title": "Pressupostos e implícitos",
+    "explain": "Pressupostos são informações tomadas como dadas por certas expressões; inferências implícitas dependem do contexto e do conhecimento do leitor. Nem toda inferência é uma certeza.",
+    "example": "João voltou a estudar pressupõe que ele já estudava antes.",
+    "question": "O que 'Maria parou de fumar' pressupõe?",
+    "options": [
+      "Maria fumava antes.",
+      "Maria nunca fumou.",
+      "Maria começou hoje."
+    ],
+    "correct": 0,
+    "feedback": "Parar de fumar pressupõe hábito anterior."
+  },
+  {
+    "title": "Revisão de relações de sentido",
+    "explain": "Para interpretar questões semânticas, observe o contexto, os efeitos figurados, a escolha lexical e informações implícitas. Uma palavra isolada pode não bastar para decidir o sentido.",
+    "example": "Em 'A notícia caiu como uma bomba', bomba tem valor figurado.",
+    "question": "Qual frase usa linguagem figurada?",
+    "options": [
+      "O aluno abriu o livro.",
+      "A notícia caiu como uma bomba.",
+      "O trem chegou às oito."
+    ],
+    "correct": 1,
+    "feedback": "A comparação com bomba expressa impacto emocional, não explosão literal."
+  }
+]
 };
 export function getExpandedPortugueseLessons(topic:string):Lesson[]|undefined{return curriculum[topic]}
