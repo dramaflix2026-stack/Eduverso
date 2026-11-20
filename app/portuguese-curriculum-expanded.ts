@@ -2382,5 +2382,402 @@ const curriculum:Record<string,Lesson[]>={
     "feedback": "A comparação com bomba expressa impacto emocional, não explosão literal."
   }
 ]
+,
+"Figuras de linguagem": [
+  {
+    "title": "Linguagem figurada e efeitos de sentido",
+    "explain": "Figuras de linguagem são recursos expressivos que alteram usos habituais de palavras, estruturas ou sons. Para identificá-las, observe o contexto e o efeito produzido, não apenas palavras isoladas.",
+    "example": "Em 'A cidade acordou', uma ação humana é atribuída à cidade.",
+    "question": "Qual enunciado contém uso figurado?",
+    "options": [
+      "O relógio marcou seis horas.",
+      "A esperança floresceu.",
+      "A porta estava aberta."
+    ],
+    "correct": 1,
+    "feedback": "Florescer, associado à esperança, produz imagem figurada de desenvolvimento."
+  },
+  {
+    "title": "Metáfora",
+    "explain": "A metáfora estabelece aproximação implícita entre elementos de campos diferentes, sem conectivo comparativo explícito. A relação se apoia em características compartilhadas.",
+    "example": "'Seus olhos são estrelas' aproxima olhos e estrelas pelo brilho.",
+    "question": "Qual frase apresenta metáfora?",
+    "options": [
+      "Ele corre como vento.",
+      "A vida é um palco.",
+      "O vento soprou forte."
+    ],
+    "correct": 1,
+    "feedback": "A vida é associada diretamente a um palco, sem 'como'."
+  },
+  {
+    "title": "Comparação ou símile",
+    "explain": "A comparação explicita uma aproximação entre elementos por conectivos como como, tal qual ou semelhante a. Diferencia-se da metáfora pelo vínculo comparativo expresso.",
+    "example": "'A menina é rápida como uma flecha' apresenta comparação.",
+    "question": "Qual frase contém comparação explícita?",
+    "options": [
+      "Sua voz é mel.",
+      "Sua voz é doce como mel.",
+      "Sua voz ecoou."
+    ],
+    "correct": 1,
+    "feedback": "Como estabelece a comparação entre a voz e o mel."
+  },
+  {
+    "title": "Metonímia",
+    "explain": "Metonímia substitui um termo por outro com relação de proximidade ou associação, como autor pela obra, recipiente pelo conteúdo ou parte pelo todo em determinados contextos.",
+    "example": "'Li Machado de Assis' significa que li uma obra do autor.",
+    "question": "Em 'A turma leu Clarice Lispector', ocorre:",
+    "options": [
+      "metonímia",
+      "hipérbole",
+      "antítese"
+    ],
+    "correct": 0,
+    "feedback": "O nome da autora representa suas obras."
+  },
+  {
+    "title": "Personificação",
+    "explain": "Personificação ou prosopopeia atribui características, ações ou sentimentos humanos a animais, objetos, fenômenos ou ideias.",
+    "example": "'O vento sussurrava entre as árvores' atribui ao vento uma ação humana.",
+    "question": "Qual frase apresenta personificação?",
+    "options": [
+      "A chuva começou cedo.",
+      "O sol sorriu para a cidade.",
+      "O sol estava forte."
+    ],
+    "correct": 1,
+    "feedback": "Sorrir é ação humana atribuída ao sol."
+  },
+  {
+    "title": "Hipérbole e eufemismo",
+    "explain": "Hipérbole intensifica uma ideia por exagero expressivo; eufemismo suaviza uma informação considerada dura ou desagradável.",
+    "example": "'Esperei uma eternidade' é hipérbole; 'Ele partiu' pode suavizar a referência à morte.",
+    "question": "Qual frase exemplifica hipérbole?",
+    "options": [
+      "Esperei mil anos por você.",
+      "Esperei vinte minutos.",
+      "Esperei até as oito."
+    ],
+    "correct": 0,
+    "feedback": "Mil anos exagera expressivamente o tempo de espera."
+  },
+  {
+    "title": "Ironia",
+    "explain": "A ironia cria contraste entre o enunciado literal e o sentido pretendido, frequentemente dependendo da situação e do tom. Não se deve inferir ironia sem pistas contextuais.",
+    "example": "Ao encontrar a sala completamente bagunçada, alguém comenta: 'Que organização impecável!'",
+    "question": "Na situação descrita, 'Que organização impecável!' expressa:",
+    "options": [
+      "elogio literal",
+      "ironia",
+      "descrição neutra"
+    ],
+    "correct": 1,
+    "feedback": "O elogio aparente contrasta com a bagunça observada."
+  },
+  {
+    "title": "Antítese e paradoxo",
+    "explain": "Antítese aproxima ideias opostas; paradoxo reúne elementos aparentemente contraditórios para produzir um sentido complexo. A oposição isolada nem sempre constitui paradoxo.",
+    "example": "'Entre risos e lágrimas' contém antítese; 'É ferida que dói e não se sente' constrói paradoxo.",
+    "question": "Qual expressão apresenta antítese?",
+    "options": [
+      "amor e ódio",
+      "céu azul",
+      "música suave"
+    ],
+    "correct": 0,
+    "feedback": "Amor e ódio são ideias opostas colocadas em relação."
+  },
+  {
+    "title": "Aliteração, assonância e onomatopeia",
+    "explain": "Aliteração repete sons consonantais; assonância, vocálicos; onomatopeia procura imitar sons. A análise se concentra na sonoridade efetiva do texto.",
+    "example": "'O rato roeu a roupa' destaca repetição de /r/; 'tic-tac' imita som.",
+    "question": "Qual palavra exemplifica onomatopeia?",
+    "options": [
+      "tic-tac",
+      "gentileza",
+      "saudade"
+    ],
+    "correct": 0,
+    "feedback": "Tic-tac imita o som de um relógio."
+  },
+  {
+    "title": "Revisão integrada de figuras",
+    "explain": "Identifique primeiro o sentido literal e o contexto; depois verifique se o efeito nasce de aproximação, substituição, exagero, contraste ou sonoridade.",
+    "example": "'Li um autor inteiro nas férias' pode usar metonímia e exagero, conforme o contexto.",
+    "question": "Qual associação está correta?",
+    "options": [
+      "'O vento cantava' — personificação",
+      "'Esperei uma eternidade' — eufemismo",
+      "'Rápido como um raio' — metáfora sem comparação"
+    ],
+    "correct": 0,
+    "feedback": "Cantar é ação humana atribuída ao vento."
+  }
+],
+"Coesão e coerência": [
+  {
+    "title": "Coesão e coerência: diferenças",
+    "explain": "Coesão é o conjunto de mecanismos linguísticos que conectam partes do texto; coerência é a construção de sentido compatível com contexto, propósito e conhecimentos mobilizados. Um texto pode ter conectivos e ainda ser incoerente.",
+    "example": "'Choveu muito; por isso, a rua alagou' articula causa e consequência de modo coerente.",
+    "question": "Qual afirmação está correta?",
+    "options": [
+      "Coesão e coerência são sinônimos.",
+      "Conectivos garantem coerência automaticamente.",
+      "Coesão articula elementos; coerência envolve sentido."
+    ],
+    "correct": 2,
+    "feedback": "Os mecanismos de ligação não substituem a construção de sentido."
+  },
+  {
+    "title": "Referência anafórica",
+    "explain": "Anáfora retoma elemento já mencionado por pronomes, expressões equivalentes ou elipses, evitando repetição e sustentando a progressão textual.",
+    "example": "'Marina chegou. Ela trouxe os livros': ela retoma Marina.",
+    "question": "Em 'Pedro estudou. Ele passou', 'ele' retoma:",
+    "options": [
+      "Pedro",
+      "estudou",
+      "passou"
+    ],
+    "correct": 0,
+    "feedback": "O pronome ele recupera Pedro."
+  },
+  {
+    "title": "Referência catafórica",
+    "explain": "Catáfora antecipa informação que será apresentada adiante. O leitor resolve a referência ao prosseguir no texto.",
+    "example": "'Só desejo isto: que todos participem' antecipa a explicação de isto.",
+    "question": "Em 'A notícia é esta: fomos aprovados', 'esta' é:",
+    "options": [
+      "catafórica",
+      "antônimo",
+      "vocativo"
+    ],
+    "correct": 0,
+    "feedback": "Esta aponta para a informação que vem depois."
+  },
+  {
+    "title": "Substituição lexical",
+    "explain": "Sinônimos contextuais, hiperônimos e expressões nominais retomam referentes e evitam repetição excessiva. A substituição deve preservar a referência sem alterar indevidamente o sentido.",
+    "example": "'O cachorro fugiu. O animal foi encontrado' retoma cachorro por animal.",
+    "question": "Qual expressão retoma adequadamente 'um cachorro'?",
+    "options": [
+      "o animal",
+      "a cidade",
+      "o calendário"
+    ],
+    "correct": 0,
+    "feedback": "Animal é termo mais geral que inclui cachorro."
+  },
+  {
+    "title": "Elipse e repetição funcional",
+    "explain": "A elipse omite termo recuperável pelo contexto. A repetição também pode ser coesiva quando enfatiza uma ideia ou mantém um referente; nem toda repetição é defeito.",
+    "example": "'Ana leu o livro; Bruno, a revista' omite o verbo leu na segunda oração.",
+    "question": "O que foi omitido em 'Ana leu o livro; Bruno, a revista'?",
+    "options": [
+      "o verbo leu",
+      "o substantivo Ana",
+      "a preposição de"
+    ],
+    "correct": 0,
+    "feedback": "A estrutura permite recuperar leu."
+  },
+  {
+    "title": "Conectivos de causa e consequência",
+    "explain": "Porque, já que e visto que podem introduzir causas; portanto, assim e por isso podem indicar consequências ou conclusões. A escolha deve corresponder à relação lógica.",
+    "example": "'O transporte parou; por isso, chegamos tarde'.",
+    "question": "Qual conectivo indica consequência?",
+    "options": [
+      "por isso",
+      "embora",
+      "porém"
+    ],
+    "correct": 0,
+    "feedback": "Por isso introduz resultado da situação anterior."
+  },
+  {
+    "title": "Conectivos de contraste e concessão",
+    "explain": "Mas e porém introduzem contraste coordenativo; embora e ainda que introduzem concessão. A relação semântica depende do período inteiro.",
+    "example": "'Embora estivesse cansado, terminou a tarefa'.",
+    "question": "Qual conectivo exprime concessão?",
+    "options": [
+      "embora",
+      "porque",
+      "portanto"
+    ],
+    "correct": 0,
+    "feedback": "Embora apresenta obstáculo que não impede o resultado."
+  },
+  {
+    "title": "Progressão temática",
+    "explain": "Um texto progride quando acrescenta informação relevante ao tema, em vez de apenas repetir afirmações. Cada parágrafo deve contribuir para o objetivo comunicativo.",
+    "example": "Um texto sobre reciclagem pode avançar de definição para impactos e soluções.",
+    "question": "Qual sequência apresenta progressão temática?",
+    "options": [
+      "Definição, impactos, soluções",
+      "Definição, definição, definição",
+      "Soluções sem explicar o problema"
+    ],
+    "correct": 0,
+    "feedback": "A sequência amplia gradualmente a discussão."
+  },
+  {
+    "title": "Contradições e inferências",
+    "explain": "Coerência exige avaliar compatibilidade entre afirmações e informações implícitas. Uma contradição pode ser intencional em literatura, mas em texto expositivo precisa ser explicada.",
+    "example": "'A biblioteca estava fechada; ninguém pôde entrar' é coerente sem informação adicional.",
+    "question": "Qual sequência é incoerente sem explicação adicional?",
+    "options": [
+      "A porta estava trancada; ninguém entrou.",
+      "O local estava fechado; mesmo assim todos entraram livremente.",
+      "O ônibus atrasou; cheguei depois."
+    ],
+    "correct": 1,
+    "feedback": "Entrar livremente em local fechado exige contexto que explique a aparente contradição."
+  },
+  {
+    "title": "Revisão de parágrafo",
+    "explain": "Na revisão, verifique referentes pronominais, conectivos, ordem das ideias, repetição e adequação ao tema. Uma boa reescrita mantém o sentido e esclarece relações.",
+    "example": "'Choveu. O jogo foi adiado' pode ser ligado por 'Por causa da chuva, o jogo foi adiado'.",
+    "question": "Qual reescrita explicita a causa?",
+    "options": [
+      "Choveu, mas o jogo foi adiado.",
+      "O jogo foi adiado porque choveu.",
+      "O jogo foi adiado embora não chovesse."
+    ],
+    "correct": 1,
+    "feedback": "Porque expressa a relação causal entre chuva e adiamento."
+  }
+],
+"Gêneros textuais": [
+  {
+    "title": "Gênero textual e situação comunicativa",
+    "explain": "Gêneros textuais são formas socialmente reconhecíveis de comunicação, definidas por finalidade, interlocutores, circulação e organização. Não se confundem com tipos textuais, como narração e argumentação.",
+    "example": "Uma notícia informa fatos de interesse público; um convite busca convidar alguém.",
+    "question": "O que ajuda a identificar um gênero?",
+    "options": [
+      "Apenas o número de palavras",
+      "Finalidade e contexto de circulação",
+      "Somente o tempo verbal"
+    ],
+    "correct": 1,
+    "feedback": "O gênero depende da situação social e da finalidade."
+  },
+  {
+    "title": "Notícia",
+    "explain": "A notícia costuma informar acontecimentos de relevância pública, com título, informações centrais e desenvolvimento. O texto deve distinguir fatos verificados de opiniões.",
+    "example": "'Escola inaugura biblioteca nesta segunda-feira' é título informativo.",
+    "question": "Qual é a finalidade principal de uma notícia?",
+    "options": [
+      "Informar um acontecimento",
+      "Vender necessariamente um produto",
+      "Ensinar uma receita"
+    ],
+    "correct": 0,
+    "feedback": "Notícia prioriza informação sobre acontecimentos."
+  },
+  {
+    "title": "Reportagem",
+    "explain": "A reportagem aprofunda um tema ou acontecimento, podendo reunir entrevistas, dados, contexto e diferentes perspectivas. Difere da notícia pela investigação e desenvolvimento mais extensos.",
+    "example": "Uma reportagem sobre mobilidade urbana reúne estatísticas e relatos de moradores.",
+    "question": "Qual recurso é típico de reportagem aprofundada?",
+    "options": [
+      "Apuração com fontes e dados",
+      "Somente uma frase imperativa",
+      "Apenas versos rimados"
+    ],
+    "correct": 0,
+    "feedback": "Reportagens frequentemente combinam apuração, dados e entrevistas."
+  },
+  {
+    "title": "Artigo de opinião",
+    "explain": "O artigo de opinião defende uma tese sobre questão relevante com argumentos, exemplos e possível consideração de objeções. É essencial distinguir opinião de informação factual.",
+    "example": "'A cidade precisa ampliar ciclovias' pode ser tese defendida com dados de mobilidade.",
+    "question": "Qual elemento é central no artigo de opinião?",
+    "options": [
+      "Tese argumentativa",
+      "Lista de ingredientes",
+      "Instrução de montagem"
+    ],
+    "correct": 0,
+    "feedback": "O artigo organiza argumentos em torno de uma tese."
+  },
+  {
+    "title": "Editorial",
+    "explain": "O editorial apresenta posicionamento institucional de um veículo ou organização sobre um tema. Em geral, não é assinado individualmente como um artigo pessoal.",
+    "example": "Um jornal publica editorial defendendo transparência em políticas públicas.",
+    "question": "O editorial expressa principalmente:",
+    "options": [
+      "posição institucional",
+      "diário íntimo do repórter",
+      "instruções de uso"
+    ],
+    "correct": 0,
+    "feedback": "O editorial manifesta posição da instituição editorial."
+  },
+  {
+    "title": "Crônica",
+    "explain": "A crônica costuma partir de acontecimentos cotidianos para construir reflexão, humor, crítica ou lirismo. Pode combinar narração, descrição e comentário.",
+    "example": "Uma cena no ônibus inspira reflexão sobre a pressa urbana.",
+    "question": "Qual tema combina com uma crônica?",
+    "options": [
+      "Um episódio cotidiano com reflexão",
+      "Somente tabela de especificações",
+      "Apenas cláusulas contratuais"
+    ],
+    "correct": 0,
+    "feedback": "A crônica frequentemente transforma o cotidiano em reflexão."
+  },
+  {
+    "title": "Resenha",
+    "explain": "A resenha apresenta e avalia uma obra, articulando informações sobre ela e apreciação fundamentada. Pode ser crítica ou descritiva, conforme o objetivo.",
+    "example": "Uma resenha de filme resume aspectos essenciais e analisa roteiro e atuação.",
+    "question": "Qual característica pertence à resenha crítica?",
+    "options": [
+      "Avaliação fundamentada de uma obra",
+      "Somente instruções de montagem",
+      "Proibição de qualquer opinião"
+    ],
+    "correct": 0,
+    "feedback": "A resenha crítica combina apresentação e avaliação."
+  },
+  {
+    "title": "Entrevista",
+    "explain": "A entrevista organiza informações por perguntas e respostas ou por relato construído a partir delas. A seleção de perguntas depende do propósito e do perfil do entrevistado.",
+    "example": "Uma pesquisadora responde sobre os resultados de um estudo.",
+    "question": "Qual estrutura é comum na entrevista?",
+    "options": [
+      "Perguntas e respostas",
+      "Somente estrofes",
+      "Somente fórmulas matemáticas"
+    ],
+    "correct": 0,
+    "feedback": "A entrevista frequentemente registra a interação entre entrevistador e entrevistado."
+  },
+  {
+    "title": "Carta aberta e manifesto",
+    "explain": "A carta aberta dirige-se publicamente a pessoas ou instituições, frequentemente com reivindicação ou posicionamento. O manifesto declara princípios e convoca adesão a uma causa.",
+    "example": "Uma comunidade publica carta aberta solicitando melhorias na escola.",
+    "question": "Qual finalidade é comum à carta aberta?",
+    "options": [
+      "Tornar pública uma reivindicação",
+      "Registrar apenas uma compra",
+      "Explicar exclusivamente um cálculo"
+    ],
+    "correct": 0,
+    "feedback": "A carta aberta publiciza uma demanda ou posição."
+  },
+  {
+    "title": "Gêneros digitais e revisão",
+    "explain": "Postagens, comentários, e-mails e mensagens têm convenções variáveis conforme plataforma, público e objetivo. A análise deve considerar linguagem, autoria, credibilidade e circulação.",
+    "example": "Um e-mail formal solicita informações; uma postagem pode divulgar campanha ou notícia.",
+    "question": "Qual critério ajuda a adequar um e-mail profissional?",
+    "options": [
+      "Interlocutor e finalidade",
+      "Usar sempre gírias",
+      "Omitir completamente o assunto"
+    ],
+    "correct": 0,
+    "feedback": "A adequação depende de quem recebe e do objetivo da mensagem."
+  }
+]
 };
 export function getExpandedPortugueseLessons(topic:string):Lesson[]|undefined{return curriculum[topic]}
