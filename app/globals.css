@@ -116,3 +116,11 @@
  .subject-practice fieldset{padding:16px 0!important}
  .subject-practice fieldset label{align-items:flex-start!important}
 }
+
+.enem-years{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:14px;margin:24px 0}
+.enem-year{display:flex;flex-direction:column;gap:8px;min-height:132px;justify-content:center;padding:19px;border:1px solid #66517e;border-radius:15px;background:#2b2240;color:#f8f3ff;text-decoration:none;transition:background .2s,border-color .2s}
+.enem-year:hover,.enem-year:focus-visible{background:#453260;border-color:#bda0ff}
+.enem-year>span{font-size:11px;letter-spacing:.13em;color:#c6aaff;font-weight:800}
+.enem-year>strong{font-size:27px;line-height:1.2}
+.enem-year>small{font-size:12px;color:#d5c9e8}
+@media(max-width:600px){.enem-years{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.enem-year{min-height:122px;padding:13px}.enem-year>strong{font-size:23px}}
