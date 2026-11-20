@@ -1,5 +1,6 @@
 import {getPortugueseTopicLessons} from "./portuguese-topics";
 import {getPhysicsTopicLessons} from "./physics-topics";
+import {getChemistryTopicLessons} from "./chemistry-topics";
 export type Lesson={title:string;explain:string;example:string;question:string;options:[string,string,string];correct:number;feedback:string};
 type Data={concept:string;example:string;question:string;options:[string,string,string];correct:number;detail:string};
 const entries:Record<string,Data>={
@@ -83,6 +84,7 @@ const enemComplement:Record<string,Lesson[]>={
 export function getLessons(subject:string,topic:string):Lesson[]{
  if(subject==="Português"){const dedicated=getPortugueseTopicLessons(topic);if(dedicated)return dedicated;}
  if(subject==="Física"){const dedicated=getPhysicsTopicLessons(topic);if(dedicated)return dedicated;}
+ if(subject==="Química"){const dedicated=getChemistryTopicLessons(topic);if(dedicated)return dedicated;}
  const extra=subject==="ENEM e Vestibulares"&&topic==="Educação física"?physicalEducationEnem:enemComplement[subject+"|"+topic];if(extra)return extra;
  const basePortuguese=expandedPortuguese[subject+"|"+topic];
  const basePhysics=subject==="Física"?expandedSciences[subject+"|"+topic]:undefined;
