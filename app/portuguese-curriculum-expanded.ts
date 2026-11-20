@@ -1191,5 +1191,402 @@ const curriculum:Record<string,Lesson[]>={
     "feedback": "Porém é adversativo e mantém o contraste."
   }
 ]
+,
+"Sintaxe da oração": [
+  {
+    "title": "Frase, oração e período",
+    "explain": "Frase é enunciado com sentido comunicativo; oração organiza-se em torno de verbo ou locução verbal; período é uma unidade de enunciado formada por uma ou mais orações.",
+    "example": "'Que alegria!' é frase sem verbo; 'Ela chegou' é oração e período simples.",
+    "question": "Qual enunciado contém oração?",
+    "options": [
+      "Silêncio!",
+      "A turma chegou.",
+      "Que surpresa!"
+    ],
+    "correct": 1,
+    "feedback": "Chegou é verbo e constitui o núcleo da oração."
+  },
+  {
+    "title": "Sujeito simples e composto",
+    "explain": "O sujeito é o termo sobre o qual se faz uma declaração. É simples quando tem um núcleo e composto quando apresenta mais de um núcleo.",
+    "example": "'Maria e Pedro chegaram': sujeito composto com núcleos Maria e Pedro.",
+    "question": "Qual oração tem sujeito composto?",
+    "options": [
+      "Os alunos chegaram.",
+      "Ana e Bia estudaram.",
+      "Choveu ontem."
+    ],
+    "correct": 1,
+    "feedback": "Ana e Bia são dois núcleos do sujeito."
+  },
+  {
+    "title": "Sujeito oculto e indeterminado",
+    "explain": "Sujeito oculto é recuperável pela flexão verbal ou contexto. Indeterminado não permite identificar o agente; pode ocorrer com verbo na terceira pessoa do plural sem referente definido.",
+    "example": "'Chegamos cedo' tem sujeito oculto nós; 'Roubaram meu celular' pode ter sujeito indeterminado.",
+    "question": "Em 'Estudamos ontem', o sujeito é:",
+    "options": [
+      "oculto: nós",
+      "composto",
+      "inexistente"
+    ],
+    "correct": 0,
+    "feedback": "A desinência verbal permite recuperar nós."
+  },
+  {
+    "title": "Oração sem sujeito",
+    "explain": "Verbos impessoais podem formar orações sem sujeito, como haver com sentido de existir e fazer indicando tempo decorrido. Esses verbos permanecem no singular nesse uso.",
+    "example": "'Há muitas pessoas aqui' e 'Faz dois anos' são orações sem sujeito.",
+    "question": "Qual oração não tem sujeito?",
+    "options": [
+      "Os alunos chegaram.",
+      "Há vagas disponíveis.",
+      "Maria saiu."
+    ],
+    "correct": 1,
+    "feedback": "Haver com sentido de existir é impessoal."
+  },
+  {
+    "title": "Predicado verbal e nominal",
+    "explain": "Predicado verbal tem verbo significativo como núcleo; predicado nominal tem nome predicativo como núcleo e verbo de ligação. O sentido do verbo na frase orienta a análise.",
+    "example": "'O atleta correu' é verbal; 'O atleta está cansado' é nominal.",
+    "question": "Qual frase tem predicado nominal?",
+    "options": [
+      "A criança dormiu.",
+      "A criança parece feliz.",
+      "A criança correu."
+    ],
+    "correct": 1,
+    "feedback": "Feliz é predicativo do sujeito com verbo de ligação."
+  },
+  {
+    "title": "Predicado verbo-nominal",
+    "explain": "O predicado verbo-nominal apresenta um núcleo verbal e um predicativo, que atribui característica ao sujeito ou ao objeto.",
+    "example": "'Os alunos chegaram cansados': chegaram é verbo significativo e cansados caracteriza os alunos.",
+    "question": "Qual oração tem predicado verbo-nominal?",
+    "options": [
+      "Os alunos chegaram cansados.",
+      "Os alunos dormiram.",
+      "Os alunos estavam cansados."
+    ],
+    "correct": 0,
+    "feedback": "Há verbo significativo e predicativo do sujeito."
+  },
+  {
+    "title": "Transitividade verbal",
+    "explain": "Verbos podem ser intransitivos, transitivos diretos, indiretos ou bitransitivos, conforme os complementos exigidos no contexto. A classificação pode variar conforme o sentido.",
+    "example": "'Ela comprou livros' tem objeto direto; 'Ela gosta de livros' tem objeto indireto.",
+    "question": "Em 'Ela precisa de ajuda', o verbo é:",
+    "options": [
+      "transitivo indireto",
+      "intransitivo",
+      "de ligação"
+    ],
+    "correct": 0,
+    "feedback": "Precisar de exige complemento preposicionado."
+  },
+  {
+    "title": "Complementos verbais",
+    "explain": "Objeto direto completa verbo transitivo sem preposição obrigatória; objeto indireto exige preposição regida pelo verbo. É preciso distinguir preposição exigida de adjuntos circunstanciais.",
+    "example": "'Entreguei o livro ao colega': o livro é objeto direto; ao colega é indireto.",
+    "question": "Em 'Ele comprou flores', flores é:",
+    "options": [
+      "objeto direto",
+      "sujeito",
+      "vocativo"
+    ],
+    "correct": 0,
+    "feedback": "Flores completa o verbo comprar sem preposição exigida."
+  },
+  {
+    "title": "Adjunto adnominal e adverbial",
+    "explain": "Adjunto adnominal determina ou caracteriza substantivos; adjunto adverbial acrescenta circunstâncias ao verbo, adjetivo ou advérbio.",
+    "example": "'Os dois alunos atentos estudaram ontem': dois e atentos caracterizam alunos; ontem indica tempo.",
+    "question": "Qual termo é adjunto adverbial em 'Ela estudou ontem'?",
+    "options": [
+      "Ela",
+      "estudou",
+      "ontem"
+    ],
+    "correct": 2,
+    "feedback": "Ontem expressa circunstância de tempo."
+  },
+  {
+    "title": "Revisão sintática integrada",
+    "explain": "Para analisar uma oração, localize verbos, delimite o sujeito, identifique o predicado e examine complementos e modificadores. Evite confundir função sintática com classe de palavra.",
+    "example": "'A professora explicou a matéria ontem': sujeito A professora, objeto direto a matéria, adjunto adverbial ontem.",
+    "question": "Em 'O professor explicou a lição', 'a lição' é:",
+    "options": [
+      "objeto direto",
+      "sujeito",
+      "predicativo"
+    ],
+    "correct": 0,
+    "feedback": "A lição completa diretamente o verbo explicou."
+  }
+],
+"Período composto": [
+  {
+    "title": "Período simples e composto",
+    "explain": "Período simples possui uma oração; período composto reúne duas ou mais orações. Locuções verbais podem constituir um único núcleo verbal, portanto não devem ser contadas como orações separadas.",
+    "example": "'Vou estudar' contém uma locução verbal; 'Estudei e aprendi' contém duas orações.",
+    "question": "Qual período é composto?",
+    "options": [
+      "Vou estudar.",
+      "Ela correu e sorriu.",
+      "A turma estava lendo."
+    ],
+    "correct": 1,
+    "feedback": "Correu e sorriu são núcleos de duas orações."
+  },
+  {
+    "title": "Coordenação assindética",
+    "explain": "Orações coordenadas assindéticas não são introduzidas por conjunção coordenativa. Sua relação de sentido pode ser indicada por pontuação e contexto.",
+    "example": "'Cheguei, sentei, esperei' contém três coordenadas assindéticas.",
+    "question": "Qual período contém coordenação assindética?",
+    "options": [
+      "Cheguei, sentei, esperei.",
+      "Cheguei porque chovia.",
+      "Espero que venha."
+    ],
+    "correct": 0,
+    "feedback": "As orações estão justapostas sem conjunção."
+  },
+  {
+    "title": "Coordenação aditiva e adversativa",
+    "explain": "Orações coordenadas sindéticas aditivas somam informações; adversativas expressam contraste. A conjunção ajuda a identificar a relação semântica.",
+    "example": "'Leu e anotou' é aditiva; 'Leu, mas não entendeu' é adversativa.",
+    "question": "Em 'Tentou, porém falhou', a segunda oração é:",
+    "options": [
+      "adversativa",
+      "aditiva",
+      "explicativa"
+    ],
+    "correct": 0,
+    "feedback": "Porém introduz oposição."
+  },
+  {
+    "title": "Coordenação alternativa e conclusiva",
+    "explain": "Alternativas apresentam escolhas ou alternância; conclusivas exprimem resultado lógico ou inferência. Conectivos como ou e portanto orientam a classificação.",
+    "example": "'Ou estudamos, ou descansamos'; 'Estudou, portanto passou'.",
+    "question": "Qual conectivo introduz conclusão?",
+    "options": [
+      "ou",
+      "portanto",
+      "mas"
+    ],
+    "correct": 1,
+    "feedback": "Portanto sinaliza conclusão."
+  },
+  {
+    "title": "Coordenação explicativa",
+    "explain": "Orações coordenadas explicativas justificam afirmações, ordens ou pedidos. É importante distingui-las de subordinadas causais pelo contexto e pela relação sintática.",
+    "example": "'Leve casaco, pois está frio' apresenta justificativa para a recomendação.",
+    "question": "Em 'Não saia, porque está chovendo', a oração introduzida justifica:",
+    "options": [
+      "a recomendação",
+      "uma comparação",
+      "uma alternativa"
+    ],
+    "correct": 0,
+    "feedback": "A segunda oração explica o pedido de não sair."
+  },
+  {
+    "title": "Subordinadas substantivas",
+    "explain": "Orações subordinadas substantivas exercem funções típicas de substantivos, como sujeito, objeto direto e complemento nominal. Frequentemente começam com que ou se.",
+    "example": "'Espero que você venha': a oração que você venha funciona como objeto direto de espero.",
+    "question": "Em 'Desejo que todos participem', a subordinada é:",
+    "options": [
+      "substantiva objetiva direta",
+      "adjetiva restritiva",
+      "adverbial temporal"
+    ],
+    "correct": 0,
+    "feedback": "A oração completa o verbo desejar sem preposição."
+  },
+  {
+    "title": "Subordinadas adjetivas restritivas",
+    "explain": "Orações adjetivas restritivas delimitam o referente de um substantivo e normalmente não são isoladas por vírgulas.",
+    "example": "'Os alunos que estudaram passaram': a oração restringe quais alunos passaram.",
+    "question": "Em 'Livros que inspiram são valiosos', a oração 'que inspiram' é:",
+    "options": [
+      "adjetiva restritiva",
+      "adverbial causal",
+      "substantiva subjetiva"
+    ],
+    "correct": 0,
+    "feedback": "Que inspiram caracteriza e delimita livros."
+  },
+  {
+    "title": "Subordinadas adjetivas explicativas",
+    "explain": "Orações adjetivas explicativas acrescentam comentário sobre um referente já identificado e costumam aparecer entre vírgulas.",
+    "example": "'Meu irmão, que mora longe, chegou': a oração acrescenta informação sobre meu irmão.",
+    "question": "Qual frase tem adjetiva explicativa?",
+    "options": [
+      "Os alunos que estudaram passaram.",
+      "Ana, que é médica, chegou.",
+      "Quem estuda aprende."
+    ],
+    "correct": 1,
+    "feedback": "A oração entre vírgulas acrescenta informação explicativa."
+  },
+  {
+    "title": "Subordinadas adverbiais",
+    "explain": "Orações subordinadas adverbiais indicam relações de causa, condição, concessão, tempo, finalidade e outras. O conectivo e o sentido do período orientam a análise.",
+    "example": "'Se chover, ficaremos em casa' indica condição; 'Embora chovesse, saímos' indica concessão.",
+    "question": "Em 'Quando chegou, telefonou', a subordinada indica:",
+    "options": [
+      "tempo",
+      "causa",
+      "finalidade"
+    ],
+    "correct": 0,
+    "feedback": "Quando introduz circunstância temporal."
+  },
+  {
+    "title": "Revisão de relações entre orações",
+    "explain": "Classifique períodos contando orações, verificando dependência sintática e identificando conectivos. Pontuação e relação de sentido podem alterar a interpretação.",
+    "example": "'Estudou, mas errou' tem coordenação adversativa; 'Estudou porque queria aprender' tem subordinada causal.",
+    "question": "Qual período contém subordinada condicional?",
+    "options": [
+      "Se puder, irei.",
+      "Irei e voltarei.",
+      "Queria ir, mas fiquei."
+    ],
+    "correct": 0,
+    "feedback": "Se puder expressa condição para a ação principal."
+  }
+],
+"Concordância verbal": [
+  {
+    "title": "Sujeito simples",
+    "explain": "A regra geral exige concordância do verbo com o núcleo do sujeito em pessoa e número. Termos intercalados não mudam o núcleo que determina a flexão.",
+    "example": "'A lista de exercícios chegou': o núcleo é lista, no singular.",
+    "question": "Qual frase está correta?",
+    "options": [
+      "A lista de exercícios chegaram.",
+      "A lista de exercícios chegou.",
+      "A lista de exercícios chegarem."
+    ],
+    "correct": 1,
+    "feedback": "Chegou concorda com lista, núcleo singular."
+  },
+  {
+    "title": "Sujeito composto anteposto",
+    "explain": "Com sujeito composto antes do verbo, a concordância normalmente vai para o plural. Se houver pessoas gramaticais diferentes, aplicam-se regras de prioridade de pessoa.",
+    "example": "'Maria e João estudaram' tem verbo no plural.",
+    "question": "Qual frase está correta?",
+    "options": [
+      "Maria e João estudou.",
+      "Maria e João estudaram.",
+      "Maria e João estuda."
+    ],
+    "correct": 1,
+    "feedback": "Dois núcleos antepostos exigem plural na regra geral."
+  },
+  {
+    "title": "Sujeito composto posposto",
+    "explain": "Quando o sujeito composto vem após o verbo, a norma admite frequentemente concordância no plural ou com o núcleo mais próximo, conforme a construção.",
+    "example": "'Chegaram Maria e João' e 'Chegou Maria e João' são construções possíveis.",
+    "question": "Qual alternativa apresenta concordância plural regular?",
+    "options": [
+      "Chegaram Ana e Pedro.",
+      "Chegou as meninas.",
+      "Chegaram a menina."
+    ],
+    "correct": 0,
+    "feedback": "Chegaram concorda com os dois núcleos do sujeito composto."
+  },
+  {
+    "title": "Verbo haver impessoal",
+    "explain": "Haver com sentido de existir ou acontecer é impessoal e permanece na terceira pessoa do singular, inclusive em locuções verbais. O verbo existir, por sua vez, concorda com o sujeito.",
+    "example": "'Havia problemas' e 'Existiam problemas' são construções corretas.",
+    "question": "Qual frase segue a norma-padrão?",
+    "options": [
+      "Haviam problemas.",
+      "Havia problemas.",
+      "Houveram problemas."
+    ],
+    "correct": 1,
+    "feedback": "Haver impessoal fica no singular."
+  },
+  {
+    "title": "Verbo fazer temporal",
+    "explain": "Fazer indicando tempo decorrido ou fenômeno meteorológico é impessoal e fica no singular, inclusive com auxiliar.",
+    "example": "'Faz três meses' e 'Deve fazer três meses'.",
+    "question": "Qual frase está correta?",
+    "options": [
+      "Fazem três anos.",
+      "Faz três anos.",
+      "Devem fazer três anos."
+    ],
+    "correct": 1,
+    "feedback": "Fazer indicando tempo decorrido é impessoal."
+  },
+  {
+    "title": "Verbo ser em expressões de tempo",
+    "explain": "O verbo ser apresenta particularidades em expressões de hora, data e distância; na indicação de horas, concorda em geral com o numeral.",
+    "example": "'É uma hora' e 'São duas horas'.",
+    "question": "Qual frase indica corretamente o horário?",
+    "options": [
+      "É duas horas.",
+      "São duas horas.",
+      "São uma hora."
+    ],
+    "correct": 1,
+    "feedback": "São concorda com duas horas."
+  },
+  {
+    "title": "Pronomes relativos que e quem",
+    "explain": "Com o relativo que, o verbo normalmente concorda com o antecedente; com quem, é comum a terceira pessoa do singular, embora existam outras construções admitidas.",
+    "example": "'Fui eu que fiz'; 'Fui eu quem fez'.",
+    "question": "Qual forma está correta?",
+    "options": [
+      "Fui eu que fez.",
+      "Fui eu que fiz.",
+      "Fui eu que fizeram."
+    ],
+    "correct": 1,
+    "feedback": "Que retoma eu e o verbo concorda com a primeira pessoa."
+  },
+  {
+    "title": "Expressões partitivas",
+    "explain": "Expressões como a maioria de e grande parte de seguidas de plural podem admitir concordância com o núcleo singular ou com o termo plural, dependendo da construção e do foco.",
+    "example": "'A maioria dos alunos chegou' e 'A maioria dos alunos chegaram' são possibilidades registradas.",
+    "question": "Qual opção está correta?",
+    "options": [
+      "A maioria dos alunos chegou.",
+      "A maioria dos alunos chegaste.",
+      "A maioria dos alunos chegamos."
+    ],
+    "correct": 0,
+    "feedback": "O singular concorda com o núcleo maioria."
+  },
+  {
+    "title": "Índice de indeterminação e partícula apassivadora",
+    "explain": "Com se indeterminador do sujeito, o verbo fica na terceira pessoa do singular; com se apassivador, o verbo concorda com o sujeito paciente.",
+    "example": "'Precisa-se de funcionários' e 'Vendem-se casas'.",
+    "question": "Qual frase está correta?",
+    "options": [
+      "Vende-se casas.",
+      "Vendem-se casas.",
+      "Precisam-se de funcionários."
+    ],
+    "correct": 1,
+    "feedback": "Casas é sujeito paciente plural em construção passiva sintética."
+  },
+  {
+    "title": "Revisão de concordância",
+    "explain": "Para resolver casos de concordância, identifique o sujeito, o núcleo e possíveis verbos impessoais. Verifique se o se indetermina o sujeito ou forma voz passiva.",
+    "example": "'Há vagas' usa haver impessoal; 'Existem vagas' concorda com vagas.",
+    "question": "Qual alternativa está integralmente correta?",
+    "options": [
+      "Haviam vagas e fazem anos.",
+      "Há vagas e faz dois anos.",
+      "Existem vaga e fazem anos."
+    ],
+    "correct": 1,
+    "feedback": "Haver e fazer temporal são impessoais e ficam no singular."
+  }
+]
 };
 export function getExpandedPortugueseLessons(topic:string):Lesson[]|undefined{return curriculum[topic]}
