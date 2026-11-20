@@ -1588,5 +1588,402 @@ const curriculum:Record<string,Lesson[]>={
     "feedback": "Haver e fazer temporal são impessoais e ficam no singular."
   }
 ]
+,
+"Concordância nominal": [
+  {
+    "title": "Regra geral",
+    "explain": "Artigos, adjetivos, numerais e pronomes adjetivos concordam em gênero e número com o substantivo a que se referem.",
+    "example": "As duas alunas dedicadas participaram.",
+    "question": "Qual expressão segue a regra?",
+    "options": [
+      "as meninas estudiosa",
+      "as meninas estudiosas",
+      "a meninas estudiosas"
+    ],
+    "correct": 1,
+    "feedback": "Todos os determinantes e o adjetivo concordam com meninas."
+  },
+  {
+    "title": "Adjetivo após dois substantivos",
+    "explain": "Um adjetivo posposto a dois substantivos pode ir ao plural ou concordar com o mais próximo, conforme a construção. O contexto deve evitar ambiguidade.",
+    "example": "Comprei camisa e casaco novos.",
+    "question": "Qual opção concorda com os dois núcleos?",
+    "options": [
+      "camisa e casaco novos",
+      "camisa e casaco nova",
+      "camisa e casaco novoas"
+    ],
+    "correct": 0,
+    "feedback": "Novos está no masculino plural, abrangendo os dois substantivos."
+  },
+  {
+    "title": "Adjetivo anteposto",
+    "explain": "Quando o adjetivo precede substantivos de gêneros distintos, em geral concorda com o mais próximo; há particularidades para nomes próprios e parentesco.",
+    "example": "Ela demonstrou grande coragem e esforço.",
+    "question": "Qual expressão é adequada?",
+    "options": [
+      "belas livros e revistas",
+      "belos livros e revistas",
+      "belo livros e revistas"
+    ],
+    "correct": 1,
+    "feedback": "Belos concorda com o substantivo mais próximo, livros."
+  },
+  {
+    "title": "Predicativo do sujeito",
+    "explain": "O predicativo atribui característica ao sujeito e concorda com ele, inclusive quando o verbo de ligação separa os termos.",
+    "example": "As janelas estavam abertas.",
+    "question": "Qual frase está correta?",
+    "options": [
+      "As janelas estavam aberto.",
+      "As janelas estavam abertas.",
+      "As janelas estava abertas."
+    ],
+    "correct": 1,
+    "feedback": "Abertas concorda com janelas, feminino plural."
+  },
+  {
+    "title": "É proibido, é necessário",
+    "explain": "Expressões como é proibido e é necessário costumam permanecer invariáveis quando o substantivo aparece sem determinante; com artigo, ocorre concordância.",
+    "example": "É proibido entrada; é proibida a entrada.",
+    "question": "Qual frase está correta?",
+    "options": [
+      "É proibida a entrada.",
+      "É proibido a entrada.",
+      "É proibidas a entrada."
+    ],
+    "correct": 0,
+    "feedback": "Com o artigo a, proibida concorda com entrada."
+  },
+  {
+    "title": "Anexo, incluso e obrigado",
+    "explain": "Anexo, incluso e obrigado são adjetivos e variam conforme o termo a que se referem. A locução em anexo é invariável.",
+    "example": "Seguem anexas as planilhas. A aluna disse: obrigada.",
+    "question": "Qual opção está correta?",
+    "options": [
+      "Seguem anexo as fotos.",
+      "Seguem anexas as fotos.",
+      "Seguem anexos as fotos."
+    ],
+    "correct": 1,
+    "feedback": "Anexas concorda com fotos, feminino plural."
+  },
+  {
+    "title": "Meio e meia",
+    "explain": "Meio é invariável como advérbio com sentido de um pouco; como numeral fracionário, concorda com o substantivo.",
+    "example": "Ela está meio cansada; tomou meia xícara.",
+    "question": "Qual frase usa meio como advérbio corretamente?",
+    "options": [
+      "Ela está meia cansada.",
+      "Ela está meio cansada.",
+      "Ela está meios cansada."
+    ],
+    "correct": 1,
+    "feedback": "Meio, no sentido de um pouco, não varia."
+  },
+  {
+    "title": "Bastante e bastantes",
+    "explain": "Bastante é invariável quando advérbio de intensidade; pode variar quando determina substantivo com sentido de muitos.",
+    "example": "Estudaram bastante; havia bastantes razões.",
+    "question": "Em qual frase bastante é advérbio?",
+    "options": [
+      "Havia bastantes alunos.",
+      "Estudaram bastante.",
+      "Bastantes pessoas vieram."
+    ],
+    "correct": 1,
+    "feedback": "Modifica o verbo estudaram, portanto é invariável."
+  },
+  {
+    "title": "Menos, alerta e só",
+    "explain": "Menos é invariável. Alerta pode funcionar como advérbio invariável ou adjetivo variável em certos usos; só varia quando equivale a sozinho e não quando significa apenas.",
+    "example": "Há menos dúvidas; elas ficaram sós; só elas responderam.",
+    "question": "Qual frase está correta?",
+    "options": [
+      "menas dúvidas",
+      "menos dúvidas",
+      "menos dúvidaes"
+    ],
+    "correct": 1,
+    "feedback": "Menos não apresenta flexão de gênero."
+  },
+  {
+    "title": "Revisão de concordância nominal",
+    "explain": "Identifique o substantivo núcleo, a função do modificador e os casos de invariabilidade. Em frases complexas, avalie se o adjetivo caracteriza um ou vários nomes.",
+    "example": "As estudantes estavam meio preocupadas e enviaram as respostas anexas.",
+    "question": "Qual frase está inteiramente correta?",
+    "options": [
+      "As alunas ficaram meia cansadas.",
+      "As alunas ficaram meio cansadas.",
+      "As alunas ficaram meios cansadas."
+    ],
+    "correct": 1,
+    "feedback": "Meio é advérbio invariável e cansadas concorda com alunas."
+  }
+],
+"Regência verbal e nominal": [
+  {
+    "title": "O que é regência",
+    "explain": "Regência descreve como verbos e nomes se relacionam com complementos, inclusive a exigência de preposições. A escolha pode variar conforme o sentido.",
+    "example": "Gostar de música; confiança em alguém.",
+    "question": "Qual complemento atende à regência de gostar?",
+    "options": [
+      "gostar música",
+      "gostar de música",
+      "gostar para música"
+    ],
+    "correct": 1,
+    "feedback": "Gostar exige a preposição de nesse uso."
+  },
+  {
+    "title": "Assistir: ver e prestar assistência",
+    "explain": "Na norma-padrão, assistir no sentido de ver costuma reger a; no sentido de prestar assistência, pode ser transitivo direto.",
+    "example": "Assistimos ao filme; o médico assistiu o paciente.",
+    "question": "Qual frase segue a regência formal no sentido de ver?",
+    "options": [
+      "Assisti ao espetáculo.",
+      "Assisti o espetáculo.",
+      "Assisti no espetáculo."
+    ],
+    "correct": 0,
+    "feedback": "Assistir a é a regência formal para ver ou presenciar."
+  },
+  {
+    "title": "Aspirar: respirar e desejar",
+    "explain": "Aspirar no sentido de inalar é transitivo direto; no sentido de desejar ou almejar, exige a preposição a na norma-padrão.",
+    "example": "Aspirou o perfume; aspira ao cargo.",
+    "question": "Qual frase indica desejo com regência formal?",
+    "options": [
+      "Aspira o cargo.",
+      "Aspira ao cargo.",
+      "Aspira pelo cargo."
+    ],
+    "correct": 1,
+    "feedback": "Aspirar a indica almejar."
+  },
+  {
+    "title": "Preferir e comparação",
+    "explain": "Na norma-padrão, preferir é transitivo direto e indireto, com a preposição a; evita-se combinar preferir com mais... do que na mesma construção.",
+    "example": "Prefiro chá a café.",
+    "question": "Qual frase segue a regência formal?",
+    "options": [
+      "Prefiro chá do que café.",
+      "Prefiro mais chá a café.",
+      "Prefiro chá a café."
+    ],
+    "correct": 2,
+    "feedback": "Preferir estabelece a comparação com a preposição a."
+  },
+  {
+    "title": "Obedecer e desobedecer",
+    "explain": "Obedecer e desobedecer normalmente exigem a preposição a na norma-padrão, mesmo quando o complemento designa uma regra ou pessoa.",
+    "example": "Obedeceu às instruções.",
+    "question": "Qual frase apresenta regência adequada?",
+    "options": [
+      "Obedeceu as regras.",
+      "Obedeceu às regras.",
+      "Obedeceu das regras."
+    ],
+    "correct": 1,
+    "feedback": "Obedecer a + as regras resulta em às regras."
+  },
+  {
+    "title": "Chegar e ir",
+    "explain": "Na norma-padrão formal, chegar e ir com destino geralmente pedem a; em indica localização ou outras relações e é comum em usos coloquiais de destino.",
+    "example": "Cheguei à escola; fui ao centro.",
+    "question": "Qual frase segue a regência formal de destino?",
+    "options": [
+      "Cheguei à escola.",
+      "Cheguei na escola.",
+      "Cheguei de escola."
+    ],
+    "correct": 0,
+    "feedback": "Chegar a indica destino na norma-padrão formal."
+  },
+  {
+    "title": "Lembrar e esquecer",
+    "explain": "Lembrar e esquecer podem ser transitivos diretos sem pronome; com uso pronominal, costumam exigir de. A construção deve manter coerência.",
+    "example": "Lembrei o compromisso; lembrei-me do compromisso.",
+    "question": "Qual frase está correta?",
+    "options": [
+      "Lembrei-me do compromisso.",
+      "Lembrei-me o compromisso.",
+      "Esqueci-me a chave."
+    ],
+    "correct": 0,
+    "feedback": "Lembrar-se rege de."
+  },
+  {
+    "title": "Regência de nomes",
+    "explain": "Substantivos, adjetivos e advérbios podem exigir preposições específicas: necessidade de, favorável a, compatível com, próximo de.",
+    "example": "A proposta é favorável à mudança.",
+    "question": "Qual complemento é adequado para favorável?",
+    "options": [
+      "favorável com a proposta",
+      "favorável à proposta",
+      "favorável de proposta"
+    ],
+    "correct": 1,
+    "feedback": "Favorável rege a preposição a, que se contrai com o artigo a."
+  },
+  {
+    "title": "Regência e crase",
+    "explain": "Quando um termo rege a e o complemento feminino admite artigo a, ocorre crase. Identificar a regência é necessário antes de aplicar o acento grave.",
+    "example": "Obedeceu à diretora; referiu-se à pesquisa.",
+    "question": "Qual forma está correta?",
+    "options": [
+      "Referiu-se a pesquisa.",
+      "Referiu-se à pesquisa.",
+      "Referiu-se há pesquisa."
+    ],
+    "correct": 1,
+    "feedback": "Referir-se a + a pesquisa resulta em à pesquisa."
+  },
+  {
+    "title": "Revisão de regência",
+    "explain": "Para resolver questões, identifique o sentido do verbo ou nome, a preposição exigida e o determinante do complemento. Considere o registro solicitado pelo enunciado.",
+    "example": "Prefiro leitura a televisão; assisti ao filme; confio em você.",
+    "question": "Qual frase está correta na norma-padrão?",
+    "options": [
+      "Aspiro ao cargo.",
+      "Prefiro mais estudar do que trabalhar.",
+      "Obedeço as normas."
+    ],
+    "correct": 0,
+    "feedback": "Aspirar a, no sentido de desejar, exige a preposição a."
+  }
+],
+"Crase": [
+  {
+    "title": "Conceito de crase",
+    "explain": "Crase é a fusão de duas vogais a, geralmente preposição a e artigo feminino a(s), indicada pelo acento grave. O acento não é sinônimo de artigo feminino.",
+    "example": "Vou à escola = vou a + a escola.",
+    "question": "Qual forma está correta?",
+    "options": [
+      "Vou à escola.",
+      "Vou á escola.",
+      "Vou há escola."
+    ],
+    "correct": 0,
+    "feedback": "O verbo ir pede a e escola admite artigo a."
+  },
+  {
+    "title": "Teste do masculino",
+    "explain": "Substituir um nome feminino por masculino pode revelar a fusão: se surgir ao, costuma haver à no feminino, preservada a mesma estrutura.",
+    "example": "Vou à praia → vou ao parque.",
+    "question": "Qual frase admite crase pelo teste do masculino?",
+    "options": [
+      "Vou à biblioteca.",
+      "Vi à biblioteca.",
+      "Comprei à revista."
+    ],
+    "correct": 0,
+    "feedback": "Vou ao museu confirma a preposição a antes do artigo."
+  },
+  {
+    "title": "Crase antes de nomes femininos",
+    "explain": "A crase ocorre antes de substantivos femininos com artigo quando o termo anterior exige a preposição a. Sem preposição exigida, não ocorre fusão.",
+    "example": "Entreguei o documento à secretária.",
+    "question": "Qual frase está correta?",
+    "options": [
+      "Entreguei à carta.",
+      "Entreguei a carta à diretora.",
+      "Comprei à mochila."
+    ],
+    "correct": 1,
+    "feedback": "Entregar algo a alguém: à diretora é complemento indireto."
+  },
+  {
+    "title": "Locuções femininas",
+    "explain": "Muitas locuções adverbiais, prepositivas e conjuntivas femininas recebem acento grave por convenção, como à noite, às vezes, à medida que e à procura de.",
+    "example": "À noite, estudamos; à medida que lia, compreendia.",
+    "question": "Qual locução está corretamente grafada?",
+    "options": [
+      "a noite, saímos",
+      "à noite, saímos",
+      "há noite, saímos"
+    ],
+    "correct": 1,
+    "feedback": "À noite é locução adverbial feminina."
+  },
+  {
+    "title": "Antes de verbo",
+    "explain": "Não se usa crase antes de verbo no infinitivo, porque não há artigo feminino para se fundir à preposição.",
+    "example": "Começou a estudar; voltou a trabalhar.",
+    "question": "Qual frase está correta?",
+    "options": [
+      "Começou à estudar.",
+      "Começou a estudar.",
+      "Começou há estudar."
+    ],
+    "correct": 1,
+    "feedback": "Antes do infinitivo estudar não ocorre crase."
+  },
+  {
+    "title": "Antes de palavra masculina",
+    "explain": "Em regra, não ocorre crase antes de palavra masculina, salvo casos específicos como locuções com feminino subentendido.",
+    "example": "Foi a pé; escreveu a lápis.",
+    "question": "Qual frase está correta?",
+    "options": [
+      "Foi à pé.",
+      "Foi a pé.",
+      "Foi há pé."
+    ],
+    "correct": 1,
+    "feedback": "Pé é masculino e a locução não recebe crase."
+  },
+  {
+    "title": "Antes de pronomes",
+    "explain": "Em regra, não há crase antes de pronomes pessoais e de muitos indefinidos, pois não admitem artigo. Há exceções com demonstrativos aquele(s), aquela(s), aquilo e certos tratamentos.",
+    "example": "Entreguei a ela; referi-me àquela situação.",
+    "question": "Qual frase está correta?",
+    "options": [
+      "Entreguei à ela.",
+      "Entreguei a ela.",
+      "Entreguei há ela."
+    ],
+    "correct": 1,
+    "feedback": "Ela é pronome pessoal e não admite artigo feminino."
+  },
+  {
+    "title": "Àquele, àquela e àquilo",
+    "explain": "Quando a regência exige a, ocorre crase com demonstrativos aquele, aquela e aquilo: a + aquele = àquele. O gênero masculino do demonstrativo não impede a fusão.",
+    "example": "Referi-me àquele episódio; obedeci àquela regra.",
+    "question": "Qual frase está correta?",
+    "options": [
+      "Referi-me àquele livro.",
+      "Referi-me aquele livro.",
+      "Referi-me háquele livro."
+    ],
+    "correct": 0,
+    "feedback": "Referir-se a + aquele forma àquele."
+  },
+  {
+    "title": "Crase facultativa",
+    "explain": "Em determinados contextos, o artigo pode ser facultativo, como antes de possessivo feminino singular e de alguns nomes próprios femininos. Isso pode tornar facultativa a crase.",
+    "example": "Entreguei o presente a minha irmã / à minha irmã.",
+    "question": "Em qual caso a crase pode ser facultativa?",
+    "options": [
+      "Antes de verbo",
+      "Antes de possessivo feminino singular",
+      "Antes de pronome pessoal ela"
+    ],
+    "correct": 1,
+    "feedback": "O artigo pode ser opcional antes de possessivo feminino singular."
+  },
+  {
+    "title": "Revisão integrada de crase",
+    "explain": "Verifique primeiro a regência e depois se o termo seguinte admite artigo. Use testes de substituição e reconheça locuções e demonstrativos especiais.",
+    "example": "À tarde fomos à escola, mas voltamos a pé.",
+    "question": "Qual frase está inteiramente correta?",
+    "options": [
+      "À tarde fui à escola a pé.",
+      "A tarde fui à escola à pé.",
+      "À tarde fui a escola à pé."
+    ],
+    "correct": 0,
+    "feedback": "À tarde é locução; à escola tem fusão; a pé não recebe crase."
+  }
+]
 };
 export function getExpandedPortugueseLessons(topic:string):Lesson[]|undefined{return curriculum[topic]}
