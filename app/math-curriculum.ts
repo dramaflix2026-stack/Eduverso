@@ -25,3 +25,13 @@ const highSchoolCatalog:Record<string,[string,string,string,string,string,[strin
 Object.assign(catalog,highSchoolCatalog);
 export const mathTopics=Object.keys(catalog);
 export function getMathLessons(topic:string):MathLesson[]{return (catalog[topic]||[]).map(([title,module,body,example,question,options,correct])=>({title,module,body,example,question,options,correct}));}
+
+/** Organização pedagógica sugerida; não remove nem duplica trilhas existentes. */
+export const mathHighSchoolYears: Record<1|2|3, string[]> = {
+  1: ["Conjuntos numéricos","Potenciação e radiciação","Produtos notáveis e fatoração","Equações e inequações","Função afim","Função quadrática","Razões e proporções"],
+  2: ["Funções exponenciais e logarítmicas","Progressões PA e PG","Trigonometria","Matrizes e determinantes","Sistemas lineares","Análise combinatória","Probabilidade","Geometria espacial"],
+  3: ["Geometria analítica","Números complexos","Polinômios","Estatística","Matemática financeira"]
+};
+export function getMathTopicsByYear(year: 1|2|3): string[] {
+  return mathHighSchoolYears[year].filter(topic => mathTopics.includes(topic));
+}
