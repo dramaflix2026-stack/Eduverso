@@ -397,5 +397,402 @@ const curriculum:Record<string,Lesson[]>={
       "feedback": "Po-e-ta contém duas vogais em sílabas diferentes."
     }
   ]
+,
+"Formação de palavras": [
+  {
+    "title": "Radical, prefixo e sufixo",
+    "explain": "O radical concentra o núcleo de sentido de uma família de palavras. Prefixos vêm antes dele; sufixos vêm depois e podem alterar classe gramatical e significado.",
+    "example": "Em infelizmente: in- é prefixo, feliz é radical e -mente é sufixo.",
+    "question": "Qual elemento aparece antes do radical?",
+    "options": [
+      "Sufixo",
+      "Prefixo",
+      "Desinência verbal sempre"
+    ],
+    "correct": 1,
+    "feedback": "Prefixos são acrescentados antes do radical."
+  },
+  {
+    "title": "Derivação prefixal",
+    "explain": "A derivação prefixal acrescenta um prefixo a uma base existente. Frequentemente altera o sentido, mas nem sempre muda a classe gramatical.",
+    "example": "Desfazer deriva de fazer com o prefixo des-, que indica reversão.",
+    "question": "Qual palavra exemplifica derivação prefixal?",
+    "options": [
+      "desleal",
+      "guarda-chuva",
+      "planalto"
+    ],
+    "correct": 0,
+    "feedback": "Desleal é formado com o prefixo des-."
+  },
+  {
+    "title": "Derivação sufixal",
+    "explain": "A derivação sufixal acrescenta um sufixo ao radical. Pode criar substantivos a partir de adjetivos, adjetivos a partir de substantivos ou outras classes.",
+    "example": "Beleza deriva de belo com o sufixo -eza.",
+    "question": "Qual palavra é formada por derivação sufixal?",
+    "options": [
+      "felizmente",
+      "refazer",
+      "passatempo"
+    ],
+    "correct": 0,
+    "feedback": "Felizmente deriva de feliz com o sufixo -mente."
+  },
+  {
+    "title": "Derivação parassintética",
+    "explain": "Na parassíntese, prefixo e sufixo são acrescentados simultaneamente à base, sem que as formas intermediárias sejam usuais com o mesmo sentido. Não confunda com mera presença de ambos.",
+    "example": "Anoitecer forma-se a partir de noite com a- e -ecer.",
+    "question": "Qual palavra é exemplo de parassíntese?",
+    "options": [
+      "anoitecer",
+      "infelizmente",
+      "reler"
+    ],
+    "correct": 0,
+    "feedback": "Anoitecer exige a combinação simultânea dos afixos."
+  },
+  {
+    "title": "Derivação regressiva",
+    "explain": "Na derivação regressiva, uma palavra se forma pela redução de outra, muitas vezes criando substantivos de ação a partir de verbos.",
+    "example": "Compra relaciona-se ao verbo comprar e designa a ação ou resultado.",
+    "question": "Qual par ilustra derivação regressiva na análise escolar?",
+    "options": [
+      "comprar → compra",
+      "feliz → infeliz",
+      "guarda + chuva"
+    ],
+    "correct": 0,
+    "feedback": "Compra é substantivo associado à redução de comprar."
+  },
+  {
+    "title": "Derivação imprópria",
+    "explain": "A derivação imprópria ocorre quando uma palavra passa a exercer outra classe gramatical sem mudança na forma. O contexto sintático determina a nova função.",
+    "example": "Em 'O jantar estava ótimo', jantar funciona como substantivo.",
+    "question": "Em qual frase 'jantar' é substantivo?",
+    "options": [
+      "Vamos jantar cedo.",
+      "O jantar esfriou.",
+      "Eles querem jantar."
+    ],
+    "correct": 1,
+    "feedback": "O artigo 'o' acompanha jantar usado como substantivo."
+  },
+  {
+    "title": "Composição por justaposição",
+    "explain": "Na justaposição, dois ou mais elementos se combinam mantendo sua estrutura sonora reconhecível. A grafia com ou sem hífen depende das regras ortográficas.",
+    "example": "Guarda-chuva combina guarda e chuva sem perda sonora significativa.",
+    "question": "Qual é exemplo de justaposição?",
+    "options": [
+      "guarda-chuva",
+      "infeliz",
+      "anoitecer"
+    ],
+    "correct": 0,
+    "feedback": "Guarda-chuva combina duas bases preservadas."
+  },
+  {
+    "title": "Composição por aglutinação",
+    "explain": "Na aglutinação, os elementos formadores sofrem alteração ou perda fonética na união. É diferente da justaposição, que preserva mais claramente as bases.",
+    "example": "Planalto resulta de plano + alto, com alteração na junção.",
+    "question": "Qual palavra resulta de aglutinação?",
+    "options": [
+      "planalto",
+      "passatempo",
+      "refazer"
+    ],
+    "correct": 0,
+    "feedback": "Planalto vem de plano + alto, com redução fonética."
+  },
+  {
+    "title": "Siglas, acrônimos e abreviações",
+    "explain": "Siglas reúnem letras iniciais de expressões; acrônimos podem ser pronunciados como palavras. Abreviações reduzem a escrita de um vocábulo e obedecem a convenções.",
+    "example": "ONU é sigla de Organização das Nações Unidas; pág. abrevia página.",
+    "question": "Qual alternativa é abreviação de uma palavra?",
+    "options": [
+      "pág.",
+      "ONU",
+      "IBGE"
+    ],
+    "correct": 0,
+    "feedback": "Pág. é abreviação convencional de página."
+  },
+  {
+    "title": "Revisão de processos de formação",
+    "explain": "Para classificar uma formação, identifique a base, observe acréscimos e verifique se há junção de radicais ou mudança de classe sem alteração formal.",
+    "example": "Desleal: prefixação; beleza: sufixação; planalto: aglutinação.",
+    "question": "Qual associação está correta?",
+    "options": [
+      "desleal — sufixação",
+      "planalto — aglutinação",
+      "beleza — justaposição"
+    ],
+    "correct": 1,
+    "feedback": "Planalto resulta da união com alteração de plano + alto."
+  }
+],
+"Substantivos e artigos": [
+  {
+    "title": "O substantivo na oração",
+    "explain": "Substantivos nomeiam entidades concretas e abstratas e podem funcionar como núcleo do sujeito, do objeto e de outros termos. Sua função depende da oração.",
+    "example": "Em 'A coragem inspira', coragem é substantivo abstrato e núcleo do sujeito.",
+    "question": "Qual palavra é substantivo?",
+    "options": [
+      "coragem",
+      "corajoso",
+      "corajosamente"
+    ],
+    "correct": 0,
+    "feedback": "Coragem nomeia uma qualidade ou estado."
+  },
+  {
+    "title": "Comuns e próprios",
+    "explain": "Substantivos comuns nomeiam classes de seres; próprios individualizam pessoas, lugares e outras entidades, normalmente com inicial maiúscula.",
+    "example": "Cidade é comum; Salvador é próprio.",
+    "question": "Qual é substantivo próprio?",
+    "options": [
+      "rio",
+      "Salvador",
+      "escola"
+    ],
+    "correct": 1,
+    "feedback": "Salvador individualiza uma cidade."
+  },
+  {
+    "title": "Concretos e abstratos",
+    "explain": "Substantivos concretos designam seres com existência concebida como independente, reais ou imaginários; abstratos nomeiam ações, qualidades, estados e sentimentos.",
+    "example": "Fada é concreto na classificação gramatical; beleza é abstrato.",
+    "question": "Qual substantivo é abstrato?",
+    "options": [
+      "beleza",
+      "fada",
+      "cadeira"
+    ],
+    "correct": 0,
+    "feedback": "Beleza nomeia uma qualidade."
+  },
+  {
+    "title": "Simples, compostos, primitivos e derivados",
+    "explain": "Simples têm um radical; compostos, mais de um. Primitivos não derivam de outra palavra portuguesa; derivados são formados a partir de outra base.",
+    "example": "Pedra é primitivo; pedreiro é derivado; guarda-chuva é composto.",
+    "question": "Qual substantivo é composto?",
+    "options": [
+      "guarda-chuva",
+      "pedreiro",
+      "pedra"
+    ],
+    "correct": 0,
+    "feedback": "Guarda-chuva reúne duas bases."
+  },
+  {
+    "title": "Coletivos",
+    "explain": "Substantivos coletivos nomeiam conjuntos de seres da mesma espécie ou categoria, mesmo no singular. A concordância verbal normalmente acompanha o núcleo singular.",
+    "example": "Cardume designa um conjunto de peixes.",
+    "question": "Qual substantivo coletivo designa peixes?",
+    "options": [
+      "cardume",
+      "alcateia",
+      "enxame"
+    ],
+    "correct": 0,
+    "feedback": "Cardume é coletivo de peixes."
+  },
+  {
+    "title": "Gênero dos substantivos",
+    "explain": "O gênero gramatical pode ser masculino ou feminino e não equivale necessariamente a sexo biológico. Há substantivos comuns de dois gêneros, sobrecomuns e epicenos.",
+    "example": "O estudante e a estudante: a mudança do artigo indica o gênero.",
+    "question": "Qual par usa substantivo comum de dois gêneros?",
+    "options": [
+      "o estudante / a estudante",
+      "o homem / a mulher",
+      "o boi / a vaca"
+    ],
+    "correct": 0,
+    "feedback": "Estudante mantém a forma e varia o artigo."
+  },
+  {
+    "title": "Número e plural",
+    "explain": "O plural de substantivos segue padrões e exceções conforme terminações e formação. Em palavras compostas, a flexão depende das classes dos elementos.",
+    "example": "Cidadão → cidadãos; papel → papéis.",
+    "question": "Qual é o plural correto de papel?",
+    "options": [
+      "papels",
+      "papéis",
+      "papeis"
+    ],
+    "correct": 1,
+    "feedback": "Papel faz plural em -éis."
+  },
+  {
+    "title": "Grau e efeitos de sentido",
+    "explain": "Aumentativos e diminutivos podem indicar tamanho, afeto, ironia ou avaliação. Nem sempre o sufixo descreve dimensão literal.",
+    "example": "Casinha pode indicar casa pequena ou afeto, dependendo do contexto.",
+    "question": "Qual interpretação é adequada para 'casinha'?",
+    "options": [
+      "Sempre ironia",
+      "Pode expressar afeto",
+      "Nunca indica tamanho"
+    ],
+    "correct": 1,
+    "feedback": "O diminutivo pode ter valor afetivo ou dimensional."
+  },
+  {
+    "title": "Artigos definidos e indefinidos",
+    "explain": "Artigos definidos apresentam referentes identificáveis no contexto; indefinidos introduzem referentes não especificados. Essa escolha interfere na progressão informacional.",
+    "example": "Vi um cachorro. O cachorro entrou no jardim.",
+    "question": "Qual artigo introduz um referente não identificado?",
+    "options": [
+      "o",
+      "uma",
+      "as"
+    ],
+    "correct": 1,
+    "feedback": "Uma é artigo indefinido."
+  },
+  {
+    "title": "Revisão contextualizada",
+    "explain": "Identifique o núcleo substantivo, sua classificação e a função dos artigos no texto. Evite classificar palavras isoladamente quando o contexto altera sua função.",
+    "example": "Em 'Uma professora chegou. A professora falou', os artigos organizam a referência.",
+    "question": "Por que o segundo artigo é definido?",
+    "options": [
+      "Retoma professora já mencionada",
+      "Indica quantidade exata",
+      "Transforma verbo em adjetivo"
+    ],
+    "correct": 0,
+    "feedback": "A professora retoma um referente apresentado antes."
+  }
+],
+"Adjetivos e advérbios": [
+  {
+    "title": "Adjetivos e caracterização",
+    "explain": "Adjetivos caracterizam substantivos, atribuindo qualidades, estados ou relações. Podem ocorrer junto ao nome ou como predicativo.",
+    "example": "Em 'A sala silenciosa', silenciosa caracteriza sala.",
+    "question": "Qual termo é adjetivo?",
+    "options": [
+      "silenciosa",
+      "sala",
+      "ontem"
+    ],
+    "correct": 0,
+    "feedback": "Silenciosa caracteriza o substantivo sala."
+  },
+  {
+    "title": "Adjetivos pátrios e relacionais",
+    "explain": "Adjetivos pátrios indicam origem; relacionais vinculam substantivos a domínios ou áreas. Sua interpretação depende do substantivo que acompanham.",
+    "example": "Cultura brasileira: brasileira indica origem ou relação com o Brasil.",
+    "question": "Qual é adjetivo pátrio?",
+    "options": [
+      "brasileiro",
+      "intensamente",
+      "cidade"
+    ],
+    "correct": 0,
+    "feedback": "Brasileiro indica relação com o Brasil."
+  },
+  {
+    "title": "Locuções adjetivas",
+    "explain": "Locução adjetiva é uma expressão com valor de adjetivo, frequentemente preposição mais substantivo. Nem toda locução possui equivalente em uma única palavra.",
+    "example": "Amor de mãe pode ser descrito como amor materno em certos contextos.",
+    "question": "Qual expressão é locução adjetiva?",
+    "options": [
+      "de inverno",
+      "muito cedo",
+      "correu rapidamente"
+    ],
+    "correct": 0,
+    "feedback": "De inverno caracteriza um substantivo, como roupa de inverno."
+  },
+  {
+    "title": "Concordância do adjetivo",
+    "explain": "Adjetivos geralmente concordam em gênero e número com o substantivo. Em estruturas com múltiplos núcleos, há regras específicas de concordância.",
+    "example": "As meninas estudiosas chegaram.",
+    "question": "Qual expressão está correta?",
+    "options": [
+      "meninas estudioso",
+      "meninas estudiosas",
+      "menina estudiosas"
+    ],
+    "correct": 1,
+    "feedback": "Adjetivo e substantivo estão no feminino plural."
+  },
+  {
+    "title": "Grau comparativo",
+    "explain": "O comparativo estabelece relações de superioridade, igualdade ou inferioridade. Pode usar mais... que, tão... quanto e menos... que.",
+    "example": "Ana é tão dedicada quanto Bruno.",
+    "question": "Qual frase expressa igualdade?",
+    "options": [
+      "Ana é mais alta que Bia.",
+      "Ana é tão alta quanto Bia.",
+      "Ana é menos alta que Bia."
+    ],
+    "correct": 1,
+    "feedback": "Tão... quanto indica comparação de igualdade."
+  },
+  {
+    "title": "Grau superlativo",
+    "explain": "O superlativo intensifica uma qualidade de forma absoluta ou em relação a um grupo. O superlativo absoluto analítico usa intensificadores; o sintético usa sufixos.",
+    "example": "Muito bonito é analítico; belíssimo é sintético.",
+    "question": "Qual é superlativo absoluto sintético?",
+    "options": [
+      "belíssimo",
+      "mais belo que",
+      "tão belo quanto"
+    ],
+    "correct": 0,
+    "feedback": "Belíssimo apresenta o sufixo -íssimo."
+  },
+  {
+    "title": "Advérbios de tempo e lugar",
+    "explain": "Advérbios modificam verbos, adjetivos ou outros advérbios, indicando circunstâncias. Ontem e amanhã indicam tempo; aqui e longe indicam lugar.",
+    "example": "Ela chegou ontem e esperou aqui.",
+    "question": "Qual advérbio indica lugar?",
+    "options": [
+      "aqui",
+      "ontem",
+      "lentamente"
+    ],
+    "correct": 0,
+    "feedback": "Aqui indica localização."
+  },
+  {
+    "title": "Advérbios de modo e intensidade",
+    "explain": "Advérbios de modo indicam como algo acontece; de intensidade, o grau de uma característica ou ação. Muitos advérbios de modo terminam em -mente.",
+    "example": "Ela respondeu calmamente; estava muito feliz.",
+    "question": "Qual palavra indica intensidade?",
+    "options": [
+      "muito",
+      "calmamente",
+      "amanhã"
+    ],
+    "correct": 0,
+    "feedback": "Muito intensifica o adjetivo feliz."
+  },
+  {
+    "title": "Locuções adverbiais",
+    "explain": "Locuções adverbiais são grupos de palavras com função adverbial. Podem expressar tempo, modo, lugar e outras circunstâncias.",
+    "example": "À noite estudamos; com cuidado abrimos a caixa.",
+    "question": "Qual expressão indica tempo?",
+    "options": [
+      "à noite",
+      "com cuidado",
+      "de madeira"
+    ],
+    "correct": 0,
+    "feedback": "À noite é locução adverbial temporal."
+  },
+  {
+    "title": "Revisão: adjetivo ou advérbio?",
+    "explain": "Adjetivo caracteriza substantivo e varia frequentemente em gênero e número; advérbio modifica verbos, adjetivos ou outros advérbios e tende a ser invariável.",
+    "example": "Em 'A aluna rápida corre rapidamente', rápida é adjetivo e rapidamente é advérbio.",
+    "question": "Qual análise está correta?",
+    "options": [
+      "rápida é advérbio",
+      "rapidamente é advérbio",
+      "aluna é adjetivo"
+    ],
+    "correct": 1,
+    "feedback": "Rapidamente modifica o verbo corre."
+  }
+]
 };
 export function getExpandedPortugueseLessons(topic:string):Lesson[]|undefined{return curriculum[topic]}
