@@ -2,22 +2,10 @@ import Image from "next/image";
 import Link from "next/link";
 import LandingSearch from "./landing-search";
 import LandingPreview from "./landing-preview";
+import LandingPaths from "./landing-paths";
 import "./landing.css";
 
 const go=(name:string)=>"/plataforma?disciplina="+encodeURIComponent(name);
-const school=[
- {title:"Ensino Fundamental",subtitle:"Do 1º ao 9º ano",href:go("Ensino Fundamental")},
- {title:"Ensino Médio",subtitle:"Do 1º ao 3º ano",href:go("Ensino Médio")}
-];
-const prep=[
- {title:"ENEM e Vestibulares",subtitle:"Matérias, questões e provas anteriores",href:go("ENEM e Vestibulares")},
- {title:"Concursos",subtitle:"Preparação por objetivo",href:"/plataforma?disciplina="+encodeURIComponent("Minha Preparação")+"&categoria=concursos"}
-];
-const med=[
- {title:"Vestibular de Medicina",subtitle:"Preparação para ingressar",href:"/plataforma?disciplina=Medicina&area=vestibular"},
- {title:"Faculdade de Medicina",subtitle:"Estudo por disciplinas",href:"/plataforma?disciplina=Medicina&area=faculdade"},
- {title:"Revalida e residência",subtitle:"Revisão e aprofundamento",href:"/plataforma?disciplina=Medicina&area=exames"}
-];
 const courses=[
  {name:"Matemática",detail:"Exercícios e resolução de problemas",image:"matematica.webp",href:go("Matemática")},
  {name:"Biologia",detail:"Do mundo microscópico à vida",image:"biologia.webp",href:go("Biologia")},
@@ -90,25 +78,9 @@ export default function Landing(){
     </div>
    </section>
 
-   <section className="lp-section lp-container" id="caminhos">
-    <div className="lp-section-heading"><div><span className="lp-eyebrow">FEITO PARA O SEU MOMENTO</span><h2>Qual é o seu <em>objetivo?</em></h2><p>Comece pelo caminho certo. O Eduverso organiza os conteúdos para você encontrar o que precisa.</p></div></div>
-    <div className="lp-path-grid">
-     <article className="lp-path-card">
-      <div className="lp-path-heading"><span className="lp-path-icon">▤</span><div><small>ESTUDOS ESCOLARES</small><h3>Fundamental e Médio</h3></div></div>
-      <p>Aprenda as matérias de cada ano com explicações e atividades.</p>
-      <div className="lp-path-links">{school.map(s=><Link key={s.title} href={s.href}><span><strong>{s.title}</strong><small>{s.subtitle}</small></span><b aria-hidden="true">↗</b></Link>)}</div>
-     </article>
-     <article className="lp-path-card">
-      <div className="lp-path-heading"><span className="lp-path-icon">◎</span><div><small>PREPARAÇÃO E CARREIRAS</small><h3>Provas e objetivos</h3></div></div>
-      <p>Revise conteúdos, treine questões e organize sua preparação.</p>
-      <div className="lp-path-links">{prep.map(s=><Link key={s.title} href={s.href}><span><strong>{s.title}</strong><small>{s.subtitle}</small></span><b aria-hidden="true">↗</b></Link>)}</div>
-     </article>
-     <article className="lp-path-card lp-path-medicine">
-      <div className="lp-path-heading"><span className="lp-path-icon">✚</span><div><small>SAÚDE E MEDICINA</small><h3>Medicina em cada fase</h3></div></div>
-      <p>Do vestibular à faculdade, com estudos e recursos específicos.</p>
-      <div className="lp-path-links">{med.map(s=><Link key={s.title} href={s.href}><span><strong>{s.title}</strong><small>{s.subtitle}</small></span><b aria-hidden="true">↗</b></Link>)}</div>
-     </article>
-    </div>
+   <section className="lp-section lp-container lp-choose-section" id="caminhos">
+    <div className="lp-section-heading"><span className="lp-eyebrow">FEITO PARA O SEU MOMENTO</span><h2>Qual é o seu <em>objetivo?</em></h2><p>Escolha a área que mais combina com você e encontre o próximo passo para estudar.</p></div>
+    <LandingPaths/>
    </section>
 
    <section id="produto" className="lp-section lp-container lp-product">
