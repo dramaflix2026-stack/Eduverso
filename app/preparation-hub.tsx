@@ -30,7 +30,7 @@ export default function PreparationHub({onOpenTrack}:Props){
     try{const saved=window.localStorage.getItem(progressKey);if(saved){const value=JSON.parse(saved);if(value&&typeof value==="object"&&!Array.isArray(value))setReviewed(value);}}catch{}
     return()=>window.removeEventListener("popstate",restore);
   },[]);
-  const results=useMemo(()=>prepCatalog.filter(goal=>(category==="todas"||goal.group===category)&&folded(goal.title+" "+goal.subtitle+" "+goal.id).includes(folded(query.trim()))),[category,query]);
+  const results=useMemo(()=>prepCatalog.filter(goal=>(category==="todas"||goal.group===category)&&!(category==="cursos"&&goal.id==="medicina")&&folded(goal.title+" "+goal.subtitle+" "+goal.id).includes(folded(query.trim()))),[category,query]);
   const goal=getPrepGoal(selectedId);
   const tracks=goal?getSuggestedPrepTracks(goal):[];
   const reviewedCount=goal?tracks.filter(track=>reviewed[goal.id+"|"+track.subject+"|"+track.topic]).length:0;
@@ -75,7 +75,7 @@ export default function PreparationHub({onOpenTrack}:Props){
       <section className={styles.tools} aria-label="Localizar objetivo">
         <div className={styles.groupTabs} role="group" aria-label="Filtrar objetivos por categoria">
           <button type="button" className={styles.tab+" "+(category==="todas"?styles.tabActive:"")} aria-pressed={category==="todas"} onClick={()=>changeCategory("todas")}>Todos (50)</button>
-          {prepGroups.map(g=><button key={g.key} type="button" className={styles.tab+" "+(category===g.key?styles.tabActive:"")} aria-pressed={category===g.key} onClick={()=>changeCategory(g.key)}>{g.icon} {g.title} ({prepCatalog.filter(goal=>goal.group===g.key).length})</button>)}
+          {prepGroups.map(g=><button key={g.key} type="button" className={styles.tab+" "+(category===g.key?styles.tabActive:"")} aria-pressed={category===g.key} onClick={()=>changeCategory(g.key)}>{g.icon} {g.title} ({prepCatalog.filter(goal=>goal.group===g.key&&!(g.key==="cursos"&&goal.id==="medicina")).length})</button>)}
         </div>
         <label className={styles.search}><span aria-hidden="true">⌕</span><input aria-label="Buscar universidades, cursos, concursos e exames" value={query} onChange={e=>setQuery(e.target.value)} placeholder="Busque Medicina, USP, INSS, Polícia Federal..."/></label>
         <p className={styles.count}>{results.length} {results.length===1?"opção encontrada":"opções encontradas"}</p>
