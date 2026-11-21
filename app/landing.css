@@ -624,9 +624,9 @@
  .lp-footer-newtop{gap:32px}
 }
 @media(max-width:680px){
- .edu-lp .lp-guarantee.lp-guarantee-art{display:flex;align-items:flex-end;min-height:640px;padding:0 18px 22px;margin-top:16px;margin-bottom:45px;border-radius:22px;aspect-ratio:auto}
+ .edu-lp .lp-guarantee.lp-guarantee-art{display:flex;align-items:flex-end;min-height:505px;padding:0 19px 22px;margin-top:16px;margin-bottom:42px;border-radius:22px;aspect-ratio:auto}
  .lp-guarantee-picture img{object-fit:cover;object-position:center top}
- .lp-guarantee-overlay{background:linear-gradient(180deg,transparent 0%,#10071e12 34%,#10091bd6 48%,#0c071aec 58%,#0c0719 100%)}
+ .lp-guarantee-overlay{background:linear-gradient(180deg,transparent 0%,#10071e25 25%,#10091ba9 36%,#0c071aed 47%,#0c0719 72%,#0c0719 100%)}
  .lp-guarantee-content{width:100%;max-width:none;align-items:stretch}
  .lp-guarantee-kicker{align-self:flex-start;font-size:9px;padding:7px 10px;letter-spacing:1px}
  .lp-guarantee-content h2{font-size:clamp(27px,7.1vw,36px);margin:14px 0 10px;letter-spacing:-.85px}
@@ -648,7 +648,15 @@
  .lp-footer-newbottom>span{order:3;flex-basis:100%;font-size:9px}
 }
 @media(max-width:365px){
- .edu-lp .lp-guarantee.lp-guarantee-art{min-height:620px;padding:0 14px 20px}
+ .edu-lp .lp-guarantee.lp-guarantee-art{min-height:510px;padding:0 14px 20px}
  .lp-guarantee-content h2{font-size:27px}
  .lp-guarantee-content p{font-size:11px}
+}
+
+/* Compact mobile guarantee typography and accessible action target */
+@media(max-width:680px){
+ .lp-guarantee-content h2{font-size:clamp(25px,6.6vw,31px);line-height:1.12;margin:11px 0 9px}
+ .lp-guarantee-content p{font-size:11.5px;line-height:1.48;margin-bottom:10px}
+ .lp-guarantee-benefits{font-size:10px;line-height:1.45;gap:6px 12px;margin-bottom:13px}
+ .lp-guarantee-content>small{margin-top:8px}
 }
