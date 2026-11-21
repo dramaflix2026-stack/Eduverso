@@ -115,7 +115,12 @@ export default function MedicineHub({area,onChangeArea,onOpenGoal,onOpenTrack,ge
    <p className={styles.note}>Residência médica não é uma prova única: programas, modalidades, instituições e edições têm critérios diferentes. O roteiro geral precisa ser complementado com o edital específico.</p>
   </>}
   {area==="faculdade"&&mockOpen?<MedicineMockExam scope={currentDiscipline?.slug} onClose={()=>setMockOpen(false)}/>:null}
-  {area==="faculdade"&&!currentDiscipline&&!mockOpen&&<>
+  {area==="faculdade"&&!currentDiscipline&&!mockOpen&&!atlasOpen&&<>
+   <button type="button" className={styles.atlasFeature} onClick={()=>{setAtlasOpen(true);window.scrollTo({top:0,behavior:"smooth"});}} aria-label="Abrir Atlas Anatômico Interativo">
+    <span aria-hidden="true" className={styles.atlasIcon}>🦴</span>
+    <span><strong>Atlas Anatômico Interativo</strong><small>Ferramenta de estudo visual · 12 estruturas ósseas · Desafios de identificação · Flashcards</small></span>
+    <span aria-hidden="true" className={styles.atlasArrow}>Explorar →</span>
+   </button>
    <div className={styles.sectionHead}><div><span className={styles.eyebrow}>DISCIPLINAS DE GRADUAÇÃO</span><h2>Escolha uma disciplina</h2></div><button className={styles.primary} type="button" onClick={()=>setMockOpen(true)}>📝 Simulado geral</button></div>
    <div className={styles.toolbar}>
     <div className={styles.filters} role="group" aria-label="Filtrar pelo ciclo">
@@ -140,6 +145,10 @@ export default function MedicineHub({area,onChangeArea,onOpenGoal,onOpenTrack,ge
     </button>)}
    </div>:<div className={styles.empty}>Nenhuma disciplina encontrada. Tente remover algum filtro.</div>}
    <div className={styles.note}>Conteúdo acadêmico de revisão. Não substitui formação clínica, prática supervisionada ou protocolos profissionais. Para situações de saúde reais, procure atendimento qualificado.</div>
+  </>}
+  {area==="faculdade"&&!currentDiscipline&&atlasOpen&&!mockOpen&&<>
+   <button type="button" className={styles.back} onClick={()=>setAtlasOpen(false)}>← Voltar às 18 disciplinas</button>
+   <AnatomyAtlas/>
   </>}
   {area==="faculdade"&&currentDiscipline&&!currentTopic&&!mockOpen&&!atlasOpen&&<>
    <button type="button" className={styles.back} onClick={()=>pushLocation(null,null)}>← Voltar às 18 disciplinas</button>
