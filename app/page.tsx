@@ -2,7 +2,6 @@ import Image from "next/image";
 import Link from "next/link";
 import LandingPreview from "./landing-preview";
 import LandingPricing from "./landing-pricing";
-import LandingPaths from "./landing-paths";
 import "./landing.css";
 
 const go=(name:string)=>"/plataforma?disciplina="+encodeURIComponent(name);
@@ -12,7 +11,7 @@ export default function Landing(){
    <div className="lp-container lp-header-inner">
     <Link href="/" className="lp-logo" aria-label="Eduverso — início"><span className="lp-mark" aria-hidden="true">✦</span><strong>Eduverso<span>.</span></strong></Link>
     <nav className="lp-nav" aria-label="Navegação principal">
-     <a href="#caminhos">Para quem é</a><a href="#produto">Conheça por dentro</a><a href="#planos">Planos</a>
+     <a href="#produto">Conheça por dentro</a><a href="#planos">Planos</a>
     </nav>
     <div className="lp-header-actions"><Link href="/entrar" className="lp-login">Entrar</Link><Link href="/cadastro" className="lp-button lp-button-small">Criar conta <span aria-hidden="true">↗</span></Link></div>
    </div>
@@ -71,11 +70,6 @@ export default function Landing(){
     </div>
    </section>
 
-   <section className="lp-section lp-container lp-choose-section" id="caminhos">
-    <div className="lp-section-heading"><span className="lp-eyebrow">FEITO PARA O SEU MOMENTO</span><h2>Qual é o seu <em>objetivo?</em></h2><p>Escolha a área que mais combina com você e encontre o próximo passo para estudar.</p></div>
-    <LandingPaths/>
-   </section>
-
    <section id="produto" className="lp-section lp-container lp-product">
     <div className="lp-section-heading lp-centered">
      <span className="lp-eyebrow">CONHEÇA ANTES DE COMEÇAR</span>
@@ -86,20 +80,6 @@ export default function Landing(){
    </section>
 
    <LandingPricing/>
-
-   <section className="lp-section lp-container lp-learning" id="recursos">
-    <div className="lp-section-heading"><span className="lp-eyebrow">APRENDIZADO NA PRÁTICA</span><h2>Entender, praticar e <em>lembrar.</em></h2><p>Ferramentas pensadas para transformar estudo em aprendizado ativo.</p></div>
-    <div className="lp-learning-grid">
-     <article className="lp-learning-feature">
-      <div><span className="lp-number">01 / ESTUDE</span><h3>Primeiro, entenda a matéria.</h3><p>Comece pela explicação do assunto e veja exemplos antes de responder às questões.</p><Link href={go("Matemática")} className="lp-text-link">Explorar uma aula <span aria-hidden="true">↗</span></Link></div>
-      <div className="lp-learning-image"><Image src="/images/home/matematica.webp" alt="Ilustração de matemática com números e formas geométricas" fill sizes="(max-width: 680px) 90vw, 480px"/></div>
-     </article>
-     <article className="lp-learning-feature lp-learning-feature-reverse">
-      <div><span className="lp-number">02 / PRATIQUE</span><h3>Teste o que aprendeu.</h3><p>Faça questões com correção comentada e use desafios de identificação no atlas anatômico.</p><Link href="/plataforma?disciplina=Medicina&area=faculdade" className="lp-text-link">Conhecer o atlas <span aria-hidden="true">↗</span></Link></div>
-      <div className="lp-learning-image"><Image src="/images/home/anatomia.webp" alt="Ilustração didática do corpo humano" fill sizes="(max-width: 680px) 90vw, 480px"/></div>
-     </article>
-    </div>
-   </section>
 
    <section className="lp-container lp-final">
     <span className="lp-eyebrow">SUA PRÓXIMA CONQUISTA COMEÇA AQUI</span>
@@ -113,7 +93,7 @@ export default function Landing(){
    <div className="lp-container lp-footer-inner">
     <Link href="/" className="lp-logo"><span className="lp-mark" aria-hidden="true">✦</span><strong>Eduverso<span>.</span></strong></Link>
     <span>Seu universo de aprendizado.</span>
-    <nav aria-label="Rodapé"><a href="#caminhos">Para quem é</a><a href="#produto">A plataforma</a><a href="#planos">Planos</a><Link href="/entrar">Entrar</Link></nav>
+    <nav aria-label="Rodapé"><a href="#produto">A plataforma</a><a href="#planos">Planos</a><Link href="/entrar">Entrar</Link></nav>
     <small>© {new Date().getFullYear()} Eduverso</small>
    </div>
   </footer>
