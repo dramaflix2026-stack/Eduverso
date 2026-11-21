@@ -15,7 +15,7 @@ function getSaved():RecordMap{
   for(const b of bones){
    const v=obj[b.id];if(!v||typeof v!=="object")continue;
    const num=(k:string)=>typeof v[k]==="number"&&Number.isFinite(v[k])?Math.max(0,v[k]):0;
-   out[b.id]={hits:num("hits"),misses:num("misses"),ms:num("ms"),remembered:num("remembered"),forgotten:num("forgotten"),level:Math.min(3,num("level")),due:typeof v.due==="string"?v.due:null};
+   out[b.id]={hits:num("hits"),misses:num("misses"),ms:num("ms"),remembered:num("remembered"),forgotten:num("forgotten"),level:Math.min(3,num("level")),due:num("hits")===0&&num("misses")>0&&num("remembered")===0?null:(typeof v.due==="string"?v.due:null)};
   }
   return out;
  }catch{return {};}
@@ -53,7 +53,7 @@ export default function AnatomyAtlas(){
   const correct=b.id===target.id;
   setAnswer(b.id);if(correct)setSessionHits(v=>v+1);
   const ms=Math.max(0,Math.min(600000,Date.now()-started.current));
-  setScores(prev=>{const old=prev[target.id]||empty();return {...prev,[target.id]:{...old,hits:old.hits+(correct?1:0),misses:old.misses+(correct?0:1),ms:old.ms+ms,due:correct?(old.due||nextReview(1)):new Date().toISOString()}};});
+  setScores(prev=>{const old=prev[target.id]||empty();return {...prev,[target.id]:{...old,hits:old.hits+(correct?1:0),misses:old.misses+(correct?0:1),ms:old.ms+ms,due:correct?nextReview(1):new Date().toISOString()}};});
  }
  function nextQuestion(){if(q===bones.length-1){setCompleted(true);}else{setQ(v=>v+1);setAnswer(null);started.current=Date.now();}}
  function grade(recalled:boolean){
