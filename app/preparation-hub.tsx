@@ -3,6 +3,8 @@
 import {useEffect,useMemo,useState} from "react";
 import {getPrepGoal,getSuggestedPrepTracks,prepCatalog,prepGroups,type PrepGroup} from "./preparation-catalog";
 import styles from "./preparation-hub.module.css";
+import {getHistoricalPapers} from "./preparation-papers";
+import PreparationStudyTools from "./preparation-study-tools";
 
 type Props={onOpenTrack:(subject:string,topic:string)=>void};
 type Category="todas"|PrepGroup;
@@ -15,6 +17,7 @@ export default function PreparationHub({onOpenTrack}:Props){
   const [selectedId,setSelectedId]=useState<string|null>(null);
   const [admissionId,setAdmissionId]=useState("enem-sisu");
   const [reviewed,setReviewed]=useState<Record<string,boolean>>({});
+  const [detailTab,setDetailTab]=useState<"roteiro"|"provas"|"pratica"|"ia">("roteiro");
   useEffect(()=>{
     const restore=()=>setSelectedId(getPrepGoal(new URLSearchParams(window.location.search).get("objetivo"))?.id??null);
     restore();
@@ -26,9 +29,11 @@ export default function PreparationHub({onOpenTrack}:Props){
   const goal=getPrepGoal(selectedId);
   const tracks=goal?getSuggestedPrepTracks(goal):[];
   const reviewedCount=goal?tracks.filter(track=>reviewed[goal.id+"|"+track.subject+"|"+track.topic]).length:0;
+  const papers=goal?getHistoricalPapers(goal.id,goal.group==="cursos"?admissionId:undefined):[];
   const institution=getPrepGoal(admissionId);
   function selectGoal(id:string|null){
     setSelectedId(id);
+    setDetailTab("roteiro");
     const url=new URL(window.location.href);
     if(id)url.searchParams.set("objetivo",id);else url.searchParams.delete("objetivo");
     window.history.pushState({},"",url.pathname+url.search+url.hash);
@@ -95,6 +100,15 @@ export default function PreparationHub({onOpenTrack}:Props){
         {goal.officialUrl&&<a className={styles.pathLink} href={goal.officialUrl} target="_blank" rel="noopener noreferrer">Consultar página oficial ↗</a>}
       </section>
       <div className={styles.note}><strong>Roteiro inicial, não edital.</strong> As trilhas abaixo aproveitam o conteúdo existente no Eduverso e são sugestões de base geral. Provas específicas podem exigir outras disciplinas, legislações, habilidades e formatos ainda não cadastrados. Use o edital vigente para validar sua preparação.</div>
+      <div className={styles.detailTabs} role="tablist" aria-label="Conteúdo da preparação">
+        {([
+        ["roteiro","🧭 Roteiro"],
+        ["provas","📄 Provas anteriores"],
+        ["pratica","📚 Aulas e questões"],
+        ["ia","✨ IA personalizada"]
+        ] as const).map(([id,label])=><button type="button" key={id} role="tab" aria-selected={detailTab===id} className={styles.detailTab+" "+(detailTab===id?styles.activeDetailTab:"")} onClick={()=>setDetailTab(id)}>{label}</button>)}
+      </div>
+      {detailTab==="roteiro"&&<>
       <div className={styles.sectionTitle}><h2>Seu caminho de estudos</h2><span>{reviewedCount} de {tracks.length} trilhas revisadas</span></div>
       <div className={styles.progress} role="progressbar" aria-label="Progresso do roteiro" aria-valuenow={reviewedCount} aria-valuemin={0} aria-valuemax={tracks.length}>
         <div className={styles.progressFill} style={{width:(tracks.length?100*reviewedCount/tracks.length:0)+"%"}}/>
@@ -115,6 +129,24 @@ export default function PreparationHub({onOpenTrack}:Props){
         })}
       </section>
       <p className={styles.footer}>As marcações de revisão são salvas somente neste navegador. Não constituem comprovação de domínio ou histórico sincronizado com sua conta.</p>
+      </>}
+      {detailTab==="provas"&&<section className={styles.library} aria-label={"Provas anteriores para "+goal.title}>
+        <div className={styles.sectionTitle}><h2>Provas anteriores</h2><span>{papers.length} {papers.length===1?"fonte cadastrada":"fontes cadastradas"}</span></div>
+        <p className={styles.libraryIntro}>Acesse cadernos e gabaritos de edições anteriores nos portais oficiais. Os links levam à página de cada edição ou acervo; não são PDFs hospedados pelo Eduverso.</p>
+        {papers.length?<div className={styles.paperList}>{papers.map(item=><a key={item.url} href={item.url} target="_blank" rel="noopener noreferrer" className={styles.paperCard}>
+          <span className={styles.paperYear}>{item.year??"ACERVO"}</span><span className={styles.paperCopy}><strong>{item.title}</strong><small>{item.publisher}{item.note?" · "+item.note:""}</small></span><span className={styles.paperArrow} aria-hidden="true">↗</span>
+        </a>)}</div>:<div className={styles.emptyPane}><strong>Acervo específico ainda não cadastrado</strong><p>Esta categoria pode incluir diferentes bancas, instituições, cargos e edições. Nenhum arquivo oficial foi validado para este objetivo até o momento. Não exibimos provas inventadas.</p>{goal.officialUrl&&<a href={goal.officialUrl} target="_blank" rel="noopener noreferrer">Consultar página oficial ↗</a>}</div>}
+        {goal.group==="cursos"&&<p className={styles.libraryIntro}>Os documentos apresentados correspondem ao vestibular selecionado acima, e não a uma prova exclusiva para o curso de {goal.title}.</p>}
+      </section>}
+      {detailTab==="pratica"&&<PreparationStudyTools key={goal.id} goal={goal} onOpenTrack={onOpenTrack}/>}
+      {detailTab==="ia"&&<section className={styles.aiPanel}>
+        <span className={styles.heroKicker}>✨ Conteúdo personalizado</span>
+        <h2>IA de preparação</h2>
+        <p>A proposta é gerar aulas aprofundadas, explicações antes das questões, simulados inéditos, correções comentadas e revisões adaptadas às dificuldades do aluno — sempre identificando conteúdo gerado por IA.</p>
+        <div className={styles.aiIdeas}><span>📚 Aulas por tema</span><span>🧠 Exercícios inéditos</span><span>📝 Simulados personalizados</span><span>📊 Revisões por desempenho</span></div>
+        <div className={styles.note}><strong>Ainda não ativada.</strong> A plataforma está sem autenticação real e sem credencial de um provedor de IA configurada. Antes de permitir geração automática, precisamos integrar login, proteger o uso da API e configurar limite de custos. Enquanto isso, use a aba “Aulas e questões”, com material já disponível.</div>
+        <button type="button" className={styles.studyButton} onClick={()=>setDetailTab("pratica")}>Usar aulas e questões existentes ↗</button>
+      </section>}
     </>}
   </div>;
 }
