@@ -170,6 +170,10 @@ export default function MedicineHub({area,onChangeArea,onOpenGoal,onOpenTrack}:P
      </div>
      {!checked?<button type="button" className={styles.primary} disabled={chosen===null} onClick={verify}>Conferir resposta</button>:<div role="status" className={styles.feedback}><strong>{chosen===currentTopic.correct?"✓ Correto!":"✕ Vamos revisar esse conceito."}</strong><p>{currentTopic.feedback}</p></div>}
     </div>
+    <div className={styles.example}>
+      <h3>✨ Tutor de IA — integração preparada</h3>
+      <p>O gerador poderá aprofundar esta aula, criar exercícios inéditos e propor revisões adaptadas ao seu desempenho. A API protegida já está implementada, mas a geração está desativada até a integração do login e das credenciais do provedor. As explicações e exercícios acima são conteúdos editoriais que já funcionam.</p>
+    </div>
     <div className={styles.actions}><button type="button" className={styles.secondary} onClick={()=>pushLocation(currentDiscipline.slug,null)}>Ver todos os assuntos</button><button type="button" className={styles.primary} onClick={nextTopic}>Próximo assunto →</button></div>
     <div className={styles.note}>Material para aprendizagem teórica. Não é diagnóstico, indicação de tratamento nem procedimento para realização sem supervisão profissional.</div>
    </article>
