@@ -2,12 +2,13 @@
 import {useMemo,useState} from "react";
 import {medicineDisciplines,type MedTopic} from "./medicine-curriculum";
 import {anatomyChapters} from "./medicine-anatomy-deep";
+import {histologyChapters} from "./medicine-histology-deep";
 import styles from "./medicine-hub.module.css";
 type Question=MedTopic&{discipline:string};
 export default function MedicineMockExam({scope,onClose}:{scope?:string|null;onClose:()=>void}){
  const pool=useMemo(()=>{
   const originals=medicineDisciplines.filter(d=>!scope||d.slug===scope).flatMap(d=>d.topics.map(topic=>({...topic,discipline:d.title})));
-  const deeper=(!scope||scope==="anatomia-humana")?anatomyChapters.flatMap(ch=>ch.questions.map(q=>({
+  const anatomyDeeper=(!scope||scope==="anatomia-humana")?anatomyChapters.flatMap(ch=>ch.questions.map(q=>({
     id:q.id,
     name:ch.title,
     theory:q.explanation,
@@ -19,7 +20,19 @@ export default function MedicineMockExam({scope,onClose}:{scope?:string|null;onC
     cycle:"basico" as const,
     discipline:"Anatomia Humana"
   }))):[];
-  return [...originals,...deeper];
+  const histologyDeeper=(!scope||scope==="histologia")?histologyChapters.flatMap(ch=>ch.questions.map(q=>({
+    id:q.id,
+    name:ch.title,
+    theory:q.explanation,
+    example:ch.caseStudy,
+    question:q.prompt,
+    options:q.options,
+    correct:q.correct,
+    feedback:q.explanation,
+    cycle:"basico" as const,
+    discipline:"Histologia"
+  }))):[];
+  return [...originals,...anatomyDeeper,...histologyDeeper];
  },[scope]);
  const [seed,setSeed]=useState(0);
  const [index,setIndex]=useState(0);
@@ -41,7 +54,7 @@ export default function MedicineMockExam({scope,onClose}:{scope?:string|null;onC
    <button className={styles.back} onClick={onClose} type="button">← Voltar ao catálogo</button>
    <span className={styles.eyebrow}>SIMULADO EDUVERSO · QUESTÕES AUTORAIS</span>
    <h2>{scope?"Simulado da disciplina":"Simulado geral de Medicina"}</h2>
-   <p>Revisão com questões didáticas do catálogo, incluindo as novas questões aprofundadas de Anatomia. Não são questões oficiais, nem uma prova certificadora ou exame clínico.</p>
+   <p>Revisão com questões didáticas do catálogo, incluindo as novas questões aprofundadas de Anatomia e Histologia. Não são questões oficiais, nem uma prova certificadora ou exame clínico.</p>
    {!finished&&current?<div className={styles.quiz}>
      <div className={styles.sectionHead}><h3>Questão {index+1} de {total}</h3><small>{current.discipline}</small></div>
      <p>{current.question}</p>
