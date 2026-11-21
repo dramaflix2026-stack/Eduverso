@@ -24,7 +24,7 @@ export default function Entrar(){
  return <main className="auth-shell"><section className="auth-panel">
   <Link href="/" className="auth-logo">✦ Eduverso<span>.</span></Link>
   <div className="auth-tag">BEM-VINDO DE VOLTA</div><h1>Entre no seu universo.</h1>
-  <p>Use o e-mail e a senha cadastrados para acompanhar seu aprendizado.</p>
+  <p>Use o e-mail e a senha já cadastrados para acompanhar seu aprendizado. Se esse endereço já foi utilizado anteriormente, não é necessário criar outra conta.</p>
   <form onSubmit={submit}>
    <label htmlFor="email">E-mail</label>
    <input id="email" value={email} onChange={e=>setEmail(e.target.value)} type="email" required autoComplete="email" placeholder="seu@email.com" maxLength={254}/>

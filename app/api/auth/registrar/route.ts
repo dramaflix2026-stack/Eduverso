@@ -18,7 +18,7 @@ export async function POST(request:NextRequest){
   });
   if(!result.ok)return NextResponse.json({error:safeError(result.data,"Não foi possível concluir o cadastro. Tente novamente.")},{status:result.status===429?429:400});
   const authenticated=!!(result.data.access_token&&result.data.refresh_token);
-  const response=NextResponse.json({ok:true,authenticated,message:authenticated?"Conta criada e sessão iniciada.":"Se o endereço estiver apto a cadastro, você receberá um e-mail para confirmar sua conta."},{headers:{"Cache-Control":"no-store"}});
+  const response=NextResponse.json({ok:true,authenticated,message:authenticated?"Conta criada e sessão iniciada.":"Solicitação recebida. Em um primeiro cadastro, confira sua caixa de entrada para confirmar o e-mail. Se você já possui uma conta com esse endereço, um novo e-mail pode não ser enviado: entre usando sua senha cadastrada."},{headers:{"Cache-Control":"no-store"}});
   if(authenticated)writeTokens(response,{access_token:result.data.access_token!,refresh_token:result.data.refresh_token!,expires_in:result.data.expires_in||3600});
   return response;
  }catch{return NextResponse.json({error:"Não foi possível processar o cadastro."},{status:500});}
