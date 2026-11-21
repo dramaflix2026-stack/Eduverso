@@ -89,50 +89,52 @@ export default function Landing(){
     <small>Valores exibidos para escolha. O cadastro não realiza cobrança nem libera planos pagos automaticamente.</small>
    </section>
 
-   <section className="lp-container lp-guarantee" aria-labelledby="lp-guarantee-title">
-    <div className="lp-guarantee-seal" aria-hidden="true">
-     <span className="lp-guarantee-spark">✦</span>
-     <strong>7</strong>
-     <span>DIAS</span>
+   <section className="lp-container lp-guarantee lp-guarantee-art" aria-labelledby="lp-guarantee-title">
+    <picture className="lp-guarantee-picture" aria-hidden="true">
+     <source media="(max-width: 680px)" srcSet="/images/eduverso-garantia-mobile.svg"/>
+     <img src="/images/eduverso-garantia-desktop.svg" alt="" loading="lazy" decoding="async"/>
+    </picture>
+    <div className="lp-guarantee-overlay" aria-hidden="true"/>
+    <div className="lp-guarantee-content">
+     <span className="lp-guarantee-kicker"><span aria-hidden="true">✦</span> COMPRA COM TRANQUILIDADE</span>
+     <h2 id="lp-guarantee-title">Sua escolha tem <em>7 dias de garantia.</em></h2>
+     <p>Se mudar de ideia, você pode solicitar o cancelamento e o reembolso em até 7 dias após a compra, pelos canais informados na contratação.</p>
+     <div className="lp-guarantee-benefits"><span>✓ 7 dias para decidir</span><span>✓ Solicitação de reembolso</span></div>
+     <a className="lp-button lp-guarantee-button" href="#planos">Conhecer os planos <span aria-hidden="true">↗</span></a>
+     <small>Válida para compras realizadas. O cadastro não gera cobrança.</small>
     </div>
-    <div className="lp-guarantee-copy">
-     <span className="lp-eyebrow">MAIS SEGURANÇA NA SUA DECISÃO</span>
-     <h2 id="lp-guarantee-title">Você tem <em>7 dias de garantia.</em></h2>
-     <p>Contratou e mudou de ideia? Você poderá solicitar o cancelamento e o reembolso em até 7 dias após a compra, pelos canais de atendimento informados na contratação.</p>
-     <span className="lp-guarantee-footnote">A garantia é válida para compras efetivamente realizadas. O cadastro, por si só, não gera cobrança.</span>
-    </div>
-    <a className="lp-guarantee-link" href="#planos" aria-label="Comparar planos do Eduverso">Ver planos <span aria-hidden="true">↗</span></a>
    </section>
   </main>
 
-  <footer className="lp-footer">
-   <div className="lp-footer-ambient" aria-hidden="true"/>
-   <div className="lp-container lp-footer-main">
-    <div className="lp-footer-brand">
-     <Link href="/" className="lp-logo" aria-label="Eduverso — página inicial"><span className="lp-mark" aria-hidden="true">✦</span><strong>Eduverso<span>.</span></strong></Link>
-     <p>Seu universo de aprendizado. Descubra novos caminhos, pratique com propósito e evolua no seu ritmo.</p>
-     <div className="lp-footer-brand-pills" aria-label="Diferenciais do Eduverso">
-      <span>✦ Conhecimento</span><span>✦ Prática</span><span>✦ Evolução</span>
-     </div>
+  <footer className="lp-footer lp-footer-redesign">
+   <div className="lp-footer-highlight" aria-hidden="true"/>
+   <div className="lp-container lp-footer-newtop">
+    <div className="lp-footer-newbrand">
+     <Link href="/" className="lp-logo" aria-label="Eduverso — início">
+      <span className="lp-mark" aria-hidden="true">✦</span><strong>Eduverso<span>.</span></strong>
+     </Link>
+     <h2>Seu universo de <em>possibilidades.</em></h2>
+     <p>Explore o conhecimento, encontre seu ritmo e siga aprendendo. Tudo em um só lugar.</p>
+     <a href="#produto" className="lp-footer-newcta">Explorar a plataforma <span aria-hidden="true">↗</span></a>
     </div>
-    <div className="lp-footer-navigation">
-     <nav className="lp-footer-column" aria-label="Explorar o Eduverso">
-      <h3>Explore</h3>
-      <a href="#produto">Conhecer a plataforma</a>
+    <div className="lp-footer-newlinks">
+     <nav className="lp-footer-newcol" aria-label="Conhecer o Eduverso">
+      <h3>Descubra</h3>
+      <a href="#produto">Como é a plataforma</a>
       <a href="#planos">Planos e preços</a>
-      <Link href="/plataforma">Ver demonstração</Link>
+      <Link href="/plataforma">Demonstração</Link>
      </nav>
-     <nav className="lp-footer-column" aria-label="Acesso à conta">
-      <h3>Sua jornada</h3>
-      <Link href="/cadastro">Criar minha conta</Link>
-      <Link href="/entrar">Entrar</Link>
-      <Link href="/plataforma">Acessar estudos</Link>
+     <nav className="lp-footer-newcol" aria-label="Sua conta no Eduverso">
+      <h3>Sua conta</h3>
+      <Link href="/cadastro">Criar conta</Link>
+      <Link href="/entrar">Fazer login</Link>
+      <Link href="/plataforma">Área de estudos</Link>
      </nav>
     </div>
    </div>
-   <div className="lp-container lp-footer-bottom">
-    <small>© {new Date().getFullYear()} Eduverso. Todos os direitos reservados.</small>
-    <span>Aprender é descobrir possibilidades.</span>
+   <div className="lp-container lp-footer-newbottom">
+    <small>© {new Date().getFullYear()} Eduverso · Todos os direitos reservados.</small>
+    <span>Aprender abre novos caminhos.</span>
     <a href="#topo">Voltar ao topo <span aria-hidden="true">↑</span></a>
    </div>
   </footer>
