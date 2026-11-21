@@ -498,7 +498,7 @@ export const yearOneRemaining:Record<string,{intro:{sections:string[];examples:s
       "prompt": "Quando percebemos costumes diferentes entre famílias, podemos...",
       "choices": [
        "Rir de quem faz diferente",
-       "Obriguar todos a mudar seus costumes",
+       "Obrigar todos a mudar seus costumes",
        "Conversar com respeito"
       ],
       "correct": 2,

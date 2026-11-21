@@ -1,4 +1,5 @@
 import {fundamentalLessons,type FundamentalSubjectId} from "./fundamental-curriculum";
+import {yearOneRemaining} from "./fundamental-year1-remaining";
 
 export type FundamentalQuestion={prompt:string;choices:[string,string,string];correct:number;explanation:string};
 export type FundamentalTopic={id:string;title:string;objective:string;sections:string[];examples:string[];visual:string[];questions:FundamentalQuestion[];expanded:boolean};
@@ -737,12 +738,13 @@ export function getFundamentalTopics(year:number,subject:FundamentalSubjectId):F
  const lesson=fundamentalLessons[year]?.[subject];
  if(!lesson)return [];
  const key=year+":"+subject;
- const introExtra=expanded[key]?.intro;
+ const topicContent=expanded[key]??yearOneRemaining[key];
+ const introExtra=topicContent?.intro;
  const defaultQuestion:FundamentalQuestion={prompt:lesson.question,choices:lesson.choices,correct:lesson.correct,explanation:lesson.feedback};
  const intro:FundamentalTopic={id:"introducao",title:lesson.title,objective:learningObjectives[year]?.[subject]??"Compreender o tema da aula inicial.",
    sections:introExtra?.sections??[lesson.theory],examples:introExtra?.examples??[lesson.example],visual:introExtra?.visual??[],
    questions:introExtra?.questions??[improvedIntroQuestions[key]??defaultQuestion],expanded:Boolean(introExtra)};
- return [intro,...(expanded[key]?.extra??[]).map(t=>({...t,expanded:true}))];
+ return [intro,...(topicContent?.extra??[]).map(t=>({...t,expanded:true}))];
 }
 export const fundamentalTopicCount=Array.from({length:9},(_,i)=>i+1).reduce((total,year)=>{
  const s=Object.keys(fundamentalLessons[year]??{}) as FundamentalSubjectId[];
