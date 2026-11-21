@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import LandingPreview from "./landing-preview";
+import LandingPricing from "./landing-pricing";
 import LandingPaths from "./landing-paths";
 import "./landing.css";
 
@@ -11,7 +12,7 @@ export default function Landing(){
    <div className="lp-container lp-header-inner">
     <Link href="/" className="lp-logo" aria-label="Eduverso — início"><span className="lp-mark" aria-hidden="true">✦</span><strong>Eduverso<span>.</span></strong></Link>
     <nav className="lp-nav" aria-label="Navegação principal">
-     <a href="#caminhos">Para quem é</a><a href="#produto">Como funciona</a><a href="#recursos">Recursos</a>
+     <a href="#caminhos">Para quem é</a><a href="#produto">Conheça por dentro</a><a href="#planos">Planos</a>
     </nav>
     <div className="lp-header-actions"><Link href="/entrar" className="lp-login">Entrar</Link><Link href="/cadastro" className="lp-button lp-button-small">Criar conta <span aria-hidden="true">↗</span></Link></div>
    </div>
@@ -20,11 +21,11 @@ export default function Landing(){
    <section className="lp-hero lp-container" aria-labelledby="lp-heading">
     <div className="lp-hero-copy">
      <span className="lp-eyebrow"><span className="lp-pulse" aria-hidden="true"/> SEU ESTUDO EM UM SÓ LUGAR</span>
-     <h1 id="lp-heading">Seu próximo passo começa com <em>um jeito melhor de estudar.</em></h1>
-     <p>Da escola à Medicina, encontre aulas, questões e trilhas organizadas para estudar com clareza, praticar e seguir no seu ritmo.</p>
+     <h1 id="lp-heading">Aprenda melhor. <em>Evolua no seu ritmo.</em></h1>
+     <p>Da escola à Medicina: aulas, questões comentadas e trilhas para você aprender com clareza, praticar e continuar evoluindo.</p>
      <div className="lp-hero-actions">
-      <Link href="/cadastro" className="lp-button lp-button-large">Começar agora <span aria-hidden="true">↗</span></Link>
-      <a href="#produto" className="lp-outline lp-button-large">Conhecer a plataforma <span aria-hidden="true">→</span></a>
+      <a href="#planos" className="lp-button lp-button-large">Conhecer os planos <span aria-hidden="true">↗</span></a>
+      <a href="#produto" className="lp-outline lp-button-large">Testar uma questão <span aria-hidden="true">→</span></a>
      </div>
      <div className="lp-hero-points"><span><b aria-hidden="true">✓</b> Aulas e questões</span><span><b aria-hidden="true">✓</b> Revisão por assunto</span><span><b aria-hidden="true">✓</b> Estude no celular</span></div>
     </div>
@@ -57,7 +58,7 @@ export default function Landing(){
       </div>
      </div>
      <div className="lp-floating-chip lp-floating-chip-left" aria-hidden="true"><span>✦</span><strong>Conteúdos organizados</strong></div>
-     <div className="lp-floating-chip lp-floating-chip-right" aria-hidden="true"><span>↗</span><strong>Aprenda no seu ritmo</strong></div>
+     <a href="#planos" className="lp-floating-chip lp-floating-chip-right lp-offer-chip" aria-label="Conhecer os três planos, a partir de R$ 29,90"><span className="lp-offer-chip-icon" aria-hidden="true">✦</span><span><strong>A partir de R$ 29,90</strong><small>3 opções de acesso ↗</small></span></a>
      <p className="lp-illustration-note">Prévia ilustrativa da interface · veja as experiências reais abaixo</p>
     </div>
    </section>
@@ -84,6 +85,8 @@ export default function Landing(){
     <LandingPreview/>
    </section>
 
+   <LandingPricing/>
+
    <section className="lp-section lp-container lp-learning" id="recursos">
     <div className="lp-section-heading"><span className="lp-eyebrow">APRENDIZADO NA PRÁTICA</span><h2>Entender, praticar e <em>lembrar.</em></h2><p>Ferramentas pensadas para transformar estudo em aprendizado ativo.</p></div>
     <div className="lp-learning-grid">
@@ -100,17 +103,17 @@ export default function Landing(){
 
    <section className="lp-container lp-final">
     <span className="lp-eyebrow">SUA PRÓXIMA CONQUISTA COMEÇA AQUI</span>
-    <h2>Um universo de aprendizado. <em>Um caminho só seu.</em></h2>
-    <p>Explore, pratique e descubra até onde seu conhecimento pode chegar.</p>
-    <div className="lp-final-actions"><Link href="/cadastro" className="lp-button">Criar minha conta <span aria-hidden="true">↗</span></Link><a href="#produto" className="lp-outline">Conhecer a plataforma <span aria-hidden="true">→</span></a></div>
-    <small>Cadastro não equivale à liberação de compra. O acesso comercial será confirmado conforme o pagamento.</small>
+    <h2>Seu próximo avanço começa <em>com uma escolha.</em></h2>
+    <p>Conheça os planos, escolha sua jornada e experimente a plataforma antes de contratar.</p>
+    <div className="lp-final-actions"><a href="#planos" className="lp-button">Ver os 3 planos <span aria-hidden="true">↗</span></a><a href="#produto" className="lp-outline">Testar demonstração <span aria-hidden="true">→</span></a></div>
+    <small>Valores exibidos para escolha. O cadastro não realiza cobrança nem libera planos pagos automaticamente.</small>
    </section>
   </main>
   <footer className="lp-footer">
    <div className="lp-container lp-footer-inner">
     <Link href="/" className="lp-logo"><span className="lp-mark" aria-hidden="true">✦</span><strong>Eduverso<span>.</span></strong></Link>
     <span>Seu universo de aprendizado.</span>
-    <nav aria-label="Rodapé"><a href="#caminhos">Para quem é</a><a href="#produto">A plataforma</a><Link href="/entrar">Entrar</Link></nav>
+    <nav aria-label="Rodapé"><a href="#caminhos">Para quem é</a><a href="#produto">A plataforma</a><a href="#planos">Planos</a><Link href="/entrar">Entrar</Link></nav>
     <small>© {new Date().getFullYear()} Eduverso</small>
    </div>
   </footer>

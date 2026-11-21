@@ -1,13 +1,15 @@
 "use client";
 import Link from "next/link";
 import {useRouter} from "next/navigation";
-import {FormEvent,useState} from "react";
+import {FormEvent,useEffect,useState} from "react";
 import "../auth.css";
 export default function Cadastro(){
  const router=useRouter();
  const [name,setName]=useState("");const [email,setEmail]=useState("");
  const [password,setPassword]=useState("");const [confirm,setConfirm]=useState("");
- const [busy,setBusy]=useState(false);const [error,setError]=useState("");const [notice,setNotice]=useState("");
+ const [busy,setBusy]=useState(false);
+ const [selectedPlan,setSelectedPlan]=useState<""|"inicial"|"avancado"|"professores">("");
+ useEffect(()=>{const value=new URLSearchParams(window.location.search).get("plano");if(value==="inicial"||value==="avancado"||value==="professores")setSelectedPlan(value);},[]);const [error,setError]=useState("");const [notice,setNotice]=useState("");
  async function submit(event:FormEvent<HTMLFormElement>){
   event.preventDefault();setError("");setNotice("");
   if(password!==confirm){setError("As senhas não conferem.");return;}
@@ -25,10 +27,10 @@ export default function Cadastro(){
  return <main className="auth-shell"><section className="auth-panel">
   <Link href="/" className="auth-logo">✦ Eduverso<span>.</span></Link>
   <div className="auth-tag">COMECE SUA JORNADA</div><h1>Seu próximo capítulo começa aqui.</h1>
-  <p>Crie sua conta para identificar seu perfil e guardar seu histórico de estudos. A liberação definitiva do conteúdo pago depende da confirmação da compra.</p><div className="auth-existing-account">Já se cadastrou antes com este e-mail? <Link href="/entrar">Entre na sua conta existente</Link>. Um segundo cadastro não gera outro e-mail de confirmação.</div>
+  <p>Crie sua conta para identificar seu perfil e guardar seu histórico de estudos. A liberação definitiva do conteúdo pago depende da confirmação da compra.</p>{selectedPlan&&<div className="auth-existing-account"><strong>Plano de interesse: {selectedPlan==="inicial"?"Inicial · R$ 29,90":selectedPlan==="avancado"?"Avançado · R$ 49,90":"Professores · R$ 79,90"}</strong>. Este cadastro não realiza pagamento ou reserva o valor escolhido; a contratação e a periodicidade serão confirmadas quando estiverem disponíveis. <Link href="/#planos">Ver outros planos</Link></div>}<div className="auth-existing-account">Já se cadastrou antes com este e-mail? <Link href="/entrar">Entre na sua conta existente</Link>. Um segundo cadastro não gera outro e-mail de confirmação.</div>
   <form onSubmit={submit}>
    <label htmlFor="name">Nome completo</label><input id="name" value={name} onChange={e=>setName(e.target.value)} type="text" minLength={2} maxLength={120} required autoComplete="name" placeholder="Nome e sobrenome"/>
-   <label htmlFor="email">E-mail usado na compra</label><input id="email" value={email} onChange={e=>setEmail(e.target.value)} type="email" maxLength={254} required autoComplete="email" placeholder="seu@email.com"/>
+   <label htmlFor="email">E-mail para cadastro e compra</label><input id="email" value={email} onChange={e=>setEmail(e.target.value)} type="email" maxLength={254} required autoComplete="email" placeholder="seu@email.com"/>
    <label htmlFor="password">Senha</label><input id="password" value={password} onChange={e=>setPassword(e.target.value)} type="password" minLength={8} required autoComplete="new-password" placeholder="Mínimo de 8 caracteres"/>
    <label htmlFor="confirm">Confirmar senha</label><input id="confirm" value={confirm} onChange={e=>setConfirm(e.target.value)} type="password" minLength={8} required autoComplete="new-password" placeholder="Repita sua senha"/>
    <button type="submit" disabled={busy}>{busy?"Criando conta...":"Criar minha conta →"}</button>
