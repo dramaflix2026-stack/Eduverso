@@ -22,9 +22,21 @@
 .grade{display:flex;gap:8px}.grade button{flex:1;min-width:0}
 .foot a,.error a{color:#dfbdff;text-decoration:underline}
 .error{padding:16px;color:#ffdddd;background:#442535;border:1px solid #a9687b;border-radius:11px;font-size:12px}
-@media(max-width:760px){.columns{grid-template-columns:1fr}.sidebar{order:-1}.diagram{width:min(100%,380px)}}
+@media(max-width:760px){.columns{grid-template-columns:1fr}.sidebar{order:initial}.exploreColumns .sidebar{order:-1}.diagram{width:min(100%,380px)}}
 @media(max-width:480px){.metrics div{padding:10px 7px}.metrics strong{font-size:19px}.tabs button{font-size:11px}.dot{width:27px;height:27px;font-size:10px}.title{flex-wrap:wrap}.card{padding:15px}}
 
 /* Mobile learning sequence: instruction → illustration → feedback and action. */
-.mobilePrompt{display:none}
-@media(max-width:760px){.mobilePrompt{display:flex;flex-direction:column;gap:5px;padding:13px 15px;background:#332340;border:1px solid #76568c;border-radius:12px}.mobilePrompt small{font-size:11px;font-weight:850;color:#ceabef;letter-spacing:.08em}.mobilePrompt strong{font-size:19px;line-height:1.3;color:#f6e7ff}.mobilePrompt p{margin:0;font-size:12px;line-height:1.6;color:#d8c5e9}.sidebar{order:initial}}
+.mobilePrompt{display:flex;flex-direction:column;gap:5px;padding:13px 15px;background:#332340;border:1px solid #76568c;border-radius:12px}
+.mobilePrompt small{font-size:11px;font-weight:850;color:#ceabef;letter-spacing:.08em}
+.mobilePrompt strong{font-size:19px;line-height:1.3;color:#f6e7ff}
+.mobilePrompt p{margin:0;font-size:12px;line-height:1.6;color:#d8c5e9}
+.sidebar{scroll-margin-top:110px}
+.answerForm{display:flex;flex-direction:column;gap:9px;width:100%;text-align:left}
+.answerForm label{font-size:12px;font-weight:800;color:#efd9ff}
+.answerForm input{width:100%;min-width:0;box-sizing:border-box;border-radius:11px;border:1px solid #9877b5;background:#211729;color:white;padding:13px 14px;font-size:16px;font-family:inherit;outline-offset:2px}
+.answerForm input:focus{outline:2px solid #d7a8ff}
+.answerForm input:disabled{opacity:.8}
+.answerForm p{color:#baa9ce;font-size:11px;line-height:1.5;text-align:left;margin:0}
+.answerForm button{width:100%}
+.actionHint{color:#bdacd0;font-size:12px}
+@media(max-width:760px){.sidebar{order:initial}.exploreColumns .sidebar{order:-1}}

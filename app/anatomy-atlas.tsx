@@ -21,6 +21,26 @@ function getSaved():RecordMap{
  }catch{return {};}
 }
 const nextReview=(days:number)=>new Date(Date.now()+days*86400000).toISOString();
+// Comparação estrita, ignorando apenas acentos, pontuação, artigos e apelidos anatômicos conhecidos.
+const normalizeAnswer=(text:string)=>text.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9 ]/g," ").replace(/\s+/g," ").trim().replace(/^(o|a|os|as)\s+/,"");
+const acceptedNames:Record<string,string[]>={
+ cranio:["cranio"],
+ mandibula:["mandibula","maxilar inferior"],
+ clavicula:["clavicula"],
+ esterno:["esterno"],
+ costelas:["costelas","costela"],
+ umero:["umero"],
+ coluna:["coluna vertebral","coluna","espinha dorsal"],
+ pelve:["osso do quadril","osso coxal","coxal"],
+ radio:["radio"],
+ femur:["femur"],
+ patela:["patela","rotula"],
+ tibia:["tibia"]
+};
+function isCorrectName(bone:Bone,answer:string){
+ const value=normalizeAnswer(answer);
+ return [bone.name,...(acceptedNames[bone.id]??[])].some(name=>normalizeAnswer(name)===value);
+}
 export default function AnatomyAtlas(){
  const [mode,setMode]=useState<Mode>("explorar");
  const [picked,setPicked]=useState<string|null>(null);
@@ -32,10 +52,16 @@ export default function AnatomyAtlas(){
  const [sessionHits,setSessionHits]=useState(0);
  const [completed,setCompleted]=useState(false);
  const [f,setF]=useState(0);
- const [flipped,setFlipped]=useState(false);
+ const [typed,setTyped]=useState("");
+ const [submitted,setSubmitted]=useState(false);
+ const [typedCorrect,setTypedCorrect]=useState(false);
+ const exploreDetailRef=useRef<HTMLDivElement>(null);
  const started=useRef(Date.now());
  useEffect(()=>{setScores(getSaved());setLoaded(true);},[]);
  useEffect(()=>{if(loaded)try{localStorage.setItem(key,JSON.stringify(scores));}catch{}},[scores,loaded]);
+ useEffect(()=>{
+  if(mode==="explorar"&&picked)exploreDetailRef.current?.scrollIntoView({behavior:"smooth",block:"start"});
+ },[mode,picked]);
  const metrics=useMemo(()=>{
   const v=Object.values(scores),hits=v.reduce((a,b)=>a+b.hits,0),misses=v.reduce((a,b)=>a+b.misses,0),n=hits+misses;
   const total=v.reduce((a,b)=>a+b.ms,0);
@@ -44,7 +70,7 @@ export default function AnatomyAtlas(){
  },[scores]);
  const target=bones[q],flash=bones[f],selected=bones.find(b=>b.id===picked);
  function show(next:Mode){
-  setMode(next);setPicked(null);setFlipped(false);setAnswer(null);started.current=Date.now();
+  setMode(next);setPicked(null);setTyped("");setSubmitted(false);setTypedCorrect(false);setAnswer(null);started.current=Date.now();
   if(next==="desafio"){setQ(0);setSessionHits(0);setCompleted(false);}
  }
  function selectBone(b:Bone){
@@ -56,13 +82,19 @@ export default function AnatomyAtlas(){
   setScores(prev=>{const old=prev[target.id]||empty();return {...prev,[target.id]:{...old,hits:old.hits+(correct?1:0),misses:old.misses+(correct?0:1),ms:old.ms+ms,due:correct?nextReview(1):new Date().toISOString()}};});
  }
  function nextQuestion(){if(q===bones.length-1){setCompleted(true);}else{setQ(v=>v+1);setAnswer(null);started.current=Date.now();}}
- function grade(recalled:boolean){
-  if(!flipped)return;
+ function checkFlash(){
+  if(submitted||!typed.trim()||!imageOk)return;
+  const correct=isCorrectName(flash,typed);
+  setTypedCorrect(correct);setSubmitted(true);
   setScores(prev=>{
-   const old=prev[flash.id]||empty(),level=recalled?Math.min(3,old.level+1):0;
-   return {...prev,[flash.id]:{...old,level,remembered:old.remembered+(recalled?1:0),forgotten:old.forgotten+(recalled?0:1),due:recalled?nextReview([1,7,30][level-1]):new Date().toISOString()}};
+   const old=prev[flash.id]||empty();
+   const level=correct?Math.min(3,old.level+1):0;
+   return {...prev,[flash.id]:{...old,level,remembered:old.remembered+(correct?1:0),forgotten:old.forgotten+(correct?0:1),due:correct?nextReview([1,7,30][level-1]):new Date().toISOString()}};
   });
-  setF(v=>(v+1)%bones.length);setFlipped(false);
+ }
+ function nextFlash(){
+  if(!submitted)return;
+  setF(v=>(v+1)%bones.length);setTyped("");setSubmitted(false);setTypedCorrect(false);
  }
  return <section className={styles.atlas} aria-label="Atlas anatômico interativo">
   <header className={styles.hero}><span>✦ EDUVERSO · ATLAS INTERATIVO</span><h2>Sistema esquelético</h2><p>Estude por imagens, identifique estruturas e pratique a memorização. Esta experiência é independente das aulas e dos simulados.</p></header>
@@ -78,12 +110,12 @@ export default function AnatomyAtlas(){
   </div>
   <div className={styles.panel}>
    <div className={styles.title}><div><h3>{mode==="explorar"?"Explore os ossos":mode==="desafio"?"Identifique na imagem":"Memorização ativa"}</h3>
-    <p>{mode==="explorar"?"Toque nos números para conhecer cada estrutura.":mode==="desafio"?"Encontre o osso solicitado tocando em um dos pontos.":"Observe o marcador amarelo e responda mentalmente antes de revelar."}</p>
+    <p>{mode==="explorar"?"Toque nos números para conhecer cada estrutura.":mode==="desafio"?"Encontre o osso solicitado tocando em um dos pontos.":"Observe o marcador amarelo, digite o nome do osso e confira seu resultado."}</p>
    </div><small>{mode==="explorar"?"12 estruturas":mode==="desafio"?(completed?"Concluído":q+1+" de 12"):f+1+" de 12"}</small></div>
    {mode==="desafio"&&<div className={styles.progress} role="progressbar" aria-label="Progresso do desafio" aria-valuemin={0} aria-valuemax={bones.length} aria-valuenow={completed?bones.length:q}><span style={{width:(100*(completed?bones.length:q)/bones.length)+"%"}}/></div>}
    {mode==="desafio"&&!completed&&<div className={styles.mobilePrompt}><small>QUESTÃO {q+1} DE {bones.length}</small><strong>Onde está {target.name}?</strong><p>Toque no número correspondente na imagem abaixo.</p></div>}
-   {mode==="flashcards"&&<div className={styles.mobilePrompt}><small>FLASHCARD {f+1} DE {bones.length}</small><strong>Que osso está marcado em amarelo?</strong><p>Recorde o nome antes de revelar a resposta.</p></div>}
-   <div className={styles.columns}>
+   {mode==="flashcards"&&<div className={styles.mobilePrompt}><small>FLASHCARD {f+1} DE {bones.length}</small><strong>Qual é o osso destacado em amarelo?</strong><p>Observe a imagem e depois escreva o nome no campo de resposta.</p></div>}
+   <div className={styles.columns+" "+(mode==="explorar"?styles.exploreColumns:"")}>
     <div className={styles.imageArea}>
      {imageOk?<div className={styles.diagram}>
       <img src={imageUrl} width={500} height={1015} alt="Esqueleto humano em vista anterior e sem identificação de ossos" onError={()=>setImageOk(false)}/>
@@ -101,26 +133,38 @@ export default function AnatomyAtlas(){
      </div>:<div role="alert" className={styles.error}>Não foi possível carregar a imagem. Confira sua conexão ou <a href={sourceUrl} target="_blank" rel="noopener noreferrer">abra a imagem original</a>. O desafio fica indisponível sem a imagem.</div>}
      <small>Vista anterior · representação didática</small>
     </div>
-    <div className={styles.sidebar}>
+    <div className={styles.sidebar} ref={exploreDetailRef}>
      {mode==="explorar"&&<div className={styles.card}>
       {selected?<><small>{selected.group}</small><h4>{selected.name}</h4><p>{selected.description}</p></>:<><h4>Selecione uma estrutura</h4><p>Toque em um ponto numerado para descobrir o nome e uma explicação sobre o osso.</p></>}
       <button type="button" className={styles.primary} onClick={()=>show("desafio")}>Praticar identificação →</button>
      </div>}
      {mode==="desafio"&&<div className={styles.card}>
-      {!completed?<><small>DESAFIO {q+1} DE {bones.length}</small><h4>Onde está {target.name}?</h4><p>Toque no número posicionado sobre o osso correspondente.</p>
-       {answer!==null&&<div className={styles.feedback} role="status"><strong>{answer===target.id?"✓ Correto!":"↻ Revise esta estrutura"}</strong><p>{target.description}</p></div>}
+      {!completed?<>{answer!==null?<div className={styles.feedback} role="status">
+        <strong>{answer===target.id?"✓ Correto!":"↻ Ainda não. A resposta correta está destacada em verde."}</strong>
+        <p><b>{target.name}:</b> {target.description}</p>
+       </div>:<p className={styles.actionHint}>Selecione um dos pontos do esqueleto para liberar a próxima estrutura.</p>}
        <button type="button" className={styles.primary} disabled={answer===null} onClick={nextQuestion}>{q===bones.length-1?"Ver resultado":"Próxima estrutura →"}</button>
       </>:<><h4>Rodada concluída!</h4><p>Você acertou {sessionHits} de {bones.length} identificações nesta rodada.</p>
        <button type="button" className={styles.primary} onClick={()=>show("desafio")}>Refazer desafio</button><button type="button" className={styles.secondary} onClick={()=>show("flashcards")}>Revisar flashcards</button></>}
      </div>}
-     {mode==="flashcards"&&<><div className={styles.card+" "+styles.flashCard}>
-      <small>{flash.group} · cartão {f+1}</small>
-      {!flipped?<><h4>Que osso está marcado?</h4><p>Observe o ponto amarelo e recorde o nome antes de revelar.</p><button type="button" className={styles.primary} onClick={()=>setFlipped(true)}>Revelar resposta</button></>:
-       <><h4>{flash.name}</h4><p>{flash.description}</p></>}
-     </div><div className={styles.grade}>
-      <button type="button" className={styles.secondary} disabled={!flipped} onClick={()=>grade(false)}>↻ Revisar</button>
-      <button type="button" className={styles.primary} disabled={!flipped} onClick={()=>grade(true)}>✓ Lembrei</button>
-     </div><p>Próximas revisões após 1, 7 e 30 dias conforme os acertos.</p></>}
+     {mode==="flashcards"&&<div className={styles.card+" "+styles.flashCard}>
+      <small>{flash.group} · cartão {f+1} de {bones.length}</small>
+      <form className={styles.answerForm} onSubmit={e=>{e.preventDefault();checkFlash();}}>
+       <label htmlFor="atlas-typed-answer">Sua resposta</label>
+       <input id="atlas-typed-answer" autoComplete="off" autoCapitalize="sentences" spellCheck={false} maxLength={80}
+        value={typed} onChange={e=>setTyped(e.target.value)} disabled={submitted} placeholder="Digite o nome do osso…" aria-describedby="atlas-answer-help"/>
+       <p id="atlas-answer-help">Os acentos e as letras maiúsculas não interferem na correção.</p>
+       {!submitted&&<button type="submit" className={styles.primary} disabled={!imageOk||!typed.trim()}>Ver resultado</button>}
+      </form>
+      {submitted&&<div className={styles.feedback} role="status">
+       <strong>{typedCorrect?"✓ Resposta correta!":"↻ Resposta incorreta. Vamos revisar."}</strong>
+       <p>Você escreveu: <b>{typed.trim()}</b></p>
+       <p>Resposta esperada: <b>{flash.name}</b></p>
+       <p>{flash.description}</p>
+      </div>}
+      {submitted&&<button type="button" className={styles.primary} onClick={nextFlash}>Próximo cartão →</button>}
+      <p>Acertos são programados para revisão após 1, 7 e 30 dias; erros permanecem pendentes.</p>
+     </div>}
     </div>
    </div>
   </div>
