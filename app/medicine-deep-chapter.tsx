@@ -3,8 +3,9 @@ import {useEffect,useMemo,useState} from "react";
 import type {MedTopic} from "./medicine-curriculum";
 import type {DeepChapter,DeepQuestion} from "./medicine-anatomy-deep";
 import styles from "./medicine-deep-chapter.module.css";
+import AnatomyAtlas from "./anatomy-atlas";
 
-type View="aulas"|"questoes"|"resumo";
+type View="aulas"|"questoes"|"resumo"|"atlas";
 type SavedProgress={visited:number[];results:Record<string,boolean>};
 type Props={topic:MedTopic;chapter:DeepChapter;disciplineTitle:string;coverSrc:string;onBack:()=>void;onNext:()=>void;onComplete:()=>void;onAnswer:(correct:boolean)=>void};
 function storageKey(id:string){
@@ -30,6 +31,7 @@ function loadProgress(topicId:string):SavedProgress{
 }
 export default function MedicineDeepChapter({topic,chapter,disciplineTitle,coverSrc,onBack,onNext,onComplete,onAnswer}:Props){
  const [view,setView]=useState<View>("aulas");
+ const hasAtlas=topic.id.startsWith("anatomia-humana-");
  const [lessonIndex,setLessonIndex]=useState(0);
  const [quizIndex,setQuizIndex]=useState(0);
  const [choice,setChoice]=useState<number|null>(null);
@@ -92,11 +94,13 @@ export default function MedicineDeepChapter({topic,chapter,disciplineTitle,cover
    <div className={styles.progressTop}><strong>Seu avanço nas aulas</strong><span>{progress.visited.length} de 4 abertas</span></div>
    <div className={styles.progress} role="progressbar" aria-label="Aulas acessadas" aria-valuenow={sectionPct} aria-valuemin={0} aria-valuemax={100}><span style={{width:sectionPct+"%"}}/></div>
   </div>
-  <div className={styles.modeNav} role="group" aria-label="Etapas do módulo">
+  <div className={styles.modeNav+" "+(hasAtlas?styles.modeNavFour:"")} role="group" aria-label="Etapas do módulo">
    <button type="button" aria-pressed={view==="aulas"} onClick={()=>setView("aulas")} className={view==="aulas"?styles.selected:""}>📚 Aulas</button>
    <button type="button" aria-pressed={view==="questoes"} onClick={()=>setView("questoes")} className={view==="questoes"?styles.selected:""}>✍️ Questões</button>
    <button type="button" aria-pressed={view==="resumo"} onClick={()=>setView("resumo")} className={view==="resumo"?styles.selected:""}>📊 Revisão</button>
+   {hasAtlas&&<button type="button" aria-pressed={view==="atlas"} onClick={()=>setView("atlas")} className={view==="atlas"?styles.selected:""}>🦴 Atlas interativo</button>}
   </div>
+  {view==="atlas"&&hasAtlas&&<AnatomyAtlas/>}
   {view==="aulas"&&<>
    <section className={styles.objectives}>
     <h3>O que você vai aprender</h3>

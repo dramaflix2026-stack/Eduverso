@@ -1,0 +1,26 @@
+.atlas{display:flex;flex-direction:column;gap:18px;color:#f5eaff;min-width:0}
+.hero{background:radial-gradient(ellipse at 100% 0%,#7a44bd45,transparent 55%),#241933;border:1px solid #694b83;border-radius:17px;padding:clamp(16px,3vw,28px)}
+.hero span{font-size:11px;letter-spacing:.13em;font-weight:850;color:#d0aff5}.hero h2{font-size:clamp(24px,4vw,34px);letter-spacing:-.03em;line-height:1.2;margin:9px 0}.hero p,.foot{color:#cab9da;font-size:12px;line-height:1.8;margin:0}
+.metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.metrics div{padding:13px 10px;background:#291d39;border:1px solid #564369;border-radius:12px}.metrics strong{display:block;font-size:clamp(20px,3vw,27px);line-height:1.2}.metrics small{display:block;margin-top:5px;color:#beafce;font-size:11px;line-height:1.5}
+.tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.tabs button{font:inherit;font-size:12px;font-weight:800;padding:12px 5px;border:1px solid #5e4678;border-radius:11px;background:#21182d;color:#dbc8ef;cursor:pointer}.tabs button.active{background:#753bcb;color:white;border-color:#c094ff}
+.panel{padding:clamp(12px,2.5vw,20px);border:1px solid #55416c;background:#191322;border-radius:17px;display:flex;flex-direction:column;gap:15px}
+.title{display:flex;gap:12px;justify-content:space-between;align-items:start}.title h3{margin:0 0 5px;font-size:19px}.title p{margin:0;color:#bcaed0;font-size:12px;line-height:1.6}.title>small{white-space:nowrap;font-size:11px;color:#d6c0ed;border:1px solid #705788;padding:6px;border-radius:8px}
+.progress{height:7px;border-radius:10px;background:#503965;overflow:hidden}.progress span{display:block;height:100%;background:linear-gradient(90deg,#8e4fde,#d49bf8)}
+.columns{display:grid;grid-template-columns:minmax(0,1fr) minmax(205px,.85fr);gap:17px;align-items:start}
+.imageArea{display:flex;align-items:center;flex-direction:column;gap:10px;border:1px solid #4d3861;background:radial-gradient(ellipse,#453251,#21162d);border-radius:14px;padding:9px}
+.diagram{position:relative;width:min(100%,350px);aspect-ratio:500/1015;border-radius:12px;overflow:hidden;background:#fff}
+.diagram img{width:100%;height:100%;display:block;object-fit:fill}
+.dot{position:absolute;transform:translate(-50%,-50%);width:29px;height:29px;display:flex;align-items:center;justify-content:center;border:2px solid #fff;border-radius:50%;font:850 11px/1 inherit;cursor:pointer;box-shadow:0 1px 8px #21122e77;touch-action:manipulation}
+.dot:hover,.dot:focus-visible{outline:3px solid #bd8df9;outline-offset:2px}
+.normalDot{background:#7541ba;color:white}.selectedDot,.flashDot{background:#f2bf4b;color:#392445}.hit{background:#12845d;color:white}.fail{background:#bb3459;color:white}.flashDot{pointer-events:none}.dot:disabled{opacity:1;cursor:default}
+.imageArea>small{font-size:11px;color:#c5b5d6;text-align:center}
+.sidebar{display:flex;flex-direction:column;gap:10px}.sidebar>p{margin:0;font-size:11px;color:#c7b8d8;line-height:1.6}
+.card{padding:17px;border:1px solid #644a7d;border-radius:13px;background:#2e213d;display:flex;flex-direction:column;gap:12px}.card h4{font-size:clamp(18px,3vw,24px);margin:0;line-height:1.25}.card p{font-size:13px;line-height:1.75;color:#e3d2ee;margin:0}.card small{color:#cba8ec;font-size:11px;font-weight:750}
+.primary,.secondary{font:inherit;font-size:12px;font-weight:800;padding:12px 13px;min-height:42px;border-radius:10px;cursor:pointer}.primary{background:#773ed0;color:#fff;border:1px solid #bc8bf7}.secondary{color:#e5d3f5;border:1px solid #7a5c90;background:#332640}.primary:disabled,.secondary:disabled{opacity:.45;cursor:not-allowed}
+.feedback{padding:12px;border:1px solid #8666a6;border-radius:10px;background:#433055;display:flex;flex-direction:column;gap:5px}.feedback strong{font-size:13px}
+.flashCard{min-height:195px;align-items:center;text-align:center;justify-content:center;background:radial-gradient(ellipse at 0% 0%,#704f8d77,transparent 60%),#30203f}
+.grade{display:flex;gap:8px}.grade button{flex:1;min-width:0}
+.foot a,.error a{color:#dfbdff;text-decoration:underline}
+.error{padding:16px;color:#ffdddd;background:#442535;border:1px solid #a9687b;border-radius:11px;font-size:12px}
+@media(max-width:760px){.columns{grid-template-columns:1fr}.sidebar{order:-1}.diagram{width:min(100%,380px)}}
+@media(max-width:480px){.metrics div{padding:10px 7px}.metrics strong{font-size:19px}.tabs button{font-size:11px}.dot{width:27px;height:27px;font-size:10px}.title{flex-wrap:wrap}.card{padding:15px}}

@@ -58,3 +58,6 @@
 .summary a{color:#d9b3ff}
 .disclaimer{font-size:11px;line-height:1.65;color:#ab9abb;margin:0}
 @media(max-width:650px){.chapter{gap:15px;border-radius:18px;padding:16px}.lessonNav{grid-template-columns:1fr}.visual img{height:180px}.summary dl{grid-template-columns:1fr}.lessonBody{padding:16px}.modeNav button{font-size:11px;padding:10px 6px}.progressTop{flex-wrap:wrap}.actions button{min-width:0}}
+
+.modeNavFour{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media(max-width:650px){.modeNavFour{grid-template-columns:repeat(2,minmax(0,1fr))}}

@@ -5,6 +5,7 @@ import styles from "./medicine-hub.module.css";
 import MedicineMockExam from "./medicine-mock-exam";
 import MedicineEntrance,{type EntranceTopic} from "./medicine-entrance";
 import MedicineDeepChapter from "./medicine-deep-chapter";
+import AnatomyAtlas from "./anatomy-atlas";
 import {advancedMedCourses} from "./medicine-advanced-catalog";
 
 export type MedicineArea="faculdade"|"vestibular"|"exames";
@@ -30,6 +31,7 @@ export default function MedicineHub({area,onChangeArea,onOpenGoal,onOpenTrack,ge
  const [chosen,setChosen]=useState<number|null>(null);
  const [checked,setChecked]=useState(false);
  const [mockOpen,setMockOpen]=useState(false);
+ const [atlasOpen,setAtlasOpen]=useState(false);
  const [completed,setCompleted]=useState<Record<string,boolean>>({});
  const [coverAssets,setCoverAssets]=useState<Record<string,string>>({});
  const [attempts,setAttempts]=useState<Record<string,Attempt>>({});
@@ -59,7 +61,7 @@ export default function MedicineHub({area,onChangeArea,onOpenGoal,onOpenTrack,ge
   if(d)url.searchParams.set("materia",d);else url.searchParams.delete("materia");
   if(t)url.searchParams.set("assunto",t);else url.searchParams.delete("assunto");
   window.history.pushState({},"",url.pathname+url.search+url.hash);
-  setDiscipline(d);setTopic(t);setChosen(null);setChecked(false);setMockOpen(false);
+  setDiscipline(d);setTopic(t);setChosen(null);setChecked(false);setMockOpen(false);setAtlasOpen(false);
   window.scrollTo({top:0,behavior:"smooth"});
  }
  function changeArea(next:MedicineArea){
@@ -139,12 +141,13 @@ export default function MedicineHub({area,onChangeArea,onOpenGoal,onOpenTrack,ge
    </div>:<div className={styles.empty}>Nenhuma disciplina encontrada. Tente remover algum filtro.</div>}
    <div className={styles.note}>Conteúdo acadêmico de revisão. Não substitui formação clínica, prática supervisionada ou protocolos profissionais. Para situações de saúde reais, procure atendimento qualificado.</div>
   </>}
-  {area==="faculdade"&&currentDiscipline&&!currentTopic&&!mockOpen&&<>
+  {area==="faculdade"&&currentDiscipline&&!currentTopic&&!mockOpen&&!atlasOpen&&<>
    <button type="button" className={styles.back} onClick={()=>pushLocation(null,null)}>← Voltar às 18 disciplinas</button>
    <section className={styles.hero}>
     <span className={styles.eyebrow}>{medCycles.find(c=>c.value===currentDiscipline.cycle)?.label} · {currentDiscipline.years}</span><h1>{currentDiscipline.title}<span>.</span></h1><p>{currentDiscipline.description}. Abra uma trilha para acessar explicação, exemplo aplicado e exercício comentado.</p>
     <div className={styles.stats}><span>{currentDiscipline.topics.length} módulos</span>{advancedMedCourses[currentDiscipline.slug]&&<><span>{advancedMedCourses[currentDiscipline.slug].metrics.lessons} aulas aprofundadas</span><span>{advancedMedCourses[currentDiscipline.slug].metrics.extraQuestions+currentDiscipline.topics.length} questões de revisão</span></>}<span>{currentDiscipline.topics.filter(t=>completed[t.id]).length} revisados corretamente</span></div>
    </section>
+   {currentDiscipline.slug==="anatomia-humana"&&<button type="button" className={styles.atlasFeature} onClick={()=>{setAtlasOpen(true);window.scrollTo({top:0,behavior:"smooth"});}}><span aria-hidden="true" className={styles.atlasIcon}>🦴</span><span><strong>Atlas Anatômico Interativo</strong><small>Explore 12 estruturas · Desafios · Flashcards</small></span><span aria-hidden="true" className={styles.atlasArrow}>Explorar →</span></button>}
    <div className={styles.sectionHead}><h2>Assuntos de {currentDiscipline.title}</h2><button type="button" className={styles.primary} onClick={()=>setMockOpen(true)}>📝 Simulado da matéria</button></div>
    <div className={styles.topicGrid}>
     {currentDiscipline.topics.map((t,i)=><button type="button" key={t.id} className={styles.topicCard} onClick={()=>pushLocation(currentDiscipline.slug,t.id)}>
@@ -153,6 +156,7 @@ export default function MedicineHub({area,onChangeArea,onOpenGoal,onOpenTrack,ge
    </div>
    {currentDiscipline.slug==="anatomia-humana"&&<div className={styles.resource}><strong>Integração com Anatomia do Eduverso</strong><p>Você também pode explorar as trilhas visuais de ossos, músculos, sistemas corporais e outras estruturas já existentes na plataforma.</p><button className={styles.primary} onClick={()=>onOpenTrack("Anatomia","Sistema ósseo")}>Abrir trilhas de Anatomia ↗</button></div>}
   </>}
+  {area==="faculdade"&&currentDiscipline?.slug==="anatomia-humana"&&!currentTopic&&atlasOpen&&!mockOpen&&<><button type="button" className={styles.back} onClick={()=>setAtlasOpen(false)}>← Voltar aos módulos de Anatomia</button><AnatomyAtlas/></>}
   {area==="faculdade"&&currentDiscipline&&advancedMedCourses[currentDiscipline.slug]&&currentTopic&&!mockOpen&&
     <MedicineDeepChapter key={currentTopic.id} topic={currentTopic}
       chapter={advancedMedCourses[currentDiscipline.slug].byTopic[currentTopic.id]}
