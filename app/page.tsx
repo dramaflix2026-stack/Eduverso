@@ -57,7 +57,7 @@ export default function Landing(){
       </div>
      </div>
      <div className="lp-floating-chip lp-floating-chip-left" aria-hidden="true"><span>✦</span><strong>Conteúdos organizados</strong></div>
-     <a href="#planos" className="lp-floating-chip lp-floating-chip-right lp-offer-chip" aria-label="Conhecer os três planos, a partir de R$ 29,90"><span className="lp-offer-chip-icon" aria-hidden="true">✦</span><span><strong>A partir de R$ 29,90</strong><small>3 opções de acesso ↗</small></span></a>
+     <a href="#planos" className="lp-floating-chip lp-floating-chip-right lp-offer-chip" aria-label="Conhecer os dois planos, a partir de R$ 49,90"><span className="lp-offer-chip-icon" aria-hidden="true">✦</span><span><strong>A partir de R$ 49,90</strong><small>2 opções de acesso ↗</small></span></a>
      <p className="lp-illustration-note">Prévia ilustrativa da interface · veja as experiências reais abaixo</p>
     </div>
    </section>
@@ -85,7 +85,7 @@ export default function Landing(){
     <span className="lp-eyebrow">SUA PRÓXIMA CONQUISTA COMEÇA AQUI</span>
     <h2>Seu próximo avanço começa <em>com uma escolha.</em></h2>
     <p>Conheça os planos, escolha sua jornada e experimente a plataforma antes de contratar.</p>
-    <div className="lp-final-actions"><a href="#planos" className="lp-button">Ver os 3 planos <span aria-hidden="true">↗</span></a><a href="#produto" className="lp-outline">Testar demonstração <span aria-hidden="true">→</span></a></div>
+    <div className="lp-final-actions"><a href="#planos" className="lp-button">Ver os 2 planos <span aria-hidden="true">↗</span></a><a href="#produto" className="lp-outline">Testar demonstração <span aria-hidden="true">→</span></a></div>
     <small>Valores exibidos para escolha. O cadastro não realiza cobrança nem libera planos pagos automaticamente.</small>
    </section>
 

@@ -8,8 +8,8 @@ export default function Cadastro(){
  const [name,setName]=useState("");const [email,setEmail]=useState("");
  const [password,setPassword]=useState("");const [confirm,setConfirm]=useState("");
  const [busy,setBusy]=useState(false);
- const [selectedPlan,setSelectedPlan]=useState<""|"inicial"|"avancado"|"professores">("");
- useEffect(()=>{const value=new URLSearchParams(window.location.search).get("plano");if(value==="inicial"||value==="avancado"||value==="professores")setSelectedPlan(value);},[]);const [error,setError]=useState("");const [notice,setNotice]=useState("");
+ const [selectedPlan,setSelectedPlan]=useState<""|"estudante"|"professores">("");
+ useEffect(()=>{const value=new URLSearchParams(window.location.search).get("plano");if(value==="professores")setSelectedPlan("professores");else if(value==="estudante"||value==="avancado"||value==="inicial")setSelectedPlan("estudante");},[]);const [error,setError]=useState("");const [notice,setNotice]=useState("");
  async function submit(event:FormEvent<HTMLFormElement>){
   event.preventDefault();setError("");setNotice("");
   if(password!==confirm){setError("As senhas não conferem.");return;}
@@ -27,7 +27,7 @@ export default function Cadastro(){
  return <main className="auth-shell"><section className="auth-panel">
   <Link href="/" className="auth-logo">✦ Eduverso<span>.</span></Link>
   <div className="auth-tag">COMECE SUA JORNADA</div><h1>Seu próximo capítulo começa aqui.</h1>
-  <p>Crie sua conta para identificar seu perfil e guardar seu histórico de estudos. A liberação definitiva do conteúdo pago depende da confirmação da compra.</p>{selectedPlan&&<div className="auth-existing-account"><strong>Plano de interesse: {selectedPlan==="inicial"?"Inicial · R$ 29,90":selectedPlan==="avancado"?"Avançado · R$ 49,90":"Professores · R$ 79,90"}</strong>. Este cadastro não realiza pagamento ou reserva o valor escolhido; a contratação e a periodicidade serão confirmadas quando estiverem disponíveis. <Link href="/#planos">Ver outros planos</Link></div>}<div className="auth-existing-account">Já se cadastrou antes com este e-mail? <Link href="/entrar">Entre na sua conta existente</Link>. Um segundo cadastro não gera outro e-mail de confirmação.</div>
+  <p>Crie sua conta para identificar seu perfil e guardar seu histórico de estudos. A liberação definitiva do conteúdo pago depende da confirmação da compra.</p>{selectedPlan&&<div className="auth-existing-account"><strong>Plano de interesse: {selectedPlan==="estudante"?"Eduverso Estudante · R$ 49,90":"Eduverso Professor · R$ 79,90"}</strong>. Este cadastro não realiza pagamento ou reserva o valor escolhido; a contratação e as condições do pagamento único serão informadas antes das vendas. A geração em massa do plano Professor está em desenvolvimento. <Link href="/#planos">Ver outros planos</Link></div>}<div className="auth-existing-account">Já se cadastrou antes com este e-mail? <Link href="/entrar">Entre na sua conta existente</Link>. Um segundo cadastro não gera outro e-mail de confirmação.</div>
   <form onSubmit={submit}>
    <label htmlFor="name">Nome completo</label><input id="name" value={name} onChange={e=>setName(e.target.value)} type="text" minLength={2} maxLength={120} required autoComplete="name" placeholder="Nome e sobrenome"/>
    <label htmlFor="email">E-mail para cadastro e compra</label><input id="email" value={email} onChange={e=>setEmail(e.target.value)} type="email" maxLength={254} required autoComplete="email" placeholder="seu@email.com"/>

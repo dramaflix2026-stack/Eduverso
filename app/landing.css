@@ -660,3 +660,20 @@
  .lp-guarantee-benefits{font-size:10px;line-height:1.45;gap:6px 12px;margin-bottom:13px}
  .lp-guarantee-content>small{margin-top:8px}
 }
+
+/* Two Eduverso offers: Estudante and Professor */
+.edu-lp .lp-pricing-grid{grid-template-columns:repeat(2,minmax(0,1fr));max-width:970px;margin-inline:auto;gap:18px}
+.edu-lp .lp-price-card:last-child{grid-column:auto}
+.edu-lp .lp-price-card{padding:29px 27px;border-radius:21px}
+.edu-lp .lp-price-card-featured{padding:28px 26px}
+.edu-lp .lp-price-soon{display:inline-flex;align-items:center;border-radius:999px;padding:6px 10px;border:1px solid #aa8bda75;background:#42275a70;color:#d9c4ff;font-size:10px;font-weight:700}
+.edu-lp .lp-price-card-planned{background:linear-gradient(155deg,#251932,#171020 82%)}
+.edu-lp .lp-price-development{font-size:11px;line-height:1.55;color:#bda6d4;margin:-3px 0 16px}
+.edu-lp .lp-price-period{color:#d5baff;font-weight:800;font-size:11px}
+.edu-lp .lp-price-caption{min-height:42px}
+@media(max-width:680px){
+ .edu-lp .lp-pricing-grid{grid-template-columns:1fr;gap:14px}
+ .edu-lp .lp-price-card,.edu-lp .lp-price-card-featured{padding:20px 19px}
+ .edu-lp .lp-price-caption{min-height:0}
+ .edu-lp .lp-price-soon{font-size:9px;padding:5px 8px}
+}
