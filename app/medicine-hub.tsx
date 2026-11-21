@@ -29,7 +29,13 @@ export default function MedicineHub({area,onChangeArea,onOpenGoal,onOpenTrack,ge
  const [checked,setChecked]=useState(false);
  const [mockOpen,setMockOpen]=useState(false);
  const [completed,setCompleted]=useState<Record<string,boolean>>({});
+ const [coverAssets,setCoverAssets]=useState<Record<string,string>>({});
  const [attempts,setAttempts]=useState<Record<string,Attempt>>({});
+ useEffect(()=>{
+  let cancelled=false;
+  fetch("/api/medicina/capas").then(async response=>response.ok?response.json():null).then(data=>{if(!cancelled&&data?.covers)setCoverAssets(data.covers)}).catch(()=>{});
+  return()=>{cancelled=true};
+ },[]);
  useEffect(()=>{
   const restore=()=>{
    const params=new URLSearchParams(window.location.search);
@@ -124,7 +130,7 @@ export default function MedicineHub({area,onChangeArea,onOpenGoal,onOpenTrack,ge
    </div>}
    {visible.length?<div className={styles.discGrid} aria-label="Disciplinas da Faculdade de Medicina">
     {visible.map(d=><button type="button" key={d.slug} className={styles.disciplineCard} onClick={()=>pushLocation(d.slug,null)}>
-     <img className={styles.cardImage} src={d.image} loading="lazy" alt=""/>
+     <img className={styles.cardImage} src={coverAssets[d.slug]??d.image} loading="lazy" alt="" onError={e=>{if(e.currentTarget.src!==new URL(d.image,window.location.href).href)e.currentTarget.src=d.image}}/>
      <span className={styles.cardOverlay} aria-hidden="true"/>
      <span className={styles.cardInfo}><span className={styles.tag}>{medCycles.find(c=>c.value===d.cycle)?.label} • {d.years}</span><strong>{d.title}</strong><small>{d.description}</small><span className={styles.cardAction}>Explorar 6 assuntos ↗</span></span>
     </button>)}
