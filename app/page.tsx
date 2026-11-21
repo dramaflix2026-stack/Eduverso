@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import LandingSearch from "./landing-search";
+import LandingPreview from "./landing-preview";
 import "./landing.css";
 
 const urlFor=(name:string)=>"/plataforma?disciplina="+encodeURIComponent(name);
@@ -13,9 +14,19 @@ const featured=[
  {name:"Anatomia",slug:"anatomia",description:"O corpo humano em detalhes"}
 ];
 const paths=[
- {title:"Estudos escolares",detail:"Ensino Fundamental e Médio, com matérias organizadas por etapa.",glyph:"▤",href:urlFor("Ensino Fundamental"),extra:{text:"Ensino Médio",href:urlFor("Ensino Médio")}},
- {title:"Preparação e carreiras",detail:"ENEM, vestibulares e concursos em trilhas direcionadas.",glyph:"◎",href:urlFor("ENEM e Vestibulares"),extra:{text:"Concursos",href:"/plataforma?disciplina=Minha%20Prepara%C3%A7%C3%A3o&categoria=concursos"}},
- {title:"Medicina",detail:"Do vestibular à graduação, com atlas e revisão anatômica.",glyph:"✚",href:"/plataforma?disciplina=Medicina&area=faculdade",extra:{text:"Vestibular de Medicina",href:"/plataforma?disciplina=Medicina&area=vestibular"}}
+ {title:"Estudos escolares",detail:"Matérias organizadas por etapa, do 1º ano ao Ensino Médio.",glyph:"▤",links:[
+  {text:"Ensino Fundamental",href:urlFor("Ensino Fundamental")},
+  {text:"Ensino Médio",href:urlFor("Ensino Médio")}
+ ]},
+ {title:"Preparação e carreiras",detail:"Trilhas para exames, vestibulares e concursos.",glyph:"◎",links:[
+  {text:"ENEM e vestibulares",href:urlFor("ENEM e Vestibulares")},
+  {text:"Concursos",href:"/plataforma?disciplina=Minha%20Prepara%C3%A7%C3%A3o&categoria=concursos"}
+ ]},
+ {title:"Medicina",detail:"Estudo da graduação, vestibular médico e exames profissionais.",glyph:"✚",links:[
+  {text:"Vestibular de Medicina",href:"/plataforma?disciplina=Medicina&area=vestibular"},
+  {text:"Faculdade de Medicina",href:"/plataforma?disciplina=Medicina&area=faculdade"},
+  {text:"Revalida e residência",href:"/plataforma?disciplina=Medicina&area=exames"}
+ ]}
 ];
 const steps=[
  {n:"01",glyph:"◎",title:"Escolha seu universo",description:"Encontre a área que combina com seu momento."},
@@ -23,16 +34,17 @@ const steps=[
  {n:"03",glyph:"↗",title:"Evolua no seu ritmo",description:"Pratique, revise e acompanhe seu progresso."}
 ];
 const benefits=[
- {glyph:"✦",title:"Conteúdo organizado",description:"Disciplinas, assuntos e aulas em uma navegação intuitiva."},
- {glyph:"◎",title:"Aprendizado com prática",description:"Exemplos, perguntas e correção para consolidar conceitos."},
- {glyph:"↗",title:"Explore onde estiver",description:"Uma experiência adaptada ao computador e ao celular."}
+ {glyph:"✎",title:"Questões com correção comentada",description:"Estude o conteúdo, responda às questões e entenda a explicação depois de praticar."},
+ {glyph:"◉",title:"Atlas anatômico interativo",description:"Explore ossos, pratique identificação visual e responda aos flashcards digitando."},
+ {glyph:"▤",title:"Provas anteriores do ENEM",description:"Consulte cadernos e gabaritos oficiais para se familiarizar com o exame."},
+ {glyph:"↗",title:"Retome seus estudos",description:"Volte à última disciplina acessada na sua conta, sem precisar começar do zero."}
 ];
 
 export default function Landing(){
  return <div className="edu-lp">
   <header className="lp-header">
    <Link href="/" className="lp-logo" aria-label="Eduverso, página inicial"><span aria-hidden="true">✦</span><strong>Eduverso<span className="lp-dot">.</span></strong></Link>
-   <nav className="lp-nav" aria-label="Navegação principal"><a href="#caminhos">Caminhos</a><a href="#disciplinas">Disciplinas</a><a href="#como-funciona">Como funciona</a></nav>
+   <nav className="lp-nav" aria-label="Navegação principal"><a href="#caminhos">Caminhos</a><a href="#demonstracao">Veja por dentro</a><a href="#disciplinas">Disciplinas</a></nav>
    <div className="lp-actions"><Link href="/entrar" className="lp-login">Entrar</Link><Link href="/cadastro" className="lp-button lp-button-small">Criar conta</Link></div>
   </header>
   <main>
@@ -42,8 +54,8 @@ export default function Landing(){
      <h1>Aprender pode ser <em>extraordinário.</em></h1>
      <p>O Eduverso reúne disciplinas, trilhas e prática em um só lugar, para você aprender com clareza e avançar no seu ritmo.</p>
      <div className="lp-hero-actions">
-      <Link href="/cadastro" className="lp-button">Começar minha jornada <span aria-hidden="true">↗</span></Link>
-      <Link href="/plataforma" className="lp-outline">Explorar a plataforma <span aria-hidden="true">→</span></Link>
+      <Link href="/cadastro" className="lp-button">Criar minha conta <span aria-hidden="true">↗</span></Link>
+      <a href="#demonstracao" className="lp-outline">Ver demonstração <span aria-hidden="true">→</span></a>
      </div>
     </div>
     <div className="lp-hero-visual">
@@ -62,13 +74,16 @@ export default function Landing(){
    </div>
    <section id="caminhos" className="lp-section lp-paths">
     <div className="lp-title"><span className="lp-eyebrow">COMECE POR AQUI</span><h2>Escolha seu <em>caminho.</em></h2><p>Encontre o que mais combina com o seu momento.</p></div>
-    <div className="lp-path-grid">{paths.map(p=><article className="lp-path-card" key={p.title}>
-     <Link href={p.href} className="lp-path-primary" aria-label={"Explorar "+p.title}>
-      <span className="lp-path-icon" aria-hidden="true">{p.glyph}</span><span className="lp-path-arrow" aria-hidden="true">↗</span>
-      <strong>{p.title}</strong><span className="lp-path-description">{p.detail}</span>
-     </Link>
-     <Link className="lp-path-extra" href={p.extra.href}>{p.extra.text} <span aria-hidden="true">→</span></Link>
+    <div className="lp-path-grid">{paths.map(p=><article className="lp-path-card lp-path-v2" key={p.title}>
+     <div className="lp-path-header"><span className="lp-path-icon" aria-hidden="true">{p.glyph}</span><h3>{p.title}</h3><p>{p.detail}</p></div>
+     <nav className="lp-path-options" aria-label={"Acessos de "+p.title}>
+      {p.links.map(link=><Link key={link.text} href={link.href}>{link.text}<span aria-hidden="true">↗</span></Link>)}
+     </nav>
     </article>)}</div>
+   </section>
+   <section id="demonstracao" className="lp-section lp-demo-section">
+    <div className="lp-title lp-demo-title"><span className="lp-eyebrow">VEJA O PRODUTO FUNCIONANDO</span><h2>Conheça o Eduverso <em>por dentro.</em></h2><p>Explore uma tela real da plataforma: aulas com atividades, atlas anatômico e provas do ENEM.</p></div>
+    <LandingPreview/>
    </section>
    <section id="buscar" className="lp-section lp-search-section">
     <div className="lp-title"><span className="lp-eyebrow">ENCONTRE O QUE PRECISA</span><h2>O que você quer <em>estudar hoje?</em></h2></div>
@@ -88,20 +103,21 @@ export default function Landing(){
     <div className="lp-process-grid">{steps.map(s=><article key={s.n}><span className="lp-step">{s.n}</span><span className="lp-step-icon" aria-hidden="true">{s.glyph}</span><h3>{s.title}</h3><p>{s.description}</p></article>)}</div>
    </section>
    <section id="beneficios" className="lp-section lp-benefits">
-    <div className="lp-title"><span className="lp-eyebrow">UMA EXPERIÊNCIA FEITA PARA VOCÊ</span><h2>Por que estudar no <em>Eduverso?</em></h2><p>Organização, prática e liberdade para descobrir mais.</p></div>
+    <div className="lp-title"><span className="lp-eyebrow">UMA EXPERIÊNCIA FEITA PARA VOCÊ</span><h2>Recursos que fazem <em>diferença.</em></h2><p>Funcionalidades que você pode experimentar na plataforma — não apenas promessas.</p></div>
     <div className="lp-benefit-list">{benefits.map(s=><article key={s.title}><span className="lp-benefit-icon" aria-hidden="true">{s.glyph}</span><div><h3>{s.title}</h3><p>{s.description}</p></div></article>)}</div>
    </section>
    <section className="lp-final">
     <span className="lp-eyebrow">SUA JORNADA COMEÇA AQUI</span>
     <h2>Existe um universo inteiro esperando por <em>você.</em></h2>
-    <p>Escolha o que aprender hoje. O próximo passo é seu.</p>
-    <div className="lp-final-actions"><Link href="/cadastro" className="lp-button">Criar minha conta <span aria-hidden="true">↗</span></Link><Link href="/plataforma" className="lp-outline">Ver a plataforma <span aria-hidden="true">→</span></Link></div>
+    <p>Conheça as ferramentas e escolha como deseja começar.</p>
+    <div className="lp-final-actions"><Link href="/cadastro" className="lp-button">Criar minha conta <span aria-hidden="true">↗</span></Link><a href="#demonstracao" className="lp-outline">Ver demonstração <span aria-hidden="true">→</span></a></div>
+    <small className="lp-cta-note">Criar conta não libera automaticamente o conteúdo pago. O acesso completo depende da compra confirmada.</small>
    </section>
   </main>
   <footer className="lp-footer">
    <Link href="/" className="lp-logo"><span aria-hidden="true">✦</span><strong>Eduverso<span className="lp-dot">.</span></strong></Link>
    <p>Seu universo de aprendizado.</p>
-   <nav aria-label="Links do rodapé"><a href="#caminhos">Caminhos</a><a href="#disciplinas">Disciplinas</a><a href="#como-funciona">Sobre</a><Link href="/entrar">Entrar</Link></nav>
+   <nav aria-label="Links do rodapé"><a href="#caminhos">Caminhos</a><a href="#demonstracao">Demonstração</a><a href="#disciplinas">Disciplinas</a><Link href="/entrar">Entrar</Link></nav>
    <small>© {new Date().getFullYear()} Eduverso</small>
   </footer>
  </div>
