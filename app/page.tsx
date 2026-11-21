@@ -1,25 +1,17 @@
 import Image from "next/image";
 import Link from "next/link";
-import LandingSearch from "./landing-search";
 import LandingPreview from "./landing-preview";
 import LandingPaths from "./landing-paths";
 import "./landing.css";
 
 const go=(name:string)=>"/plataforma?disciplina="+encodeURIComponent(name);
-const courses=[
- {name:"Matemática",detail:"Exercícios e resolução de problemas",image:"matematica.webp",href:go("Matemática")},
- {name:"Biologia",detail:"Do mundo microscópico à vida",image:"biologia.webp",href:go("Biologia")},
- {name:"Anatomia",detail:"Explore o corpo humano",image:"anatomia.webp",href:go("Anatomia")},
- {name:"ENEM",detail:"Prepare-se para a prova",image:"enem-e-vestibulares.webp",href:go("ENEM e Vestibulares")}
-];
-
 export default function Landing(){
  return <div className="edu-lp">
   <header className="lp-header">
    <div className="lp-container lp-header-inner">
     <Link href="/" className="lp-logo" aria-label="Eduverso — início"><span className="lp-mark" aria-hidden="true">✦</span><strong>Eduverso<span>.</span></strong></Link>
     <nav className="lp-nav" aria-label="Navegação principal">
-     <a href="#caminhos">Para quem é</a><a href="#produto">Como funciona</a><a href="#disciplinas">Conteúdos</a>
+     <a href="#caminhos">Para quem é</a><a href="#produto">Como funciona</a><a href="#recursos">Recursos</a>
     </nav>
     <div className="lp-header-actions"><Link href="/entrar" className="lp-login">Entrar</Link><Link href="/cadastro" className="lp-button lp-button-small">Criar conta <span aria-hidden="true">↗</span></Link></div>
    </div>
@@ -104,15 +96,6 @@ export default function Landing(){
       <div className="lp-learning-image"><Image src="/images/home/anatomia.webp" alt="Ilustração didática do corpo humano" fill sizes="(max-width: 680px) 90vw, 480px"/></div>
      </article>
     </div>
-   </section>
-
-   <section className="lp-section lp-container lp-discover" id="disciplinas">
-    <div className="lp-section-heading lp-discover-head"><div><span className="lp-eyebrow">UM UNIVERSO DE CONTEÚDOS</span><h2>Encontre seu próximo <em>assunto.</em></h2><p>Escolha uma disciplina ou pesquise o que quer estudar hoje.</p></div><Link className="lp-text-link" href="/plataforma">Todas as áreas <span aria-hidden="true">↗</span></Link></div>
-    <LandingSearch/>
-    <div className="lp-subject-grid">{courses.map(c=><Link href={c.href} key={c.name} className="lp-subject-card">
-     <Image src={"/images/home/"+c.image} alt="" fill sizes="(max-width: 680px) 45vw, 24vw"/>
-     <span className="lp-subject-shade"/><span className="lp-subject-info"><strong>{c.name}</strong><small>{c.detail}</small></span><span className="lp-subject-arrow" aria-hidden="true">↗</span>
-    </Link>)}</div>
    </section>
 
    <section className="lp-section lp-container lp-how" id="como-funciona">
