@@ -7,7 +7,7 @@ export type MedicalTopicSeed={
  topicId:string;mechanism:string;contrast:string;application:string;caution:string;
  terms?:[string,string][];questions?:[MedicalQuestionSeed,MedicalQuestionSeed,MedicalQuestionSeed];reference:string;
 };
-export type CreatedCourse={chapters:DeepChapter[];byTopic:Record<string,DeepChapter>;metrics:{modules:number;lessons:number;extraQuestions:number}};
+export type CreatedCourse={title:string;chapters:DeepChapter[];byTopic:Record<string,DeepChapter>;metrics:{modules:number;lessons:number;extraQuestions:number}};
 const explanationHint="Estude o mecanismo, compare conceitos próximos e associe os exemplos às condições em que o conhecimento é válido. A conclusão sobre uma pessoa real exige contexto, avaliação e referências clínicas pertinentes.";
 function buildLessonSections(topic:MedTopic,p:MedicalTopicSeed){
  return [
@@ -51,5 +51,5 @@ export function createAdvancedMedicalCourse(slug:string,seeds:MedicalTopicSeed[]
    reference:p.reference,questions
   };
  });
- return {chapters,byTopic:Object.fromEntries(chapters.map(ch=>[ch.topicId,ch])),metrics:{modules:chapters.length,lessons:chapters.reduce((n,ch)=>n+ch.sections.length,0),extraQuestions:chapters.reduce((n,ch)=>n+ch.questions.length,0)}};
+ return {title:d.title,chapters,byTopic:Object.fromEntries(chapters.map(ch=>[ch.topicId,ch])),metrics:{modules:chapters.length,lessons:chapters.reduce((n,ch)=>n+ch.sections.length,0),extraQuestions:chapters.reduce((n,ch)=>n+ch.questions.length,0)}};
 }
