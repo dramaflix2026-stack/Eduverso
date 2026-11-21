@@ -129,3 +129,32 @@
 .poster-photo.poster-portuguese{background-size:100% 124%!important;background-position:center bottom!important}
 .poster-photo.poster-portuguese .poster-bottom{background:linear-gradient(to bottom,transparent 0%,rgba(10,10,24,.96) 20%,#0a0a18 48%);min-height:43%;padding-top:30px}
 @media(max-width:470px){.poster-photo.poster-portuguese .poster-bottom{padding:30px 12px 13px}}
+
+
+/* Navegação hierárquica do Eduverso: separa estudos escolares de preparação avançada */
+.nav-section-group{display:flex;flex-direction:column;gap:3px;min-width:0;margin-top:6px}
+.side-nav .nav-group-toggle{width:100%;display:flex;align-items:center;gap:10px;padding:11px 12px;border-radius:12px;border:1px solid #423659;background:#241c3a;color:#eee6ff;text-align:left;font-weight:750;font-size:13px;line-height:1.35;min-height:48px}
+.side-nav .nav-group-toggle:hover{background:#34224d;border-color:#7654a9}
+.side-nav .nav-group-toggle.nav-group-current{border-color:#7d55db;background:#342057}
+.side-nav .nav-group-icon{width:23px;min-width:23px;flex:none;font-size:19px;text-align:center}
+.side-nav .nav-group-title{width:auto;flex:1;font-size:13px;text-align:left}
+.side-nav .nav-chevron{width:auto;flex:none;color:#bda5e4;font-size:18px;transition:transform .18s ease;display:inline-block;text-align:right}
+.side-nav .nav-chevron-open{transform:rotate(180deg)}
+.nav-group-panel{display:flex;flex-direction:column;gap:3px;padding:3px 0 4px 9px;margin-left:12px;border-left:1px solid #40334f}
+.nav-subject-list{display:flex;flex-direction:column;gap:2px;padding:3px 0 2px 10px;margin-left:10px;border-left:1px solid #4d4160}
+.side-nav .nav-level-toggle,.side-nav .nav-nested-item{display:flex;align-items:center;gap:8px;width:100%;min-height:38px;padding:8px 9px;border-radius:10px;font-size:12.5px;line-height:1.25;color:#c9c1da}
+.side-nav .nav-level-toggle{font-weight:750;background:#1b172b;color:#ede5ff}
+.side-nav .nav-level-toggle:hover,.side-nav .nav-nested-item:hover{background:#ffffff11;color:white}
+.side-nav .nav-nested-item.active{background:#7452d52b;color:#eee2ff;box-shadow:inset 3px 0 0 #aa91ff}
+.side-nav .nav-item-icon{font-size:15px;width:19px;min-width:19px;flex:none;text-align:center;line-height:1.2}
+.side-nav .nav-child-label{font-size:12.5px;width:auto;min-width:0;flex:1;text-align:left;overflow-wrap:anywhere}
+.nav-coming-soon{display:flex;gap:8px;align-items:center;color:#8f839f;padding:8px 9px;min-height:44px;border-radius:10px;font-weight:600}
+.nav-coming-soon .nav-child-label{font-size:12.5px}
+.nav-coming-soon small{display:block;margin-top:3px;color:#8d7e9c;font-size:10px;font-weight:600}
+.side-nav .nav-med-highlight{color:#d5b6ff}
+.nav-section-group button:focus-visible{outline:2px solid #c0a5ff;outline-offset:2px}
+@media(max-width:760px){
+ .side-nav .nav-group-toggle{min-height:48px;padding:10px 12px}
+ .side-nav .nav-nested-item,.side-nav .nav-level-toggle{min-height:39px}
+ .nav-group-panel{padding-top:4px;padding-bottom:4px}
+}
