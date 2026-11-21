@@ -7,7 +7,10 @@ import styles from "./medicine-deep-chapter.module.css";
 type View="aulas"|"questoes"|"resumo";
 type SavedProgress={visited:number[];results:Record<string,boolean>};
 type Props={topic:MedTopic;chapter:DeepChapter;disciplineTitle:string;coverSrc:string;onBack:()=>void;onNext:()=>void;onComplete:()=>void;onAnswer:(correct:boolean)=>void};
-function storageKey(id:string){return "eduverso:medicina:"+(id.startsWith("anatomia-humana-")?"anatomia:avanco:":"histologia:avanco:")+id;}
+function storageKey(id:string){
+ const prefix=id.startsWith("anatomia-humana-")?"anatomia:avanco:":id.startsWith("histologia-")?"histologia:avanco:":"embriologia:avanco:";
+ return "eduverso:medicina:"+prefix+id;
+}
 function loadProgress(topicId:string):SavedProgress{
  try{
   const raw=window.localStorage.getItem(storageKey(topicId));
