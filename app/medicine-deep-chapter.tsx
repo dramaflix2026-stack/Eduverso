@@ -1,13 +1,13 @@
 "use client";
 import {useEffect,useMemo,useState} from "react";
 import type {MedTopic} from "./medicine-curriculum";
-import {anatomyByTopic,type DeepQuestion} from "./medicine-anatomy-deep";
+import type {DeepChapter,DeepQuestion} from "./medicine-anatomy-deep";
 import styles from "./medicine-deep-chapter.module.css";
 
 type View="aulas"|"questoes"|"resumo";
 type SavedProgress={visited:number[];results:Record<string,boolean>};
-type Props={topic:MedTopic;onBack:()=>void;onNext:()=>void;onComplete:()=>void;onAnswer:(correct:boolean)=>void};
-function storageKey(id:string){return "eduverso:medicina:anatomia:avanco:"+id;}
+type Props={topic:MedTopic;chapter:DeepChapter;disciplineTitle:string;coverSrc:string;onBack:()=>void;onNext:()=>void;onComplete:()=>void;onAnswer:(correct:boolean)=>void};
+function storageKey(id:string){return "eduverso:medicina:"+(id.startsWith("anatomia-humana-")?"anatomia:avanco:":"histologia:avanco:")+id;}
 function loadProgress(topicId:string):SavedProgress{
  try{
   const raw=window.localStorage.getItem(storageKey(topicId));
@@ -20,8 +20,7 @@ function loadProgress(topicId:string):SavedProgress{
  }catch{}
  return {visited:[],results:{}};
 }
-export default function MedicineDeepChapter({topic,onBack,onNext,onComplete,onAnswer}:Props){
- const chapter=anatomyByTopic[topic.id];
+export default function MedicineDeepChapter({topic,chapter,disciplineTitle,coverSrc,onBack,onNext,onComplete,onAnswer}:Props){
  const [view,setView]=useState<View>("aulas");
  const [lessonIndex,setLessonIndex]=useState(0);
  const [quizIndex,setQuizIndex]=useState(0);
@@ -76,10 +75,10 @@ export default function MedicineDeepChapter({topic,onBack,onNext,onComplete,onAn
  return <article className={styles.chapter}>
   <div className={styles.chapterHead}>
    <button type="button" className={styles.back} onClick={onBack}>← Voltar aos 6 módulos</button>
-   <span className={styles.kicker}>ANATOMIA HUMANA · MATERIAL APROFUNDADO</span>
+   <span className={styles.kicker}>{disciplineTitle.toUpperCase()} · MATERIAL APROFUNDADO</span>
    <h2>{chapter.title}</h2>
    <div className={styles.metadata}><span>4 aulas</span><span>4 questões comentadas</span><span>≈ {chapter.minutes} min</span></div>
-   <p className={styles.lead}>Este módulo amplia a trilha introdutória do Eduverso com explicações progressivas, aplicação anatômica e revisão por questões.</p>
+   <p className={styles.lead}>Este módulo aprofunda a trilha do Eduverso com explicações progressivas, observação morfológica e revisão por questões.</p>
   </div>
   <div className={styles.progressWrap}>
    <div className={styles.progressTop}><strong>Seu avanço nas aulas</strong><span>{progress.visited.length} de 4 abertas</span></div>
@@ -96,8 +95,8 @@ export default function MedicineDeepChapter({topic,onBack,onNext,onComplete,onAn
     <ul>{chapter.objectives.map(item=><li key={item}>{item}</li>)}</ul>
    </section>
    <figure className={styles.visual}>
-    <img src="/images/medicina/anatomia-humana.png" alt="Ilustração digital do esqueleto humano em vista frontal, referência visual para a disciplina de Anatomia." loading="lazy"/>
-    <figcaption>Ilustração anatômica de referência. As estruturas e planos descritos nas aulas devem ser estudados também em atlas e modelos anatômicos.</figcaption>
+    <img src={coverSrc} alt={"Ilustração de apoio à disciplina "+disciplineTitle+". Não substitui observação de lâminas ou atlas acadêmicos."} loading="lazy"/>
+    <figcaption>Imagem didática ilustrativa. Para reconhecimento de estruturas reais, utilize também atlas, lâminas e modelos de laboratório supervisionado.</figcaption>
    </figure>
    <nav className={styles.lessonNav} aria-label="Selecionar aula">
     {chapter.sections.map((part,i)=><button type="button" key={part.title} aria-current={lessonIndex===i?"step":undefined} className={lessonIndex===i?styles.activeLesson:""} onClick={()=>setLessonIndex(i)}>
@@ -140,6 +139,6 @@ export default function MedicineDeepChapter({topic,onBack,onNext,onComplete,onAn
     <button type="button" className={allCorrect?styles.primary:styles.secondary} onClick={onNext}>{allCorrect?"Módulo concluído ✓ · Próximo →":"Voltar e escolher outro módulo →"}</button>
    </div>
   </section>}
-  <p className={styles.disclaimer}>Material universitário de revisão. As imagens são ilustrativas. Não substitui laboratório anatômico, formação profissional ou prática clínica supervisionada.</p>
+  <p className={styles.disclaimer}>Material universitário de revisão. As imagens são ilustrativas e não substituem observação de lâminas, atlas de referência, laboratório ou formação profissional supervisionada.</p>
  </article>;
 }
