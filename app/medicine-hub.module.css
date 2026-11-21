@@ -83,3 +83,8 @@
 .atlasFeature:hover,.atlasFeature:focus-visible{border-color:#deb7ff}
 .atlasIcon{font-size:32px;flex:none}.atlasFeature span:nth-child(2){display:flex;flex-direction:column;gap:6px;flex:1;min-width:0}.atlasFeature strong{font-size:clamp(17px,2vw,21px)}.atlasFeature small{color:#cdbadd;line-height:1.65;font-size:12px}.atlasArrow{font-size:12px;font-weight:850;color:#e3c2ff;white-space:nowrap}
 @media(max-width:600px){.atlasFeature{padding:15px;gap:10px;flex-wrap:wrap}.atlasIcon{font-size:26px}.atlasArrow{width:100%;padding-left:37px}}
+
+/* Persistent four-way Medicina navigation: the Atlas remains visible in all views. */
+.areaTabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}
+.areaTab{min-height:49px;line-height:1.35;white-space:normal;text-align:center;border-radius:13px}
+@media(max-width:680px){.areaTabs{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.areaTab{min-height:51px;padding:11px 7px;font-size:12px}}

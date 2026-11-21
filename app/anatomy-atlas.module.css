@@ -24,3 +24,7 @@
 .error{padding:16px;color:#ffdddd;background:#442535;border:1px solid #a9687b;border-radius:11px;font-size:12px}
 @media(max-width:760px){.columns{grid-template-columns:1fr}.sidebar{order:-1}.diagram{width:min(100%,380px)}}
 @media(max-width:480px){.metrics div{padding:10px 7px}.metrics strong{font-size:19px}.tabs button{font-size:11px}.dot{width:27px;height:27px;font-size:10px}.title{flex-wrap:wrap}.card{padding:15px}}
+
+/* Mobile learning sequence: instruction → illustration → feedback and action. */
+.mobilePrompt{display:none}
+@media(max-width:760px){.mobilePrompt{display:flex;flex-direction:column;gap:5px;padding:13px 15px;background:#332340;border:1px solid #76568c;border-radius:12px}.mobilePrompt small{font-size:11px;font-weight:850;color:#ceabef;letter-spacing:.08em}.mobilePrompt strong{font-size:19px;line-height:1.3;color:#f6e7ff}.mobilePrompt p{margin:0;font-size:12px;line-height:1.6;color:#d8c5e9}.sidebar{order:initial}}

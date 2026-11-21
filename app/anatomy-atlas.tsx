@@ -53,14 +53,14 @@ export default function AnatomyAtlas(){
   const correct=b.id===target.id;
   setAnswer(b.id);if(correct)setSessionHits(v=>v+1);
   const ms=Math.max(0,Math.min(600000,Date.now()-started.current));
-  setScores(prev=>{const old=prev[target.id]||empty();return {...prev,[target.id]:{...old,hits:old.hits+(correct?1:0),misses:old.misses+(correct?0:1),ms:old.ms+ms,due:old.due||nextReview(1)}};});
+  setScores(prev=>{const old=prev[target.id]||empty();return {...prev,[target.id]:{...old,hits:old.hits+(correct?1:0),misses:old.misses+(correct?0:1),ms:old.ms+ms,due:correct?(old.due||nextReview(1)):new Date().toISOString()}};});
  }
  function nextQuestion(){if(q===bones.length-1){setCompleted(true);}else{setQ(v=>v+1);setAnswer(null);started.current=Date.now();}}
  function grade(recalled:boolean){
   if(!flipped)return;
   setScores(prev=>{
    const old=prev[flash.id]||empty(),level=recalled?Math.min(3,old.level+1):0;
-   return {...prev,[flash.id]:{...old,level,remembered:old.remembered+(recalled?1:0),forgotten:old.forgotten+(recalled?0:1),due:nextReview(recalled?[1,7,30][level-1]:1)}};
+   return {...prev,[flash.id]:{...old,level,remembered:old.remembered+(recalled?1:0),forgotten:old.forgotten+(recalled?0:1),due:recalled?nextReview([1,7,30][level-1]):new Date().toISOString()}};
   });
   setF(v=>(v+1)%bones.length);setFlipped(false);
  }
@@ -69,7 +69,7 @@ export default function AnatomyAtlas(){
   <div className={styles.metrics}>
    <div><strong>{metrics.accuracy}%</strong><small>Acertos em {metrics.attempts} tentativas</small></div>
    <div><strong>{metrics.average}s</strong><small>Tempo médio para identificar</small></div>
-   <div><strong>{metrics.due}</strong><small>Estruturas para revisar</small></div>
+   <div><strong>{metrics.due}</strong><small>Estruturas novas ou pendentes de revisão</small></div>
   </div>
   <div className={styles.tabs} role="group" aria-label="Modos de estudo">
    <button type="button" aria-pressed={mode==="explorar"} className={mode==="explorar"?styles.active:""} onClick={()=>show("explorar")}>🔎 Explorar</button>
@@ -81,6 +81,8 @@ export default function AnatomyAtlas(){
     <p>{mode==="explorar"?"Toque nos números para conhecer cada estrutura.":mode==="desafio"?"Encontre o osso solicitado tocando em um dos pontos.":"Observe o marcador amarelo e responda mentalmente antes de revelar."}</p>
    </div><small>{mode==="explorar"?"12 estruturas":mode==="desafio"?(completed?"Concluído":q+1+" de 12"):f+1+" de 12"}</small></div>
    {mode==="desafio"&&<div className={styles.progress} role="progressbar" aria-label="Progresso do desafio" aria-valuemin={0} aria-valuemax={bones.length} aria-valuenow={completed?bones.length:q}><span style={{width:(100*(completed?bones.length:q)/bones.length)+"%"}}/></div>}
+   {mode==="desafio"&&!completed&&<div className={styles.mobilePrompt}><small>QUESTÃO {q+1} DE {bones.length}</small><strong>Onde está {target.name}?</strong><p>Toque no número correspondente na imagem abaixo.</p></div>}
+   {mode==="flashcards"&&<div className={styles.mobilePrompt}><small>FLASHCARD {f+1} DE {bones.length}</small><strong>Que osso está marcado em amarelo?</strong><p>Recorde o nome antes de revelar a resposta.</p></div>}
    <div className={styles.columns}>
     <div className={styles.imageArea}>
      {imageOk?<div className={styles.diagram}>
