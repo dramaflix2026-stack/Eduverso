@@ -13,7 +13,7 @@ export default function SubjectCourse({subject,topic}:{subject:string;topic:stri
  function selectLesson(i:number){setActive(i);try{const saved=JSON.parse(localStorage.getItem("eduverso-subject-progress-v1")||"{}");saved[key]=i;localStorage.setItem("eduverso-subject-progress-v1",JSON.stringify(saved))}catch{}}
  if(!lessons.length)return <p>Conteúdo desta trilha em preparação.</p>;
  const lesson=lessons[active];
- const questionKey=key+"|"+active+"|"+list+"|"+attempt;
+ const questionKey=key+"|"+active;
  const choice=answers[questionKey];
  const done=checked[questionKey];
  return <div className="subject-course">
