@@ -98,15 +98,6 @@ export default function Landing(){
     </div>
    </section>
 
-   <section className="lp-section lp-container lp-how" id="como-funciona">
-    <div className="lp-section-heading lp-centered"><span className="lp-eyebrow">TRÊS PASSOS, NO SEU RITMO</span><h2>Estudar não precisa ser <em>complicado.</em></h2></div>
-    <div className="lp-how-grid">
-     <article><span>01</span><h3>Escolha seu caminho</h3><p>Encontre sua etapa de estudo e selecione uma disciplina.</p></article>
-     <article><span>02</span><h3>Aprenda e pratique</h3><p>Abra uma trilha, estude o conteúdo e resolva atividades.</p></article>
-     <article><span>03</span><h3>Continue evoluindo</h3><p>Retome seus assuntos e acompanhe seu percurso na conta.</p></article>
-    </div>
-   </section>
-
    <section className="lp-section lp-container lp-faq" id="perguntas">
     <div className="lp-section-heading"><span className="lp-eyebrow">DÚVIDAS FREQUENTES</span><h2>Antes de começar, <em>saiba mais.</em></h2></div>
     <div className="lp-faq-list">
