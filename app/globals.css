@@ -170,3 +170,15 @@
 .featured-home-compact>picture.featured-compact-art{position:absolute;inset:0;width:100%;height:100%;max-width:none;display:block;z-index:0;overflow:hidden}
 .featured-home-compact>picture.featured-compact-art img{width:100%;height:100%;display:block;object-fit:cover;object-position:center 57%}
 @media(max-width:760px){.featured-home-compact>picture.featured-compact-art img{object-position:center 60%}}
+
+/* Identificação de conta: nunca apresentar uma identidade fictícia no modo visitante. */
+.nav-account{display:flex;align-items:center;gap:10px;min-width:0;margin:9px 4px 3px;padding:12px 10px;border-radius:12px;background:#1c182d;border:1px solid #403552;}
+.nav-account-avatar{display:grid;place-items:center;flex:none;height:35px;width:35px;border-radius:50%;background:#7655db;color:white;font-size:14px;font-weight:800;}
+.nav-account-details{display:flex;flex-direction:column;gap:4px;min-width:0;}
+.nav-account-label{color:#f4eaff;font-size:12px;font-weight:750;line-height:1.3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.nav-account-email{color:#c8b7df;font-size:11px;overflow-wrap:anywhere;word-break:break-word;line-height:1.5;}
+.nav-account-guest{color:#968aab;font-size:11px;line-height:1.3;}
+.nav-account-login{color:#cdb5ff;font-size:11px;font-weight:750;text-decoration:none;margin:3px 12px 9px;display:inline-block;}
+.nav-account-login:hover,.nav-account-login:focus-visible{text-decoration:underline;}
+.top-avatar{font-size:14px;letter-spacing:.2px;text-transform:uppercase;flex-shrink:0;}
+@media(max-width:760px){.nav-account{margin:12px 4px 4px;padding:11px 10px}.nav-account-email{font-size:11.5px;}}

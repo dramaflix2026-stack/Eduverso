@@ -1,5 +1,6 @@
 "use client";
 import {useEffect,useState} from "react";
+import Link from "next/link";
 import FractionLesson from "../fraction-lesson";
 import MathCourse from "../math-course";
 import {getMathTopicsByYear} from "../math-curriculum";
@@ -56,6 +57,35 @@ function EnemPastPapers(){
 function EnemArea({name}:{name:string}){const areas:Record<string,{title:string;subject:string;topic:string}[]>={"Linguagens":[{title:"Língua portuguesa e interpretação",subject:"Português",topic:"Interpretação"},{title:"Gramática",subject:"Português",topic:"Gramática"},{title:"Literatura",subject:"Português",topic:"Literatura"},{title:"Língua inglesa",subject:"Inglês",topic:"Vocabulário"},{title:"Língua espanhola",subject:"ENEM e Vestibulares",topic:"Espanhol"},{title:"Artes",subject:"ENEM e Vestibulares",topic:"Artes"},{title:"Educação física",subject:"ENEM e Vestibulares",topic:"Educação física"}],"Ciências Humanas":[{title:"História do Brasil",subject:"História",topic:"História do Brasil"},{title:"História antiga",subject:"História",topic:"História antiga"},{title:"Geografia e geopolítica",subject:"Geografia",topic:"Geopolítica"},{title:"Cartografia",subject:"Geografia",topic:"Cartografia"},{title:"Filosofia",subject:"ENEM e Vestibulares",topic:"Filosofia"},{title:"Sociologia",subject:"ENEM e Vestibulares",topic:"Sociologia"}],"Ciências da Natureza":[{title:"Mecânica",subject:"Física",topic:"Mecânica"},{title:"Energia",subject:"Física",topic:"Energia"},{title:"Eletricidade",subject:"Física",topic:"Eletricidade"},{title:"Átomos",subject:"Química",topic:"Átomos"},{title:"Reações químicas",subject:"Química",topic:"Reações"},{title:"Ecologia",subject:"Biologia",topic:"Ecologia"},{title:"Genética",subject:"Biologia",topic:"Genética"}]};return <section className="subject-course"><div className="subject-lesson"><span className="eyebrow">PREPARAÇÃO ENEM</span><h2>{name}</h2><p>Comece pelos conteúdos já disponíveis no Eduverso. Outros componentes curriculares serão adicionados sem apresentar material incompleto como se estivesse pronto.</p><div className="enem-years">{(areas[name]||[]).map(item=><a className="enem-year" key={item.title} href={"/plataforma?disciplina="+encodeURIComponent(item.subject)+"&trilha="+encodeURIComponent(item.topic)}><span>{item.subject}</span><strong style={{fontSize:19}}>{item.title}</strong><small>Estudar conteúdo ↗</small></a>)}</div></div></section>}
 const extras=[{name:"Minha Biblioteca",symbol:"▤"},{name:"Minha Evolução",symbol:"↗"},{name:"Configurações",symbol:"⚙"}];
 const schoolSubjectNames=["Matemática","Português","Física","Química","Biologia","Anatomia","História","Geografia","Inglês"] as const;
+type AuthenticatedAccount={name:string|null;email:string};
+function normalizeAccount(value:unknown):AuthenticatedAccount|null{
+ if(!value||typeof value!=="object")return null;
+ const p=value as Record<string,unknown>;
+ if(typeof p.email!=="string"||!p.email.includes("@")||p.email.trim().length>254)return null;
+ const name=typeof p.name==="string"&&p.name.trim()?p.name.trim().slice(0,120):null;
+ return {name,email:p.email.trim()};
+}
+function useAuthenticatedAccount(){
+ const [account,setAccount]=useState<AuthenticatedAccount|null>(null);
+ useEffect(()=>{
+  let mounted=true;
+  const abort=new AbortController();
+  async function refreshAccount(){
+   try{
+    const response=await fetch("/api/conta",{method:"GET",cache:"no-store",credentials:"same-origin",signal:abort.signal});
+    if(!response.ok){if(mounted)setAccount(null);return;}
+    const data:unknown=await response.json();
+    const profile=data&&typeof data==="object"?"user" in data?(data as {user:unknown}).user:null:null;
+    if(mounted)setAccount(normalizeAccount(profile));
+   }catch{if(mounted&&!abort.signal.aborted)setAccount(null);}
+  }
+  refreshAccount();
+  const onFocus=()=>refreshAccount();
+  window.addEventListener("focus",onFocus);
+  return()=>{mounted=false;abort.abort();window.removeEventListener("focus",onFocus);};
+ },[]);
+ return account;
+}
 export default function Home(){
 const [schoolYear,setSchoolYear]=useState<0|1|2|3>(0);
 const [schoolOpen,setSchoolOpen]=useState(false);
@@ -64,6 +94,8 @@ const [careerOpen,setCareerOpen]=useState(false);
 const [medicineOpen,setMedicineOpen]=useState(false);
 const [medicineArea,setMedicineArea]=useState<MedicineArea>("faculdade");
 const [prepNavigationVersion,setPrepNavigationVersion]=useState(0);
+const account=useAuthenticatedAccount();
+const avatarLetter=Array.from((account?.name||account?.email||"?").trim())[0]?.toLocaleUpperCase("pt-BR")||"?";
 const [active,setActive]=useState("Início");const [topic,setTopic]=useState<Topic|null>(null);const [menu,setMenu]=useState(false);const [search,setSearch]=useState("");
 const selected=subjects.find(s=>s.name===active);const cards=selected?selected.topics.map(t=>({...t,accent:selected.accent})):subjects.map(s=>({name:s.name,symbol:s.symbol,description:s.description,accent:s.accent}));
 const homeImages:Record<string,string>={"Matemática":"matematica","Português":"portugues","Física":"fisica","Química":"quimica","Biologia":"biologia","Anatomia":"anatomia","História":"historia","Geografia":"geografia","Inglês":"ingles","ENEM e Vestibulares":"enem-e-vestibulares","Concursos":"concursos"};
@@ -145,10 +177,21 @@ return <div className="app-shell">
   </div>
 </nav>
 <div className="side-caption bottom-caption">MINHA ÁREA</div>
-<nav className="side-nav" aria-label="Minha área">{extras.map(e=><button type="button" key={e.name} className={active===e.name?"active":""} onClick={()=>navigate(e.name)}><span>{e.symbol}</span>{e.name}</button>)}</nav>
+<nav className="side-nav" aria-label="Minha área">
+ {extras.filter(e=>e.name!=="Configurações").map(e=><button type="button" key={e.name} className={active===e.name?"active":""} onClick={()=>navigate(e.name)}><span>{e.symbol}</span>{e.name}</button>)}
+ <div className="nav-account" aria-label={account?"Conta autenticada":"Acesso de visitante"}>
+  <span className="nav-account-avatar" aria-hidden="true">{avatarLetter}</span>
+  <div className="nav-account-details">
+   <span className="nav-account-label">{account?.name||"Visitante"}</span>
+   {account?<span className="nav-account-email" title={account.email}>{account.email}</span>:<span className="nav-account-guest">Sem conta conectada</span>}
+  </div>
+ </div>
+ {!account&&<Link className="nav-account-login" href="/entrar" onClick={()=>setMenu(false)}>Entrar na minha conta ↗</Link>}
+ {extras.filter(e=>e.name==="Configurações").map(e=><button type="button" key={e.name} className={active===e.name?"active":""} onClick={()=>navigate(e.name)}><span>{e.symbol}</span>{e.name}</button>)}
+ </nav>
 <div className="side-foot">✦ Seu universo de aprendizado</div>
 </aside>
-<div className="workspace"><header className="topbar"><button className="hamburger" aria-label="Abrir menu" aria-controls="eduverso-menu" aria-expanded={menu} onClick={()=>setMenu(true)}>☰</button><div className="breadcrumb"><button type="button" className="breadcrumb-brand brand-header-home" aria-label="Eduverso — ir para a página inicial" onClick={()=>navigate("Início")}>Eduverso <span>/</span></button><button type="button" className="mobile-brand brand-header-home" aria-label="Eduverso — ir para a página inicial" onClick={()=>navigate("Início")}>✦ Eduverso<span className="period">.</span></button><span className="breadcrumb-current">{active}</span>{topic&&<> <span>/</span> {topic.name}</>}</div><div className="top-avatar" aria-label="Perfil demonstrativo">E</div></header>
+<div className="workspace"><header className="topbar"><button className="hamburger" aria-label="Abrir menu" aria-controls="eduverso-menu" aria-expanded={menu} onClick={()=>setMenu(true)}>☰</button><div className="breadcrumb"><button type="button" className="breadcrumb-brand brand-header-home" aria-label="Eduverso — ir para a página inicial" onClick={()=>navigate("Início")}>Eduverso <span>/</span></button><button type="button" className="mobile-brand brand-header-home" aria-label="Eduverso — ir para a página inicial" onClick={()=>navigate("Início")}>✦ Eduverso<span className="period">.</span></button><span className="breadcrumb-current">{active}</span>{topic&&<> <span>/</span> {topic.name}</>}</div><div className="top-avatar" aria-label={account?"Perfil de "+(account.name||account.email):"Visitante — sem sessão autenticada"} title={account?account.name||account.email:"Visitante"}>{avatarLetter}</div></header>
 <main className="content">
 {active==="Medicina"?<MedicineHub area={medicineArea} onChangeArea={navigateMedicine} onOpenGoal={(cat,goal)=>navigatePreparation(cat,goal)} getSubjectTopics={(subject)=>subjects.find(s=>s.name===subject)?.topics.map(t=>({name:t.name,description:t.description,image:trailImages[subject+"|"+t.name]??(homeImages[subject]?"/images/home/"+homeImages[subject]+".webp":undefined)}))??[]} onOpenTrack={(subject,trail)=>{const match=subjects.find(s=>s.name===subject);const found=match?.topics.find(t=>t.name===trail);if(!match||!found)return;setActive(subject);setTopic(found);setSearch("");setSchoolYear(0);syncUrl(subject,trail);window.scrollTo({top:0,behavior:"smooth"})}}/>:active==="Minha Preparação"?<PreparationHub key={prepNavigationVersion} onOpenTrack={(subject,trail)=>{const match=subjects.find(s=>s.name===subject);const found=match?.topics.find(t=>t.name===trail);if(!match||!found)return;setActive(subject);setTopic(found);setSearch("");setSchoolYear(0);syncUrl(subject,trail);window.scrollTo({top:0,behavior:"smooth"})}}/>:topic&&selected?<><button className="back" onClick={()=>{setTopic(null);syncUrl(active)}}>← Voltar para {selected.name}</button><section className="intro"><span className="eyebrow">TRILHA DE APRENDIZAGEM</span><h1>{topic.name}<span className="period">.</span></h1><p>{topic.description} · {selected.name}</p></section>{active==="Matemática"&&topic.name==="Frações"?<FractionLesson/>:active==="Matemática"?<MathCourse key={topic.name} topic={topic.name}/>:active==="ENEM e Vestibulares"&&topic.name==="Provas Passadas"?<EnemPastPapers/>:active==="ENEM e Vestibulares"&&(topic.name==="Linguagens"||topic.name==="Ciências Humanas"||topic.name==="Ciências da Natureza")?<EnemArea name={topic.name}/>:<SubjectCourse key={active+"|"+topic.name} subject={active} topic={topic.name}/>}</>:
 active==="Ensino Fundamental"?<FundamentalHub/>:active==="Ensino Médio"?<HighSchoolHome subjects={subjects} onOpen={navigate}/>:active==="Início"?<EduversoHome subjects={subjects} onOpen={navigate} onOpenMedicine={navigateMedicine} onOpenPreparation={navigatePreparation} onOpenTopic={(subjectName,trail)=>{const match=subjects.find(s=>s.name===subjectName);const found=match?.topics.find(t=>t.name===trail);if(!match||!found){navigate(subjectName);return}setActive(subjectName);setTopic(found);setSearch("");setSchoolYear(0);syncUrl(subjectName,trail);window.scrollTo({top:0,behavior:"smooth"})}}/>:selected?<><section className="intro"><span className="eyebrow">{selected?"EXPLORE ESTA DISCIPLINA":"SEJA BEM-VINDO AO EDUVERSO"}</span><h1>{selected?selected.name:"Seu conhecimento, sem limites"}<span className="period">.</span></h1><p>{selected?selected.description:"Escolha uma disciplina e descubra um universo de possibilidades. Seu aprendizado começa aqui."}</p></section>{selected?<section className="featured featured-home"><div><span className="featured-tag">✦ UMA NOVA FORMA DE APRENDER</span><h2>Descubra cada assunto.</h2><p>Selecione um tema para acessar sua trilha de aprendizagem.</p></div></section>:<section className="featured featured-home featured-home-compact" aria-label="Explore o Eduverso"><picture className="featured-compact-art"><source media="(max-width: 760px)" srcSet="/images/hero-eduverso/home-mobile.png"/><img src="/images/hero-eduverso/home-desktop.png" alt="Arte educacional com livros e elementos de aprendizado em tons roxos" width={1600} height={900} decoding="async" fetchPriority="high"/></picture><a href="#disciplinas" className="featured-compact-cta">Explorar disciplinas <span aria-hidden="true">→</span></a></section>}<div id="disciplinas" className="section-heading"><div><span className="eyebrow">{selected?"TRILHAS DISPONÍVEIS":"ESCOLHA SEU UNIVERSO"}</span><h2>{selected?"Assuntos de "+selected.name:"Todas as disciplinas"}</h2></div><span className="count">{filtered.length} {selected?"assuntos":"universos"}</span></div>{selected&&active!=="Concursos"&&active!=="ENEM e Vestibulares"&&<div role="group" aria-label={`Filtrar ${active} por ano escolar`} style={{display:"flex",flexWrap:"wrap",gap:10,margin:"18px 0"}}>{([0,1,2,3] as const).map(year=><button key={year} type="button" aria-pressed={schoolYear===year} onClick={()=>setSchoolYear(year)} style={{padding:"11px 16px",borderRadius:12,border:"1px solid #8b5cf6",background:schoolYear===year?"#6d28d9":"#1e1b32",color:"#fff",fontWeight:600,cursor:"pointer"}}>{year===0?"Todas as trilhas":`${year}º ano`}</button>)}<p style={{width:"100%",opacity:.8,fontSize:13,margin:"4px 0"}}>A organização por ano é uma sugestão pedagógica e pode variar conforme a escola. Use “Todas as trilhas” para consultar o catálogo completo.</p></div>}<label className="search"><span>⌕</span><input value={search} onChange={e=>setSearch(e.target.value)} placeholder={selected?"Buscar assunto...":"Buscar disciplina..."} aria-label="Buscar conteúdo"/></label><div className="poster-grid">{filtered.map((c,i)=><button key={c.name} className={"poster "+((!selected||Boolean(trailImages[active+"|"+c.name]))?"poster-photo":"")+(active==="Português"&&Boolean(trailImages[active+"|"+c.name])&&!["Gramática","Interpretação","Redação","Literatura"].includes(c.name)?" poster-portuguese":"")} style={{"--accent":c.accent,"--offset":i%4,...{backgroundImage:(!selected?`linear-gradient(to top, rgba(7,7,19,.97),rgba(7,7,19,.05) 65%),url("/images/home/${homeImages[c.name]}.webp")`:trailImages[active+"|"+c.name]?`linear-gradient(to top, rgba(7,7,19,.97),rgba(7,7,19,.05) 65%),url("${trailImages[active+"|"+c.name]}")`:undefined)}} as React.CSSProperties} onClick={()=>{if(selected){setTopic(selected.topics.find(t=>t.name===c.name)||null);syncUrl(active,c.name);window.scrollTo({top:0,behavior:"smooth"})}else navigate(c.name)}}><span className="poster-glow"/>{!(!selected||Boolean(trailImages[active+"|"+c.name]))&&<span className="poster-symbol">{c.symbol}</span>}<span className="poster-bottom"><span className="poster-kicker">{selected?"TRILHA":"DISCIPLINA"}</span><strong>{c.name}</strong><small>{c.description}</small><span className="poster-action">Explorar ↗</span></span></button>)}</div>{filtered.length===0&&<p className="empty">Nenhum resultado encontrado.</p>}</>:
