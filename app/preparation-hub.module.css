@@ -1,0 +1,60 @@
+
+.hub{display:flex;flex-direction:column;gap:24px;padding-bottom:40px;color:#f7f4ff}
+.hero{border:1px solid #34245a;border-radius:28px;overflow:hidden;background:radial-gradient(circle at 87% 10%,rgba(137,83,255,.35),transparent 40%),radial-gradient(circle at 5% 95%,rgba(73,98,255,.18),transparent 50%),#111020;padding:clamp(24px,5vw,48px);display:grid;grid-template-columns:minmax(0,1fr) auto;gap:20px;align-items:center;position:relative}
+.heroKicker{font-size:12px;text-transform:uppercase;letter-spacing:.18em;font-weight:800;color:#bba1ff;margin-bottom:14px}
+.hero h1{font-size:clamp(28px,5vw,48px);letter-spacing:-.05em;line-height:1.12;margin:0 0 12px;max-width:680px}
+.hero h1 span{color:#a98bff}
+.hero p{color:#bdb5d0;margin:0;max-width:650px;font-size:15px;line-height:1.65}
+.heroVisual{display:grid;place-items:center;width:116px;height:116px;border-radius:30px;background:linear-gradient(145deg,#7038eb,#271956);box-shadow:0 0 65px #683bb45b;font-size:63px;transform:rotate(-8deg)}
+.statRow{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
+.stat{background:#ffffff0b;border:1px solid #ffffff18;padding:9px 12px;border-radius:12px;font-size:13px;color:#c5bcda}
+.stat b{color:#fff;font-size:15px}
+.tools{display:flex;flex-direction:column;gap:13px}
+.groupTabs{display:flex;gap:9px;flex-wrap:wrap}
+.tab{border:1px solid #413563;background:#171428;color:#cfc6e8;border-radius:999px;padding:10px 14px;font:inherit;font-size:13px;font-weight:700;cursor:pointer;transition:background .15s,border-color .15s}
+.tab:hover{border-color:#ac80ff}.tabActive{border-color:#9464ff;background:#6b32ce;color:#fff}
+.search{display:flex;gap:12px;align-items:center;padding:13px 16px;border:1px solid #363147;border-radius:16px;background:#191727;color:#a99cc7}
+.search input{flex:1;min-width:0;background:transparent;color:#fff;outline:0;border:0;font:inherit;font-size:15px}
+.search input::placeholder{color:#8b849e}
+.count{font-size:13px;color:#a99eb9;margin:0}
+.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.goalCard{position:relative;display:flex;flex-direction:column;gap:10px;min-height:218px;padding:20px;text-align:left;border-radius:20px;border:1px solid #332c4f;background:linear-gradient(135deg,#211937 0%,#141323 68%);color:inherit;font:inherit;cursor:pointer;overflow:hidden;transition:transform .17s,border-color .17s}
+.goalCard:before{content:"";position:absolute;width:170px;height:170px;border-radius:50%;background:#8c4aff19;right:-80px;top:-75px}
+.goalCard:hover{transform:translateY(-3px);border-color:#9d76f6}
+.cardBadge{display:flex;gap:8px;align-items:center;font-size:11px;letter-spacing:.04em;text-transform:uppercase;color:#b99dff;font-weight:800}
+.cardIcon{font-size:24px;background:#7c4fdf20;border-radius:10px;width:43px;height:43px;display:grid;place-items:center}
+.goalCard strong{font-size:20px;letter-spacing:-.02em;line-height:1.2;position:relative}
+.goalCard small{font-size:13px;line-height:1.5;color:#b5aeca;position:relative}
+.open{font-size:12px;color:#ceb5ff;font-weight:800;margin-top:auto}
+.empty{padding:40px 20px;text-align:center;border:1px dashed #534468;border-radius:20px;color:#bfb3d5}
+.back{align-self:flex-start;display:inline-flex;align-items:center;gap:8px;background:transparent;color:#d0b9ff;border:0;font:inherit;font-weight:700;cursor:pointer;padding:5px 0}
+.detail{display:flex;flex-direction:column;gap:20px}
+.detailHead{border:1px solid #453366;background:radial-gradient(circle at right top,#3c225a99,transparent 60%),#151122;border-radius:23px;padding:clamp(22px,4vw,34px)}
+.detailTitle{font-size:clamp(28px,5vw,39px);margin:12px 0;font-weight:800;line-height:1.13;letter-spacing:-.035em}
+.detailDesc{font-size:15px;color:#c8bed7;margin:0;line-height:1.65}
+.note{padding:14px 16px;background:#2b253b;border:1px solid #504265;border-radius:14px;color:#d8cde4;font-size:13px;line-height:1.65}
+.pathLink{display:inline-flex;align-items:center;gap:7px;margin-top:15px;color:#d9c0ff;font-weight:700;font-size:13px}
+.field{display:flex;flex-direction:column;gap:9px;margin:18px 0 0}
+.field label{color:#e1d8f5;font-weight:700;font-size:13px}
+.field select{background:#191527;border:1px solid #665485;color:#fff;border-radius:12px;padding:13px 12px;font:inherit;width:100%;max-width:440px}
+.sectionTitle{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.sectionTitle h2{font-size:22px;letter-spacing:-.03em;margin:0}
+.sectionTitle span{color:#afa5c5;font-size:13px}
+.progress{height:8px;background:#292337;border-radius:50px;overflow:hidden}
+.progressFill{height:100%;background:linear-gradient(90deg,#8c52ff,#ca8fff);border-radius:inherit;transition:width .2s}
+.trackGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.track{display:flex;flex-direction:column;gap:13px;padding:17px;border:1px solid #342a50;background:#171427;border-radius:17px}
+.trackTop{display:flex;gap:12px;align-items:flex-start}
+.trackNumber{display:grid;place-items:center;flex-shrink:0;width:34px;height:34px;border-radius:10px;background:#38205a;color:#ceb7ff;font-weight:800;font-size:13px}
+.trackNames{display:flex;flex-direction:column;gap:3px;min-width:0}
+.trackNames strong{font-size:15px}
+.trackNames small{color:#ada0c0;font-size:12px}
+.trackActions{display:flex;flex-wrap:wrap;gap:8px;margin-top:auto}
+.studyButton,.markButton{border-radius:10px;padding:9px 11px;font:inherit;font-size:12px;font-weight:800;cursor:pointer}
+.studyButton{border:1px solid #9465ec;color:white;background:#713ad1}
+.markButton{border:1px solid #514364;color:#c9bee0;background:#241d36}
+.marked{background:#1b433e;border-color:#328f81;color:#acfce6}
+.footer{font-size:12px;line-height:1.6;color:#9990ad}
+@media(max-width:1000px){.cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:640px){.hero{grid-template-columns:1fr;border-radius:22px}.heroVisual{display:none}.cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.goalCard{padding:15px;min-height:210px;border-radius:16px}.goalCard strong{font-size:17px}.cardBadge{font-size:10px}.trackGrid{grid-template-columns:1fr}.tab{font-size:12px;padding:9px 11px}.detailHead{border-radius:18px}.hub{gap:18px}}
+@media(max-width:350px){.cards{grid-template-columns:1fr}.goalCard{min-height:165px}}
