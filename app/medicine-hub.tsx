@@ -5,7 +5,8 @@ import styles from "./medicine-hub.module.css";
 import MedicineMockExam from "./medicine-mock-exam";
 import MedicineEntrance,{type EntranceTopic} from "./medicine-entrance";
 import MedicineDeepChapter from "./medicine-deep-chapter";
-import {anatomyMetrics} from "./medicine-anatomy-deep";
+import {anatomyMetrics,anatomyByTopic} from "./medicine-anatomy-deep";
+import {histologyMetrics,histologyByTopic} from "./medicine-histology-deep";
 
 export type MedicineArea="faculdade"|"vestibular"|"exames";
 type Props={
@@ -143,18 +144,21 @@ export default function MedicineHub({area,onChangeArea,onOpenGoal,onOpenTrack,ge
    <button type="button" className={styles.back} onClick={()=>pushLocation(null,null)}>← Voltar às 18 disciplinas</button>
    <section className={styles.hero}>
     <span className={styles.eyebrow}>{medCycles.find(c=>c.value===currentDiscipline.cycle)?.label} · {currentDiscipline.years}</span><h1>{currentDiscipline.title}<span>.</span></h1><p>{currentDiscipline.description}. Abra uma trilha para acessar explicação, exemplo aplicado e exercício comentado.</p>
-    <div className={styles.stats}><span>{currentDiscipline.topics.length} módulos</span>{currentDiscipline.slug==="anatomia-humana"&&<><span>{anatomyMetrics.lessons} aulas aprofundadas</span><span>{anatomyMetrics.extraQuestions+currentDiscipline.topics.length} questões de revisão</span></>}<span>{currentDiscipline.topics.filter(t=>completed[t.id]).length} revisados corretamente</span></div>
+    <div className={styles.stats}><span>{currentDiscipline.topics.length} módulos</span>{(currentDiscipline.slug==="anatomia-humana"||currentDiscipline.slug==="histologia")&&<><span>{(currentDiscipline.slug==="histologia"?histologyMetrics:anatomyMetrics).lessons} aulas aprofundadas</span><span>{(currentDiscipline.slug==="histologia"?histologyMetrics:anatomyMetrics).extraQuestions+currentDiscipline.topics.length} questões de revisão</span></>}<span>{currentDiscipline.topics.filter(t=>completed[t.id]).length} revisados corretamente</span></div>
    </section>
    <div className={styles.sectionHead}><h2>Assuntos de {currentDiscipline.title}</h2><button type="button" className={styles.primary} onClick={()=>setMockOpen(true)}>📝 Simulado da matéria</button></div>
    <div className={styles.topicGrid}>
     {currentDiscipline.topics.map((t,i)=><button type="button" key={t.id} className={styles.topicCard} onClick={()=>pushLocation(currentDiscipline.slug,t.id)}>
-     <span>{String(i+1).padStart(2,"0")}</span><strong>{t.name}</strong><small>{completed[t.id]?"✓ Módulo concluído":currentDiscipline.slug==="anatomia-humana"?"4 aulas · Aplicação · 4 questões":"Aula, exemplo e questão comentada"}</small><span className={styles.cardAction}>Estudar assunto ↗</span>
+     <span>{String(i+1).padStart(2,"0")}</span><strong>{t.name}</strong><small>{completed[t.id]?"✓ Módulo concluído":(currentDiscipline.slug==="anatomia-humana"||currentDiscipline.slug==="histologia")?"4 aulas · Aplicação · 4 questões":"Aula, exemplo e questão comentada"}</small><span className={styles.cardAction}>Estudar assunto ↗</span>
     </button>)}
    </div>
    {currentDiscipline.slug==="anatomia-humana"&&<div className={styles.resource}><strong>Integração com Anatomia do Eduverso</strong><p>Você também pode explorar as trilhas visuais de ossos, músculos, sistemas corporais e outras estruturas já existentes na plataforma.</p><button className={styles.primary} onClick={()=>onOpenTrack("Anatomia","Sistema ósseo")}>Abrir trilhas de Anatomia ↗</button></div>}
   </>}
-  {area==="faculdade"&&currentDiscipline?.slug==="anatomia-humana"&&currentTopic&&!mockOpen&&
+  {area==="faculdade"&&currentDiscipline&&(currentDiscipline.slug==="anatomia-humana"||currentDiscipline.slug==="histologia")&&currentTopic&&!mockOpen&&
     <MedicineDeepChapter key={currentTopic.id} topic={currentTopic}
+      chapter={currentDiscipline.slug==="histologia"?histologyByTopic[currentTopic.id]:anatomyByTopic[currentTopic.id]}
+      disciplineTitle={currentDiscipline.title}
+      coverSrc={coverAssets[currentDiscipline.slug]??(currentDiscipline.slug==="histologia"?"/images/medicina/histologia.png":"/images/medicina/anatomia-humana.png")}
       onBack={()=>pushLocation(currentDiscipline.slug,null)}
       onNext={nextTopic}
       onComplete={()=>{
@@ -173,7 +177,7 @@ export default function MedicineHub({area,onChangeArea,onOpenGoal,onOpenTrack,ge
         });
       }}
     />}
-  {area==="faculdade"&&currentDiscipline&&currentDiscipline.slug!=="anatomia-humana"&&currentTopic&&!mockOpen&&<>
+  {area==="faculdade"&&currentDiscipline&&currentDiscipline.slug!=="anatomia-humana"&&currentDiscipline.slug!=="histologia"&&currentTopic&&!mockOpen&&<>
    <button type="button" className={styles.back} onClick={()=>pushLocation(currentDiscipline.slug,null)}>← Voltar a {currentDiscipline.title}</button>
    <article className={styles.study}>
     <span className={styles.eyebrow}>{currentDiscipline.title} · Trilha {currentDiscipline.topics.findIndex(t=>t.id===currentTopic.id)+1} de {currentDiscipline.topics.length}</span>
