@@ -13,6 +13,8 @@ type Props={
 };
 type Cycle="todos"|MedCycle;
 const localKey="eduverso:medicina:revisoes:v1";
+const attemptsKey="eduverso:medicina:tentativas:v1";
+type Attempt={right:number;wrong:number};
 const strip=(v:string)=>v.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
 
 export default function MedicineHub({area,onChangeArea,onOpenGoal,onOpenTrack}:Props){
@@ -25,6 +27,7 @@ export default function MedicineHub({area,onChangeArea,onOpenGoal,onOpenTrack}:P
  const [checked,setChecked]=useState(false);
  const [mockOpen,setMockOpen]=useState(false);
  const [completed,setCompleted]=useState<Record<string,boolean>>({});
+ const [attempts,setAttempts]=useState<Record<string,Attempt>>({});
  useEffect(()=>{
   const restore=()=>{
    const params=new URLSearchParams(window.location.search);
@@ -32,7 +35,9 @@ export default function MedicineHub({area,onChangeArea,onOpenGoal,onOpenTrack}:P
    setTopic(params.get("assunto")??null);
   };
   restore();window.addEventListener("popstate",restore);
-  try{const saved=window.localStorage.getItem(localKey);if(saved){const obj=JSON.parse(saved);if(obj&&typeof obj==="object"&&!Array.isArray(obj))setCompleted(obj)}}catch{}
+  try{const saved=window.localStorage.getItem(localKey);if(saved){const obj=JSON.parse(saved);if(obj&&typeof obj==="object"&&!Array.isArray(obj))setCompleted(obj)}
+   const attemptsValue=window.localStorage.getItem(attemptsKey);
+   if(attemptsValue){const obj=JSON.parse(attemptsValue);if(obj&&typeof obj==="object"&&!Array.isArray(obj))setAttempts(obj)}}catch{}
   return()=>window.removeEventListener("popstate",restore);
  },[]);
  const currentDiscipline=getMedDiscipline(discipline);
@@ -54,6 +59,10 @@ export default function MedicineHub({area,onChangeArea,onOpenGoal,onOpenTrack}:P
  function verify(){
   if(chosen===null||!currentTopic)return;
   setChecked(true);
+  const old=attempts[currentTopic.id]??{right:0,wrong:0};
+  const nextAttempts={...attempts,[currentTopic.id]:{right:old.right+(chosen===currentTopic.correct?1:0),wrong:old.wrong+(chosen===currentTopic.correct?0:1)}};
+  setAttempts(nextAttempts);
+  try{window.localStorage.setItem(attemptsKey,JSON.stringify(nextAttempts));}catch{}
   if(chosen===currentTopic.correct){
    const next={...completed,[currentTopic.id]:true};setCompleted(next);
    try{window.localStorage.setItem(localKey,JSON.stringify(next));}catch{}
@@ -66,6 +75,7 @@ export default function MedicineHub({area,onChangeArea,onOpenGoal,onOpenTrack}:P
   else pushLocation(currentDiscipline.slug,null);
  }
  const studiedCount=medicineDisciplines.reduce((total,d)=>total+d.topics.filter(t=>completed[t.id]).length,0);
+ const suggestedReviews=medicineDisciplines.flatMap(d=>d.topics.map(t=>({discipline:d.slug,disciplineTitle:d.title,topic:t,errors:attempts[t.id]?.wrong??0,acertos:attempts[t.id]?.right??0}))).filter(v=>v.errors>0).sort((a,b)=>(b.errors-b.acertos)-(a.errors-a.acertos)||b.errors-a.errors).slice(0,4);
  return <div className={styles.med}>
   <section className={styles.hero}>
    <span className={styles.eyebrow}>✦ Eduverso Medicina</span>
@@ -119,6 +129,9 @@ export default function MedicineHub({area,onChangeArea,onOpenGoal,onOpenTrack}:P
     <label className={styles.search}><span aria-hidden="true">⌕</span><input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Buscar disciplina ou assunto..." aria-label="Buscar disciplinas de Medicina"/></label>
     <p className={styles.note}>Divisão por ciclos e anos é orientativa: universidades podem adotar currículos integrados e sequências próprias. {studiedCount} de 108 assuntos concluídos corretamente neste navegador.</p>
    </div>
+   {suggestedReviews.length>0&&<div className={styles.resource}><strong>🧠 Revisão recomendada pelo seu desempenho</strong><p>Assuntos em que você teve erros são priorizados. Essa recomendação é baseada nas suas respostas, sem geração de IA ou avaliação médica.</p>
+    <div className={styles.actions}>{suggestedReviews.map(v=><button key={v.topic.id} type="button" className={styles.secondary} onClick={()=>pushLocation(v.discipline,v.topic.id)}>{v.disciplineTitle}: {v.topic.name} ({v.errors} {v.errors===1?"erro":"erros"}) ↗</button>)}</div>
+   </div>}
    {visible.length?<div className={styles.discGrid} aria-label="Disciplinas da Faculdade de Medicina">
     {visible.map(d=><button type="button" key={d.slug} className={styles.disciplineCard} onClick={()=>pushLocation(d.slug,null)}>
      <img className={styles.cardImage} src={d.image} loading="lazy" alt=""/>
