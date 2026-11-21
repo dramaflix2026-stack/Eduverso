@@ -72,10 +72,32 @@ export function authResponse(request:NextRequest,data:unknown,status=200,session
  if(session?.renewed)writeTokens(response,session.renewed);
  return response;
 }
+/**
+ * Railway can forward a request to an internal hostname even though the browser
+ * submitted it from the app's public HTTPS domain. Use only a configured public
+ * origin for CSRF validation; never trust unverified forwarded-host headers.
+ */
+export function publicOrigin(request:NextRequest){
+ const configured=process.env.EDUVERSO_PUBLIC_URL||process.env.RAILWAY_PUBLIC_DOMAIN;
+ if(configured){
+  const url=new URL(configured.startsWith("https://")?configured:"https://"+configured);
+  if(url.protocol!=="https:"||url.username||url.password||url.pathname!=="/"||url.search||url.hash)
+   throw new Error("Invalid Eduverso public origin configuration");
+  return url.origin;
+ }
+ if(process.env.NODE_ENV!=="production")return request.nextUrl.origin;
+ throw new Error("Eduverso public origin must be configured");
+}
 export function sameOrigin(request:NextRequest){
  const origin=request.headers.get("origin");
  const fetchSite=request.headers.get("sec-fetch-site");
- return (!origin||origin===request.nextUrl.origin)&&(!fetchSite||fetchSite==="same-origin"||fetchSite==="none");
+ if(fetchSite&&fetchSite!=="same-origin"&&fetchSite!=="none")return false;
+ try{
+  // Modern browsers send an Origin on form POSTs. Accept requests without one
+  // only when Fetch Metadata explicitly confirms same-origin navigation.
+  if(!origin)return fetchSite==="same-origin";
+  return new URL(origin).origin===publicOrigin(request)&&origin===publicOrigin(request);
+ }catch{return false;}
 }
 export async function ensureProfile(session:Session){
  const metadata=session.user.user_metadata||{};

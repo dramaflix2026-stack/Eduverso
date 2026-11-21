@@ -1,5 +1,5 @@
 import {NextRequest,NextResponse} from "next/server";
-import {safeError,sameOrigin,supabaseRequest,writeTokens} from "../../../lib/eduverso-auth";
+import {publicOrigin,safeError,sameOrigin,supabaseRequest,writeTokens} from "../../../lib/eduverso-auth";
 export const dynamic="force-dynamic";
 type Signup={user?:{id:string};access_token?:string;refresh_token?:string;expires_in?:number};
 export async function POST(request:NextRequest){
@@ -12,7 +12,7 @@ export async function POST(request:NextRequest){
   const confirm=typeof input.confirm==="string"?input.confirm:"";
   if(name.length<2||name.length>120||email.length>254||!/^\S+@\S+\.\S+$/.test(email)||password.length<8||password.length>128||password!==confirm)
    return NextResponse.json({error:"Confira nome, e-mail e senhas (mínimo de 8 caracteres, duas senhas iguais)."},{status:400});
-  const redirect=new URL("/entrar?confirmado=1",request.nextUrl.origin).toString();
+  const redirect=new URL("/entrar?confirmado=1",publicOrigin(request)).toString();
   const result=await supabaseRequest<Signup&{error_code?:string}>("/auth/v1/signup?redirect_to="+encodeURIComponent(redirect),{
    method:"POST",body:{email,password,data:{full_name:name,app:"eduverso"}}
   });
