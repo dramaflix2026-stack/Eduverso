@@ -508,3 +508,74 @@
  .lp-demo-view{min-height:0}
  .edu-lp .lp-final{margin-top:55px;margin-bottom:38px;padding:32px 17px}
 }
+
+
+/* Guarantee of 7 days + premium editorial footer */
+.edu-lp .lp-final{margin-bottom:0}
+.lp-guarantee{position:relative;display:grid;grid-template-columns:120px minmax(0,1fr) auto;align-items:center;column-gap:25px;margin-top:20px;margin-bottom:76px;padding:26px 28px;border-radius:22px;border:1px solid #6f548d;background:linear-gradient(125deg,#20152f 0%,#171322 65%,#20132b 100%);box-shadow:0 13px 44px #03010730;isolation:isolate}
+.lp-guarantee:before{content:"";position:absolute;z-index:-1;left:-1px;top:12px;bottom:12px;width:4px;border-radius:3px;background:linear-gradient(#b592fc,#7540cb)}
+.lp-guarantee-seal{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;width:110px;height:110px;border-radius:50%;border:2px solid #b797ff;background:radial-gradient(circle at 35% 24%,#7651a8 0%,#35204d 55%,#251832 100%);box-shadow:0 0 0 7px #8b5aca18,inset 0 0 23px #bc9fff1f;color:#fff;line-height:1}
+.lp-guarantee-seal strong{font-size:48px;font-weight:900;letter-spacing:-2px;margin-top:5px}
+.lp-guarantee-seal>span:last-child{font-size:13px;letter-spacing:2px;font-weight:900;color:#dccaff;margin-top:3px}
+.lp-guarantee-seal .lp-guarantee-spark{position:absolute;top:3px;right:7px;color:#dec6ff;font-size:16px}
+.lp-guarantee-copy{min-width:0}
+.lp-guarantee .lp-eyebrow{font-size:10px;letter-spacing:1.7px}
+.lp-guarantee h2{font-size:clamp(22px,2.8vw,32px);line-height:1.17;letter-spacing:-.9px;margin:8px 0}
+.lp-guarantee p{max-width:660px;font-size:13px;line-height:1.65;color:#d0c5df;margin:0 0 8px}
+.lp-guarantee-footnote{display:block;max-width:670px;font-size:10px;line-height:1.55;color:#aa9abd}
+.lp-guarantee-link{white-space:nowrap;align-self:center;border-radius:12px;border:1px solid #8866ad;background:#342047;color:#f8efff!important;display:inline-flex;gap:17px;align-items:center;justify-content:center;padding:14px 17px;font-size:12px;font-weight:800;transition:background .2s,border-color .2s,transform .2s}
+.lp-guarantee-link:hover{background:#523078;border-color:#b78dec;transform:translateY(-2px)}
+.lp-guarantee-link>span{font-size:17px;color:#caafff}
+.edu-lp .lp-footer{position:relative;overflow:hidden;background:linear-gradient(155deg,#141022 0%,#0b0a17 62%,#090812 100%);border-top:1px solid #9472cc4d}
+.lp-footer-ambient{pointer-events:none;position:absolute;top:-215px;left:-205px;width:570px;height:570px;background:radial-gradient(circle,#673b9b30 0%,transparent 67%)}
+.lp-footer-main{position:relative;display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:80px;padding-top:66px;padding-bottom:57px}
+.lp-footer-brand{max-width:385px}
+.lp-footer-brand .lp-logo{font-size:27px;font-weight:900;letter-spacing:-1.3px}
+.lp-footer-brand .lp-mark{width:45px;height:45px;border-radius:13px;font-size:28px;box-shadow:0 7px 22px #9f76ff31}
+.lp-footer-brand p{font-size:14px;line-height:1.75;color:#bdb0cf;margin:23px 0 23px}
+.lp-footer-brand-pills{display:flex;flex-wrap:wrap;gap:7px}
+.lp-footer-brand-pills span{border:1px solid #66517c8f;border-radius:999px;background:#ffffff04;font-size:10px;color:#c4b5da;padding:7px 10px;white-space:nowrap}
+.lp-footer-navigation{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:36px}
+.lp-footer-column{display:flex;flex-direction:column;align-items:flex-start;gap:17px}
+.lp-footer-column h3{font-size:13px;font-weight:900;color:#f5eaff;margin:9px 0 7px}
+.lp-footer-column a{font-size:12px;line-height:1.45;color:#bdb0cf!important;transition:color .16s,transform .16s}
+.lp-footer-column a:hover{color:#d5b8ff!important;transform:translateX(3px)}
+.lp-footer-bottom{display:flex;align-items:center;justify-content:space-between;gap:18px;min-height:75px;border-top:1px solid #ffffff1c;padding-top:17px;padding-bottom:18px}
+.lp-footer-bottom small,.lp-footer-bottom>span{font-size:11px;line-height:1.5;color:#9389a5}
+.lp-footer-bottom>a{font-size:11px;font-weight:800;color:#d4bafb;white-space:nowrap}
+.lp-footer-bottom>a span{margin-left:6px;font-size:16px}
+.lp-footer-bottom>a:hover{color:#fff}
+@media(max-width:900px){
+ .lp-guarantee{grid-template-columns:100px minmax(0,1fr);gap:17px;padding:23px}
+ .lp-guarantee-seal{width:90px;height:90px}
+ .lp-guarantee-seal strong{font-size:41px}
+ .lp-guarantee-link{grid-column:2;justify-self:start;margin-top:1px}
+ .lp-footer-main{gap:45px}
+}
+@media(max-width:560px){
+ .edu-lp .lp-final{margin-bottom:0}
+ .lp-guarantee{grid-template-columns:66px minmax(0,1fr);gap:12px;padding:20px 15px 18px;margin-top:14px;margin-bottom:45px;border-radius:18px}
+ .lp-guarantee-seal{width:60px;height:60px;border-width:1px;box-shadow:0 0 0 4px #8b5aca18}
+ .lp-guarantee-seal strong{font-size:27px;margin-top:5px;letter-spacing:-1px}
+ .lp-guarantee-seal>span:last-child{font-size:8px;letter-spacing:1.3px;margin-top:1px}
+ .lp-guarantee-seal .lp-guarantee-spark{font-size:10px;right:5px;top:0}
+ .lp-guarantee .lp-eyebrow{font-size:9px;letter-spacing:1.05px}
+ .lp-guarantee h2{font-size:21px;line-height:1.17;margin:7px 0}
+ .lp-guarantee p{font-size:11px;line-height:1.6;margin-bottom:8px}
+ .lp-guarantee-footnote{font-size:9px;line-height:1.5}
+ .lp-guarantee-link{grid-column:1/-1;justify-self:stretch;min-height:43px;margin-top:2px}
+ .lp-footer-main{grid-template-columns:1fr;gap:29px;padding-top:39px;padding-bottom:29px}
+ .lp-footer-brand .lp-logo{font-size:25px}
+ .lp-footer-brand .lp-mark{width:42px;height:42px}
+ .lp-footer-brand p{font-size:12px;line-height:1.65;margin:17px 0}
+ .lp-footer-brand-pills{gap:5px}
+ .lp-footer-brand-pills span{font-size:9px;padding:6px 8px}
+ .lp-footer-navigation{grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
+ .lp-footer-column{gap:14px}
+ .lp-footer-column h3{margin:0 0 3px;font-size:12px}
+ .lp-footer-column a{font-size:11px}
+ .lp-footer-bottom{flex-wrap:wrap;gap:12px;min-height:0;padding-top:21px;padding-bottom:26px}
+ .lp-footer-bottom small{flex:1 1 65%;font-size:10px}
+ .lp-footer-bottom>span{order:3;flex-basis:100%;font-size:10px}
+ .lp-footer-bottom>a{font-size:10px}
+}

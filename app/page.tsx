@@ -7,7 +7,7 @@ import "./landing.css";
 const go=(name:string)=>"/plataforma?disciplina="+encodeURIComponent(name);
 export default function Landing(){
  return <div className="edu-lp">
-  <header className="lp-header">
+  <header className="lp-header" id="topo">
    <div className="lp-container lp-header-inner">
     <Link href="/" className="lp-logo" aria-label="Eduverso — início"><span className="lp-mark" aria-hidden="true">✦</span><strong>Eduverso<span>.</span></strong></Link>
     <nav className="lp-nav" aria-label="Navegação principal">
@@ -88,13 +88,52 @@ export default function Landing(){
     <div className="lp-final-actions"><a href="#planos" className="lp-button">Ver os 3 planos <span aria-hidden="true">↗</span></a><a href="#produto" className="lp-outline">Testar demonstração <span aria-hidden="true">→</span></a></div>
     <small>Valores exibidos para escolha. O cadastro não realiza cobrança nem libera planos pagos automaticamente.</small>
    </section>
+
+   <section className="lp-container lp-guarantee" aria-labelledby="lp-guarantee-title">
+    <div className="lp-guarantee-seal" aria-hidden="true">
+     <span className="lp-guarantee-spark">✦</span>
+     <strong>7</strong>
+     <span>DIAS</span>
+    </div>
+    <div className="lp-guarantee-copy">
+     <span className="lp-eyebrow">MAIS SEGURANÇA NA SUA DECISÃO</span>
+     <h2 id="lp-guarantee-title">Você tem <em>7 dias de garantia.</em></h2>
+     <p>Contratou e mudou de ideia? Você poderá solicitar o cancelamento e o reembolso em até 7 dias após a compra, pelos canais de atendimento informados na contratação.</p>
+     <span className="lp-guarantee-footnote">A garantia é válida para compras efetivamente realizadas. O cadastro, por si só, não gera cobrança.</span>
+    </div>
+    <a className="lp-guarantee-link" href="#planos" aria-label="Comparar planos do Eduverso">Ver planos <span aria-hidden="true">↗</span></a>
+   </section>
   </main>
+
   <footer className="lp-footer">
-   <div className="lp-container lp-footer-inner">
-    <Link href="/" className="lp-logo"><span className="lp-mark" aria-hidden="true">✦</span><strong>Eduverso<span>.</span></strong></Link>
-    <span>Seu universo de aprendizado.</span>
-    <nav aria-label="Rodapé"><a href="#produto">A plataforma</a><a href="#planos">Planos</a><Link href="/entrar">Entrar</Link></nav>
-    <small>© {new Date().getFullYear()} Eduverso</small>
+   <div className="lp-footer-ambient" aria-hidden="true"/>
+   <div className="lp-container lp-footer-main">
+    <div className="lp-footer-brand">
+     <Link href="/" className="lp-logo" aria-label="Eduverso — página inicial"><span className="lp-mark" aria-hidden="true">✦</span><strong>Eduverso<span>.</span></strong></Link>
+     <p>Seu universo de aprendizado. Descubra novos caminhos, pratique com propósito e evolua no seu ritmo.</p>
+     <div className="lp-footer-brand-pills" aria-label="Diferenciais do Eduverso">
+      <span>✦ Conhecimento</span><span>✦ Prática</span><span>✦ Evolução</span>
+     </div>
+    </div>
+    <div className="lp-footer-navigation">
+     <nav className="lp-footer-column" aria-label="Explorar o Eduverso">
+      <h3>Explore</h3>
+      <a href="#produto">Conhecer a plataforma</a>
+      <a href="#planos">Planos e preços</a>
+      <Link href="/plataforma">Ver demonstração</Link>
+     </nav>
+     <nav className="lp-footer-column" aria-label="Acesso à conta">
+      <h3>Sua jornada</h3>
+      <Link href="/cadastro">Criar minha conta</Link>
+      <Link href="/entrar">Entrar</Link>
+      <Link href="/plataforma">Acessar estudos</Link>
+     </nav>
+    </div>
+   </div>
+   <div className="lp-container lp-footer-bottom">
+    <small>© {new Date().getFullYear()} Eduverso. Todos os direitos reservados.</small>
+    <span>Aprender é descobrir possibilidades.</span>
+    <a href="#topo">Voltar ao topo <span aria-hidden="true">↑</span></a>
    </div>
   </footer>
  </div>;
