@@ -98,16 +98,6 @@ export default function Landing(){
     </div>
    </section>
 
-   <section className="lp-section lp-container lp-faq" id="perguntas">
-    <div className="lp-section-heading"><span className="lp-eyebrow">DÚVIDAS FREQUENTES</span><h2>Antes de começar, <em>saiba mais.</em></h2></div>
-    <div className="lp-faq-list">
-     <details><summary>Quais áreas posso estudar no Eduverso?<span aria-hidden="true">+</span></summary><p>Há conteúdos do Ensino Fundamental e Médio, preparação para ENEM e concursos e uma área específica para Medicina. Cada área tem uma organização própria.</p></details>
-     <details><summary>Posso conhecer a plataforma antes?<span aria-hidden="true">+</span></summary><p>Sim. Use a demonstração desta página para explorar as experiências disponíveis e conhecer a navegação.</p></details>
-     <details><summary>O Eduverso funciona no celular?<span aria-hidden="true">+</span></summary><p>Sim. A plataforma é acessível pelo navegador do celular e também pelo computador.</p></details>
-     <details><summary>Criar minha conta libera o conteúdo pago?<span aria-hidden="true">+</span></summary><p>O cadastro identifica o aluno, mas a liberação definitiva de conteúdos pagos depende da confirmação da compra.</p></details>
-    </div>
-   </section>
-
    <section className="lp-container lp-final">
     <span className="lp-eyebrow">SUA PRÓXIMA CONQUISTA COMEÇA AQUI</span>
     <h2>Um universo de aprendizado. <em>Um caminho só seu.</em></h2>
