@@ -14,6 +14,7 @@ export default function EnemPdfViewer({src,officialUrl,title}:Props){
  const [loading,setLoading]=useState(true);
  const [rendering,setRendering]=useState(false);
  const [error,setError]=useState<string|null>(null);
+ const [retry,setRetry]=useState(0);
  useEffect(()=>{
   const node=frameRef.current;
   if(!node)return;
@@ -42,7 +43,7 @@ export default function EnemPdfViewer({src,officialUrl,title}:Props){
    cancelled=true;
    if(task)void task.destroy().catch(()=>{});
   };
- },[src]);
+ },[src,retry]);
  useEffect(()=>{
   if(!doc)return;
   let cancelled=false;
@@ -83,7 +84,7 @@ export default function EnemPdfViewer({src,officialUrl,title}:Props){
   </div>
   <div className={styles.readerActions}>
    <a href={officialUrl} target="_blank" rel="noopener noreferrer">↗ Abrir PDF oficial</a>
-   <a href={officialUrl} target="_blank" rel="noopener noreferrer" download>↓ Baixar PDF</a>
+   <a href={src} download={title.toLowerCase().replace(/[^a-z0-9]+/g,"-")+".pdf"}>↓ Baixar PDF</a>
   </div>
   {numPages>0&&<div className={styles.pageBar} role="group" aria-label="Navegação pelas páginas">
    <button type="button" disabled={page<=1} onClick={()=>setPage(n=>Math.max(1,n-1))}>← Anterior</button>
@@ -92,7 +93,7 @@ export default function EnemPdfViewer({src,officialUrl,title}:Props){
   </div>}
   <div className={styles.viewerFrame} ref={frameRef}>
    {(loading||rendering)&&!error&&<div className={styles.loader} role="status">{loading?"Carregando documento oficial...":"Renderizando página "+page+"..."}</div>}
-   {error?<div role="alert" className={styles.readerError}><strong>O PDF não carregou.</strong><p>{error}</p><a href={officialUrl} target="_blank" rel="noopener noreferrer">Abrir documento original ↗</a></div>:<canvas ref={canvasRef} className={styles.pageCanvas} aria-label={`Página ${page} de ${numPages||"?"} do PDF`}/>}
+   {error?<div role="alert" className={styles.readerError}><strong>O PDF não carregou.</strong><p>{error}</p><button type="button" onClick={()=>setRetry(n=>n+1)}>Tentar novamente</button><a href={officialUrl} target="_blank" rel="noopener noreferrer">Abrir documento original ↗</a></div>:<canvas ref={canvasRef} className={styles.pageCanvas} aria-label={`Página ${page} de ${numPages||"?"} do PDF`}/>}
   </div>
   {numPages>1&&<div className={styles.pageBar} role="group" aria-label="Navegação inferior das páginas">
    <button type="button" disabled={page<=1} onClick={()=>setPage(n=>Math.max(1,n-1))}>← Página anterior</button>
