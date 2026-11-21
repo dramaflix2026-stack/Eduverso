@@ -1,1 +1,40 @@
-"use client";import Link from "next/link";import {useState} from "react";import "../auth.css";export default function Entrar(){const [notice,setNotice]=useState(false);return <main className="auth-shell"><section className="auth-panel"><Link href="/" className="auth-logo">✦ Eduverso<span>.</span></Link><div className="auth-tag">BEM-VINDO DE VOLTA</div><h1>Entre no seu universo.</h1><p>O acesso por conta estará disponível quando a autenticação for integrada. Por enquanto, você pode explorar as aulas sem login.</p><form onSubmit={e=>{e.preventDefault();setNotice(true)}}><label htmlFor="email">E-mail</label><input id="email" type="email" required autoComplete="email" placeholder="seu@email.com"/><label htmlFor="password">Senha</label><input id="password" type="password" required autoComplete="current-password" placeholder="Sua senha"/><button type="submit">Entrar →</button>{notice&&<div className="auth-notice" role="status">Login ainda não disponível: a autenticação e o banco de dados não estão conectados. Nenhuma credencial foi enviada ou armazenada.</div>}</form><div className="auth-footer">Ainda não tem conta? <Link href="/cadastro">Cadastre-se</Link></div><Link className="auth-explore" href="/plataforma">Explorar a plataforma sem login ↗</Link></section></main>}
+"use client";
+import Link from "next/link";
+import {useRouter} from "next/navigation";
+import {FormEvent,useState} from "react";
+import "../auth.css";
+export default function Entrar(){
+ const router=useRouter();
+ const [email,setEmail]=useState("");
+ const [password,setPassword]=useState("");
+ const [busy,setBusy]=useState(false);
+ const [notice,setNotice]=useState("");
+ const [error,setError]=useState("");
+ async function submit(event:FormEvent<HTMLFormElement>){
+  event.preventDefault();setBusy(true);setError("");setNotice("");
+  try{
+   const response=await fetch("/api/auth/entrar",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",body:JSON.stringify({email,password})});
+   const data=await response.json();
+   if(!response.ok){setError(typeof data.error==="string"?data.error:"Não foi possível entrar.");return;}
+   router.push("/plataforma");
+   router.refresh();
+  }catch{setError("Não foi possível conectar ao servidor. Tente novamente.");}
+  finally{setBusy(false);}
+ }
+ return <main className="auth-shell"><section className="auth-panel">
+  <Link href="/" className="auth-logo">✦ Eduverso<span>.</span></Link>
+  <div className="auth-tag">BEM-VINDO DE VOLTA</div><h1>Entre no seu universo.</h1>
+  <p>Use o e-mail e a senha cadastrados para acompanhar seu aprendizado.</p>
+  <form onSubmit={submit}>
+   <label htmlFor="email">E-mail</label>
+   <input id="email" value={email} onChange={e=>setEmail(e.target.value)} type="email" required autoComplete="email" placeholder="seu@email.com" maxLength={254}/>
+   <label htmlFor="password">Senha</label>
+   <input id="password" value={password} onChange={e=>setPassword(e.target.value)} type="password" required autoComplete="current-password" placeholder="Sua senha"/>
+   <button type="submit" disabled={busy}>{busy?"Entrando...":"Entrar na plataforma →"}</button>
+   {error&&<div className="auth-notice auth-error" role="alert">{error}</div>}
+   {notice&&<div className="auth-notice" role="status">{notice}</div>}
+  </form>
+  <div className="auth-footer">Ainda não tem conta? <Link href="/cadastro">Cadastre-se</Link></div>
+  <Link className="auth-explore" href="/plataforma">Explorar a versão de demonstração ↗</Link>
+ </section></main>
+}

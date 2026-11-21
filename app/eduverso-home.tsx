@@ -36,6 +36,15 @@ export default function EduversoHome({subjects,onOpen,onOpenMedicine,onOpenPrepa
    const value=JSON.parse(localStorage.getItem("eduverso:recent")||"null");
    if(value&&typeof value.label==="string"&&typeof value.href==="string"&&value.href.startsWith("/plataforma?"))setRecent(value);
   }catch{/* Browsing without saved history is supported */}
+  const controller=new AbortController();
+  fetch("/api/progresso",{credentials:"same-origin",cache:"no-store",signal:controller.signal})
+   .then(r=>r.ok?r.json():null)
+   .then(data=>{const last=data?.items?.[0];if(!last||typeof last.subject!=="string")return;
+     const params=new URLSearchParams({disciplina:last.subject});
+     if(last.topic)params.set("trilha",last.topic);
+     setRecent({label:last.topic?last.subject+" · "+last.topic:last.subject,detail:"Seu último estudo salvo na conta",href:"/plataforma?"+params.toString()});
+   }).catch(()=>{});
+  return()=>controller.abort();
  },[]);
  const go=(key:string)=>{
   switch(key){

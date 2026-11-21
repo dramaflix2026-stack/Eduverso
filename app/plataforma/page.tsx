@@ -104,6 +104,7 @@ const yearTopics=schoolYear===0?null:(active==="Matemática"?getMathTopicsByYear
 const filtered=cards.filter(c=>c.name.toLowerCase().includes(search.toLowerCase())&&(!selected||schoolYear===0||Boolean(yearTopics?.includes(c.name))));
 function syncUrl(subject:string,trail?:string){const url=new URL(window.location.href);if(subject!=="Minha Preparação"){url.searchParams.delete("objetivo");url.searchParams.delete("categoria");}if(subject!=="Medicina"){url.searchParams.delete("area");url.searchParams.delete("materia");url.searchParams.delete("assunto");url.searchParams.delete("vestMateria");url.searchParams.delete("atlas");}if(subject!=="Ensino Fundamental"){url.searchParams.delete("fundAno");url.searchParams.delete("fundMateria");url.searchParams.delete("fundAssunto");}if(subject==="Início")url.searchParams.delete("disciplina");else url.searchParams.set("disciplina",subject);if(trail)url.searchParams.set("trilha",trail);else url.searchParams.delete("trilha");window.history.pushState({},"",url.pathname+url.search+url.hash);
  if(subject!=="Início"&&!extras.some(e=>e.name===subject))try{localStorage.setItem("eduverso:recent",JSON.stringify({label:trail?subject+" · "+trail:subject,detail:trail?"Retomar este assunto":"Abrir área de estudos",href:url.pathname+url.search}))}catch{}
+ if(account&&subject!=="Início")void fetch("/api/progresso",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",body:JSON.stringify({area:subject==="Medicina"?"medicina":subject==="Ensino Fundamental"?"fundamental":subject==="Ensino Médio"?"medio":"geral",subject,topic:trail||""}),keepalive:true}).catch(()=>{});
 }
 function navigate(name:string){setActive(name);setTopic(null);setSearch("");setSchoolYear(0);setMenu(false);if(schoolSubjectNames.some(s=>s===name)){setSchoolOpen(true);setHighSchoolOpen(true)}if(name==="Ensino Fundamental"||name==="Ensino Médio"){setSchoolOpen(true);setHighSchoolOpen(true)}if(name==="ENEM e Vestibulares"||name==="Concursos")setCareerOpen(true);syncUrl(name);window.scrollTo({top:0,behavior:"smooth"})}
 function navigateMedicine(area:MedicineArea="faculdade"){
@@ -187,6 +188,7 @@ return <div className="app-shell">
   </div>
  </div>
  {!account&&<Link className="nav-account-login" href="/entrar" onClick={()=>setMenu(false)}>Entrar na minha conta ↗</Link>}
+ {account&&<button type="button" className="nav-account-logout" onClick={async()=>{try{await fetch("/api/auth/sair",{method:"POST",credentials:"same-origin"});}finally{window.location.assign("/entrar");}}}>↪ Sair da minha conta</button>}
  {extras.filter(e=>e.name==="Configurações").map(e=><button type="button" key={e.name} className={active===e.name?"active":""} onClick={()=>navigate(e.name)}><span>{e.symbol}</span>{e.name}</button>)}
  </nav>
 <div className="side-foot">✦ Seu universo de aprendizado</div>
