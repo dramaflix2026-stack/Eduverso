@@ -3,6 +3,7 @@ import {useEffect,useMemo,useState} from "react";
 import {getMedDiscipline,medicineDisciplines,medCycles,type MedCycle} from "./medicine-curriculum";
 import styles from "./medicine-hub.module.css";
 import MedicineMockExam from "./medicine-mock-exam";
+import MedicineEntrance,{type EntranceTopic} from "./medicine-entrance";
 
 export type MedicineArea="faculdade"|"vestibular"|"exames";
 type Props={
@@ -10,6 +11,7 @@ type Props={
  onChangeArea:(next:MedicineArea)=>void;
  onOpenGoal:(category:"vestibulares"|"cursos"|"profissionais",goal?:string)=>void;
  onOpenTrack:(subject:string,topic:string)=>void;
+ getSubjectTopics:(subject:string)=>EntranceTopic[];
 };
 type Cycle="todos"|MedCycle;
 const localKey="eduverso:medicina:revisoes:v1";
@@ -17,7 +19,7 @@ const attemptsKey="eduverso:medicina:tentativas:v1";
 type Attempt={right:number;wrong:number};
 const strip=(v:string)=>v.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
 
-export default function MedicineHub({area,onChangeArea,onOpenGoal,onOpenTrack}:Props){
+export default function MedicineHub({area,onChangeArea,onOpenGoal,onOpenTrack,getSubjectTopics}:Props){
  const [cycle,setCycle]=useState<Cycle>("todos");
  const [year,setYear]=useState(0);
  const [search,setSearch]=useState("");
@@ -77,32 +79,20 @@ export default function MedicineHub({area,onChangeArea,onOpenGoal,onOpenTrack}:P
  const studiedCount=medicineDisciplines.reduce((total,d)=>total+d.topics.filter(t=>completed[t.id]).length,0);
  const suggestedReviews=medicineDisciplines.flatMap(d=>d.topics.map(t=>({discipline:d.slug,disciplineTitle:d.title,topic:t,errors:attempts[t.id]?.wrong??0,acertos:attempts[t.id]?.right??0}))).filter(v=>v.errors>0).sort((a,b)=>(b.errors-b.acertos)-(a.errors-a.acertos)||b.errors-a.errors).slice(0,4);
  return <div className={styles.med}>
-  <section className={styles.hero}>
-   <span className={styles.eyebrow}>✦ Eduverso Medicina</span>
-   <h1>Seu caminho na <span>Medicina.</span></h1>
-   <p>Da preparação para o vestibular ao aprendizado universitário e às seleções profissionais. Conteúdo estruturado por disciplinas e assuntos, com revisões comentadas.</p>
-   <div className={styles.stats}><span>18 disciplinas universitárias</span><span>108 assuntos iniciais</span><span>3 caminhos de aprendizagem</span></div>
+  <section className={styles.hero+" "+(area==="vestibular"?styles.heroCompact:"")}>
+   <span className={styles.eyebrow}>✦ {area==="vestibular"?"EDUVERSO · PREPARAÇÃO":area==="faculdade"?"EDUVERSO · FACULDADE":"EDUVERSO · ESPECIALIZAÇÃO"}</span>
+   <h1>{area==="vestibular"?<>Vestibular de <span>Medicina.</span></>:area==="faculdade"?<>Faculdade de <span>Medicina.</span></>:<>Revalida e <span>Residência.</span></>}</h1>
+   <p>{area==="vestibular"?"Escolha uma matéria, explore os assuntos e comece a estudar com as trilhas já existentes no Eduverso.":area==="faculdade"?"Explore disciplinas universitárias, aulas comentadas, exercícios e simulados por ciclo e ano.":"Consulte os exames profissionais e os acervos oficiais de questões anteriores."}</p>
+   {area==="faculdade"&&<div className={styles.stats}><span>18 disciplinas universitárias</span><span>108 assuntos iniciais</span></div>}
   </section>
-  <div className={styles.tracks} aria-label="Escolha sua etapa na Medicina">
-   {([
-    {id:"vestibular",icon:"🎓",title:"Vestibular de Medicina",desc:"Preparação para ENEM, FUVEST e outros processos de ingresso."},
-    {id:"faculdade",icon:"🫀",title:"Faculdade de Medicina",desc:"Disciplinas, ciclos, aulas e exercícios comentados."},
-    {id:"exames",icon:"📋",title:"Revalida e Residência",desc:"Exames profissionais e provas anteriores oficiais."}
-   ] as const).map(item=><button key={item.id} type="button" onClick={()=>changeArea(item.id)} aria-pressed={area===item.id} className={styles.path+" "+(area===item.id?styles.pathActive:"")}><span aria-hidden="true">{item.icon}</span><strong>{item.title}</strong><small>{item.desc}</small><i>{area===item.id?"Selecionado ✓":"Explorar ↗"}</i></button>)}
+  <div className={styles.areaTabs} role="group" aria-label="Áreas de Medicina">
+    {([
+      {id:"vestibular",label:"🎓 Vestibular"},
+      {id:"faculdade",label:"🫀 Faculdade"},
+      {id:"exames",label:"📋 Revalida e residência"}
+    ] as const).map(item=><button type="button" key={item.id} onClick={()=>changeArea(item.id)} aria-pressed={area===item.id} className={styles.areaTab+" "+(area===item.id?styles.areaTabActive:"")}>{item.label}</button>)}
   </div>
-  {area==="vestibular"&&<>
-   <div className={styles.sectionHead}><div><span className={styles.eyebrow}>PREPARAÇÃO PARA INGRESSO</span><h2>Seu vestibular de Medicina</h2></div></div>
-   <p className={styles.note}>A aprovação em Medicina depende do vestibular ou modalidade de ingresso, não de uma prova nacional exclusiva do curso. Escolha a instituição e use as matérias da preparação geral e as provas oficiais correspondentes.</p>
-   <div className={styles.pathNotes}>
-    {[
-     {title:"Medicina — plano de estudos",desc:"Selecione o processo seletivo desejado, estude Ciências da Natureza, Matemática, Linguagens e Redação e acompanhe o roteiro.",id:"medicina",cat:"cursos" as const},
-     {title:"USP / FUVEST",desc:"Trilhas de preparação para a Universidade de São Paulo e acervo por edição.",id:"usp-fuvest",cat:"vestibulares" as const},
-     {title:"ENEM e Sisu",desc:"Aulas, redação, simulados e provas do ENEM em fonte oficial.",id:"enem-sisu",cat:"vestibulares" as const},
-     {title:"Outros vestibulares",desc:"Explore Unicamp, Unesp, UERJ, instituições federais e outras seleções.",id:undefined,cat:"vestibulares" as const}
-    ].map(item=><div key={item.title} className={styles.resource}><strong>{item.title}</strong><p>{item.desc}</p><button type="button" className={styles.primary} onClick={()=>onOpenGoal(item.cat,item.id)}>Ver preparação e provas ↗</button></div>)}
-   </div>
-   <div className={styles.note}>As exigências e pesos variam por universidade, curso e edição. Consulte o edital vigente da instituição.</div>
-  </>}
+  {area==="vestibular"&&<MedicineEntrance getTopics={getSubjectTopics} onOpenGoal={onOpenGoal} onOpenTrack={onOpenTrack}/>}
   {area==="exames"&&<>
    <div className={styles.sectionHead}><div><span className={styles.eyebrow}>EXAMES E ESPECIALIZAÇÃO</span><h2>Revalida, Enamed e Residência</h2></div></div>
    <div className={styles.pathNotes}>
