@@ -27,7 +27,7 @@
 .disciplineCard{aspect-ratio:9/16;min-height:0;background:#231738}
 .disciplineCard:hover,.topicCard:hover{transform:translateY(-2px);border-color:#a66df5}
 .cardImage{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:saturate(1.1)}
-.cardOverlay{position:absolute;inset:0;z-index:0;background:linear-gradient(180deg,#100b1905 17%,#0e0b1c2a 52%,#0e0c1cf8 87%)}
+.cardOverlay{position:absolute;inset:0;z-index:0;background:linear-gradient(180deg,#100b1900 0%,#100b190a 35%,#0e0b1c5c 56%,#0e0c1ce8 77%,#0b0916 100%)}
 .cardInfo{position:relative;z-index:1;padding:clamp(10px,1.8vw,19px);display:flex;flex-direction:column;gap:7px;width:100%}
 .tag{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#ddc4ff;font-weight:850}
 .cardInfo strong{font-size:clamp(15px,1.7vw,21px);line-height:1.18;letter-spacing:-.03em;overflow-wrap:anywhere}
