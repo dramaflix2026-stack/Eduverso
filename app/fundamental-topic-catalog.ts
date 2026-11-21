@@ -1,5 +1,7 @@
 import {fundamentalLessons,type FundamentalSubjectId} from "./fundamental-curriculum";
 import {yearOneRemaining} from "./fundamental-year1-remaining";
+import {yearTwoCore} from "./fundamental-year2-core";
+import {yearTwoOther} from "./fundamental-year2-other";
 
 export type FundamentalQuestion={prompt:string;choices:[string,string,string];correct:number;explanation:string};
 export type FundamentalTopic={id:string;title:string;objective:string;sections:string[];examples:string[];visual:string[];questions:FundamentalQuestion[];expanded:boolean};
@@ -738,7 +740,7 @@ export function getFundamentalTopics(year:number,subject:FundamentalSubjectId):F
  const lesson=fundamentalLessons[year]?.[subject];
  if(!lesson)return [];
  const key=year+":"+subject;
- const topicContent=expanded[key]??yearOneRemaining[key];
+ const topicContent=expanded[key]??yearOneRemaining[key]??yearTwoCore[key]??yearTwoOther[key];
  const introExtra=topicContent?.intro;
  const defaultQuestion:FundamentalQuestion={prompt:lesson.question,choices:lesson.choices,correct:lesson.correct,explanation:lesson.feedback};
  const intro:FundamentalTopic={id:"introducao",title:lesson.title,objective:learningObjectives[year]?.[subject]??"Compreender o tema da aula inicial.",
