@@ -157,7 +157,7 @@ export default function MedicineHub({area,onChangeArea,onOpenGoal,onOpenTrack,ge
     <MedicineDeepChapter key={currentTopic.id} topic={currentTopic}
       chapter={advancedMedCourses[currentDiscipline.slug].byTopic[currentTopic.id]}
       disciplineTitle={currentDiscipline.title}
-      coverSrc={coverAssets[currentDiscipline.slug]??("/images/medicina/"+currentDiscipline.slug+".png")}
+      coverSrc={coverAssets[currentDiscipline.slug]??currentDiscipline.image}
       onBack={()=>pushLocation(currentDiscipline.slug,null)}
       onNext={nextTopic}
       onComplete={()=>{
