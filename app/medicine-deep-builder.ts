@@ -5,7 +5,7 @@ import type {DeepChapter,DeepQuestion} from "./medicine-anatomy-deep";
 export type MedicalQuestionSeed={ask:string;right:string;wrong1:string;wrong2:string;why:string};
 export type MedicalTopicSeed={
  topicId:string;mechanism:string;contrast:string;application:string;caution:string;
- terms:[string,string][];questions:[MedicalQuestionSeed,MedicalQuestionSeed,MedicalQuestionSeed];reference:string;
+ terms?:[string,string][];questions?:[MedicalQuestionSeed,MedicalQuestionSeed,MedicalQuestionSeed];reference:string;
 };
 export type CreatedCourse={chapters:DeepChapter[];byTopic:Record<string,DeepChapter>;metrics:{modules:number;lessons:number;extraQuestions:number}};
 const explanationHint="Estude o mecanismo, compare conceitos próximos e associe os exemplos às condições em que o conhecimento é válido. A conclusão sobre uma pessoa real exige contexto, avaliação e referências clínicas pertinentes.";
@@ -26,8 +26,15 @@ export function createAdvancedMedicalCourse(slug:string,seeds:MedicalTopicSeed[]
   const t=d.topics[i];
   if(t.id!==p.topicId||ids.has(p.topicId))throw Error("Tópicos fora de ordem ou repetidos: "+slug+" "+p.topicId);
   ids.add(p.topicId);
-  if(p.questions.length!==3||p.terms.length<3)throw Error("Material de revisão incompleto: "+p.topicId);
-  const questions:DeepQuestion[]=p.questions.map((q,j)=>{
+  if((p.questions&&p.questions.length!==3)||(p.terms&&p.terms.length<3))throw Error("Material de revisão incompleto: "+p.topicId);
+  const neighborA=seeds[(i+1)%seeds.length];
+  const neighborB=seeds[(i+3)%seeds.length];
+  const autoQuestions:MedicalQuestionSeed[]=[
+   {ask:"Qual afirmação caracteriza especificamente os mecanismos de "+t.name+"?",right:p.mechanism,wrong1:neighborA.mechanism,wrong2:neighborB.mechanism,why:"O conceito central desta etapa é: "+p.mechanism},
+   {ask:"Ao comparar temas próximos, qual distinção corresponde a "+t.name+"?",right:p.contrast,wrong1:neighborA.contrast,wrong2:neighborB.contrast,why:"A distinção importante é: "+p.contrast},
+   {ask:"Que interpretação está associada ao exemplo de "+t.name+"?",right:p.application,wrong1:neighborA.application,wrong2:neighborB.application,why:"A aplicação didática correspondente é: "+p.application}
+  ];
+  const questions:DeepQuestion[]=(p.questions??autoQuestions).map((q,j)=>{
    if([q.ask,q.right,q.wrong1,q.wrong2,q.why].some(x=>!x||x.trim().length<8)||new Set([q.right,q.wrong1,q.wrong2]).size!==3)throw Error("Alternativa inválida: "+p.topicId+"-"+j);
    const correct=(i+j)%3;
    const options=[q.wrong1,q.wrong2];options.splice(correct,0,q.right);
@@ -40,7 +47,7 @@ export function createAdvancedMedicalCourse(slug:string,seeds:MedicalTopicSeed[]
     "Aplicar o raciocínio ao exemplo e reconhecer seus limites."],
    sections:buildLessonSections(t,p),
    caseStudy:t.example+" "+p.application,
-   glossary:[{term:t.name,definition:t.theory},...p.terms.map(([term,definition])=>({term,definition}))],
+   glossary:[{term:t.name,definition:t.theory},...(p.terms??[["Mecanismo principal",p.mechanism],["Distinção relevante",p.contrast],["Contexto de aplicação",p.application]]).map(([term,definition])=>({term,definition}))],
    reference:p.reference,questions
   };
  });
