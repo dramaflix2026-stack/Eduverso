@@ -1,0 +1,60 @@
+.chapter{display:flex;flex-direction:column;gap:20px;border:1px solid #56406b;background:linear-gradient(150deg,#211830,#100e1c);border-radius:23px;padding:clamp(17px,3vw,30px);color:#f7f1ff;line-height:1.7}
+.chapterHead{display:flex;flex-direction:column;gap:10px}
+.back{align-self:flex-start;background:none;border:0;padding:3px 0;color:#d8baff;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit}
+.back:hover{text-decoration:underline}
+.kicker{font-size:11px;letter-spacing:.13em;font-weight:850;color:#cbb0ff;text-transform:uppercase}
+.chapterHead h2{font-size:clamp(25px,4vw,39px);margin:0;line-height:1.16;letter-spacing:-.04em}
+.chapterHead .lead{font-size:14px;color:#cdbfdc;margin:0}
+.metadata{display:flex;gap:7px;flex-wrap:wrap}
+.metadata span{border:1px solid #544269;border-radius:10px;padding:5px 9px;color:#dac9ee;font-size:11px;background:#3426488c}
+.progressWrap{padding:13px 14px;border:1px solid #4b375e;border-radius:13px;background:#281d37}
+.progressTop{display:flex;justify-content:space-between;gap:10px;font-size:12px;color:#dbcbeb}
+.progressTop span{color:#bfb0d0}
+.progress{height:7px;border-radius:100px;background:#4a365d;overflow:hidden;margin-top:10px}
+.progress>span{display:block;height:100%;background:linear-gradient(90deg,#9055ff,#db9cff);border-radius:100px;transition:width .25s}
+.modeNav{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.modeNav button{font:inherit;font-size:12px;font-weight:800;padding:11px 8px;border:1px solid #5a426f;background:#21172f;color:#dbc7f1;border-radius:12px;cursor:pointer}
+.modeNav button.selected{background:#6b37c1;border-color:#bc8bff;color:#fff}
+.objectives{background:#2a1d3b;border:1px solid #60447e;border-radius:15px;padding:15px 18px}
+.objectives h3{font-size:16px;margin:0 0 7px}
+.objectives ul,.keyBox ul{margin:0;padding-left:19px;color:#d9cce7;font-size:13px;line-height:1.75}
+.objectives li+li,.keyBox li+li{margin-top:5px}
+.visual{margin:0;border:1px solid #48385b;border-radius:16px;overflow:hidden;background:#151222}
+.visual img{display:block;width:100%;height:clamp(150px,28vw,270px);object-fit:cover;object-position:center 35%;filter:saturate(1.08)}
+.visual figcaption{padding:10px 13px;font-size:11px;color:#bbb0ca;line-height:1.6}
+.lessonNav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.lessonNav button{display:flex;text-align:left;align-items:center;gap:9px;background:#1a1528;border:1px solid #574169;border-radius:12px;padding:12px 10px;color:#dcd0e9;font:inherit;font-size:12px;font-weight:750;line-height:1.35;cursor:pointer}
+.lessonNav button.activeLesson{background:#452561;border-color:#a477e6;color:#fff}
+.lessonNumber{flex:none;font-size:11px;background:#63388a69;border-radius:9px;padding:7px;font-weight:850}
+.visited{margin-left:auto;color:#b8ffdc}
+.lessonBody{display:flex;flex-direction:column;gap:15px;background:#171322;border:1px solid #413051;border-radius:18px;padding:clamp(16px,3vw,27px)}
+.lessonBody h3,.quiz h3,.summary h3{font-size:clamp(19px,3vw,26px);margin:0;line-height:1.25;letter-spacing:-.02em}
+.lessonBody p,.quiz p,.summary p{font-size:14px;line-height:1.9;color:#e2d7ee;margin:0}
+.keyBox{background:#312043ad;border-left:3px solid #ba84ff;border-radius:11px;padding:15px 17px;display:flex;flex-direction:column;gap:7px}
+.keyBox strong{color:#f3e5ff;font-size:13px}
+.actions{display:flex;gap:9px;flex-wrap:wrap;align-items:center}
+.actions button,.quiz>.primary{flex:1;min-width:120px}
+.primary,.secondary{font:inherit;font-weight:800;font-size:12px;padding:12px 14px;border-radius:11px;cursor:pointer}
+.primary{background:#793ddb;color:#fff;border:1px solid #a572ed}
+.secondary{background:#2b203c;color:#e5d5fb;border:1px solid #654b7b}
+.primary:disabled,.secondary:disabled{opacity:.45;cursor:not-allowed}
+.quiz,.summary{display:flex;flex-direction:column;gap:16px;padding:clamp(15px,3vw,26px);background:#16121f;border-radius:17px;border:1px solid #4c395f}
+.quizTop{display:flex;flex-direction:column;gap:3px}
+.muted{font-size:12px;color:#a99ab9}
+.options{display:flex;flex-direction:column;gap:9px}
+.options button{border:1px solid #5d4675;border-radius:11px;background:#282035;text-align:left;padding:13px;color:#f4e8ff;font:inherit;line-height:1.55;font-size:13px;cursor:pointer}
+.options button.chosen{background:#4a2a71;border-color:#b389f5}
+.options button:disabled{cursor:default}
+.options button strong{color:#d2b3ff;margin-right:3px}
+.feedback{border:1px solid #815eaf;background:#392750;border-radius:13px;padding:14px 17px}
+.feedback>strong{color:#f2dfff;font-size:14px}
+.feedback p{margin-top:5px;font-size:13px}
+.summary h4{font-size:17px;margin:0}
+.summary dl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:0}
+.summary dl>div{padding:12px;background:#282033;border:1px solid #514067;border-radius:11px}
+.summary dt{color:#e4c8ff;font-weight:850;font-size:12px}
+.summary dd{font-size:12px;line-height:1.5;color:#c7b8d7;margin:5px 0 0}
+.summary .reference{font-size:12px;color:#bdb0ce}
+.summary a{color:#d9b3ff}
+.disclaimer{font-size:11px;line-height:1.65;color:#ab9abb;margin:0}
+@media(max-width:650px){.chapter{gap:15px;border-radius:18px;padding:16px}.lessonNav{grid-template-columns:1fr}.visual img{height:180px}.summary dl{grid-template-columns:1fr}.lessonBody{padding:16px}.modeNav button{font-size:11px;padding:10px 6px}.progressTop{flex-wrap:wrap}.actions button{min-width:0}}
