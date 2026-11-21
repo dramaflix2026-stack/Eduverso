@@ -16,6 +16,7 @@ const sources:Record<string,HistoricalPaper[]>={
 {year:2025,title:"Vestibular Unesp 2025 — provas e gabaritos",publisher:"Vunesp",url:"https://www.vunesp.com.br/VNSP2404",kind:"edicao"},
 {year:2023,title:"Vestibular Unesp 2023 — provas e gabaritos",publisher:"Vunesp",url:"https://www.vunesp.com.br/VNSP2206/",kind:"edicao"}
 ],
+"enare":[{year:2026,title:"ENARE 2026 — provas e gabaritos oficiais",publisher:"FGV Conhecimento / HU Brasil",url:"https://enare2026.conhecimento.fgv.br/provas/",kind:"edicao",note:"Consulte a modalidade de residência e o caderno correspondente."}],
 "revalida":[
 {year:null,title:"Revalida — provas e gabaritos oficiais",publisher:"Inep",url:"https://www.gov.br/inep/pt-br/areas-de-atuacao/avaliacao-e-exames-educacionais/revalida/provas-e-gabaritos",kind:"acervo"}
 ],
