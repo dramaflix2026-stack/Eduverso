@@ -158,3 +158,10 @@
  .side-nav .nav-nested-item,.side-nav .nav-level-toggle{min-height:39px}
  .nav-group-panel{padding-top:4px;padding-bottom:4px}
 }
+
+/* Brand is a working home navigation control in both sidebar and topbar. */
+.brand-home{display:inline-flex;align-items:center;gap:10px;border:0;background:transparent;color:inherit;font:inherit;font-weight:inherit;letter-spacing:inherit;text-align:left;padding:0;min-width:0}
+.brand-home:hover,.brand-header-home:hover{color:#e1cbff}
+.brand-home:focus-visible,.brand-header-home:focus-visible{outline:2px solid #bcaaff;outline-offset:5px;border-radius:7px}
+.brand-header-home{border:0;background:transparent;color:inherit;font:inherit;font-weight:inherit;cursor:pointer;padding:0;text-align:left}
+@media(max-width:760px){.brand-header-home.mobile-brand{display:inline}}
