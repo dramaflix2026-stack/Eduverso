@@ -13,4 +13,4 @@ export async function proxy(request:NextRequest){
   return response;
  }catch{return NextResponse.redirect(new URL("/entrar",request.url));}
 }
-export const config={matcher:["/plataforma/:path*"]};
+export const config={matcher:["/plataforma/:path*","/api/medicina/:path*","/api/materiais/:path*"]};

@@ -41,3 +41,9 @@ On sign-up, the app sends `redirect_to` to the Eduverso login page. Confirmation
 6. Only then activate `EDUVERSO_REQUIRE_PURCHASE=true` and check redirect to `/acesso-pendente` without entitlement.
 
 **Limit of initial paywall:** the Next.js app contains some hardcoded course content in client bundles. The route-level protection helps navigation but full content confidentiality will require moving protected lesson payloads behind authenticated APIs.
+
+## Shared Auth isolation
+
+Toledo uses an `auth.users` trigger named `on_auth_user_created_create_laboratory_profile`. New Eduverso students must sign up with `raw_user_meta_data.app = "eduverso"` so that they do not receive a laboratory profile. The trigger now excludes `app='eixo'` (existing behavior) and `app='eduverso'`, while preserving the existing lab profile creation behavior for other users. Do not remove this app tag.
+
+The commercial paywall in `proxy.ts` also protects the lesson API routes `/api/medicina/*` and `/api/materiais/*` if enabled.

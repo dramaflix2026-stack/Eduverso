@@ -14,7 +14,7 @@ export async function POST(request:NextRequest){
    return NextResponse.json({error:"Confira nome, e-mail e senhas (mínimo de 8 caracteres, duas senhas iguais)."},{status:400});
   const redirect=new URL("/entrar?confirmado=1",request.nextUrl.origin).toString();
   const result=await supabaseRequest<Signup&{error_code?:string}>("/auth/v1/signup?redirect_to="+encodeURIComponent(redirect),{
-   method:"POST",body:{email,password,data:{full_name:name,eduverso:true}}
+   method:"POST",body:{email,password,data:{full_name:name,app:"eduverso"}}
   });
   if(!result.ok)return NextResponse.json({error:safeError(result.data,"Não foi possível concluir o cadastro. Tente novamente.")},{status:result.status===429?429:400});
   const authenticated=!!(result.data.access_token&&result.data.refresh_token);
