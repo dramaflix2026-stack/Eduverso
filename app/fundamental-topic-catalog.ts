@@ -2,6 +2,15 @@ import {fundamentalLessons,type FundamentalSubjectId} from "./fundamental-curric
 import {yearOneRemaining} from "./fundamental-year1-remaining";
 import {yearTwoCore} from "./fundamental-year2-core";
 import {yearTwoOther} from "./fundamental-year2-other";
+import {expandedYearTopics,type YearSeeds} from "./fundamental-expansion-builder";
+import {year3Seeds} from "./fundamental-year3";
+import {year4Seeds} from "./fundamental-year4";
+import {year5Seeds} from "./fundamental-year5";
+import {year6Seeds} from "./fundamental-year6";
+import {year7Seeds} from "./fundamental-year7";
+import {year8Seeds} from "./fundamental-year8";
+import {year9Seeds} from "./fundamental-year9";
+const schoolYearExtensions:Record<number,YearSeeds>={3:year3Seeds,4:year4Seeds,5:year5Seeds,6:year6Seeds,7:year7Seeds,8:year8Seeds,9:year9Seeds};
 
 export type FundamentalQuestion={prompt:string;choices:[string,string,string];correct:number;explanation:string};
 export type FundamentalTopic={id:string;title:string;objective:string;sections:string[];examples:string[];visual:string[];questions:FundamentalQuestion[];expanded:boolean};
@@ -737,6 +746,11 @@ const improvedIntroQuestions:Record<string,FundamentalQuestion>={
 };
 
 export function getFundamentalTopics(year:number,subject:FundamentalSubjectId):FundamentalTopic[]{
+ const extensions=schoolYearExtensions[year];
+ if(extensions){
+  const study=expandedYearTopics(year,subject,extensions);
+  if(study)return study;
+ }
  const lesson=fundamentalLessons[year]?.[subject];
  if(!lesson)return [];
  const key=year+":"+subject;

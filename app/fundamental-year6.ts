@@ -166,7 +166,7 @@ export const year6Seeds:YearSeeds={
  ],
  "matematica": [
   {
-   "id": "frações-soma",
+   "id": "fracoes-soma",
    "title": "Soma de frações com denominador igual",
    "objective": "Resolver adições de frações com partes da mesma unidade.",
    "explanation": "Ao adicionar frações de mesmo denominador, somamos os numeradores e mantemos o denominador, pois as partes têm o mesmo tamanho.",
