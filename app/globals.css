@@ -165,3 +165,8 @@
 .brand-home:focus-visible,.brand-header-home:focus-visible{outline:2px solid #bcaaff;outline-offset:5px;border-radius:7px}
 .brand-header-home{border:0;background:transparent;color:inherit;font:inherit;font-weight:inherit;cursor:pointer;padding:0;text-align:left}
 @media(max-width:760px){.brand-header-home.mobile-brand{display:inline}}
+
+/* Hero image is a real responsive picture, not a zero-height first div. The previous .featured>div:first-child positioning collapsed the background layer. */
+.featured-home-compact>picture.featured-compact-art{position:absolute;inset:0;width:100%;height:100%;max-width:none;display:block;z-index:0;overflow:hidden}
+.featured-home-compact>picture.featured-compact-art img{width:100%;height:100%;display:block;object-fit:cover;object-position:center 57%}
+@media(max-width:760px){.featured-home-compact>picture.featured-compact-art img{object-position:center 60%}}
