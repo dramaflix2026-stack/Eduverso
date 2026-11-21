@@ -8,8 +8,13 @@ type View="aulas"|"questoes"|"resumo";
 type SavedProgress={visited:number[];results:Record<string,boolean>};
 type Props={topic:MedTopic;chapter:DeepChapter;disciplineTitle:string;coverSrc:string;onBack:()=>void;onNext:()=>void;onComplete:()=>void;onAnswer:(correct:boolean)=>void};
 function storageKey(id:string){
- const prefix=id.startsWith("anatomia-humana-")?"anatomia:avanco:":id.startsWith("histologia-")?"histologia:avanco:":id.startsWith("embriologia-")?"embriologia:avanco:":id.startsWith("bioquimica-")?"bioquimica:avanco:":"fisiologia:avanco:";
- return "eduverso:medicina:"+prefix+id;
+ // Compatibilidade com as cinco disciplinas já publicadas: nunca migrar chaves existentes.
+ const slug=id.slice(0,id.lastIndexOf("-"));
+ const oldKeys:Record<string,string>={
+  "anatomia-humana":"anatomia:avanco:","histologia":"histologia:avanco:","embriologia":"embriologia:avanco:",
+  "bioquimica":"bioquimica:avanco:","fisiologia":"fisiologia:avanco:"
+ };
+ return "eduverso:medicina:"+(oldKeys[slug]??("curso:"+slug+":avanco:"))+id;
 }
 function loadProgress(topicId:string):SavedProgress{
  try{
