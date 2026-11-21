@@ -2,6 +2,7 @@
 import {useEffect,useMemo,useState} from "react";
 import {getMedDiscipline,medicineDisciplines,medCycles,type MedCycle} from "./medicine-curriculum";
 import styles from "./medicine-hub.module.css";
+import MedicineMockExam from "./medicine-mock-exam";
 
 export type MedicineArea="faculdade"|"vestibular"|"exames";
 type Props={
@@ -22,6 +23,7 @@ export default function MedicineHub({area,onChangeArea,onOpenGoal,onOpenTrack}:P
  const [topic,setTopic]=useState<string|null>(null);
  const [chosen,setChosen]=useState<number|null>(null);
  const [checked,setChecked]=useState(false);
+ const [mockOpen,setMockOpen]=useState(false);
  const [completed,setCompleted]=useState<Record<string,boolean>>({});
  useEffect(()=>{
   const restore=()=>{
@@ -42,7 +44,7 @@ export default function MedicineHub({area,onChangeArea,onOpenGoal,onOpenTrack}:P
   if(d)url.searchParams.set("materia",d);else url.searchParams.delete("materia");
   if(t)url.searchParams.set("assunto",t);else url.searchParams.delete("assunto");
   window.history.pushState({},"",url.pathname+url.search+url.hash);
-  setDiscipline(d);setTopic(t);setChosen(null);setChecked(false);
+  setDiscipline(d);setTopic(t);setChosen(null);setChecked(false);setMockOpen(false);
   window.scrollTo({top:0,behavior:"smooth"});
  }
  function changeArea(next:MedicineArea){
@@ -102,8 +104,9 @@ export default function MedicineHub({area,onChangeArea,onOpenGoal,onOpenTrack}:P
    </div>
    <p className={styles.note}>Residência médica não é uma prova única: programas, modalidades, instituições e edições têm critérios diferentes. O roteiro geral precisa ser complementado com o edital específico.</p>
   </>}
-  {area==="faculdade"&&!currentDiscipline&&<>
-   <div className={styles.sectionHead}><div><span className={styles.eyebrow}>DISCIPLINAS DE GRADUAÇÃO</span><h2>Escolha uma disciplina</h2></div><small>{visible.length} de 18 disciplinas</small></div>
+  {area==="faculdade"&&mockOpen?<MedicineMockExam scope={currentDiscipline?.slug} onClose={()=>setMockOpen(false)}/>:null}
+  {area==="faculdade"&&!currentDiscipline&&!mockOpen&&<>
+   <div className={styles.sectionHead}><div><span className={styles.eyebrow}>DISCIPLINAS DE GRADUAÇÃO</span><h2>Escolha uma disciplina</h2></div><button className={styles.primary} type="button" onClick={()=>setMockOpen(true)}>📝 Simulado geral</button></div>
    <div className={styles.toolbar}>
     <div className={styles.filters} role="group" aria-label="Filtrar pelo ciclo">
      <span className={styles.filterLabel}>Ciclo</span>
@@ -125,13 +128,13 @@ export default function MedicineHub({area,onChangeArea,onOpenGoal,onOpenTrack}:P
    </div>:<div className={styles.empty}>Nenhuma disciplina encontrada. Tente remover algum filtro.</div>}
    <div className={styles.note}>Conteúdo acadêmico de revisão. Não substitui formação clínica, prática supervisionada ou protocolos profissionais. Para situações de saúde reais, procure atendimento qualificado.</div>
   </>}
-  {area==="faculdade"&&currentDiscipline&&!currentTopic&&<>
+  {area==="faculdade"&&currentDiscipline&&!currentTopic&&!mockOpen&&<>
    <button type="button" className={styles.back} onClick={()=>pushLocation(null,null)}>← Voltar às 18 disciplinas</button>
    <section className={styles.hero}>
     <span className={styles.eyebrow}>{medCycles.find(c=>c.value===currentDiscipline.cycle)?.label} · {currentDiscipline.years}</span><h1>{currentDiscipline.title}<span>.</span></h1><p>{currentDiscipline.description}. Abra uma trilha para acessar explicação, exemplo aplicado e exercício comentado.</p>
     <div className={styles.stats}><span>{currentDiscipline.topics.length} assuntos</span><span>{currentDiscipline.topics.filter(t=>completed[t.id]).length} revisados corretamente</span></div>
    </section>
-   <div className={styles.sectionHead}><h2>Assuntos de {currentDiscipline.title}</h2></div>
+   <div className={styles.sectionHead}><h2>Assuntos de {currentDiscipline.title}</h2><button type="button" className={styles.primary} onClick={()=>setMockOpen(true)}>📝 Simulado da matéria</button></div>
    <div className={styles.topicGrid}>
     {currentDiscipline.topics.map((t,i)=><button type="button" key={t.id} className={styles.topicCard} onClick={()=>pushLocation(currentDiscipline.slug,t.id)}>
      <span>{String(i+1).padStart(2,"0")}</span><strong>{t.name}</strong><small>{completed[t.id]?"✓ Exercício resolvido corretamente":"Aula, exemplo e questão comentada"}</small><span className={styles.cardAction}>Estudar assunto ↗</span>
@@ -139,7 +142,7 @@ export default function MedicineHub({area,onChangeArea,onOpenGoal,onOpenTrack}:P
    </div>
    {currentDiscipline.slug==="anatomia-humana"&&<div className={styles.resource}><strong>Integração com Anatomia do Eduverso</strong><p>Você também pode explorar as trilhas visuais de ossos, músculos, sistemas corporais e outras estruturas já existentes na plataforma.</p><button className={styles.primary} onClick={()=>onOpenTrack("Anatomia","Sistema ósseo")}>Abrir trilhas de Anatomia ↗</button></div>}
   </>}
-  {area==="faculdade"&&currentDiscipline&&currentTopic&&<>
+  {area==="faculdade"&&currentDiscipline&&currentTopic&&!mockOpen&&<>
    <button type="button" className={styles.back} onClick={()=>pushLocation(currentDiscipline.slug,null)}>← Voltar a {currentDiscipline.title}</button>
    <article className={styles.study}>
     <span className={styles.eyebrow}>{currentDiscipline.title} · Trilha {currentDiscipline.topics.findIndex(t=>t.id===currentTopic.id)+1} de {currentDiscipline.topics.length}</span>
