@@ -19,7 +19,12 @@ export default function PreparationHub({onOpenTrack}:Props){
   const [reviewed,setReviewed]=useState<Record<string,boolean>>({});
   const [detailTab,setDetailTab]=useState<"roteiro"|"provas"|"pratica"|"ia">("roteiro");
   useEffect(()=>{
-    const restore=()=>setSelectedId(getPrepGoal(new URLSearchParams(window.location.search).get("objetivo"))?.id??null);
+    const restore=()=>{
+      const params=new URLSearchParams(window.location.search);
+      setSelectedId(getPrepGoal(params.get("objetivo"))?.id??null);
+      const group=params.get("categoria");
+      setCategory(group==="vestibulares"||group==="cursos"||group==="concursos"||group==="profissionais"?group:"todas");
+    };
     restore();
     window.addEventListener("popstate",restore);
     try{const saved=window.localStorage.getItem(progressKey);if(saved){const value=JSON.parse(saved);if(value&&typeof value==="object"&&!Array.isArray(value))setReviewed(value);}}catch{}
@@ -31,6 +36,12 @@ export default function PreparationHub({onOpenTrack}:Props){
   const reviewedCount=goal?tracks.filter(track=>reviewed[goal.id+"|"+track.subject+"|"+track.topic]).length:0;
   const papers=goal?getHistoricalPapers(goal.id,goal.group==="cursos"?admissionId:undefined):[];
   const institution=getPrepGoal(admissionId);
+  function changeCategory(next:Category){
+    setCategory(next);
+    const url=new URL(window.location.href);
+    if(next==="todas")url.searchParams.delete("categoria");else url.searchParams.set("categoria",next);
+    window.history.replaceState({},"",url.pathname+url.search+url.hash);
+  }
   function selectGoal(id:string|null){
     setSelectedId(id);
     setDetailTab("roteiro");
@@ -63,8 +74,8 @@ export default function PreparationHub({onOpenTrack}:Props){
       </section>
       <section className={styles.tools} aria-label="Localizar objetivo">
         <div className={styles.groupTabs} role="group" aria-label="Filtrar objetivos por categoria">
-          <button type="button" className={styles.tab+" "+(category==="todas"?styles.tabActive:"")} aria-pressed={category==="todas"} onClick={()=>setCategory("todas")}>Todos (50)</button>
-          {prepGroups.map(g=><button key={g.key} type="button" className={styles.tab+" "+(category===g.key?styles.tabActive:"")} aria-pressed={category===g.key} onClick={()=>setCategory(g.key)}>{g.icon} {g.title} ({prepCatalog.filter(goal=>goal.group===g.key).length})</button>)}
+          <button type="button" className={styles.tab+" "+(category==="todas"?styles.tabActive:"")} aria-pressed={category==="todas"} onClick={()=>changeCategory("todas")}>Todos (50)</button>
+          {prepGroups.map(g=><button key={g.key} type="button" className={styles.tab+" "+(category===g.key?styles.tabActive:"")} aria-pressed={category===g.key} onClick={()=>changeCategory(g.key)}>{g.icon} {g.title} ({prepCatalog.filter(goal=>goal.group===g.key).length})</button>)}
         </div>
         <label className={styles.search}><span aria-hidden="true">⌕</span><input aria-label="Buscar universidades, cursos, concursos e exames" value={query} onChange={e=>setQuery(e.target.value)} placeholder="Busque Medicina, USP, INSS, Polícia Federal..."/></label>
         <p className={styles.count}>{results.length} {results.length===1?"opção encontrada":"opções encontradas"}</p>
