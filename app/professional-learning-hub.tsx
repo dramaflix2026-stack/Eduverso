@@ -72,7 +72,7 @@ export default function ProfessionalLearningHub({trackId,onSelectTrack,onOpenBoo
   onSelectTrack(id);
  }
  if(trackId==="catalog")return <div className={styles.root}>
-  <header className={styles.catalogHero}><span className={styles.kicker}>✦ EDUVERSO · NOVOS CAMINHOS</span><h1>Formações profissionais<span>.</span></h1><p>Escolha uma área para aprender conceitos, ver demonstrações, resolver desafios práticos e acompanhar seu progresso. Cada formação possui ${track.lessons.length} aulas estruturadas.</p></header>
+  <header className={styles.catalogHero}><span className={styles.kicker}>✦ EDUVERSO · NOVOS CAMINHOS</span><h1>Formações profissionais<span>.</span></h1><p>Escolha uma área para aprender conceitos, ver demonstrações, resolver desafios práticos e acompanhar seu progresso. Cada formação possui {professionalTracks[0]?.lessons.length??0} aulas estruturadas.</p></header>
   <section className={styles.catalog} aria-label="Catálogo de formações profissionais">
    <div className={styles.sectionTitle}><div><span>ESCOLHA SEU CURSO</span><h2>Nove áreas para desenvolver habilidades</h2></div></div>
    <div className={styles.catalogGrid}>{professionalTracks.map(item=><button type="button" key={item.id} className={styles.catalogCard} onClick={()=>onSelectTrack(item.id)}>
@@ -156,7 +156,7 @@ export default function ProfessionalLearningHub({trackId,onSelectTrack,onOpenBoo
    <div className={styles.reviewIntro}><span>REVISÃO DE APRENDIZAGEM</span><h2>Teste seu conhecimento em {track.name}</h2><p>São {reviewItems.length} questões contextualizadas. O gabarito comentado aparece depois de corrigir todas.</p></div>
    {reviewItems.map((item,i)=>{
     const shuffled=orderFor(i,track.id.length+1);
-    return <div className={styles.reviewQuestion} key={item.title}>
+    return <div className={styles.reviewQuestion} key={item.title+"-"+i}>
      <small>QUESTÃO {String(i+1).padStart(2,"0")} DE {reviewItems.length} · {item.title}</small>
      <strong>{item.question}</strong>
      <div className={styles.options} role="group" aria-label={"Alternativas da questão "+(i+1)}>{shuffled.map((answerIndex,j)=>
