@@ -18,7 +18,7 @@ export function makeProfessionalBooklet(track:ProfessionalTrack,limit=10,format:
  lessons.forEach((item,i)=>{
   const deep=getProfessionalDepth(track.id,i);
   sections.push({heading:"Capítulo "+(i+1)+" - "+item.title,kind:"chapter",paragraphs:[
-   item.explain, ...(deep?[deep.objective,deep.explanation]:[])
+   (item.explain||item.body||""), ...(deep?[deep.objective,deep.explanation]:[])
   ]});
   sections.push({heading:"Exemplo de aplicação",kind:"example",paragraphs:[item.example,item.context]});
   const source=getProfessionalCodeExample(track.id,i);
@@ -40,7 +40,7 @@ export function makeProfessionalBooklet(track:ProfessionalTrack,limit=10,format:
   sections.push({heading:"Gabarito comentado",kind:"chapter",pageBreakBefore:true,paragraphs:["Consulte esta seção depois de tentar todas as questões."]});
   lessons.forEach((lesson,i)=>{
    const extra=getProfessionalDepth(track.id,i)?.quiz;
-   sections.push({heading:"Capítulo "+(i+1)+" - Questão 1",kind:"answer",paragraphs:["Resposta: "+letters[lesson.correct]+") "+lesson.options[lesson.correct],lesson.feedback]});
+   sections.push({heading:"Capítulo "+(i+1)+" - Questão 1",kind:"answer",paragraphs:["Resposta: "+letters[lesson.correct]+") "+lesson.options[lesson.correct],lesson.feedback||lesson.explain||lesson.body||"Consulte a explicação do capítulo."]});
    if(extra)sections.push({heading:"Capítulo "+(i+1)+" - Questão 2",kind:"answer",paragraphs:["Resposta: A) "+extra.options[0],extra.explanation]});
   });
  }
