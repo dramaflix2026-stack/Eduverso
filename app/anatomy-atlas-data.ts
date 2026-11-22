@@ -1,17 +1,17 @@
-export type Bone={id:string;name:string;group:string;x:number;y:number;description:string};
+export type Bone={id:string;name:string;group:string;x:number;y:number;description:string;function:string;clinical:string};
 export const imageUrl="https://thumb.wikimedia.org/wikipedia/commons/thumb/a/ac/Human_skeleton_front_no-text_no-color.svg/500px-Human_skeleton_front_no-text_no-color.svg.png";
 export const sourceUrl="https://commons.wikimedia.org/wiki/File:Human_skeleton_front_no-text_no-color.svg";
 export const bones:Bone[]=[
-{id:"cranio",name:"Crânio",group:"Cabeça",x:45,y:6.5,description:"O neurocrânio envolve e protege o encéfalo; o crânio também inclui ossos da face."},
-{id:"mandibula",name:"Mandíbula",group:"Face",x:45,y:12,description:"Osso móvel da face que sustenta a arcada dentária inferior."},
-{id:"clavicula",name:"Clavícula",group:"Cintura escapular",x:33.5,y:19.4,description:"Conecta o esterno à escápula e auxilia a mobilidade do ombro."},
-{id:"esterno",name:"Esterno",group:"Tórax",x:47.4,y:25.5,description:"Osso plano central do tórax conectado às cartilagens costais."},
-{id:"costelas",name:"Costelas",group:"Tórax",x:34,y:29,description:"Arcos ósseos que compõem a caixa torácica com esterno e vértebras."},
-{id:"umero",name:"Úmero",group:"Braço",x:25.7,y:29.7,description:"Osso longo entre ombro e cotovelo."},
-{id:"coluna",name:"Coluna vertebral",group:"Tronco",x:45.4,y:37.1,description:"Conjunto de vértebras que sustenta o tronco e protege a medula espinal."},
-{id:"pelve",name:"Osso do quadril",group:"Bacia",x:34.8,y:44.9,description:"Osso formado por ílio, ísquio e púbis, integrando a cintura pélvica."},
-{id:"radio",name:"Rádio",group:"Antebraço",x:78.9,y:45.2,description:"Osso lateral do antebraço, do lado do polegar em posição anatômica."},
-{id:"femur",name:"Fêmur",group:"Coxa",x:35.1,y:59,description:"Osso longo da coxa, articulado ao quadril e ao joelho."},
-{id:"patela",name:"Patela",group:"Joelho",x:37.5,y:71,description:"Osso sesamoide anterior ao joelho, associado ao mecanismo extensor."},
-{id:"tibia",name:"Tíbia",group:"Perna",x:41,y:81.7,description:"Principal osso de sustentação da perna, medial à fíbula."}
+{id:"cranio",name:"Crânio",group:"Cabeça",x:45,y:6.5,description:"O neurocrânio envolve e protege o encéfalo; o crânio também inclui ossos da face.",function:"Forma a caixa protetora do encéfalo e dá suporte a estruturas da face.",clinical:"Suturas e forames cranianos ajudam a compreender trajetos vasculares e nervosos."},
+{id:"mandibula",name:"Mandíbula",group:"Face",x:45,y:12,description:"Osso móvel da face que sustenta a arcada dentária inferior.",function:"Participa da mastigação, da fala e da abertura da boca pela articulação temporomandibular.",clinical:"A cabeça da mandíbula articula-se com o osso temporal; traumas podem alterar oclusão e mobilidade."},
+{id:"clavicula",name:"Clavícula",group:"Cintura escapular",x:33.5,y:19.4,description:"Conecta o esterno à escápula e auxilia a mobilidade do ombro.",function:"Conecta o membro superior ao esqueleto axial e mantém o afastamento funcional do ombro.",clinical:"Fraturas no terço médio são frequentes; sua relação com vasos subclávios exige atenção anatômica."},
+{id:"esterno",name:"Esterno",group:"Tórax",x:47.4,y:25.5,description:"Osso plano central do tórax conectado às cartilagens costais.",function:"Serve de ligação a costelas e clavículas e ajuda a proteger órgãos do mediastino.",clinical:"O ângulo esternal é referência para localizar a segunda cartilagem costal."},
+{id:"costelas",name:"Costelas",group:"Tórax",x:34,y:29,description:"Arcos ósseos que compõem a caixa torácica com esterno e vértebras.",function:"Protegem estruturas torácicas e se movimentam durante a ventilação.",clinical:"A contagem dos espaços intercostais auxilia exames e procedimentos torácicos."},
+{id:"umero",name:"Úmero",group:"Braço",x:25.7,y:29.7,description:"Osso longo entre ombro e cotovelo.",function:"Transmite forças entre ombro e cotovelo e serve de alavanca para movimentos do braço.",clinical:"O nervo radial acompanha a face posterior da diáfise umeral, sendo relevante em lesões do osso."},
+{id:"coluna",name:"Coluna vertebral",group:"Tronco",x:45.4,y:37.1,description:"Conjunto de vértebras que sustenta o tronco e protege a medula espinal.",function:"Suporta o eixo corporal, permite movimentos regionais e protege a medula espinal.",clinical:"A divisão cervical, torácica e lombar orienta exames e correlações neurológicas."},
+{id:"pelve",name:"Osso do quadril",group:"Bacia",x:34.8,y:44.9,description:"Osso formado por ílio, ísquio e púbis, integrando a cintura pélvica.",function:"Transfere carga da coluna aos membros inferiores e oferece inserções musculares.",clinical:"Ílio, ísquio e púbis contribuem para o acetábulo, que recebe a cabeça femoral."},
+{id:"radio",name:"Rádio",group:"Antebraço",x:78.9,y:45.2,description:"Osso lateral do antebraço, do lado do polegar em posição anatômica.",function:"Participa da rotação do antebraço e da articulação do punho.",clinical:"A extremidade distal do rádio é frequentemente avaliada nos traumas do punho."},
+{id:"femur",name:"Fêmur",group:"Coxa",x:35.1,y:59,description:"Osso longo da coxa, articulado ao quadril e ao joelho.",function:"Suporta cargas corporais e atua nas articulações do quadril e joelho.",clinical:"O colo femoral é importante na avaliação de fraturas do quadril."},
+{id:"patela",name:"Patela",group:"Joelho",x:37.5,y:71,description:"Osso sesamoide anterior ao joelho, associado ao mecanismo extensor.",function:"Aumenta a eficiência do mecanismo extensor do joelho associado ao quadríceps.",clinical:"Sua posição anterior permite palpação e avaliação durante o exame do joelho."},
+{id:"tibia",name:"Tíbia",group:"Perna",x:41,y:81.7,description:"Principal osso de sustentação da perna, medial à fíbula.",function:"Transmite o peso da articulação do joelho ao tornozelo.",clinical:"A crista anterior da tíbia é palpável; sua extremidade distal forma o maléolo medial."}
 ];

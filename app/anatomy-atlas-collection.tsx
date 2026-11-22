@@ -4,6 +4,8 @@ import AnatomyAtlas from "./anatomy-atlas";
 import {bones} from "./anatomy-atlas-data";
 import {atlasViews,type AtlasSpot,type AtlasView} from "./anatomy-atlas-collection-data";
 import {expandedAtlasViews} from "./anatomy-atlas-extension";
+import AtlasArt,{atlasFamily} from "./anatomy-atlas-art";
+import {studySections,studySummary,reviewPrompt} from "./anatomy-atlas-flash-content";
 import styles from "./anatomy-atlas-collection.module.css";
 
 type Mode="explorar"|"desafio"|"flashcards";
@@ -45,9 +47,11 @@ function AtlasStudy({view}:{view:AtlasView}){
  const [typed,setTyped]=useState("");
  const [submitted,setSubmitted]=useState(false);
  const [flashCorrect,setFlashCorrect]=useState(false);
+ const [flashRated,setFlashRated]=useState(false);
  const detail=useRef<HTMLDivElement>(null);
  const items=view.spots;
  const listMode=view.spotMode==="list";
+ const localizedMode=listMode||["cranio","coluna","torax","membro-inferior"].includes(view.id);
  useEffect(()=>{setScores(restore(view.id));setReady(true);},[view.id]);
  useEffect(()=>{if(ready)try{localStorage.setItem(keyFor(view.id),JSON.stringify(scores));}catch{}},[ready,scores,view.id]);
  useEffect(()=>{
@@ -61,7 +65,7 @@ function AtlasStudy({view}:{view:AtlasView}){
  const quizChoices=target?(()=>{const others=items.filter(v=>v.id!==target.id),pool=[target,...[0,2,4].map((step)=>others[(q*3+step)%others.length])];const offset=q%pool.length;return [...pool.slice(offset),...pool.slice(0,offset)];})():[];
  const fallbackUrl=view.source.replace("/wiki/File:","/wiki/Special:FilePath/");
  function selectMode(next:Mode){
-  setMode(next);setPicked(null);setAnswer(null);setTyped("");setSubmitted(false);
+  setMode(next);setPicked(null);setAnswer(null);setTyped("");setSubmitted(false);setFlashRated(false);
   if(next==="desafio"){setQ(0);setHits(0);setCompleted(false);}
   if(next==="flashcards")setF(0);
  }
@@ -76,7 +80,7 @@ function AtlasStudy({view}:{view:AtlasView}){
  }
  function clickPoint(b:AtlasSpot){
   if(mode==="explorar"){setPicked(b.id);return;}
-  if(mode!=="desafio"||answer!==null||completed||!target||(!listMode&&imageFailed))return;
+  if(mode!=="desafio"||answer!==null||completed||!target||(!localizedMode&&imageFailed))return;
   const correct=b.id===target.id;
   setAnswer(b.id);if(correct)setHits(n=>n+1);saveResult(target,correct);
  }
@@ -85,10 +89,20 @@ function AtlasStudy({view}:{view:AtlasView}){
   setQ(v=>v+1);setAnswer(null);
  }
  function submitFlash(){
-  if(!typed.trim()||submitted||(!listMode&&imageFailed)||!flash)return;
-  const correct=matches(flash,typed);setFlashCorrect(correct);setSubmitted(true);saveResult(flash,correct);
+  if(submitted||(!localizedMode&&imageFailed)||!flash)return;
+  const hasGuess=Boolean(typed.trim());
+  const correct=hasGuess&&matches(flash,typed);
+  setFlashCorrect(correct);setSubmitted(true);
+  if(hasGuess){saveResult(flash,correct);setFlashRated(true);}
  }
- function advanceFlash(){if(!submitted)return;setF(v=>(v+1)%items.length);setTyped("");setSubmitted(false);setFlashCorrect(false);}
+ function rateFlash(correct:boolean){
+  if(!submitted||flashRated||!flash)return;
+  saveResult(flash,correct);setFlashCorrect(correct);setFlashRated(true);
+ }
+ function advanceFlash(){
+  if(!submitted||!flashRated)return;
+  setF(v=>(v+1)%items.length);setTyped("");setSubmitted(false);setFlashCorrect(false);setFlashRated(false);
+ }
  return <div className={styles.study}>
   <header className={styles.studyHeader}>
    <span>ATLAS INTERATIVO · {view.spots.length} ESTRUTURAS</span>
@@ -106,55 +120,59 @@ function AtlasStudy({view}:{view:AtlasView}){
    )}
   </div>
   {mode==="desafio"&&!completed&&target&&<div className={styles.question} role="status">
-   <small>QUESTÃO {q+1} DE {items.length}</small><strong>{listMode?"Qual estrutura corresponde à descrição?":"Encontre: "+target.name}</strong>
-   <p>{listMode?target.description:"Toque no ponto numerado que corresponde à estrutura solicitada."}</p>
+   <small>QUESTÃO {q+1} DE {items.length}</small><strong>{localizedMode?"Qual estrutura corresponde à descrição?":"Encontre: "+target.name}</strong>
+   <p>{localizedMode?target.description:"Toque no ponto numerado que corresponde à estrutura solicitada."}</p>
    <div className={styles.progress} role="progressbar" aria-label="Progresso do desafio" aria-valuemin={0} aria-valuemax={items.length} aria-valuenow={q}><span style={{width:(q/items.length*100)+"%"}}/></div>
   </div>}
   {mode==="flashcards"&&flash&&<div className={styles.question}>
    <small>CARTÃO {f+1} DE {items.length}</small>
-   <strong>{listMode?"Identifique a estrutura descrita:":"Que estrutura está marcada em amarelo?"}</strong>
-   <p>{listMode?flash.description:"Observe a imagem e escreva o nome sem consultar a resposta."}</p>
+   <strong>{localizedMode?"Identifique a estrutura descrita:":"Que estrutura está marcada em amarelo?"}</strong>
+   <p>{localizedMode?flash.description:"Observe a imagem e escreva o nome sem consultar a resposta."}</p>
   </div>}
   <div className={styles.studyColumns}>
    <figure className={styles.figure}>
-    {imageFailed?
-     <div className={styles.failure} role="alert">
-      Não foi possível carregar esta ilustração. <a href={view.source} target="_blank" rel="noreferrer noopener">Abrir fonte original</a>.
-     </div>
-    :<div className={styles.diagram} style={{aspectRatio:view.ratio,background:view.background||"#fff"}}>
-      <img alt={view.alt} src={imageFallback?fallbackUrl:view.image} loading="eager"
-        style={listMode?{objectFit:"contain"}:undefined}
+    {localizedMode?
+      <div className={styles.localizedPlate}>
+       <AtlasArt family={atlasFamily(view.id)} id={view.id+"-study"} title={view.short} compact/>
+       {mode==="explorar"&&<div className={styles.localizedPickers} aria-label="Estruturas em português">
+         {items.map((b,i)=><button type="button" key={b.id}
+          aria-pressed={picked===b.id} className={picked===b.id?styles.structureActive:""}
+          onClick={()=>clickPoint(b)}><span>{String(i+1).padStart(2,"0")}</span>{b.name}</button>)}
+        </div>}
+       {mode!=="explorar"&&<div className={styles.localizedHint}>{mode==="desafio"?"Observe a área anatômica e selecione a estrutura correta nas alternativas.":"Observe a representação sem rótulos e tente lembrar a estrutura."}</div>}
+      </div>:
+      imageFailed?<div className={styles.failure} role="alert">Não foi possível carregar a ilustração. <a href={view.source} target="_blank" rel="noreferrer noopener">Consultar fonte</a>.</div>
+      :<div className={styles.diagram} style={{aspectRatio:view.ratio,background:view.background||"#fff"}}>
+       <img alt={view.alt} src={imageFallback?fallbackUrl:view.image} loading="eager"
         onError={()=>{if(imageFallback)setImageFailed(true);else setImageFallback(true);}}/>
-      {!listMode&&items.map((b,i)=>{
-       if(mode==="flashcards"&&flash?.id!==b.id)return null;
-       const pos={left:b.x+"%",top:b.y+"%"};
-       const correct=mode==="desafio"&&answer!==null&&b.id===target?.id;
-       const wrong=mode==="desafio"&&answer===b.id&&b.id!==target?.id;
-       const selectedExplore=mode==="explorar"&&picked===b.id;
-       const cls=styles.pin+" "+(mode==="flashcards"?styles.pinFlash:correct?styles.pinCorrect:wrong?styles.pinWrong:selectedExplore?styles.pinSelected:styles.pinDefault);
-       return mode==="flashcards"?<span key={b.id} className={cls} style={pos} aria-hidden="true">?</span>:
-        <button type="button" key={b.id} className={cls} style={pos}
-          aria-label={mode==="explorar"?"Mostrar "+b.name:"Ponto "+(i+1)}
-          aria-pressed={selectedExplore||Boolean(mode==="desafio"&&answer===b.id)}
-          disabled={mode==="desafio"&&(completed||answer!==null)}
-          onClick={()=>clickPoint(b)}>{i+1}</button>;
-      })}
-     </div>}
-    <figcaption>{listMode?"Imagem de referência; explore as estruturas na lista interativa.":view.alt.replace("Ilustração ","")+" · representação didática"}</figcaption>
+       {items.map((b,i)=>{
+        if(mode==="flashcards"&&flash?.id!==b.id)return null;
+        const pos={left:b.x+"%",top:b.y+"%"};
+        const correct=mode==="desafio"&&answer!==null&&b.id===target?.id;
+        const wrong=mode==="desafio"&&answer===b.id&&b.id!==target?.id;
+        const selectedExplore=mode==="explorar"&&picked===b.id;
+        const cls=styles.pin+" "+(mode==="flashcards"?styles.pinFlash:correct?styles.pinCorrect:wrong?styles.pinWrong:selectedExplore?styles.pinSelected:styles.pinDefault);
+        return mode==="flashcards"?<span key={b.id} className={cls} style={pos} aria-hidden="true">?</span>:
+         <button type="button" key={b.id} className={cls} style={pos}
+           aria-label={mode==="explorar"?"Mostrar "+b.name:"Ponto "+(i+1)}
+           aria-pressed={selectedExplore||Boolean(mode==="desafio"&&answer===b.id)}
+           disabled={mode==="desafio"&&(completed||answer!==null)}
+           onClick={()=>clickPoint(b)}>{i+1}</button>;
+       })}
+      </div>}
+    <figcaption>{localizedMode?"Mapa didático com nomes anatômicos em português. Representação conceitual, sem escala.":"Ilustração anatômica sem legendas · representação didática"}</figcaption>
    </figure>
    <div className={styles.details} ref={detail}>
-    {listMode&&mode==="explorar"&&<div className={styles.structureList} aria-label="Estruturas do atlas">{items.map((b,i)=><button type="button" key={b.id} className={picked===b.id?styles.structureActive:""} aria-pressed={picked===b.id} onClick={()=>clickPoint(b)}><span>{String(i+1).padStart(2,"0")}</span>{b.name}</button>)}</div>}
-    {listMode&&mode==="desafio"&&answer===null&&!completed&&<div className={styles.quizList} role="group" aria-label="Alternativas do desafio">{quizChoices.map((b,i)=><button type="button" key={b.id} onClick={()=>clickPoint(b)}><b>{String.fromCharCode(65+i)})</b> {b.name}</button>)}</div>}
+    {localizedMode&&mode==="desafio"&&answer===null&&!completed&&<div className={styles.quizList} role="group" aria-label="Alternativas do desafio">{quizChoices.map((b,i)=><button type="button" key={b.id} onClick={()=>clickPoint(b)}><b>{String.fromCharCode(65+i)})</b> {b.name}</button>)}</div>}
     {mode==="explorar"&&<article className={styles.detailCard}>
-     {selected?<><small>{selected.group}</small><h4>{selected.name}</h4>
-       <p>{selected.description}</p>
-       <strong>Função anatômica</strong><p>{selected.function}</p>
-       <strong>Correlação clínica</strong><p>{selected.clinical}</p>
-      </>:<><h4>{listMode?"Escolha uma estrutura":"Selecione um ponto"}</h4><p>{listMode?"Selecione uma estrutura na lista para consultar localização, funções e correlações clínicas.":"Toque nos marcadores numerados para explorar cada estrutura, entender sua função e conhecer uma correlação clínica."}</p></>}
+     {selected?<><small>{selected.group} · GUIA ANATÔMICO</small><h4>{selected.name}</h4>
+       {studySections(selected,view).map(block=><div className={styles.studySection} key={block.title}><strong>{block.title}</strong><p>{block.text}</p></div>)}
+       <div className={styles.reviewPrompt}><strong>Pergunta de revisão</strong><p>{reviewPrompt(selected)}</p></div>
+      </>:<><h4>{localizedMode?"Escolha uma estrutura":"Selecione um ponto"}</h4><p>{localizedMode?"Toque em uma das estruturas em português para estudar o que é, a função, a aplicação clínica e revisar o assunto.":"Toque nos marcadores numerados para explorar cada estrutura, entender sua função e conhecer uma correlação clínica."}</p></>}
      <button type="button" className={styles.primary} onClick={()=>selectMode("desafio")}>Praticar identificação →</button>
     </article>}
     {mode==="desafio"&&<article className={styles.detailCard}>
-     {!completed?<>{answer===null?<p>{listMode?"Escolha uma das alternativas para conferir a resposta.":"Escolha um marcador na ilustração para conferir a resposta."}</p>:
+     {!completed?<>{answer===null?<p>{localizedMode?"Escolha uma das alternativas para conferir a resposta.":"Escolha um marcador na ilustração para conferir a resposta."}</p>:
        <div className={styles.feedback} role="status">
         <strong>{answer===target.id?"✓ Resposta correta!":"↻ Resposta diferente da esperada"}</strong>
         <p><b>{target.name}</b> — {target.description}</p>
@@ -166,21 +184,32 @@ function AtlasStudy({view}:{view:AtlasView}){
        <button type="button" className={styles.secondary} onClick={()=>selectMode("flashcards")}>Revisar flashcards</button>
       </>}
     </article>}
-    {mode==="flashcards"&&flash&&<article className={styles.detailCard}>
-     <small>{flash.group} · cartão {f+1} de {items.length}</small>
-     <form className={styles.answerForm} onSubmit={e=>{e.preventDefault();submitFlash();}}>
-      <label htmlFor={"atlas-answer-"+view.id}>Nome anatômico</label>
-      <input id={"atlas-answer-"+view.id} value={typed} onChange={e=>setTyped(e.target.value)}
-       maxLength={100} disabled={submitted} autoComplete="off" spellCheck={false}
-       placeholder="Digite o nome da estrutura"/>
-      <p>A correção ignora acentos e maiúsculas.</p>
-      {!submitted&&<button type="submit" disabled={!typed.trim()||(!listMode&&imageFailed)} className={styles.primary}>Conferir resposta</button>}
-     </form>
-     {submitted&&<div className={styles.feedback} role="status">
-      <strong>{flashCorrect?"✓ Muito bem!":"↻ Revise esta estrutura"}</strong>
-      <p>Resposta correta: <b>{flash.name}</b></p><p>{flash.description}</p>
-     </div>}
-     {submitted&&<button type="button" className={styles.primary} onClick={advanceFlash}>Próximo cartão →</button>}
+    {mode==="flashcards"&&flash&&<article className={styles.detailCard+" "+styles.fullFlashcard}>
+     <div className={styles.flashTopline}><small>{flash.group.toUpperCase()} · CARTÃO {f+1} DE {items.length}</small><span>REVISÃO ATIVA</span></div>
+     {!submitted?<div className={styles.flashFront}>
+       <span className={styles.flashQuestionIcon} aria-hidden="true">?</span>
+       <h4>Você consegue identificar a estrutura?</h4>
+       <p>{localizedMode?flash.description:"Observe o marcador amarelo e recorde a estrutura destacada."}</p>
+       <form className={styles.answerForm} onSubmit={e=>{e.preventDefault();submitFlash();}}>
+        <label htmlFor={"atlas-answer-"+view.id}>Sua resposta (opcional)</label>
+        <input id={"atlas-answer-"+view.id} value={typed} onChange={e=>setTyped(e.target.value)}
+         maxLength={100} autoComplete="off" spellCheck={false} placeholder="Digite o nome anatômico"/>
+        <p>Você também pode revelar a resposta e avaliar sua memorização.</p>
+        <button type="submit" className={styles.primary}>{typed.trim()?"Conferir e revelar a resposta":"Revelar resposta completa"}</button>
+       </form>
+      </div>:
+      <div className={styles.flashBack} role="region" aria-label={"Verso do cartão "+flash.name}>
+       <div className={styles.flashBackTitle}><span>RESPOSTA · {String(f+1).padStart(2,"0")}</span><h4>{flash.name}</h4><p>{studySummary(flash)}</p></div>
+       {studySections(flash,view).map(block=><section className={styles.studySection} key={block.title}><strong>{block.title}</strong><p>{block.text}</p></section>)}
+       <div className={styles.reviewPrompt}><strong>Teste de fixação</strong><p>{reviewPrompt(flash)}</p></div>
+       {typed.trim()&&<p className={styles.flashStatus}>{flashCorrect?"✓ Você identificou corretamente a estrutura.":"↻ A resposta digitada não corresponde ao nome registrado. Revise a explicação."}</p>}
+       {!flashRated&&<div className={styles.flashRate}>
+        <p>Como foi sua recordação?</p>
+        <button type="button" className={styles.secondary} onClick={()=>rateFlash(false)}>Preciso revisar</button>
+        <button type="button" className={styles.primary} onClick={()=>rateFlash(true)}>Lembrei corretamente</button>
+       </div>}
+       {flashRated&&<button type="button" className={styles.primary} onClick={advanceFlash}>Próximo flashcard →</button>}
+      </div>}
     </article>}
    </div>
   </div>
@@ -257,7 +286,7 @@ export default function AnatomyAtlasCollection(){
   {!selected&&<label className={styles.searchBox}><span aria-hidden="true">⌕</span><input type="search" value={term} onChange={e=>setTerm(e.target.value)} placeholder="Buscar atlas, região ou estrutura..." aria-label="Buscar no atlas de anatomia"/></label>}
   {!selected&&!category&&!term.trim()&&<div className={styles.segmentGrid}>
     {groupCatalog.map(g=><button key={g.id} type="button" className={styles.segmentCard} onClick={()=>openCategory(g.id)}>
-     <span className={styles.segmentPreview}><img src={g.cover} loading="lazy" alt={"Prévia de "+g.title}/></span>
+     <span className={styles.segmentPreview}><AtlasArt family={g.id} id={"capa-"+g.id} title={g.title}/></span>
      <span className={styles.segmentInfo}><span className={styles.segmentIcon} aria-hidden="true">{g.icon}</span><strong>{g.title}</strong><small>{g.description}</small><em>{g.ids.length} atlas · Explorar →</em></span>
     </button>)}
    </div>}
@@ -265,11 +294,11 @@ export default function AnatomyAtlasCollection(){
    <div className={styles.sectionLabel}><strong>{term.trim()?"Resultados da busca":group?.title}</strong><span>{shown.length+(visibleIds.includes("anterior")&&!term.trim()?1:0)} atlas</span></div>
    <div className={styles.cards}>
     {visibleIds.includes("anterior")&&!term.trim()&&<button type="button" className={styles.atlasCard} onClick={()=>openView("anterior")}>
-      <span className={styles.cardMedia}><img alt="Esqueleto humano visto pela frente" loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/Human_skeleton_front_no-text_no-color.svg/500px-Human_skeleton_front_no-text_no-color.svg.png"/></span>
+      <span className={styles.cardMedia}><AtlasArt family="ossos" id="capa-anterior" title="Vista anterior"/></span>
       <span className={styles.cardInfo}><small>ATLAS INTERATIVO</small><strong>Vista anterior</strong><span>{bones.length} estruturas · exploração e revisão</span><em>Explorar atlas →</em></span>
      </button>}
     {shown.map(v=><button key={v.id} type="button" className={styles.atlasCard} onClick={()=>openView(v.id)}>
-      <span className={styles.cardMedia} style={v.background?{background:v.background}:undefined}><img alt={v.alt} loading="lazy" src={v.image}/></span>
+      <span className={styles.cardMedia}><AtlasArt family={atlasFamily(v.id)} id={"capa-"+v.id} title={v.short}/></span>
       <span className={styles.cardInfo}><small>{v.spotMode==="list"?"ATLAS DE SISTEMAS":"ATLAS REGIONAL"}</small><strong>{v.short}</strong><span>{v.spots.length} estruturas · desafios e flashcards</span><em>Explorar atlas →</em></span>
      </button>)}
    </div>

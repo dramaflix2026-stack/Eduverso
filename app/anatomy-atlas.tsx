@@ -2,6 +2,10 @@
 import {useEffect,useMemo,useRef,useState} from "react";
 import {bones,imageUrl,sourceUrl,type Bone} from "./anatomy-atlas-data";
 import styles from "./anatomy-atlas.module.css";
+import studyStyles from "./anatomy-atlas-collection.module.css";
+import {studySections,studySummary,reviewPrompt} from "./anatomy-atlas-flash-content";
+import type {AtlasView} from "./anatomy-atlas-collection-data";
+const anteriorView={id:"anterior"} as AtlasView;
 type Mode="explorar"|"desafio"|"flashcards";
 type Score={hits:number;misses:number;ms:number;remembered:number;forgotten:number;level:number;due:string|null};
 type RecordMap=Record<string,Score>;
@@ -55,6 +59,7 @@ export default function AnatomyAtlas(){
  const [typed,setTyped]=useState("");
  const [submitted,setSubmitted]=useState(false);
  const [typedCorrect,setTypedCorrect]=useState(false);
+ const [flashRated,setFlashRated]=useState(false);
  const exploreDetailRef=useRef<HTMLDivElement>(null);
  const started=useRef(Date.now());
  useEffect(()=>{setScores(getSaved());setLoaded(true);},[]);
@@ -70,7 +75,7 @@ export default function AnatomyAtlas(){
  },[scores]);
  const target=bones[q],flash=bones[f],selected=bones.find(b=>b.id===picked);
  function show(next:Mode){
-  setMode(next);setPicked(null);setTyped("");setSubmitted(false);setTypedCorrect(false);setAnswer(null);started.current=Date.now();
+  setMode(next);setPicked(null);setTyped("");setSubmitted(false);setTypedCorrect(false);setFlashRated(false);setAnswer(null);started.current=Date.now();
   if(next==="desafio"){setQ(0);setSessionHits(0);setCompleted(false);}
  }
  function selectBone(b:Bone){
@@ -85,7 +90,17 @@ export default function AnatomyAtlas(){
  function checkFlash(){
   if(submitted||!typed.trim()||!imageOk)return;
   const correct=isCorrectName(flash,typed);
-  setTypedCorrect(correct);setSubmitted(true);
+  setTypedCorrect(correct);setSubmitted(true);setFlashRated(true);
+  setScores(prev=>{
+   const old=prev[flash.id]||empty();
+   const level=correct?Math.min(3,old.level+1):0;
+   return {...prev,[flash.id]:{...old,level,remembered:old.remembered+(correct?1:0),forgotten:old.forgotten+(correct?0:1),due:correct?nextReview([1,7,30][level-1]):new Date().toISOString()}};
+  });
+ }
+ function revealFlash(){if(submitted||!imageOk)return;setSubmitted(true);setFlashRated(false);}
+ function rateFlash(correct:boolean){
+  if(!submitted||flashRated)return;
+  setTypedCorrect(correct);setFlashRated(true);
   setScores(prev=>{
    const old=prev[flash.id]||empty();
    const level=correct?Math.min(3,old.level+1):0;
@@ -93,8 +108,8 @@ export default function AnatomyAtlas(){
   });
  }
  function nextFlash(){
-  if(!submitted)return;
-  setF(v=>(v+1)%bones.length);setTyped("");setSubmitted(false);setTypedCorrect(false);
+  if(!submitted||!flashRated)return;
+  setF(v=>(v+1)%bones.length);setTyped("");setSubmitted(false);setTypedCorrect(false);setFlashRated(false);
  }
  return <section className={styles.atlas} aria-label="Atlas anatômico interativo">
   <header className={styles.hero}><span>✦ EDUVERSO · ATLAS INTERATIVO</span><h2>Sistema esquelético</h2><p>Estude por imagens, identifique estruturas e pratique a memorização. Esta experiência é independente das aulas e dos simulados.</p></header>
@@ -135,7 +150,7 @@ export default function AnatomyAtlas(){
     </div>
     <div className={styles.sidebar} ref={exploreDetailRef}>
      {mode==="explorar"&&<div className={styles.card}>
-      {selected?<><small>{selected.group}</small><h4>{selected.name}</h4><p>{selected.description}</p></>:<><h4>Selecione uma estrutura</h4><p>Toque em um ponto numerado para descobrir o nome e uma explicação sobre o osso.</p></>}
+      {selected?<><small>{selected.group} · GUIA DE ESTUDO</small><h4>{selected.name}</h4>{studySections(selected,anteriorView).map(section=><div className={studyStyles.studySection} key={section.title}><strong>{section.title}</strong><p>{section.text}</p></div>)}<div className={studyStyles.reviewPrompt}><strong>Pergunta de revisão</strong><p>{reviewPrompt(selected)}</p></div></>:<><h4>Selecione uma estrutura</h4><p>Toque em um ponto numerado para descobrir o nome e uma explicação sobre o osso.</p></>}
       <button type="button" className={styles.primary} onClick={()=>show("desafio")}>Praticar identificação →</button>
      </div>}
      {mode==="desafio"&&<div className={styles.card}>
@@ -149,21 +164,27 @@ export default function AnatomyAtlas(){
      </div>}
      {mode==="flashcards"&&<div className={styles.card+" "+styles.flashCard}>
       <small>{flash.group} · cartão {f+1} de {bones.length}</small>
-      <form className={styles.answerForm} onSubmit={e=>{e.preventDefault();checkFlash();}}>
-       <label htmlFor="atlas-typed-answer">Sua resposta</label>
-       <input id="atlas-typed-answer" autoComplete="off" autoCapitalize="sentences" spellCheck={false} maxLength={80}
-        value={typed} onChange={e=>setTyped(e.target.value)} disabled={submitted} placeholder="Digite o nome do osso…" aria-describedby="atlas-answer-help"/>
-       <p id="atlas-answer-help">Os acentos e as letras maiúsculas não interferem na correção.</p>
-       {!submitted&&<button type="submit" className={styles.primary} disabled={!imageOk||!typed.trim()}>Ver resultado</button>}
-      </form>
-      {submitted&&<div className={styles.feedback} role="status">
-       <strong>{typedCorrect?"✓ Resposta correta!":"↻ Resposta incorreta. Vamos revisar."}</strong>
-       <p>Você escreveu: <b>{typed.trim()}</b></p>
-       <p>Resposta esperada: <b>{flash.name}</b></p>
-       <p>{flash.description}</p>
-      </div>}
-      {submitted&&<button type="button" className={styles.primary} onClick={nextFlash}>Próximo cartão →</button>}
-      <p>Acertos são programados para revisão após 1, 7 e 30 dias; erros permanecem pendentes.</p>
+      {!submitted?<><h4>Que osso está destacado?</h4><p>Observe o marcador amarelo e tente lembrar a estrutura.</p>
+       <form className={styles.answerForm} onSubmit={e=>{e.preventDefault();if(typed.trim())checkFlash();else revealFlash();}}>
+        <label htmlFor="atlas-typed-answer">Nome anatômico (opcional)</label>
+        <input id="atlas-typed-answer" autoComplete="off" autoCapitalize="sentences" spellCheck={false} maxLength={80}
+         value={typed} onChange={e=>setTyped(e.target.value)} disabled={submitted} placeholder="Digite ou revele a resposta"/>
+        <p>Você pode digitar ou estudar diretamente o verso do cartão.</p>
+        <button type="submit" className={styles.primary} disabled={!imageOk}>{typed.trim()?"Conferir e revelar":"Revelar resposta completa"}</button>
+       </form></>:
+       <div className={studyStyles.flashBack} role="region" aria-label={"Verso do cartão "+flash.name}>
+        <div className={studyStyles.flashBackTitle}><span>RESPOSTA COMPLETA</span><h4>{flash.name}</h4><p>{studySummary(flash)}</p></div>
+        {studySections(flash,anteriorView).map(section=><section className={studyStyles.studySection} key={section.title}><strong>{section.title}</strong><p>{section.text}</p></section>)}
+        <div className={studyStyles.reviewPrompt}><strong>Pergunta de revisão</strong><p>{reviewPrompt(flash)}</p></div>
+        {typed.trim()&&<p className={studyStyles.flashStatus}>{typedCorrect?"✓ Sua resposta está correta.":"↻ Compare sua resposta com o nome anatômico."}</p>}
+        {!flashRated&&<div className={studyStyles.flashRate}>
+         <p>Você se lembrou do conteúdo?</p>
+         <button type="button" className={styles.secondary} onClick={()=>rateFlash(false)}>Preciso revisar</button>
+         <button type="button" className={styles.primary} onClick={()=>rateFlash(true)}>Lembrei corretamente</button>
+        </div>}
+        {flashRated&&<button type="button" className={styles.primary} onClick={nextFlash}>Próximo cartão →</button>}
+       </div>}
+      <p>Acertos são agendados para revisão em 1, 7 e 30 dias; erros ficam pendentes neste navegador.</p>
      </div>}
     </div>
    </div>
