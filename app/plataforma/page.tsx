@@ -27,7 +27,7 @@ const subjects:Subject[]=[
 {name:"Concursos",symbol:"▣",accent:"#8ba6fa",description:"Estude com foco na aprovação.",topics:[{name:"Raciocínio lógico",symbol:"∑",description:"Questões e lógica"},{name:"Língua portuguesa",symbol:"Aa",description:"Gramática e interpretação"},{name:"Conhecimentos gerais",symbol:"◎",description:"Atualidades e fundamentos"}]}
 ];
 function EnemArea({name}:{name:string}){const areas:Record<string,{title:string;subject:string;topic:string}[]>={"Linguagens":[{title:"Língua portuguesa e interpretação",subject:"Português",topic:"Interpretação"},{title:"Gramática",subject:"Português",topic:"Gramática"},{title:"Literatura",subject:"Português",topic:"Literatura"},{title:"Língua inglesa",subject:"Inglês",topic:"Vocabulário"},{title:"Língua espanhola",subject:"ENEM e Vestibulares",topic:"Espanhol"},{title:"Artes",subject:"ENEM e Vestibulares",topic:"Artes"},{title:"Educação física",subject:"ENEM e Vestibulares",topic:"Educação física"}],"Ciências Humanas":[{title:"História do Brasil",subject:"História",topic:"História do Brasil"},{title:"História antiga",subject:"História",topic:"História antiga"},{title:"Geografia e geopolítica",subject:"Geografia",topic:"Geopolítica"},{title:"Cartografia",subject:"Geografia",topic:"Cartografia"},{title:"Filosofia",subject:"ENEM e Vestibulares",topic:"Filosofia"},{title:"Sociologia",subject:"ENEM e Vestibulares",topic:"Sociologia"}],"Ciências da Natureza":[{title:"Mecânica",subject:"Física",topic:"Mecânica"},{title:"Energia",subject:"Física",topic:"Energia"},{title:"Eletricidade",subject:"Física",topic:"Eletricidade"},{title:"Átomos",subject:"Química",topic:"Átomos"},{title:"Reações químicas",subject:"Química",topic:"Reações"},{title:"Ecologia",subject:"Biologia",topic:"Ecologia"},{title:"Genética",subject:"Biologia",topic:"Genética"}]};return <section className="subject-course"><div className="subject-lesson"><span className="eyebrow">PREPARAÇÃO ENEM</span><h2>{name}</h2><p>Comece pelos conteúdos já disponíveis no Eduverso. Outros componentes curriculares serão adicionados sem apresentar material incompleto como se estivesse pronto.</p><div className="enem-years">{(areas[name]||[]).map(item=><a className="enem-year" key={item.title} href={"/plataforma?disciplina="+encodeURIComponent(item.subject)+"&trilha="+encodeURIComponent(item.topic)}><span>{item.subject}</span><strong style={{fontSize:19}}>{item.title}</strong><small>Estudar conteúdo ↗</small></a>)}</div></div></section>}
-const extras=[{name:"Minha Biblioteca",symbol:"▤"},{name:"Minha Evolução",symbol:"↗"},{name:"Configurações",symbol:"⚙"}];
+const extras=[{name:"Minha Biblioteca",symbol:"▤"},{name:"Minha Evolução",symbol:"↗"}];
 const schoolSubjectNames=["Matemática","Português","Física","Química","Biologia","Anatomia","História","Geografia","Inglês"] as const;
 type AuthenticatedAccount={name:string|null;email:string};
 function normalizeAccount(value:unknown):AuthenticatedAccount|null{
@@ -165,7 +165,7 @@ return <div className="app-shell">
 </nav>
 <div className="side-caption bottom-caption">MINHA ÁREA</div>
 <nav className="side-nav" aria-label="Minha área">
- {extras.filter(e=>e.name!=="Configurações").map(e=><button type="button" key={e.name} className={active===e.name?"active":""} onClick={()=>navigate(e.name)}><span>{e.symbol}</span>{e.name}</button>)}
+ {extras.map(e=><button type="button" key={e.name} className={active===e.name?"active":""} onClick={()=>navigate(e.name)}><span>{e.symbol}</span>{e.name}</button>)}
  <div className="nav-account" aria-label={account?"Conta autenticada":"Acesso de visitante"}>
   <span className="nav-account-avatar" aria-hidden="true">{avatarLetter}</span>
   <div className="nav-account-details">
@@ -175,7 +175,6 @@ return <div className="app-shell">
  </div>
  {!account&&<Link className="nav-account-login" href="/entrar" onClick={()=>setMenu(false)}>Entrar na minha conta ↗</Link>}
  {account&&<button type="button" className="nav-account-logout" onClick={async()=>{try{await fetch("/api/auth/sair",{method:"POST",credentials:"same-origin"});}finally{window.location.assign("/entrar");}}}>↪ Sair da minha conta</button>}
- {extras.filter(e=>e.name==="Configurações").map(e=><button type="button" key={e.name} className={active===e.name?"active":""} onClick={()=>navigate(e.name)}><span>{e.symbol}</span>{e.name}</button>)}
  </nav>
 <div className="side-foot">✦ Seu universo de aprendizado</div>
 </aside>
