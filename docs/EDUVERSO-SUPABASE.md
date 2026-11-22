@@ -6,22 +6,41 @@ All have RLS enabled. Existing Toledo and Método EIXO tables are untouched.
 
 ## Required environment variables (Railway / Production)
 
-- `SUPABASE_URL` — Supabase HTTPS project URL.
-- `SUPABASE_PUBLISHABLE_KEY` — publishable API key; never a service-role key.
-- `EDUVERSO_REQUIRE_PURCHASE=false` — keep demo accessible while Kiwify is not ready.
-- `EDUVERSO_KIWIFY_WEBHOOK_TOKEN` — a strong random secret (at least 24 characters), kept **only** in Railway.
-- `EDUVERSO_KIWIFY_PRODUCT_ID` — actual Eduverso product ID in Kiwify.
-- `SUPABASE_SERVICE_ROLE_KEY` — Supabase *server-only* secret, required for the Kiwify webhook to insert payments. Do not put it in the Git repository or any `NEXT_PUBLIC_` variable.
+- `SUPABASE_URL` — HTTPS URL of the existing `toledo-reports` Supabase project.
+- `SUPABASE_PUBLISHABLE_KEY` — public client key used only for authenticated user operations.
+- `SUPABASE_SERVICE_ROLE_KEY` — server-only private key to record verified purchases. Never use `NEXT_PUBLIC_`.
+- `EDUVERSO_REQUIRE_PURCHASE=false` — keep the site accessible until end-to-end QA.
+- `EDUVERSO_KIWIFY_ESTUDANTE_PRODUCT_ID` — actual Kiwify Student product ID.
+- `EDUVERSO_KIWIFY_ESTUDANTE_WEBHOOK_TOKEN` — token displayed by Kiwify for the Student webhook.
+- `EDUVERSO_KIWIFY_PROFESSOR_PRODUCT_ID` — actual Kiwify Teacher product ID.
+- `EDUVERSO_KIWIFY_PROFESSOR_WEBHOOK_TOKEN` — token displayed by Kiwify for the Teacher webhook.
 
-**Never** turn `EDUVERSO_REQUIRE_PURCHASE=true` on before testing payment approval, refunds, email confirmation, and login end-to-end.
+Legacy `EDUVERSO_KIWIFY_PRODUCT_ID` and `EDUVERSO_KIWIFY_WEBHOOK_TOKEN` remain accepted as fallbacks for Student only; prefer the explicit Student names.
 
-## Webhook configuration
+## Kiwify webhook setup
 
-In Kiwify > Apps > Webhooks, select the exact Eduverso product, order approved and refund/chargeback events, and enter an HTTPS endpoint:
+Create **two separate webhook subscriptions** at Kiwify > Apps > Webhooks:
 
-`https://eduverso-web-production.up.railway.app/api/webhooks/kiwify?token=<your-strong-secret>`
+| Name | Product selection | Events |
+| --- | --- | --- |
+| Eduverso - Estudante | Student product only | Compra aprovada, Reembolso, Chargeback |
+| Eduverso - Professor | Teacher product only | Compra aprovada, Reembolso, Chargeback |
 
-The receiver strictly matches the configured product ID and only processes mapped order events. It rejects unsigned/unconfigured calls and writes only minimum sale status fields. A database trigger grants/revokes access to accounts with confirmed emails matching approved sales.
+Both URLs must be exactly:
+
+`https://eduverso-web-production.up.railway.app/api/webhooks/kiwify`
+
+**Do not** append a token or signature to the URL. Kiwify sends a `?signature=` HMAC-SHA1 digest on delivery, calculated from the raw JSON body and the webhook's own Token field. The receiver verifies the digest before trusting any order data. Kiwify generates a different token for each webhook: save each one in the corresponding **Railway server-side environment variable**, never in Git or public frontend code.
+
+The receiver recognizes both product IDs, requires the correct signature for that product and records order status in the existing isolated `eduverso_purchases` table. The existing database trigger grants/revokes **basic paid access** to matching confirmed Eduverso users. **The current entitlement schema does not yet differentiate Student and Teacher privileges**; do not advertise or sell Teacher functionality until separate entitlements and the bulk teaching tools have been built and tested.
+
+### Test procedure
+
+1. Configure product IDs, per-webhook tokens and the Supabase server key on Railway, and deploy.
+2. Send each Kiwify *Testar Webhook* event. Inspect Kiwify delivery logs for a 2xx HTTP response. Kiwify can send placeholder product IDs during tests; signed but unmatched payloads are acknowledged without inserting an order.
+3. Validate an actual approved test sale matches the correct product ID and creates one purchase/entitlement. Check the user has confirmed email and profile.
+4. Test reembolso, chargeback, duplicate delivery, wrong signature, wrong product/token combination and non-purchaser access.
+5. Only after successful checks activate `EDUVERSO_REQUIRE_PURCHASE=true`. Keep the Teacher checkout closed until teacher-specific permissions and features are delivered.
 
 ## Redirect URL allow list in shared Supabase Auth
 
