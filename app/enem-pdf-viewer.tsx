@@ -91,7 +91,6 @@ export default function EnemPdfViewer({src,officialUrl,title,sourceLabel="Fonte 
   <div className={styles.embeddedOptions} role="group" aria-label="Modo de leitura">
    <button type="button" className={mode==="embedded"?styles.activeReaderMode:""} onClick={()=>setMode("embedded")}>📖 Leitura integrada</button>
    <button type="button" className={mode==="alternate"?styles.activeReaderMode:""} onClick={()=>setMode("alternate")}>Visualização alternativa</button>
-   <button type="button" className={mode==="pages"?styles.activeReaderMode:""} onClick={()=>{setMode("pages");setRetry(v=>v+1)}}>Páginas individuais</button>
   </div>
   {mode!=="pages"&&<div className={styles.embeddedFrame}>
    <iframe title={title+" · leitor integrado"} loading="lazy"
