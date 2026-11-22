@@ -27,7 +27,7 @@ function numberQuestion(question:string,answer:number,wrong1:number,wrong2:numbe
  return {question,options:choices,correct:(3-position)%3,explanation,sourceTitle:"Exercício calculado",kind:"calculado",sourceIndex};
 }
 function calculatedMath(topic:string,n:number,seed:number):ExerciseItem|null{
- const a=2+(n*3+seed)%9,b=1+(n*5+seed)%7,c=1+(n*7+seed)%6,d=3+(n*11+seed)%8;
+ const a=2+(n*7+seed)%43,b=1+(n*5+seed)%19,c=1+(n*7+seed)%17,d=3+(n*11+seed)%31;
  const variant=n%6;
  if(topic==="Matrizes e determinantes"){
   if(variant===0){const ans=a*d-b*c;return numberQuestion(`Calcule o determinante de A = [[${a},${b}],[${c},${d}]].`,ans,ans+b,ans+c,`Para uma matriz 2×2, det(A) = ad − bc = ${a}×${d} − ${b}×${c} = ${ans}.`);}
@@ -37,7 +37,7 @@ function calculatedMath(topic:string,n:number,seed:number):ExerciseItem|null{
   if(variant===4){const ans=2*b;return numberQuestion(`Para A = [[${a},${b}],[${c},${d}]], determine o elemento (2A)₁₂.`,ans,2*c,2*d,`A multiplicação escalar dobra cada entrada. (2A)₁₂ = 2×${b} = ${ans}.`);}
   return numberQuestion(`A = [[${a},${b}],[${c},${d}]]. Na matriz transposta Aᵀ, quanto vale o elemento a₁₂?`,c,b,a,`Transpor troca linhas e colunas. Aᵀ₁₂ = A₂₁ = ${c}.`);
  }
- if(topic==="Porcentagem"){const pct=5*(1+n%16),value=20*(1+(n*3+seed)%18),answer=pct*value/100;return numberQuestion(`Calcule ${pct}% de ${value}.`,answer,answer+value/20,answer+pct,`Multiplique ${value} por ${pct}/100: resultado = ${answer}.`);}
+ if(topic==="Porcentagem"){const pct=5*(1+n%16),value=20*(2+(n*7+seed)%211),answer=pct*value/100;return numberQuestion(`Calcule ${pct}% de ${value}.`,answer,answer+value/20,answer+pct,`Multiplique ${value} por ${pct}/100: resultado = ${answer}.`);}
  if(topic==="Álgebra"||topic==="Equações e inequações"||topic==="Sistemas lineares"){const x=1+n%11,coef=2+n%7,intercept=1+(n*3+seed)%12;return numberQuestion(`Resolva a equação ${coef}x + ${intercept} = ${coef*x+intercept}.`,x,x+1,x+2,`Isolando a variável: ${coef}x = ${coef*x}; logo x = ${x}.`);}
  if(topic==="Funções"||topic==="Função afim"){const x=1+n%12,coef=2+n%7;const ans=coef*x+b;return numberQuestion(`Para f(x) = ${coef}x + ${b}, calcule f(${x}).`,ans,coef+b,ans+x,`Substitua x por ${x}: f(${x}) = ${coef}×${x} + ${b} = ${ans}.`);}
  if(topic==="Geometria"||topic==="Geometria espacial"){const ans=a*d;return numberQuestion(`Um retângulo tem base ${a} cm e altura ${d} cm. Qual é a sua área, em cm²?`,ans,2*(a+d),a+d,`Área do retângulo = base × altura = ${a}×${d} = ${ans} cm².`);}
