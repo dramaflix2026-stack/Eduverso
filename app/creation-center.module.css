@@ -1,0 +1,43 @@
+.root{display:grid;gap:24px;color:#f9f5ff;max-width:1160px;margin:0 auto}
+.hero{padding:34px;border:1px solid #7c58bc65;border-radius:24px;background:radial-gradient(circle at 95% 0%,#7043b94a,transparent 55%),linear-gradient(130deg,#241a3a,#151323);box-shadow:0 12px 32px #07050f35}
+.eyebrow{font-size:11px;letter-spacing:2px;font-weight:800;color:#b99aff}
+.hero h1{font-size:clamp(30px,5vw,48px);letter-spacing:-1.8px;line-height:1.1;margin:16px 0}
+.hero h1 span{color:#9e72fc}
+.hero p{max-width:690px;color:#c4b7dc;line-height:1.75;font-size:15px}
+.back{background:#382554;border:1px solid #8560c4;border-radius:12px;color:#e7dcff;font-weight:750;padding:11px 17px;margin-top:8px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.tile{text-align:left;display:flex;flex-direction:column;align-items:flex-start;gap:12px;padding:26px;min-height:215px;background:#1e1930;border:1px solid #67517d;border-radius:20px;color:#f9f6ff;transition:border-color .15s,transform .15s}
+.tile:hover,.tile:focus-visible{border-color:#a987ff;transform:translateY(-2px)}
+.tileIcon{background:#6f4db33d;width:52px;height:52px;display:grid;place-items:center;border-radius:14px;font-size:27px}
+.tile strong{font-size:20px;line-height:1.3}
+.tile small{color:#c2b8d2;line-height:1.5;font-size:13px}
+.tileAction{color:#be9dff;font-size:12px;font-weight:800;margin-top:auto}
+.panel{border:1px solid #5b4872;border-radius:22px;background:#1c182b;padding:26px;display:grid;gap:19px}
+.panel h2{font-size:22px;letter-spacing:-.5px;margin:0}
+.hint{color:#baafcb;line-height:1.7;font-size:13px;margin:0}
+.formGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px}
+.formGrid label{display:grid;gap:10px;color:#d3c9e3;font-weight:700;font-size:13px}
+.formGrid select{padding:13px 12px;background:#2b223c;border:1px solid #6e5786;border-radius:12px;color:#f8f4ff;width:100%;min-width:0;outline-offset:3px}
+.actions{display:flex;flex-wrap:wrap;gap:12px}
+.primary,.secondary{padding:14px 19px;border:1px solid #9e80ed;border-radius:12px;font-weight:800;line-height:1.35}
+.primary{background:#8059d9;color:white}.primary:hover{background:#936bed}
+.secondary{color:#eadbff;background:#352544}.secondary:hover{background:#46315f}
+.primary:disabled,.secondary:disabled{opacity:.45;cursor:not-allowed}
+.upload{display:block;width:fit-content;padding:18px 22px;background:#352544;border:1px dashed #bb95ff;border-radius:14px;font-weight:750;color:#e8d8ff;cursor:pointer}
+.upload input{display:none}
+.preview{border:1px solid #67517d;background:#171326;border-radius:15px;padding:16px;overflow-wrap:anywhere}
+.preview strong{display:block;margin-bottom:9px}.preview p{color:#c8bfd5;font-size:13px;line-height:1.65}.preview span{font-size:12px;color:#9f91b7}
+.readyGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.readyCard{padding:18px;background:#292138;border:1px solid #655077;border-radius:15px;display:flex;flex-direction:column;align-items:flex-start;gap:12px}
+.readyCard span{color:#c9b4e7;font-size:12px}.readyCard strong{font-size:17px;line-height:1.35;min-height:44px}
+.readyCard button,.savedItem button{padding:10px 12px;border:1px solid #9573d4;background:#483061;border-radius:9px;color:#f1e4ff;font-size:12px;font-weight:750}
+.readyCard button:disabled,.savedItem button:disabled{opacity:.5}
+.empty{color:#b6a9c9;border:1px dashed #68537f;border-radius:14px;padding:22px}
+.savedList{display:grid;gap:12px}
+.savedItem{display:flex;gap:12px;align-items:center;padding:14px;border-radius:13px;background:#282039;border:1px solid #5d4970}
+.savedItem>div{flex:1;min-width:0;display:grid;gap:6px}
+.savedItem strong{font-size:14px;overflow-wrap:anywhere}.savedItem small{font-size:12px;color:#bbaacc}
+.notice{border:1px solid #b894f6;border-radius:12px;padding:14px 16px;background:#2b2141;color:#f7edff;line-height:1.6;margin:0}
+.footnote{font-size:12px;color:#aba0bb;line-height:1.6;margin:0 4px}
+@media(max-width:900px){.readyGrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.hero{padding:23px}.grid{grid-template-columns:1fr}.tile{min-height:185px;padding:22px}.panel{padding:19px}.readyGrid{grid-template-columns:1fr}.formGrid{grid-template-columns:1fr}.actions{display:grid;grid-template-columns:1fr}.savedItem{flex-wrap:wrap}.savedItem>div{flex-basis:100%}}
