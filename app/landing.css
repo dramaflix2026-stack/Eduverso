@@ -31,8 +31,10 @@
 .lp-hero-copy>p{font-size:17px;line-height:1.7;color:var(--muted);max-width:520px;margin:0 0 26px}
 .lp-hero-actions{display:flex;flex-wrap:wrap;gap:11px}
 .lp-button-large{min-width:176px}
-.lp-hero-points{display:flex;flex-wrap:wrap;column-gap:17px;row-gap:11px;color:#c7bed4;font-size:11px;margin-top:26px}
-.lp-hero-points b{color:#b390ff;margin-right:3px;font-size:13px}
+/* Hero: benefícios com ícones e textos alinhados na mesma base. */
+.lp-hero-points{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-items:start;gap:12px 16px;max-width:590px;margin-top:26px;color:#c7bed4;font-size:12px}
+.lp-hero-points>span{display:flex;align-items:center;gap:8px;min-width:0;min-height:30px;line-height:1.4}
+.lp-hero-points>span>b{display:inline-grid;place-items:center;flex:0 0 21px;width:21px;height:21px;border-radius:50%;margin:0;background:#b390ff21;color:#c9abff;font-size:13px;line-height:1}
 .lp-hero-stage{position:relative;min-width:0;isolation:isolate;padding:29px 11px 37px}
 .lp-stage-glow{position:absolute;inset:-14%;background:radial-gradient(circle,#a46dff53,transparent 65%);filter:blur(27px);z-index:-1;pointer-events:none}
 .lp-app-window{overflow:hidden;background:#100d20;border:1px solid #a48bd579;border-radius:19px;box-shadow:0 25px 70px #0009,0 0 0 6px #9474dc0c;transform:rotate(-2deg)}
@@ -245,7 +247,8 @@
  .lp-hero-copy>p{font-size:14px;line-height:1.68;margin-bottom:21px}
  .lp-hero-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
  .edu-lp .lp-hero-actions>a{font-size:12px;min-width:0;min-height:51px;padding:11px 9px;gap:6px;text-align:center}
- .lp-hero-points{margin-top:17px;column-gap:12px;row-gap:7px;font-size:10px}
+ .lp-hero-points{grid-template-columns:1fr;gap:9px;margin-top:19px;font-size:13px}
+ .lp-hero-points>span{min-height:30px;gap:10px}
  .lp-hero-stage{padding:20px 10px 23px}
  .lp-app-window{transform:rotate(-1deg);border-radius:16px}
  .lp-app-topbar{height:37px;padding:0 10px}
