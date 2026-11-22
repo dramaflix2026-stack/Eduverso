@@ -2,6 +2,7 @@ import type {ProfessionalTrack} from "./learning-professions";
 import type {PdfDocumentRequest,PdfSection} from "./lib/lesson-pdf";
 import type {BookletFormat} from "./booklet-content";
 import {getProfessionalDepth} from "./professional-depth";
+import {getProfessionalCodeExample} from "./professional-code-examples";
 
 const letters=["A","B","C"];
 function slug(value:string){return value.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,65)}
@@ -20,6 +21,8 @@ export function makeProfessionalBooklet(track:ProfessionalTrack,limit=10,format:
    item.explain, ...(deep?[deep.objective,deep.explanation]:[])
   ]});
   sections.push({heading:"Exemplo de aplicação",kind:"example",paragraphs:[item.example,item.context]});
+  const source=getProfessionalCodeExample(track.id,i);
+  if(source)sections.push({heading:"Exemplo de código",kind:"example",paragraphs:source.split("\n")});
   if(deep){
    sections.push({heading:"Procedimento passo a passo",kind:"standard",paragraphs:deep.steps.map((step,j)=>(j+1)+". "+step)});
    sections.push({heading:"Desafio prático",kind:"highlight",paragraphs:[deep.practice]});
