@@ -8,16 +8,18 @@ import {entranceSubjects} from "./medicine-entrance";
 import {medicalTracks,getMedicalChoices,getMedicalTopics,getMedicalContent,chooseMedicalQuestions,type MedicalTrack} from "./creation-medical-catalog";
 import {buildExercises,type LessonSource,type ExerciseItem} from "./exercise-bank";
 import {downloadStudyPdf,type PdfDocumentRequest,type PdfSection} from "./lib/lesson-pdf";
+import {makeBooklet,type BookletFormat} from "./booklet-content";
+import {professionalTracks,getProfessionalTrack} from "./learning-professions";
 import styles from "./creation-center.module.css";
 
 export type CreationTool="inicio"|"provas"|"apostilas"|"arquivos"|"biblioteca";
 type SubjectOption={name:string;topics:{name:string}[]};
-type Props={tool:CreationTool;onNavigate:(tool:CreationTool)=>void;subjects:SubjectOption[]};
+type Props={tool:CreationTool;onNavigate:(tool:CreationTool)=>void;subjects:SubjectOption[];initialProfessional?:boolean};
 type SavedMaterial={id:string;title:string;kind:string;date:string;pdf:PdfDocumentRequest};
 const STORAGE="eduverso:central-criacao:material:v1";
 const NAV: {id:Exclude<CreationTool,"inicio">;title:string;icon:string;subtitle:string}[]=[
  {id:"provas",title:"Gerador de provas",icon:"📝",subtitle:"Monte até 100 questões e baixe a prova completa com gabarito comentado ao final."},
- {id:"apostilas",title:"Apostilas e atividades",icon:"📚",subtitle:"Aulas organizadas com exemplos e prática para baixar."},
+ {id:"apostilas",title:"Criador de apostilas",icon:"📚",subtitle:"Material teórico completo ou apostila com atividades ao final, em PDF diagramado."},
  {id:"arquivos",title:"Transformar arquivos em materiais",icon:"📄",subtitle:"Importe texto ou PDF e prepare um roteiro de estudo."},
  {id:"biblioteca",title:"Biblioteca de materiais prontos",icon:"▤",subtitle:"Acesse guias do catálogo e seus documentos salvos."}
 ];
@@ -36,18 +38,6 @@ function allLessons(subject:string,topic:string):LessonSource[]{
  if(subject==="Matemática"&&topic==="Frações")return fractionUnits.map(l=>({...l,feedback:l.explain}));
  if(subject==="Matemática")return getMathLessons(topic).map(l=>({...l,explain:l.body}));
  return getLessons(subject,topic).map(l=>({...l,body:l.explain}));
-}
-function makeBooklet(subject:string,topic:string,limit=10,prepared?:LessonSource[]):PdfDocumentRequest|null{
- const lessons=(prepared??allLessons(subject,topic)).slice(0,limit);
- if(!lessons.length)return null;
- const sections:PdfSection[]=lessons.map((l,i)=>({
-  heading:String(i+1)+". "+l.title,
-  paragraphs:[l.body||l.explain||"", "Exemplo aplicado: "+l.example, "Pratique: "+l.question,
-   ...l.options.map((o,j)=>options[j]+") "+o),
-   "Gabarito comentado: "+options[l.correct]+") "+l.options[l.correct]+". "+(l.feedback||l.body||l.explain||"")].filter(Boolean)
- }));
- return {title:"Apostila e atividades — "+topic,subtitle:"Eduverso · "+subject,fileName:"eduverso-apostila-"+fileSafe(topic)+".pdf",sections,
- note:"Material organizado a partir do conteúdo editorial já cadastrado no Eduverso, não gerado por inteligência artificial. Confira as questões e o gabarito antes de distribuir."};
 }
 function makeExam(subject:string,topic:string,items:ExerciseItem[],onlyAnswerKey=false):PdfDocumentRequest{
  const limited=items.slice(0,100);
@@ -94,9 +84,11 @@ function makeExam(subject:string,topic:string,items:ExerciseItem[],onlyAnswerKey
 function readSaved():SavedMaterial[]{
  try{const raw=JSON.parse(localStorage.getItem(STORAGE)||"[]");return Array.isArray(raw)?raw.filter(x=>x&&typeof x.id==="string"&&typeof x.title==="string"&&x.pdf&&Array.isArray(x.pdf.sections)).slice(0,12):[];}catch{return [];}
 }
-export default function CreationCenter({tool,onNavigate,subjects}:Props){
+export default function CreationCenter({tool,onNavigate,subjects,initialProfessional=false}:Props){
  const choices=useMemo(()=>subjects.filter(s=>availableSubjects.includes(s.name)&&s.topics.length),[subjects]);
- const [sourceArea,setSourceArea]=useState<"escolar"|MedicalTrack>("escolar");
+ const [sourceArea,setSourceArea]=useState<"escolar"|"profissional"|MedicalTrack>(initialProfessional?"profissional":"escolar");
+ const [professionalId,setProfessionalId]=useState("web");
+ const [bookletFormat,setBookletFormat]=useState<BookletFormat>("teoria");
  const [medChoice,setMedChoice]=useState("geral");
  const [medTopic,setMedTopic]=useState("");
  const [subject,setSubject]=useState("Matemática");
@@ -114,19 +106,23 @@ export default function CreationCenter({tool,onNavigate,subjects}:Props){
  useEffect(()=>{setNotice("");},[tool]);
  const topics=choices.find(s=>s.name===subject)?.topics??[];
  const resolvedTopic=topics.some(t=>t.name===topic)?topic:(topics[0]?.name||"");
- const medChoices=useMemo(()=>sourceArea==="escolar"?[]:getMedicalChoices(sourceArea),[sourceArea]);
+ const medChoices=useMemo(()=>sourceArea==="escolar"||sourceArea==="profissional"?[]:getMedicalChoices(sourceArea),[sourceArea]);
  const resolvedMedChoice=medChoices.find(c=>c.id===medChoice)?.id??medChoices[0]?.id??"";
  const entry=entranceSubjects.find(s=>s.id===resolvedMedChoice);
  const entranceTopics=choices.find(s=>s.name===entry?.subject)?.topics??[];
- const medTopics=useMemo(()=>sourceArea==="escolar"?[]:getMedicalTopics(sourceArea,resolvedMedChoice,entranceTopics),[sourceArea,resolvedMedChoice,entranceTopics]);
+ const medTopics=useMemo(()=>sourceArea==="escolar"||sourceArea==="profissional"?[]:getMedicalTopics(sourceArea,resolvedMedChoice,entranceTopics),[sourceArea,resolvedMedChoice,entranceTopics]);
  const resolvedMedTopic=medTopics.some(t=>t.id===medTopic)?medTopic:"";
- const medContent=useMemo(()=>sourceArea==="escolar"?null:getMedicalContent(sourceArea,resolvedMedChoice,resolvedMedTopic,entranceTopics),[sourceArea,resolvedMedChoice,resolvedMedTopic,entranceTopics]);
- const lessons=useMemo(()=>medContent?.lessons??allLessons(subject,resolvedTopic),[medContent,subject,resolvedTopic]);
+ const medContent=useMemo(()=>sourceArea==="escolar"||sourceArea==="profissional"?null:getMedicalContent(sourceArea,resolvedMedChoice,resolvedMedTopic,entranceTopics),[sourceArea,resolvedMedChoice,resolvedMedTopic,entranceTopics]);
+ const professional=getProfessionalTrack(professionalId)??professionalTracks[0];
+ const professionalMode=tool==="apostilas"&&sourceArea==="profissional";
+ const lessons=useMemo(()=>professionalMode?professional.lessons:(medContent?.lessons??allLessons(subject,resolvedTopic)),[professionalMode,professional,medContent,subject,resolvedTopic]);
+ useEffect(()=>{if(tool==="provas"&&sourceArea==="profissional")setSourceArea("escolar");},[tool,sourceArea]);
+ useEffect(()=>{if(initialProfessional&&tool==="apostilas")setSourceArea("profissional");},[initialProfessional,tool]);
  const exam=useMemo(()=>medContent?chooseMedicalQuestions(medContent.questions,quantity,seed):buildExercises(lessons,quantity,seed,undefined,subject,resolvedTopic),[medContent,lessons,quantity,seed,subject,resolvedTopic]);
- const activeSubject=medContent?.subjectLabel??subject;
- const activeTopic=medContent?.label??resolvedTopic;
+ const activeSubject=professionalMode?professional.category:(medContent?.subjectLabel??subject);
+ const activeTopic=professionalMode?professional.name:(medContent?.label??resolvedTopic);
  function switchSubject(next:string){setSubject(next);setTopic(choices.find(s=>s.name===next)?.topics[0]?.name||"");setSeed(0);setNotice("");}
- function switchArea(next:"escolar"|MedicalTrack){setSourceArea(next);setMedChoice(next==="vestibular"?"biologia":next==="atlas"?"esqueleto":"geral");setMedTopic("");setSeed(0);setNotice("");}
+ function switchArea(next:"escolar"|"profissional"|MedicalTrack){setSourceArea(next);setMedChoice(next==="vestibular"?"biologia":next==="atlas"?"esqueleto":"geral");setMedTopic("");setSeed(0);setNotice("");}
  function switchMedicineChoice(next:string){setMedChoice(next);setMedTopic("");setSeed(0);setNotice("");}
  function store(pdf:PdfDocumentRequest,kind:string){
   const entry:SavedMaterial={id:String(Date.now())+"-"+Math.round(Math.random()*100000),title:pdf.title,kind,date:new Date().toLocaleDateString("pt-BR"),pdf};
@@ -194,16 +190,30 @@ export default function CreationCenter({tool,onNavigate,subjects}:Props){
    <p>{selectedTool?selectedTool.subtitle:"Crie, organize e baixe materiais educativos usando as aulas do Eduverso. Escolha a ferramenta que atende ao seu objetivo."}</p>
    {tool!=="inicio"&&<button type="button" className={styles.back} onClick={()=>onNavigate("inicio")}>← Voltar para as ferramentas</button>}
   </header>
-  {tool==="inicio"&&<div className={styles.grid}>{NAV.map(t=><button key={t.id} type="button" className={styles.tile} onClick={()=>onNavigate(t.id)}><span className={styles.tileIcon}>{t.icon}</span><strong>{t.title}</strong><small>{t.subtitle}</small><span className={styles.tileAction}>Abrir ferramenta ↗</span></button>)}</div>}
+  {tool==="inicio"&&<><div className={styles.grid}>{NAV.map(t=><button key={t.id} type="button" className={styles.tile} onClick={()=>onNavigate(t.id)}><span className={styles.tileIcon}>{t.icon}</span><strong>{t.title}</strong><small>{t.subtitle}</small><span className={styles.tileAction}>Abrir ferramenta ↗</span></button>)}</div>
+   <div className={styles.highlightFeature}><span>✦ NOVAS FORMAÇÕES</span><strong>Programação, TI, Design, Dados e Negócios</strong><p>Trilhas introdutórias com capítulos explicativos e apostilas para baixar. Selecione Criador de Apostilas e escolha a área Formação profissional.</p><button type="button" onClick={()=>onNavigate("apostilas")}>Explorar trilhas e apostilas →</button></div></>}
   {(tool==="provas"||tool==="apostilas")&&section(tool==="provas"?"Monte sua prova":"Crie sua apostila",
    <><div className={styles.subjectPicker}>
      <span className={styles.subjectTitle}>Área de conhecimento</span>
      <div className={styles.areaChoices} role="group" aria-label="Escolher área de estudo">
        <button type="button" aria-pressed={sourceArea==="escolar"} className={styles.subjectChoice+" "+(sourceArea==="escolar"?styles.subjectChoiceActive:"")} onClick={()=>switchArea("escolar")}>📘 Fundamental e Médio</button>
+       {tool==="apostilas"&&<button type="button" aria-pressed={sourceArea==="profissional"} className={styles.subjectChoice+" "+(sourceArea==="profissional"?styles.subjectChoiceActive:"")} onClick={()=>switchArea("profissional")}>💻 Formação profissional</button>}
        {medicalTracks.map(item=><button key={item.id} type="button" aria-pressed={sourceArea===item.id} className={styles.subjectChoice+" "+(sourceArea===item.id?styles.subjectChoiceActive:"")} onClick={()=>switchArea(item.id)}>{item.id==="vestibular"?"🎓":item.id==="faculdade"?"🫀":item.id==="revalida"?"⚕️":"🦴"} {item.name}</button>)}
      </div>
    </div>
-   {sourceArea==="escolar"?<div className={styles.subjectPicker}>
+   {professionalMode?<div className={styles.professionalArea}>
+     <div className={styles.subjectPicker}>
+      <span className={styles.subjectTitle}>Escolha uma trilha profissional <small>· {professionalTracks.length} trilhas introdutórias</small></span>
+      <div className={styles.professionalGrid}>{professionalTracks.map(track=><button type="button" key={track.id}
+       className={styles.professionalCard} aria-pressed={professionalId===track.id} onClick={()=>{setProfessionalId(track.id);setNotice("");}}>
+       <span className={styles.professionalIcon}>{track.icon}</span><span><small>{track.category}</small><strong>{track.name}</strong><em>{track.description}</em></span>
+      </button>)}</div>
+     </div>
+     <div className={styles.professionalSyllabus}><strong>Conteúdo inicial: {professional.name}</strong>
+       {professional.lessons.map((lesson,i)=><span key={lesson.title}>{String(i+1).padStart(2,"0")} · {lesson.title}</span>)}
+       <small>Trilha introdutória baseada em conteúdo editorial, com leitura de referência indicada no PDF. Não equivale a curso superior nem a certificação.</small>
+     </div>
+    </div>:sourceArea==="escolar"?<div className={styles.subjectPicker}>
      <span className={styles.subjectTitle}>Selecione a disciplina <small>· {choices.length} disponíveis</small></span>
      <div className={styles.subjectChoices} role="group" aria-label="Escolher disciplina para gerar materiais">
        {choices.map(item=><button type="button" key={item.name} aria-pressed={subject===item.name} className={styles.subjectChoice+" "+(subject===item.name?styles.subjectChoiceActive:"")} onClick={()=>switchSubject(item.name)}>{item.name}</button>)}
@@ -216,7 +226,7 @@ export default function CreationCenter({tool,onNavigate,subjects}:Props){
      {sourceArea==="revalida"&&<p className={styles.hint}>Revisão com questões autorais de clínica, internato e saúde coletiva. Não reproduz provas oficiais do Revalida ou de residência.</p>}
    </div>}
    <div className={styles.formGrid}>
-    {sourceArea==="escolar"?<label>Assunto<select value={resolvedTopic} onChange={e=>{setTopic(e.target.value);setSeed(0);setNotice("");}}>{topics.map(t=><option key={t.name} value={t.name}>{t.name}</option>)}</select></label>:
+    {professionalMode?null:sourceArea==="escolar"?<label>Assunto<select value={resolvedTopic} onChange={e=>{setTopic(e.target.value);setSeed(0);setNotice("");}}>{topics.map(t=><option key={t.name} value={t.name}>{t.name}</option>)}</select></label>:
      <label>Assunto ou abrangência<select value={resolvedMedTopic} onChange={e=>{setMedTopic(e.target.value);setSeed(0);setNotice("");}}>
        <option value="">Todos os assuntos disponíveis</option>
        {medTopics.map(t=><option key={t.id} value={t.id}>{t.name}</option>)}
@@ -224,14 +234,27 @@ export default function CreationCenter({tool,onNavigate,subjects}:Props){
     {tool==="provas"?<label>Quantidade de questões<select value={quantity} onChange={e=>{setQuantity(Number(e.target.value));setNotice("");}}>{[5,10,15,20,25,30,40,50,60,70,80,90,100].map(n=><option key={n} value={n}>{n} questões</option>)}</select></label>:
       <label>Aulas para incluir<select value={lessonLimit} onChange={e=>setLessonLimit(Number(e.target.value))}>{[5,10,15,20].map(n=><option key={n} value={n}>Até {n} aulas</option>)}</select></label>}
    </div>
-   <p className={styles.hint}>{tool==="provas"?"Questões distintas disponíveis nesta rodada: "+exam.length+" de "+quantity+".":"Aulas disponíveis para este assunto: "+lessons.length+"."} Os PDFs utilizam o catálogo existente; não dependem de IA.</p>
+   {tool==="apostilas"&&<div className={styles.bookletMode}>
+     <div className={styles.bookletIntro}><span>ESCOLHA O FORMATO</span><strong>Você quer estudar ou aplicar atividades?</strong>
+      <p>Apostilas começam com teoria e explicação. As perguntas são opcionais e nunca aparecem misturadas às explicações.</p></div>
+     <div className={styles.bookletChoices} role="group" aria-label="Formato da apostila">
+      <button type="button" className={styles.bookletChoice} aria-pressed={bookletFormat==="teoria"} onClick={()=>setBookletFormat("teoria")}>
+       <span>📖</span><strong>Apostila teórica</strong><small>Conceitos, contextualização, capítulos, exemplos e referências. Sem perguntas obrigatórias.</small></button>
+      <button type="button" className={styles.bookletChoice} aria-pressed={bookletFormat==="com-atividades"} onClick={()=>setBookletFormat("com-atividades")}>
+       <span>📝</span><strong>Teoria + atividades</strong><small>O mesmo conteúdo teórico, com exercícios ao final e gabarito comentado em seção separada.</small></button>
+     </div>
+     <div className={styles.bookletPreview}><span>PRÉVIA DO SUMÁRIO</span><strong>{activeTopic}</strong>
+       <div>{lessons.slice(0,lessonLimit).map((l,i)=><small key={i}>{String(i+1).padStart(2,"0")} · {l.title}</small>)}</div>
+     </div>
+    </div>}
+   <p className={styles.hint}>{tool==="provas"?"Questões distintas disponíveis nesta rodada: "+exam.length+" de "+quantity+".":"Capítulos disponíveis para este assunto: "+Math.min(lessons.length,lessonLimit)+"."} Os PDFs utilizam o catálogo existente e conteúdo editorial; não dependem de IA.</p>
    {tool==="provas"&&exam.length<quantity&&<p className={styles.notice} role="status">Este recorte possui {exam.length} questões distintas disponíveis. O PDF terá somente essas {exam.length} questões — sem repetir perguntas para atingir {quantity}. Para ampliar o banco, selecione todos os assuntos ou outra disciplina.</p>}
    {tool==="provas"&&<button type="button" className={styles.secondary} onClick={()=>{setSeed(v=>v+37);setNotice("");}}>↻ Sortear outra versão</button>}
    <div className={styles.actions}>
     {tool==="provas"?<>
       <button disabled={busy||!exam.length} className={styles.primary} onClick={()=>create(makeExam(activeSubject,activeTopic,exam),"Prova")}>↓ Baixar prova + gabarito comentado (PDF)</button>
       <button disabled={busy||!exam.length} className={styles.secondary} onClick={()=>create(makeExam(activeSubject,activeTopic,exam,true),"Gabarito")}>↓ Baixar somente o gabarito (PDF)</button>
-     </>:<button disabled={busy||!lessons.length} className={styles.primary} onClick={()=>create(makeBooklet(activeSubject,activeTopic,lessonLimit,lessons),"Apostila")}>↓ Criar e baixar apostila PDF</button>}
+     </>:<button disabled={busy||!lessons.length} className={styles.primary} onClick={()=>create(makeBooklet(activeSubject,activeTopic,lessonLimit,lessons,bookletFormat),"Apostila")}>↓ Baixar {bookletFormat==="teoria"?"apostila teórica":"apostila com atividades"} (PDF)</button>}
    </div></>)}
   {tool==="arquivos"&&section("Importar material de estudo",
     <><p className={styles.hint}>Envie um PDF com texto selecionável ou um arquivo TXT. A leitura acontece no navegador; nesta etapa, o arquivo é organizado em um PDF de revisão, sem reescrita por IA.</p>
@@ -240,8 +263,14 @@ export default function CreationCenter({tool,onNavigate,subjects}:Props){
     {fileText&&<div className={styles.preview}><strong>{fileName}</strong><p>{fileText.slice(0,600)}{fileText.length>600?"...":""}</p><span>{fileText.length.toLocaleString("pt-BR")} caracteres extraídos</span></div>}
     <button type="button" className={styles.primary} disabled={busy||fileReading||!fileText} onClick={()=>create(fromFile(),"Roteiro de arquivo")}>↓ Preparar roteiro de estudo PDF</button></>)}
   {tool==="biblioteca"&&<>
-    {section("Materiais do catálogo prontos para baixar",<div className={styles.readyGrid}>{starterMaterials.map(entry=><div className={styles.readyCard} key={entry.subject+"-"+entry.topic}><span>▤ {entry.subject}</span><strong>{entry.topic}</strong><button type="button" disabled={busy} onClick={()=>create(makeBooklet(entry.subject,entry.topic,10),"Material pronto")}>↓ Baixar PDF</button></div>)}</div>)}
-    {section("Medicina — apostilas das 18 disciplinas",<div className={styles.readyGrid}>{medicineDisciplines.map(d=><div className={styles.readyCard} key={d.slug}><span>🫀 Faculdade de Medicina</span><strong>{d.title}</strong><button type="button" disabled={busy} onClick={()=>{const content=getMedicalContent("faculdade",d.slug,"");void create(makeBooklet("Faculdade de Medicina",d.title,10,content.lessons),"Apostila de Medicina");}}>↓ Baixar PDF</button></div>)}</div>)}
+    {section("Materiais do catálogo prontos para baixar",<div className={styles.readyGrid}>{starterMaterials.map(entry=><div className={styles.readyCard} key={entry.subject+"-"+entry.topic}><span>▤ {entry.subject}</span><strong>{entry.topic}</strong><button type="button" disabled={busy} onClick={()=>create(makeBooklet(entry.subject,entry.topic,10,allLessons(entry.subject,entry.topic),"teoria"),"Material pronto")}>↓ Baixar PDF</button></div>)}</div>)}
+    {section("Medicina — apostilas das 18 disciplinas",<div className={styles.readyGrid}>{medicineDisciplines.map(d=><div className={styles.readyCard} key={d.slug}><span>🫀 Faculdade de Medicina</span><strong>{d.title}</strong><button type="button" disabled={busy} onClick={()=>{const content=getMedicalContent("faculdade",d.slug,"");void create(makeBooklet("Faculdade de Medicina",d.title,10,content.lessons,"teoria"),"Apostila de Medicina");}}>↓ Baixar PDF</button></div>)}</div>)}
+    {section("Formações profissionais — apostilas introdutórias",<div className={styles.readyGrid}>
+     {professionalTracks.map(t=><div className={styles.readyCard} key={t.id}><span>{t.icon} {t.category}</span><strong>{t.name}</strong>
+      <p className={styles.hint}>{t.description}</p>
+      <button type="button" disabled={busy} onClick={()=>create(makeBooklet(t.category,t.name,20,t.lessons,"teoria"),"Apostila profissional")}>↓ Apostila teórica PDF</button>
+     </div>)}
+    </div>)}
     {section("Meus materiais salvos",<><p className={styles.hint}>Cópias dos materiais gerados nesta Central. Armazenadas somente neste navegador, não sincronizadas entre dispositivos.</p>
      {saved.length===0?<div className={styles.empty}>Ainda não há materiais salvos aqui. Gere uma prova, uma apostila ou um roteiro para começar.</div>:
      <div className={styles.savedList}>{saved.map(item=><div className={styles.savedItem} key={item.id}><div><strong>{item.title}</strong><small>{item.kind} · {item.date}</small></div><button type="button" disabled={busy} onClick={()=>create(item.pdf,item.kind,false)}>↓ PDF</button><button type="button" onClick={()=>{const next=saved.filter(x=>x.id!==item.id);try{localStorage.setItem(STORAGE,JSON.stringify(next));setSaved(next);}catch{setNotice("Não foi possível remover o registro.");}}}>Excluir</button></div>)}</div>}</>)}

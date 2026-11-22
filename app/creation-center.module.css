@@ -56,3 +56,43 @@
 .areaChoices .subjectChoice{min-height:62px;padding:13px 11px}
 @media(min-width:1000px){.areaChoices{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:480px){.areaChoices{grid-template-columns:1fr}.areaChoices .subjectChoice{text-align:left;justify-content:flex-start;min-height:46px}}
+
+/* Criador de apostilas: escolha entre material teórico e atividades opcionais. */
+.bookletMode{display:grid;gap:16px;margin-top:8px}
+.bookletIntro{display:grid;gap:7px;background:linear-gradient(125deg,#39244c,#251c39);border:1px solid #8663b2;border-radius:17px;padding:22px}
+.bookletIntro span,.bookletPreview>span{color:#c49ffd;letter-spacing:.14em;font-size:11px;font-weight:900}
+.bookletIntro strong{font-size:clamp(18px,2.8vw,23px);letter-spacing:-.4px}
+.bookletIntro p{font-size:13px;color:#cfc1df;line-height:1.65;margin:0;max-width:650px}
+.bookletChoices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.bookletChoice{min-width:0;display:grid;text-align:left;align-content:start;gap:9px;background:#241c33;border:1px solid #625073;border-radius:18px;padding:20px;cursor:pointer;color:#eee6f7}
+.bookletChoice>span{font-size:30px;margin-bottom:4px}
+.bookletChoice strong{font-size:19px;letter-spacing:-.3px}
+.bookletChoice small{font-size:13px;line-height:1.6;color:#c6b8d5}
+.bookletChoice:hover,.bookletChoice:focus-visible{border-color:#b792f4;background:#322547}
+.bookletChoice[aria-pressed="true"]{background:linear-gradient(135deg,#56357c,#332546);border-color:#c5a5fb;box-shadow:inset 0 0 0 1px #ab8aef,0 8px 24px #0004}
+.bookletChoice[aria-pressed="true"] strong{color:#fff}
+.bookletPreview{background:#171326;border:1px solid #67527e;border-radius:16px;padding:20px;display:grid;gap:10px}
+.bookletPreview>strong{font-size:21px}
+.bookletPreview>div{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.bookletPreview small{display:block;border-left:2px solid #855dc1;padding:7px 10px;background:#2a1f3b;border-radius:0 8px 8px 0;color:#d7cce4;line-height:1.5;font-size:12px}
+.professionalArea{display:grid;gap:17px}
+.professionalGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px}
+.professionalCard{min-width:0;display:flex;align-items:flex-start;gap:11px;text-align:left;background:#251d35;color:#f4ebff;padding:14px 13px;border:1px solid #695581;border-radius:15px;cursor:pointer}
+.professionalIcon{font-size:24px;flex:none}
+.professionalCard>span:last-child{display:grid;gap:4px;min-width:0}
+.professionalCard small{color:#bfa2e4;font-size:10px;font-weight:850;letter-spacing:.04em}
+.professionalCard strong{color:#fff;font-size:14px;line-height:1.4}
+.professionalCard em{font-style:normal;font-size:11px;color:#c7b9d4;line-height:1.5}
+.professionalCard:hover,.professionalCard:focus-visible{border-color:#b58bed;background:#342345}
+.professionalCard[aria-pressed="true"]{background:linear-gradient(130deg,#5c3989,#322346);border-color:#c8a6ff;box-shadow:inset 0 0 0 1px #b692e9}
+.professionalSyllabus{display:grid;gap:9px;background:#241a37;border:1px solid #695080;border-radius:15px;padding:19px}
+.professionalSyllabus strong{font-size:16px;color:#ead9ff}
+.professionalSyllabus>span{font-size:12px;color:#e4d8f0;line-height:1.5;padding:6px 0;border-bottom:1px solid #58456b77}
+.professionalSyllabus small{font-size:12px;line-height:1.6;color:#baaccd}
+.highlightFeature{display:grid;gap:12px;padding:26px 28px;border:1px solid #9b7bcc;border-radius:20px;background:radial-gradient(circle at 92% 20%,#8b5fd466,transparent 38%),linear-gradient(135deg,#3c2957,#1b172d)}
+.highlightFeature>span{font-size:11px;font-weight:850;letter-spacing:.13em;color:#cba9ff}
+.highlightFeature>strong{font-size:23px;letter-spacing:-.5px}
+.highlightFeature>p{color:#cbbdde;line-height:1.6;font-size:14px;max-width:660px}
+.highlightFeature>button{width:fit-content;cursor:pointer;border-radius:11px;background:#845bd9;border:1px solid #bc9ef7;color:white;padding:12px 17px;font-weight:850}
+@media(max-width:940px){.professionalGrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.bookletChoices{grid-template-columns:1fr}.bookletPreview>div{grid-template-columns:1fr}.professionalGrid{grid-template-columns:1fr}.professionalCard{padding:13px}.bookletIntro,.bookletPreview{padding:17px}.highlightFeature{padding:21px}}
