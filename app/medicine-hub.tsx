@@ -10,6 +10,7 @@ import {atlasViews} from "./anatomy-atlas-collection-data";
 import {advancedMedCourses} from "./medicine-advanced-catalog";
 import {prepCatalog} from "./preparation-catalog";
 import LearningQuality from "./learning-quality";
+import {recordStudyActivity} from "./lib/study-activity";
 
 export type MedicineArea="faculdade"|"vestibular"|"exames"|"instituicoes";
 type Props={
@@ -69,6 +70,7 @@ export default function MedicineHub({area,onChangeArea,onAtlasStateChange,onOpen
   url.searchParams.delete("atlas");url.searchParams.delete("atlasVista");
   window.history.pushState({},"",url.pathname+url.search+url.hash);
   setDiscipline(d);setTopic(t);setChosen(null);setChecked(false);setMockOpen(false);setAtlasOpen(false);onAtlasStateChange(false);
+  if(d){const disc=medicineDisciplines.find(item=>item.slug===d);const selected=disc?.topics.find(item=>item.id===t);recordStudyActivity(disc?.title||"Medicina",selected?.name||"");}
   window.scrollTo({top:0,behavior:"smooth"});
  }
  function changeArea(next:MedicineArea){
@@ -86,12 +88,14 @@ export default function MedicineHub({area,onChangeArea,onAtlasStateChange,onOpen
  function verify(){
   if(chosen===null||!currentTopic)return;
   setChecked(true);
+  recordStudyActivity(currentDiscipline?.title||"Medicina",currentTopic.name,"answer");
   const old=attempts[currentTopic.id]??{right:0,wrong:0};
   const nextAttempts={...attempts,[currentTopic.id]:{right:old.right+(chosen===currentTopic.correct?1:0),wrong:old.wrong+(chosen===currentTopic.correct?0:1)}};
   setAttempts(nextAttempts);
   try{window.localStorage.setItem(attemptsKey,JSON.stringify(nextAttempts));}catch{}
   if(chosen===currentTopic.correct){
    const next={...completed,[currentTopic.id]:true};setCompleted(next);
+   recordStudyActivity(currentDiscipline?.title||"Medicina",currentTopic.name,"completed");
    try{window.localStorage.setItem(localKey,JSON.stringify(next));}catch{}
   }
  }
@@ -208,6 +212,7 @@ export default function MedicineHub({area,onChangeArea,onAtlasStateChange,onOpen
       onBack={()=>pushLocation(currentDiscipline.slug,null)}
       onNext={nextTopic}
       onComplete={()=>{
+        recordStudyActivity(currentDiscipline.title,currentTopic.name,"completed");
         setCompleted(prev=>{
           const next={...prev,[currentTopic.id]:true};
           try{window.localStorage.setItem(localKey,JSON.stringify(next));}catch{}
@@ -215,6 +220,7 @@ export default function MedicineHub({area,onChangeArea,onAtlasStateChange,onOpen
         });
       }}
       onAnswer={correct=>{
+        recordStudyActivity(currentDiscipline.title,currentTopic.name,"answer");
         setAttempts(prev=>{
           const old=prev[currentTopic.id]??{right:0,wrong:0};
           const next={...prev,[currentTopic.id]:{right:old.right+(correct?1:0),wrong:old.wrong+(correct?0:1)}};
