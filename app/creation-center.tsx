@@ -3,6 +3,9 @@ import {useEffect,useMemo,useState} from "react";
 import {getMathLessons} from "./math-curriculum";
 import {fractionUnits} from "./fraction-curriculum";
 import {getLessons} from "./course-catalog";
+import {medicineDisciplines} from "./medicine-curriculum";
+import {entranceSubjects} from "./medicine-entrance";
+import {medicalTracks,getMedicalChoices,getMedicalTopics,getMedicalContent,chooseMedicalQuestions,type MedicalTrack} from "./creation-medical-catalog";
 import {buildExercises,type LessonSource,type ExerciseItem} from "./exercise-bank";
 import {downloadStudyPdf,type PdfDocumentRequest,type PdfSection} from "./lib/lesson-pdf";
 import styles from "./creation-center.module.css";
@@ -34,8 +37,8 @@ function allLessons(subject:string,topic:string):LessonSource[]{
  if(subject==="Matemática")return getMathLessons(topic).map(l=>({...l,explain:l.body}));
  return getLessons(subject,topic).map(l=>({...l,body:l.explain}));
 }
-function makeBooklet(subject:string,topic:string,limit=10):PdfDocumentRequest|null{
- const lessons=allLessons(subject,topic).slice(0,limit);
+function makeBooklet(subject:string,topic:string,limit=10,prepared?:LessonSource[]):PdfDocumentRequest|null{
+ const lessons=(prepared??allLessons(subject,topic)).slice(0,limit);
  if(!lessons.length)return null;
  const sections:PdfSection[]=lessons.map((l,i)=>({
   heading:String(i+1)+". "+l.title,
@@ -61,6 +64,9 @@ function readSaved():SavedMaterial[]{
 }
 export default function CreationCenter({tool,onNavigate,subjects}:Props){
  const choices=useMemo(()=>subjects.filter(s=>availableSubjects.includes(s.name)&&s.topics.length),[subjects]);
+ const [sourceArea,setSourceArea]=useState<"escolar"|MedicalTrack>("escolar");
+ const [medChoice,setMedChoice]=useState("geral");
+ const [medTopic,setMedTopic]=useState("");
  const [subject,setSubject]=useState("Matemática");
  const [topic,setTopic]=useState("Porcentagem");
  const [quantity,setQuantity]=useState(10);
@@ -76,9 +82,20 @@ export default function CreationCenter({tool,onNavigate,subjects}:Props){
  useEffect(()=>{setNotice("");},[tool]);
  const topics=choices.find(s=>s.name===subject)?.topics??[];
  const resolvedTopic=topics.some(t=>t.name===topic)?topic:(topics[0]?.name||"");
- const lessons=useMemo(()=>allLessons(subject,resolvedTopic),[subject,resolvedTopic]);
- const exam=useMemo(()=>buildExercises(lessons,quantity,seed,undefined,subject,resolvedTopic),[lessons,quantity,seed,subject,resolvedTopic]);
+ const medChoices=useMemo(()=>sourceArea==="escolar"?[]:getMedicalChoices(sourceArea),[sourceArea]);
+ const resolvedMedChoice=medChoices.find(c=>c.id===medChoice)?.id??medChoices[0]?.id??"";
+ const entry=entranceSubjects.find(s=>s.id===resolvedMedChoice);
+ const entranceTopics=choices.find(s=>s.name===entry?.subject)?.topics??[];
+ const medTopics=useMemo(()=>sourceArea==="escolar"?[]:getMedicalTopics(sourceArea,resolvedMedChoice,entranceTopics),[sourceArea,resolvedMedChoice,entranceTopics]);
+ const resolvedMedTopic=medTopics.some(t=>t.id===medTopic)?medTopic:"";
+ const medContent=useMemo(()=>sourceArea==="escolar"?null:getMedicalContent(sourceArea,resolvedMedChoice,resolvedMedTopic,entranceTopics),[sourceArea,resolvedMedChoice,resolvedMedTopic,entranceTopics]);
+ const lessons=useMemo(()=>medContent?.lessons??allLessons(subject,resolvedTopic),[medContent,subject,resolvedTopic]);
+ const exam=useMemo(()=>medContent?chooseMedicalQuestions(medContent.questions,quantity,seed):buildExercises(lessons,quantity,seed,undefined,subject,resolvedTopic),[medContent,lessons,quantity,seed,subject,resolvedTopic]);
+ const activeSubject=medContent?.subjectLabel??subject;
+ const activeTopic=medContent?.label??resolvedTopic;
  function switchSubject(next:string){setSubject(next);setTopic(choices.find(s=>s.name===next)?.topics[0]?.name||"");setSeed(0);setNotice("");}
+ function switchArea(next:"escolar"|MedicalTrack){setSourceArea(next);setMedChoice(next==="vestibular"?"biologia":next==="atlas"?"esqueleto":"geral");setMedTopic("");setSeed(0);setNotice("");}
+ function switchMedicineChoice(next:string){setMedChoice(next);setMedTopic("");setSeed(0);setNotice("");}
  function store(pdf:PdfDocumentRequest,kind:string){
   const entry:SavedMaterial={id:String(Date.now())+"-"+Math.round(Math.random()*100000),title:pdf.title,kind,date:new Date().toLocaleDateString("pt-BR"),pdf};
   try{
@@ -148,13 +165,30 @@ export default function CreationCenter({tool,onNavigate,subjects}:Props){
   {tool==="inicio"&&<div className={styles.grid}>{NAV.map(t=><button key={t.id} type="button" className={styles.tile} onClick={()=>onNavigate(t.id)}><span className={styles.tileIcon}>{t.icon}</span><strong>{t.title}</strong><small>{t.subtitle}</small><span className={styles.tileAction}>Abrir ferramenta ↗</span></button>)}</div>}
   {(tool==="provas"||tool==="apostilas")&&section(tool==="provas"?"Monte sua prova":"Crie sua apostila",
    <><div className={styles.subjectPicker}>
+     <span className={styles.subjectTitle}>Área de conhecimento</span>
+     <div className={styles.areaChoices} role="group" aria-label="Escolher área de estudo">
+       <button type="button" aria-pressed={sourceArea==="escolar"} className={styles.subjectChoice+" "+(sourceArea==="escolar"?styles.subjectChoiceActive:"")} onClick={()=>switchArea("escolar")}>📘 Fundamental e Médio</button>
+       {medicalTracks.map(item=><button key={item.id} type="button" aria-pressed={sourceArea===item.id} className={styles.subjectChoice+" "+(sourceArea===item.id?styles.subjectChoiceActive:"")} onClick={()=>switchArea(item.id)}>{item.id==="vestibular"?"🎓":item.id==="faculdade"?"🫀":item.id==="revalida"?"⚕️":"🦴"} {item.name}</button>)}
+     </div>
+   </div>
+   {sourceArea==="escolar"?<div className={styles.subjectPicker}>
      <span className={styles.subjectTitle}>Selecione a disciplina <small>· {choices.length} disponíveis</small></span>
      <div className={styles.subjectChoices} role="group" aria-label="Escolher disciplina para gerar materiais">
        {choices.map(item=><button type="button" key={item.name} aria-pressed={subject===item.name} className={styles.subjectChoice+" "+(subject===item.name?styles.subjectChoiceActive:"")} onClick={()=>switchSubject(item.name)}>{item.name}</button>)}
      </div>
-   </div>
+   </div>:<div className={styles.subjectPicker}>
+     <span className={styles.subjectTitle}>{sourceArea==="vestibular"?"Matérias do vestibular":sourceArea==="atlas"?"Módulo de Atlas":"Disciplinas de Medicina"} <small>· {medChoices.length} opções</small></span>
+     <div className={styles.subjectChoices} role="group" aria-label="Escolher disciplina ou módulo de Medicina">
+       {medChoices.map(item=><button type="button" key={item.id} title={item.description} aria-pressed={resolvedMedChoice===item.id} className={styles.subjectChoice+" "+(resolvedMedChoice===item.id?styles.subjectChoiceActive:"")} onClick={()=>switchMedicineChoice(item.id)}>{item.name}</button>)}
+     </div>
+     {sourceArea==="revalida"&&<p className={styles.hint}>Revisão com questões autorais de clínica, internato e saúde coletiva. Não reproduz provas oficiais do Revalida ou de residência.</p>}
+   </div>}
    <div className={styles.formGrid}>
-    <label>Assunto<select value={resolvedTopic} onChange={e=>{setTopic(e.target.value);setSeed(0);setNotice("");}}>{topics.map(t=><option key={t.name} value={t.name}>{t.name}</option>)}</select></label>
+    {sourceArea==="escolar"?<label>Assunto<select value={resolvedTopic} onChange={e=>{setTopic(e.target.value);setSeed(0);setNotice("");}}>{topics.map(t=><option key={t.name} value={t.name}>{t.name}</option>)}</select></label>:
+     <label>Assunto ou abrangência<select value={resolvedMedTopic} onChange={e=>{setMedTopic(e.target.value);setSeed(0);setNotice("");}}>
+       <option value="">Todos os assuntos disponíveis</option>
+       {medTopics.map(t=><option key={t.id} value={t.id}>{t.name}</option>)}
+     </select></label>}
     {tool==="provas"?<label>Quantidade de questões<select value={quantity} onChange={e=>{setQuantity(Number(e.target.value));setNotice("");}}>{[5,10,15,20,30].map(n=><option key={n} value={n}>{n} questões</option>)}</select></label>:
       <label>Aulas para incluir<select value={lessonLimit} onChange={e=>setLessonLimit(Number(e.target.value))}>{[5,10,15,20].map(n=><option key={n} value={n}>Até {n} aulas</option>)}</select></label>}
    </div>
@@ -162,9 +196,9 @@ export default function CreationCenter({tool,onNavigate,subjects}:Props){
    {tool==="provas"&&<button type="button" className={styles.secondary} onClick={()=>{setSeed(v=>v+37);setNotice("");}}>↻ Sortear outra versão</button>}
    <div className={styles.actions}>
     {tool==="provas"?<>
-      <button disabled={busy||!exam.length} className={styles.primary} onClick={()=>create(makeExam(subject,resolvedTopic,exam),"Prova")}>↓ Baixar prova PDF</button>
-      <button disabled={busy||!exam.length} className={styles.secondary} onClick={()=>create(makeExam(subject,resolvedTopic,exam,true),"Gabarito")}>↓ Baixar gabarito comentado</button>
-     </>:<button disabled={busy||!lessons.length} className={styles.primary} onClick={()=>create(makeBooklet(subject,resolvedTopic,lessonLimit),"Apostila")}>↓ Criar e baixar apostila PDF</button>}
+      <button disabled={busy||!exam.length} className={styles.primary} onClick={()=>create(makeExam(activeSubject,activeTopic,exam),"Prova")}>↓ Baixar prova PDF</button>
+      <button disabled={busy||!exam.length} className={styles.secondary} onClick={()=>create(makeExam(activeSubject,activeTopic,exam,true),"Gabarito")}>↓ Baixar gabarito comentado</button>
+     </>:<button disabled={busy||!lessons.length} className={styles.primary} onClick={()=>create(makeBooklet(activeSubject,activeTopic,lessonLimit,lessons),"Apostila")}>↓ Criar e baixar apostila PDF</button>}
    </div></>)}
   {tool==="arquivos"&&section("Importar material de estudo",
     <><p className={styles.hint}>Envie um PDF com texto selecionável ou um arquivo TXT. A leitura acontece no navegador; nesta etapa, o arquivo é organizado em um PDF de revisão, sem reescrita por IA.</p>
@@ -174,6 +208,7 @@ export default function CreationCenter({tool,onNavigate,subjects}:Props){
     <button type="button" className={styles.primary} disabled={busy||fileReading||!fileText} onClick={()=>create(fromFile(),"Roteiro de arquivo")}>↓ Preparar roteiro de estudo PDF</button></>)}
   {tool==="biblioteca"&&<>
     {section("Materiais do catálogo prontos para baixar",<div className={styles.readyGrid}>{starterMaterials.map(entry=><div className={styles.readyCard} key={entry.subject+"-"+entry.topic}><span>▤ {entry.subject}</span><strong>{entry.topic}</strong><button type="button" disabled={busy} onClick={()=>create(makeBooklet(entry.subject,entry.topic,10),"Material pronto")}>↓ Baixar PDF</button></div>)}</div>)}
+    {section("Medicina — apostilas das 18 disciplinas",<div className={styles.readyGrid}>{medicineDisciplines.map(d=><div className={styles.readyCard} key={d.slug}><span>🫀 Faculdade de Medicina</span><strong>{d.title}</strong><button type="button" disabled={busy} onClick={()=>{const content=getMedicalContent("faculdade",d.slug,"");void create(makeBooklet("Faculdade de Medicina",d.title,10,content.lessons),"Apostila de Medicina");}}>↓ Baixar PDF</button></div>)}</div>)}
     {section("Meus materiais salvos",<><p className={styles.hint}>Cópias dos materiais gerados nesta Central. Armazenadas somente neste navegador, não sincronizadas entre dispositivos.</p>
      {saved.length===0?<div className={styles.empty}>Ainda não há materiais salvos aqui. Gere uma prova, uma apostila ou um roteiro para começar.</div>:
      <div className={styles.savedList}>{saved.map(item=><div className={styles.savedItem} key={item.id}><div><strong>{item.title}</strong><small>{item.kind} · {item.date}</small></div><button type="button" disabled={busy} onClick={()=>create(item.pdf,item.kind,false)}>↓ PDF</button><button type="button" onClick={()=>{const next=saved.filter(x=>x.id!==item.id);try{localStorage.setItem(STORAGE,JSON.stringify(next));setSaved(next);}catch{setNotice("Não foi possível remover o registro.");}}}>Excluir</button></div>)}</div>}</>)}
