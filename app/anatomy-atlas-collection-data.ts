@@ -93,5 +93,63 @@ export const atlasViews:AtlasView[]=[
    {id:"metatarsos-mi",name:"Metatarsos",group:"Antepé",x:37,y:91,description:"Cinco ossos longos entre tarso e falanges.",function:"Contribuem para os arcos do pé e para a propulsão na marcha.",clinical:"As cabeças metatarsais participam do apoio durante a fase final do passo.",aliases:["metatarsos","metatarsianos"]},
    {id:"falanges-mi",name:"Falanges do pé",group:"Dedos",x:37,y:97,description:"Ossos dos dedos do pé, em geral três por dedo, exceto o hálux.",function:"Auxiliam no equilíbrio e na propulsão durante a marcha.",clinical:"O hálux possui duas falanges.",aliases:["falanges","falanges do pe"]}
   ]
+ },
+ {
+  id:"torax",title:"Tórax — caixa torácica e cintura escapular",short:"Tórax",
+  subtitle:"Conheça esterno, costelas, cartilagens costais, clavículas e escápulas na vista anterior.",
+  image:"https://thumb.wikimedia.org/wikipedia/commons/thumb/2/22/Pectoral_girdle_front_diagram.svg/960px-Pectoral_girdle_front_diagram.svg.png",
+  source:"https://commons.wikimedia.org/wiki/File:Pectoral_girdle_front_diagram.svg",
+  credit:"Mariana Ruiz Villarreal (LadyofHats) · Wikimedia Commons · domínio público",
+  ratio:"512 / 402",alt:"Vista frontal da caixa torácica e cintura escapular humana",
+  spots:[
+   {id:"clavicula-torax",name:"Clavícula",group:"Cintura escapular",x:26,y:15,description:"Osso longo em forma de S situado entre o manúbrio do esterno e o acrômio da escápula.",function:"Mantém o membro superior afastado do tronco e transfere forças ao esqueleto axial.",clinical:"Fraturas no terço médio da clavícula são frequentes; o osso é palpável em quase toda sua extensão.",aliases:["clavicula"]},
+   {id:"escapula-torax",name:"Escápula",group:"Cintura escapular",x:78,y:36,description:"Osso plano triangular situado sobre a face posterior da parede torácica.",function:"Fornece ampla superfície de inserção muscular e participa da mobilidade do ombro.",clinical:"A cavidade glenoidal da escápula articula-se com a cabeça do úmero.",aliases:["omoplata"]},
+   {id:"manubrio",name:"Manúbrio do esterno",group:"Esterno",x:50,y:24,description:"Parte superior do esterno, onde se articulam as clavículas e as primeiras cartilagens costais.",function:"Compõe a parede anterior do tórax e estabelece conexão com a cintura escapular.",clinical:"A incisura jugular e o ângulo esternal são marcos palpáveis importantes.",aliases:["manubrio"]},
+   {id:"corpo-esterno",name:"Corpo do esterno",group:"Esterno",x:50,y:48,description:"Segmento mais extenso do esterno, entre o manúbrio e o processo xifoide.",function:"Fornece articulação às cartilagens de várias costelas e protege estruturas mediastinais.",clinical:"A parede esternal participa da proteção de coração e grandes vasos.",aliases:["esterno","corpo do esterno"]},
+   {id:"xifoide",name:"Processo xifoide",group:"Esterno",x:50,y:68,description:"Pequena extremidade inferior do esterno, inicialmente cartilaginosa.",function:"Serve de inserção ao diafragma e a músculos da parede abdominal.",clinical:"A posição do xifoide deve ser respeitada em manobras compressivas no tórax.",aliases:["apendice xifoide","xifoide"]},
+   {id:"costelas-verdadeiras",name:"Costelas verdadeiras",group:"Costelas 1–7",x:33,y:37,description:"Os sete primeiros pares de costelas, que se conectam diretamente ao esterno por cartilagens próprias.",function:"Compõem o arcabouço torácico e participam da expansão durante a inspiração.",clinical:"A identificação dos espaços intercostais auxilia em exames físicos.",aliases:["costelas superiores"]},
+   {id:"costelas-falsas",name:"Costelas falsas",group:"Costelas 8–10",x:71,y:65,description:"Pares de costelas cujas cartilagens se conectam indiretamente ao esterno pelo arco costal.",function:"Formam a porção inferior móvel da caixa torácica.",clinical:"A margem costal é um marco da transição toracoabdominal.",aliases:["costelas inferiores"]},
+   {id:"costelas-flutuantes",name:"Costelas flutuantes",group:"Costelas 11–12",x:37,y:79,description:"Os dois últimos pares de costelas, sem conexão anterior com o esterno.",function:"Protegem parcialmente estruturas posteriores do tronco e servem de inserção muscular.",clinical:"As extremidades anteriores são livres, ao contrário das costelas superiores.",aliases:["flutuantes"]},
+   {id:"cartilagens-costais",name:"Cartilagens costais",group:"Junções costocondrais",x:63,y:51,description:"Segmentos de cartilagem hialina que prolongam anteriormente as costelas.",function:"Acrescentam elasticidade à caixa torácica e viabilizam sua movimentação.",clinical:"O ângulo esternal permite localizar a segunda cartilagem costal.",aliases:["cartilagens"]},
+   {id:"umero-torax",name:"Úmero proximal",group:"Articulação do ombro",x:14,y:53,description:"Extremidade proximal do osso do braço, relacionada à cavidade glenoidal.",function:"Integra a articulação glenoumeral e permite amplitude de movimentos do ombro.",clinical:"A cabeça do úmero articula-se com a escápula.",aliases:["umero","úmero"]}
+  ]
+ },
+ {
+  id:"pelve",title:"Pelve — cintura pélvica e sacro",short:"Pelve",
+  subtitle:"Explore as estruturas que ligam a coluna aos membros inferiores.",
+  image:"https://thumb.wikimedia.org/wikipedia/commons/thumb/a/af/202201_Anterior_view_of_male_pelvis.svg/500px-202201_Anterior_view_of_male_pelvis.svg.png",
+  source:"https://commons.wikimedia.org/wiki/File:202201_Anterior_view_of_male_pelvis.svg",
+  credit:"DataBase Center for Life Science (DBCLS) · CC BY 4.0 · Wikimedia Commons · vista anterior masculina",
+  ratio:"512 / 512",alt:"Ilustração anatômica anterior da pelve óssea masculina",
+  spots:[
+   {id:"crista-iliaca",name:"Crista ilíaca",group:"Ílio",x:24,y:14,description:"Borda superior curva da asa do ílio.",function:"Oferece inserção a músculos abdominais e do quadril.",clinical:"É um marco ósseo palpável usado na orientação anatômica.",aliases:["crista iliaca"]},
+   {id:"ilio-pelve",name:"Ílio",group:"Osso coxal",x:27,y:33,description:"Maior porção superior do osso do quadril, com asa e corpo.",function:"Contribui para a parede lateral da pelve e a transmissão de carga.",clinical:"A face auricular do ílio articula-se com o sacro.",aliases:["ilio"]},
+   {id:"sacro-pelve",name:"Sacro",group:"Coluna sacral",x:50,y:42,description:"Osso triangular central formado pela fusão de cinco vértebras sacrais.",function:"Transmite forças da coluna para os ossos do quadril.",clinical:"Articula-se bilateralmente com os ílios por meio das articulações sacroilíacas.",aliases:["osso sacro"]},
+   {id:"sacroiliaca-pelve",name:"Articulação sacroilíaca",group:"Articulações",x:63,y:42,description:"Articulação entre a face auricular do sacro e a do ílio.",function:"Transfere cargas com amplitude de movimento limitada.",clinical:"Sua estabilidade depende de ligamentos fortes e da arquitetura articular.",aliases:["sacroiliaca"]},
+   {id:"acetabulo-pelve",name:"Acetábulo",group:"Quadril",x:20,y:63,description:"Cavidade lateral do osso coxal formada por ílio, ísquio e púbis.",function:"Recebe a cabeça do fêmur para formar a articulação do quadril.",clinical:"Sua orientação e profundidade influenciam a estabilidade do quadril.",aliases:["acetabulo"]},
+   {id:"isquio-pelve",name:"Ísquio",group:"Osso coxal",x:29,y:80,description:"Porção posteroinferior do osso coxal.",function:"Suporta parte do peso corporal ao sentar por meio de sua tuberosidade.",clinical:"A tuberosidade isquiática é palpável na região glútea inferior.",aliases:["isquio"]},
+   {id:"pubis-pelve",name:"Púbis",group:"Osso coxal",x:43,y:72,description:"Porção anteroinferior do osso coxal, com corpo e ramos.",function:"Forma a parte anterior do anel pélvico.",clinical:"Une-se ao púbis oposto na sínfise púbica.",aliases:["pubis"]},
+   {id:"sinfise-pubica",name:"Sínfise púbica",group:"Articulações",x:53,y:72,description:"Articulação cartilaginosa mediana que une os ossos púbicos.",function:"Estabiliza o anel pélvico e permite discreta movimentação.",clinical:"Localiza-se na linha mediana da parede anterior da pelve.",aliases:["sinfise","sinfise pubica"]},
+   {id:"coccix-pelve",name:"Cóccix",group:"Extremidade vertebral",x:50,y:62,description:"Estrutura óssea terminal da coluna, logo abaixo do sacro.",function:"Serve de inserção para ligamentos e músculos do assoalho pélvico.",clinical:"É uma referência anatômica importante na região posterior do períneo.",aliases:["coccix"]}
+  ]
+ },
+ {
+  id:"pe",title:"Pé — tarso, metatarso e falanges",short:"Pé",
+  subtitle:"Identifique os ossos do pé direito vistos por cima, do calcanhar ao hálux.",
+  image:"https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3e/202110_Dorsal_view_of_bones_of_right_foot.svg/500px-202110_Dorsal_view_of_bones_of_right_foot.svg.png",
+  source:"https://commons.wikimedia.org/wiki/File:202110_Dorsal_view_of_bones_of_right_foot.svg",
+  credit:"DataBase Center for Life Science (DBCLS) · CC BY 4.0 · Wikimedia Commons · vista dorsal do pé direito",
+  ratio:"512 / 512",alt:"Ilustração dorsal dos ossos do pé direito, com tarso, metatarso e falanges",
+  spots:[
+   {id:"calcaneo-pe",name:"Calcâneo",group:"Tarso · retropé",x:55,y:88,description:"Maior osso do tarso, localizado na parte posterior do pé e responsável pela proeminência do calcanhar.",function:"Participa do apoio do peso e da inserção do tendão calcâneo.",clinical:"A tuberosidade posterior recebe a inserção do tendão calcâneo.",aliases:["calcaneo"]},
+   {id:"talus-pe",name:"Tálus",group:"Tarso · retropé",x:49,y:75,description:"Osso do tarso situado entre tíbia, fíbula e calcâneo.",function:"Transmite forças entre perna e pé e participa da articulação talocrural.",clinical:"A tróclea do tálus articula-se com a pinça tibiofibular.",aliases:["talus","astrágalo"]},
+   {id:"navicular-pe",name:"Navicular",group:"Tarso · mediopé",x:37,y:63,description:"Osso medial do tarso localizado anteriormente à cabeça do tálus.",function:"Integra o arco longitudinal medial do pé.",clinical:"A tuberosidade do navicular é uma referência de inserção do tibial posterior.",aliases:["navicular"]},
+   {id:"cuboide-pe",name:"Cuboide",group:"Tarso · mediopé",x:59,y:64,description:"Osso lateral do tarso que se articula posteriormente ao calcâneo.",function:"Ajuda a sustentar a coluna lateral do pé.",clinical:"Possui sulco plantar para o tendão do músculo fibular longo.",aliases:["cuboide"]},
+   {id:"cuneiformes-pe",name:"Ossos cuneiformes",group:"Tarso · mediopé",x:43,y:54,description:"Três ossos entre o navicular e os primeiros metatarsos.",function:"Contribuem para a estabilidade do mediopé e dos arcos plantares.",clinical:"São denominados medial, intermédio e lateral.",aliases:["cuneiformes"]},
+   {id:"metatarso-primeiro-pe",name:"Primeiro metatarso",group:"Metatarso",x:34,y:40,description:"Osso longo que une a região medial do tarso à base do hálux.",function:"Participa do suporte de carga e da propulsão da marcha.",clinical:"A articulação metatarsofalângica do hálux é importante para o impulso final.",aliases:["1 metatarso","primeiro metatarsiano"]},
+   {id:"metatarsos-pe",name:"Metatarsos II–V",group:"Metatarso",x:54,y:40,description:"Quatro ossos longos que conectam a região central e lateral do tarso aos dedos.",function:"Contribuem para os arcos do pé e a distribuição de carga no antepé.",clinical:"Fraturas por estresse podem envolver os metatarsos.",aliases:["metatarsos","metatarsianos"]},
+   {id:"falanges-pe",name:"Falanges dos dedos",group:"Dedos",x:57,y:19,description:"Ossos articulados dos dedos do pé, geralmente três em cada dedo do II ao V.",function:"Auxiliam a estabilização e a propulsão durante a caminhada.",clinical:"As articulações interfalângicas permitem flexão e extensão.",aliases:["falanges"]},
+   {id:"halux-pe",name:"Hálux",group:"Primeiro dedo",x:34,y:19,description:"Primeiro dedo do pé, formado por duas falanges.",function:"Exerce papel importante na transferência de carga durante o impulso da marcha.",clinical:"Possui articulação metatarsofalângica e interfalângica.",aliases:["halux","dedao","dedão do pé"]}
+  ]
  }
 ];

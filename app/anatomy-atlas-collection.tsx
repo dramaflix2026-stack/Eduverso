@@ -178,7 +178,7 @@ function AtlasStudy({view}:{view:AtlasView}){
     </article>}
    </div>
   </div>
-  <p className={styles.credit}>{view.credit}. <a href={view.source} target="_blank" rel="noopener noreferrer">Consultar fonte da imagem</a>. Material didático introdutório; não substitui formação ou prática supervisionada. Progresso salvo neste navegador.</p>
+  <p className={styles.credit}>{view.credit}. <a href={view.source} target="_blank" rel="noopener noreferrer">Consultar fonte da imagem</a>{view.credit.includes("CC BY 4.0")&&<> · <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">Licença CC BY 4.0</a></>}. Material didático introdutório; não substitui formação ou prática supervisionada. Progresso salvo neste navegador.</p>
  </div>;
 }
 type AtlasSelection="anterior"|AtlasView["id"]|null;
@@ -202,12 +202,14 @@ export default function AnatomyAtlasCollection(){
   setSelected(view);window.scrollTo({top:0,behavior:"smooth"});
  }
  const active=atlasViews.find(v=>v.id===selected);
+ const order=["posterior","cranio","coluna","torax","membro-superior","pelve","membro-inferior","pe"];
+ const galleryViews=order.map(id=>atlasViews.find(v=>v.id===id)).filter((v):v is AtlasView=>Boolean(v));
  return <section className={styles.collection} aria-label="Biblioteca de atlas de anatomia">
    <header className={styles.collectionHero}>
     <span>✦ EDUVERSO · ATLAS DE ANATOMIA</span>
     <h2>Explore o corpo humano por regiões<span>.</span></h2>
-    <p>Seis atlas ósseos para estudar estruturas reais com pontos interativos, exercícios de identificação e flashcards. Selecione a região que deseja explorar.</p>
-    <div className={styles.heroStats}><span>06 atlas disponíveis</span><span>{12+atlasViews.reduce((n,v)=>n+v.spots.length,0)} estruturas mapeadas</span><span>3 modos por atlas</span></div>
+    <p>{1+atlasViews.length} atlas ósseos para estudar estruturas reais com pontos interativos, exercícios de identificação e flashcards. Selecione a região que deseja explorar.</p>
+    <div className={styles.heroStats}><span>{String(1+atlasViews.length).padStart(2,"0")} atlas disponíveis</span><span>{bones.length+atlasViews.reduce((n,v)=>n+v.spots.length,0)} estruturas mapeadas</span><span>3 modos por atlas</span></div>
    </header>
    {selected&&<button type="button" className={styles.return} onClick={()=>openView(null)}>← Voltar à biblioteca de atlas</button>}
    {!selected?<div className={styles.cards}>
@@ -215,7 +217,7 @@ export default function AnatomyAtlasCollection(){
      <span className={styles.cardMedia}><img alt="Esqueleto humano visto pela frente" loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/Human_skeleton_front_no-text_no-color.svg/500px-Human_skeleton_front_no-text_no-color.svg.png"/></span>
      <span className={styles.cardInfo}><small>01 · ESQUELETO</small><strong>Vista anterior</strong><span>12 pontos anatômicos · corpo inteiro</span><em>Explorar atlas →</em></span>
     </button>
-    {atlasViews.map((v,i)=><button key={v.id} type="button" className={styles.atlasCard} onClick={()=>openView(v.id)}>
+    {galleryViews.map((v,i)=><button key={v.id} type="button" className={styles.atlasCard} onClick={()=>openView(v.id)}>
       <span className={styles.cardMedia}><img alt={v.alt} loading="lazy" src={v.image}/></span>
       <span className={styles.cardInfo}><small>{String(i+2).padStart(2,"0")} · ATLAS ANATÔMICO</small><strong>{v.short}</strong><span>{v.spots.length} estruturas · exercícios e flashcards</span><em>Explorar atlas →</em></span>
      </button>)}

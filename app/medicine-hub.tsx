@@ -6,6 +6,7 @@ import MedicineMockExam from "./medicine-mock-exam";
 import MedicineEntrance,{type EntranceTopic} from "./medicine-entrance";
 import MedicineDeepChapter from "./medicine-deep-chapter";
 import AnatomyAtlasCollection from "./anatomy-atlas-collection";
+import {atlasViews} from "./anatomy-atlas-collection-data";
 import {advancedMedCourses} from "./medicine-advanced-catalog";
 
 export type MedicineArea="faculdade"|"vestibular"|"exames";
@@ -130,7 +131,7 @@ export default function MedicineHub({area,onChangeArea,onAtlasStateChange,onOpen
   {area==="faculdade"&&!currentDiscipline&&!mockOpen&&!atlasOpen&&<>
    <button type="button" className={styles.atlasFeature} onClick={openAtlas} aria-label="Abrir Atlas Anatômico Interativo">
     <span aria-hidden="true" className={styles.atlasIcon}>🦴</span>
-    <span><strong>Atlas Anatômico Interativo</strong><small>Biblioteca com 6 atlas · Estruturas interativas · Desafios · Flashcards</small></span>
+    <span><strong>Atlas Anatômico Interativo</strong><small>Biblioteca com {1+atlasViews.length} atlas · Estruturas interativas · Desafios · Flashcards</small></span>
     <span aria-hidden="true" className={styles.atlasArrow}>Explorar →</span>
    </button>
    <div className={styles.sectionHead}><div><span className={styles.eyebrow}>DISCIPLINAS DE GRADUAÇÃO</span><h2>Escolha uma disciplina</h2></div><button className={styles.primary} type="button" onClick={()=>setMockOpen(true)}>📝 Simulado geral</button></div>
@@ -168,7 +169,7 @@ export default function MedicineHub({area,onChangeArea,onAtlasStateChange,onOpen
     <span className={styles.eyebrow}>{medCycles.find(c=>c.value===currentDiscipline.cycle)?.label} · {currentDiscipline.years}</span><h1>{currentDiscipline.title}<span>.</span></h1><p>{currentDiscipline.description}. Abra uma trilha para acessar explicação, exemplo aplicado e exercício comentado.</p>
     <div className={styles.stats}><span>{currentDiscipline.topics.length} módulos</span>{advancedMedCourses[currentDiscipline.slug]&&<><span>{advancedMedCourses[currentDiscipline.slug].metrics.lessons} aulas aprofundadas</span><span>{advancedMedCourses[currentDiscipline.slug].metrics.extraQuestions+currentDiscipline.topics.length} questões de revisão</span></>}<span>{currentDiscipline.topics.filter(t=>completed[t.id]).length} revisados corretamente</span></div>
    </section>
-   {currentDiscipline.slug==="anatomia-humana"&&<button type="button" className={styles.atlasFeature} onClick={openAtlas}><span aria-hidden="true" className={styles.atlasIcon}>🦴</span><span><strong>Atlas Anatômico Interativo</strong><small>Explore 6 atlas · Desafios · Flashcards</small></span><span aria-hidden="true" className={styles.atlasArrow}>Explorar →</span></button>}
+   {currentDiscipline.slug==="anatomia-humana"&&<button type="button" className={styles.atlasFeature} onClick={openAtlas}><span aria-hidden="true" className={styles.atlasIcon}>🦴</span><span><strong>Atlas Anatômico Interativo</strong><small>Explore {1+atlasViews.length} atlas · Desafios · Flashcards</small></span><span aria-hidden="true" className={styles.atlasArrow}>Explorar →</span></button>}
    <div className={styles.sectionHead}><h2>Assuntos de {currentDiscipline.title}</h2><button type="button" className={styles.primary} onClick={()=>setMockOpen(true)}>📝 Simulado da matéria</button></div>
    <div className={styles.topicGrid}>
     {currentDiscipline.topics.map((t,i)=><button type="button" key={t.id} className={styles.topicCard} onClick={()=>pushLocation(currentDiscipline.slug,t.id)}>
