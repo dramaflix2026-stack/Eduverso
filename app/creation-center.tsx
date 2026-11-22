@@ -147,8 +147,13 @@ export default function CreationCenter({tool,onNavigate,subjects}:Props){
   </header>
   {tool==="inicio"&&<div className={styles.grid}>{NAV.map(t=><button key={t.id} type="button" className={styles.tile} onClick={()=>onNavigate(t.id)}><span className={styles.tileIcon}>{t.icon}</span><strong>{t.title}</strong><small>{t.subtitle}</small><span className={styles.tileAction}>Abrir ferramenta ↗</span></button>)}</div>}
   {(tool==="provas"||tool==="apostilas")&&section(tool==="provas"?"Monte sua prova":"Crie sua apostila",
-   <><div className={styles.formGrid}>
-    <label>Disciplina<select value={subject} onChange={e=>switchSubject(e.target.value)}>{choices.map(s=><option key={s.name} value={s.name}>{s.name}</option>)}</select></label>
+   <><div className={styles.subjectPicker}>
+     <span className={styles.subjectTitle}>Selecione a disciplina <small>· {choices.length} disponíveis</small></span>
+     <div className={styles.subjectChoices} role="group" aria-label="Escolher disciplina para gerar materiais">
+       {choices.map(item=><button type="button" key={item.name} aria-pressed={subject===item.name} className={styles.subjectChoice+" "+(subject===item.name?styles.subjectChoiceActive:"")} onClick={()=>switchSubject(item.name)}>{item.name}</button>)}
+     </div>
+   </div>
+   <div className={styles.formGrid}>
     <label>Assunto<select value={resolvedTopic} onChange={e=>{setTopic(e.target.value);setSeed(0);setNotice("");}}>{topics.map(t=><option key={t.name} value={t.name}>{t.name}</option>)}</select></label>
     {tool==="provas"?<label>Quantidade de questões<select value={quantity} onChange={e=>{setQuantity(Number(e.target.value));setNotice("");}}>{[5,10,15,20,30].map(n=><option key={n} value={n}>{n} questões</option>)}</select></label>:
       <label>Aulas para incluir<select value={lessonLimit} onChange={e=>setLessonLimit(Number(e.target.value))}>{[5,10,15,20].map(n=><option key={n} value={n}>Até {n} aulas</option>)}</select></label>}
