@@ -4,7 +4,7 @@ export type AtlasSpot={
 };
 export type AtlasView={
  id:string;title:string;short:string;subtitle:string;image:string;source:string;
- credit:string;ratio:string;alt:string;background?:string;spots:AtlasSpot[];
+ credit:string;ratio:string;alt:string;background?:string;spotMode?:"pins"|"list";spots:AtlasSpot[];
 };
 export const atlasViews:AtlasView[]=[
  {

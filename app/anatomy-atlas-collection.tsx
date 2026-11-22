@@ -3,6 +3,7 @@ import {useEffect,useMemo,useRef,useState} from "react";
 import AnatomyAtlas from "./anatomy-atlas";
 import {bones} from "./anatomy-atlas-data";
 import {atlasViews,type AtlasSpot,type AtlasView} from "./anatomy-atlas-collection-data";
+import {expandedAtlasViews} from "./anatomy-atlas-extension";
 import styles from "./anatomy-atlas-collection.module.css";
 
 type Mode="explorar"|"desafio"|"flashcards";
@@ -46,6 +47,7 @@ function AtlasStudy({view}:{view:AtlasView}){
  const [flashCorrect,setFlashCorrect]=useState(false);
  const detail=useRef<HTMLDivElement>(null);
  const items=view.spots;
+ const listMode=view.spotMode==="list";
  useEffect(()=>{setScores(restore(view.id));setReady(true);},[view.id]);
  useEffect(()=>{if(ready)try{localStorage.setItem(keyFor(view.id),JSON.stringify(scores));}catch{}},[ready,scores,view.id]);
  useEffect(()=>{
@@ -56,6 +58,7 @@ function AtlasStudy({view}:{view:AtlasView}){
   return {right,attempts:right+wrong,due:items.filter(b=>!scores[b.id]?.due||Date.parse(scores[b.id].due||"")<=Date.now()).length};
  },[scores,items]);
  const selected=items.find(b=>b.id===picked),target=items[q],flash=items[f];
+ const quizChoices=target?(()=>{const others=items.filter(v=>v.id!==target.id),pool=[target,...[0,2,4].map((step)=>others[(q*3+step)%others.length])];const offset=q%pool.length;return [...pool.slice(offset),...pool.slice(0,offset)];})():[];
  const fallbackUrl=view.source.replace("/wiki/File:","/wiki/Special:FilePath/");
  function selectMode(next:Mode){
   setMode(next);setPicked(null);setAnswer(null);setTyped("");setSubmitted(false);
@@ -73,7 +76,7 @@ function AtlasStudy({view}:{view:AtlasView}){
  }
  function clickPoint(b:AtlasSpot){
   if(mode==="explorar"){setPicked(b.id);return;}
-  if(mode!=="desafio"||answer!==null||completed||!target||imageFailed)return;
+  if(mode!=="desafio"||answer!==null||completed||!target||(!listMode&&imageFailed))return;
   const correct=b.id===target.id;
   setAnswer(b.id);if(correct)setHits(n=>n+1);saveResult(target,correct);
  }
@@ -82,7 +85,7 @@ function AtlasStudy({view}:{view:AtlasView}){
   setQ(v=>v+1);setAnswer(null);
  }
  function submitFlash(){
-  if(!typed.trim()||submitted||imageFailed||!flash)return;
+  if(!typed.trim()||submitted||(!listMode&&imageFailed)||!flash)return;
   const correct=matches(flash,typed);setFlashCorrect(correct);setSubmitted(true);saveResult(flash,correct);
  }
  function advanceFlash(){if(!submitted)return;setF(v=>(v+1)%items.length);setTyped("");setSubmitted(false);setFlashCorrect(false);}
@@ -103,14 +106,14 @@ function AtlasStudy({view}:{view:AtlasView}){
    )}
   </div>
   {mode==="desafio"&&!completed&&target&&<div className={styles.question} role="status">
-   <small>QUESTÃO {q+1} DE {items.length}</small><strong>Encontre: {target.name}</strong>
-   <p>Toque no ponto numerado que corresponde à estrutura solicitada.</p>
+   <small>QUESTÃO {q+1} DE {items.length}</small><strong>{listMode?"Qual estrutura corresponde à descrição?":"Encontre: "+target.name}</strong>
+   <p>{listMode?target.description:"Toque no ponto numerado que corresponde à estrutura solicitada."}</p>
    <div className={styles.progress} role="progressbar" aria-label="Progresso do desafio" aria-valuemin={0} aria-valuemax={items.length} aria-valuenow={q}><span style={{width:(q/items.length*100)+"%"}}/></div>
   </div>}
   {mode==="flashcards"&&flash&&<div className={styles.question}>
    <small>CARTÃO {f+1} DE {items.length}</small>
-   <strong>Que estrutura está marcada em amarelo?</strong>
-   <p>Observe a imagem e escreva o nome sem consultar a resposta.</p>
+   <strong>{listMode?"Identifique a estrutura descrita:":"Que estrutura está marcada em amarelo?"}</strong>
+   <p>{listMode?flash.description:"Observe a imagem e escreva o nome sem consultar a resposta."}</p>
   </div>}
   <div className={styles.studyColumns}>
    <figure className={styles.figure}>
@@ -120,8 +123,9 @@ function AtlasStudy({view}:{view:AtlasView}){
      </div>
     :<div className={styles.diagram} style={{aspectRatio:view.ratio,background:view.background||"#fff"}}>
       <img alt={view.alt} src={imageFallback?fallbackUrl:view.image} loading="eager"
+        style={listMode?{objectFit:"contain"}:undefined}
         onError={()=>{if(imageFallback)setImageFailed(true);else setImageFallback(true);}}/>
-      {items.map((b,i)=>{
+      {!listMode&&items.map((b,i)=>{
        if(mode==="flashcards"&&flash?.id!==b.id)return null;
        const pos={left:b.x+"%",top:b.y+"%"};
        const correct=mode==="desafio"&&answer!==null&&b.id===target?.id;
@@ -136,19 +140,21 @@ function AtlasStudy({view}:{view:AtlasView}){
           onClick={()=>clickPoint(b)}>{i+1}</button>;
       })}
      </div>}
-    <figcaption>{view.alt.replace("Ilustração ","")} · representação didática</figcaption>
+    <figcaption>{listMode?"Imagem de referência; explore as estruturas na lista interativa.":view.alt.replace("Ilustração ","")+" · representação didática"}</figcaption>
    </figure>
    <div className={styles.details} ref={detail}>
+    {listMode&&mode==="explorar"&&<div className={styles.structureList} aria-label="Estruturas do atlas">{items.map((b,i)=><button type="button" key={b.id} className={picked===b.id?styles.structureActive:""} aria-pressed={picked===b.id} onClick={()=>clickPoint(b)}><span>{String(i+1).padStart(2,"0")}</span>{b.name}</button>)}</div>}
+    {listMode&&mode==="desafio"&&answer===null&&!completed&&<div className={styles.quizList} role="group" aria-label="Alternativas do desafio">{quizChoices.map((b,i)=><button type="button" key={b.id} onClick={()=>clickPoint(b)}><b>{String.fromCharCode(65+i)})</b> {b.name}</button>)}</div>}
     {mode==="explorar"&&<article className={styles.detailCard}>
      {selected?<><small>{selected.group}</small><h4>{selected.name}</h4>
        <p>{selected.description}</p>
        <strong>Função anatômica</strong><p>{selected.function}</p>
        <strong>Correlação clínica</strong><p>{selected.clinical}</p>
-      </>:<><h4>Selecione um ponto</h4><p>Toque nos marcadores numerados para explorar cada estrutura, entender sua função e conhecer uma correlação clínica.</p></>}
+      </>:<><h4>{listMode?"Escolha uma estrutura":"Selecione um ponto"}</h4><p>{listMode?"Selecione uma estrutura na lista para consultar localização, funções e correlações clínicas.":"Toque nos marcadores numerados para explorar cada estrutura, entender sua função e conhecer uma correlação clínica."}</p></>}
      <button type="button" className={styles.primary} onClick={()=>selectMode("desafio")}>Praticar identificação →</button>
     </article>}
     {mode==="desafio"&&<article className={styles.detailCard}>
-     {!completed?<>{answer===null?<p>Escolha um marcador na ilustração para conferir a resposta.</p>:
+     {!completed?<>{answer===null?<p>{listMode?"Escolha uma das alternativas para conferir a resposta.":"Escolha um marcador na ilustração para conferir a resposta."}</p>:
        <div className={styles.feedback} role="status">
         <strong>{answer===target.id?"✓ Resposta correta!":"↻ Resposta diferente da esperada"}</strong>
         <p><b>{target.name}</b> — {target.description}</p>
@@ -168,7 +174,7 @@ function AtlasStudy({view}:{view:AtlasView}){
        maxLength={100} disabled={submitted} autoComplete="off" spellCheck={false}
        placeholder="Digite o nome da estrutura"/>
       <p>A correção ignora acentos e maiúsculas.</p>
-      {!submitted&&<button type="submit" disabled={!typed.trim()||imageFailed} className={styles.primary}>Conferir resposta</button>}
+      {!submitted&&<button type="submit" disabled={!typed.trim()||(!listMode&&imageFailed)} className={styles.primary}>Conferir resposta</button>}
      </form>
      {submitted&&<div className={styles.feedback} role="status">
       <strong>{flashCorrect?"✓ Muito bem!":"↻ Revise esta estrutura"}</strong>
@@ -182,45 +188,94 @@ function AtlasStudy({view}:{view:AtlasView}){
  </div>;
 }
 type AtlasSelection="anterior"|AtlasView["id"]|null;
-function fromLocation():AtlasSelection{
- const raw=new URLSearchParams(window.location.search).get("atlasVista");
- if(raw==="anterior")return raw;
- return atlasViews.find(v=>v.id===raw)?.id??null;
+type Category="ossos"|"muscular"|"neuro"|"cardio"|"orgaos"|"outros";
+const groupCatalog:{id:Category;title:string;description:string;icon:string;cover:string;ids:string[]}[]=[
+ {id:"ossos",title:"Sistema esquelético",description:"Esqueleto, crânio, coluna, tórax, pelve e membros. Osteologia por regiões.",icon:"🦴",
+  cover:"https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/Human_skeleton_front_no-text_no-color.svg/500px-Human_skeleton_front_no-text_no-color.svg.png",
+  ids:["anterior","posterior","cranio","coluna","torax","membro-superior","pelve","membro-inferior","pe"]},
+ {id:"muscular",title:"Músculos e movimento",description:"Musculatura anterior e posterior, face, pescoço e membros.",icon:"💪",
+  cover:expandedAtlasViews.find(v=>v.id==="musculos-anterior")?.image||"",
+  ids:["musculos-anterior","musculos-posterior","musculos-face","musculos-superiores","musculos-inferiores"]},
+ {id:"neuro",title:"Neuroanatomia",description:"Encéfalo, medula espinal e sistema nervoso periférico.",icon:"🧠",
+  cover:expandedAtlasViews.find(v=>v.id==="cerebro")?.image||"",
+  ids:["cerebro","medula-espinal","nervos-perifericos"]},
+ {id:"cardio",title:"Cardiovascular e respiratório",description:"Coração, circulação, pulmões e vias respiratórias.",icon:"🫀",
+  cover:expandedAtlasViews.find(v=>v.id==="coracao")?.image||"",
+  ids:["coracao","vasos-sanguineos","pulmoes"]},
+ {id:"orgaos",title:"Órgãos e sistemas internos",description:"Aparelho digestório, fígado, pâncreas, rins e sistemas reprodutores.",icon:"🫁",
+  cover:expandedAtlasViews.find(v=>v.id==="sistema-digestorio")?.image||"",
+  ids:["sistema-digestorio","figado-pancreas","sistema-urinario","reprodutor-feminino","reprodutor-masculino"]},
+ {id:"outros",title:"Sentidos e outros sistemas",description:"Endócrino, olho, ouvido, pele e sistema linfático.",icon:"👁️",
+  cover:expandedAtlasViews.find(v=>v.id==="olho")?.image||"",
+  ids:["endocrino","olho","ouvido","pele","linfatico"]}
+];
+const allViews:AtlasView[]=[...atlasViews,...expandedAtlasViews];
+const fullCount=bones.length+allViews.reduce((n,v)=>n+v.spots.length,0);
+function categoryOf(id:AtlasSelection):Category|null{
+ return groupCatalog.find(g=>id!==null&&g.ids.includes(id))?.id??null;
+}
+function fromLocation():{view:AtlasSelection;category:Category|null}{
+ const params=new URLSearchParams(window.location.search);
+ const raw=params.get("atlasVista");
+ const view:AtlasSelection=raw==="anterior"?"anterior":allViews.find(v=>v.id===raw)?.id??null;
+ const category=categoryOf(view)??groupCatalog.find(g=>g.id===params.get("atlasCategoria"))?.id??null;
+ return {view,category};
 }
 export default function AnatomyAtlasCollection(){
  const [selected,setSelected]=useState<AtlasSelection>(null);
+ const [category,setCategory]=useState<Category|null>(null);
+ const [term,setTerm]=useState("");
  useEffect(()=>{
-  const restoreView=()=>setSelected(fromLocation());
+  const restoreView=()=>{const data=fromLocation();setSelected(data.view);setCategory(data.category);};
   restoreView();window.addEventListener("popstate",restoreView);
   return()=>window.removeEventListener("popstate",restoreView);
  },[]);
- function openView(view:AtlasSelection){
+ function navigate(view:AtlasSelection,group:Category|null){
   const url=new URL(window.location.href);
   if(view)url.searchParams.set("atlasVista",view);else url.searchParams.delete("atlasVista");
+  if(group)url.searchParams.set("atlasCategoria",group);else url.searchParams.delete("atlasCategoria");
   url.searchParams.set("atlas","1");url.searchParams.set("disciplina","Medicina");url.searchParams.set("area","faculdade");
   window.history.pushState({},"",url.pathname+url.search+url.hash);
-  setSelected(view);window.scrollTo({top:0,behavior:"smooth"});
+  setSelected(view);setCategory(group);setTerm("");
+  window.scrollTo({top:0,behavior:"smooth"});
  }
- const active=atlasViews.find(v=>v.id===selected);
- const order=["posterior","cranio","coluna","torax","membro-superior","pelve","membro-inferior","pe"];
- const galleryViews=order.map(id=>atlasViews.find(v=>v.id===id)).filter((v):v is AtlasView=>Boolean(v));
+ function openView(view:AtlasSelection){navigate(view,categoryOf(view));}
+ function openCategory(group:Category|null){navigate(null,group);}
+ const group=groupCatalog.find(g=>g.id===category);
+ const visibleIds=group?group.ids:[];
+ const searchResults=term.trim()?allViews.filter(v=>(v.short+" "+v.title+" "+v.subtitle+" "+v.spots.map(p=>p.name).join(" ")).normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().includes(term.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().trim())):[];
+ const shown=term.trim()?searchResults:allViews.filter(v=>visibleIds.includes(v.id));
+ const active=allViews.find(v=>v.id===selected);
  return <section className={styles.collection} aria-label="Biblioteca de atlas de anatomia">
-   <header className={styles.collectionHero}>
-    <span>✦ EDUVERSO · ATLAS DE ANATOMIA</span>
-    <h2>Explore o corpo humano por regiões<span>.</span></h2>
-    <p>{1+atlasViews.length} atlas ósseos para estudar estruturas reais com pontos interativos, exercícios de identificação e flashcards. Selecione a região que deseja explorar.</p>
-    <div className={styles.heroStats}><span>{String(1+atlasViews.length).padStart(2,"0")} atlas disponíveis</span><span>{bones.length+atlasViews.reduce((n,v)=>n+v.spots.length,0)} estruturas mapeadas</span><span>3 modos por atlas</span></div>
-   </header>
-   {selected&&<button type="button" className={styles.return} onClick={()=>openView(null)}>← Voltar à biblioteca de atlas</button>}
-   {!selected?<div className={styles.cards}>
-    <button type="button" className={styles.atlasCard} onClick={()=>openView("anterior")}>
-     <span className={styles.cardMedia}><img alt="Esqueleto humano visto pela frente" loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/Human_skeleton_front_no-text_no-color.svg/500px-Human_skeleton_front_no-text_no-color.svg.png"/></span>
-     <span className={styles.cardInfo}><small>01 · ESQUELETO</small><strong>Vista anterior</strong><span>12 pontos anatômicos · corpo inteiro</span><em>Explorar atlas →</em></span>
-    </button>
-    {galleryViews.map((v,i)=><button key={v.id} type="button" className={styles.atlasCard} onClick={()=>openView(v.id)}>
+  <header className={styles.collectionHero}>
+   <span>✦ EDUVERSO · ATLAS DE ANATOMIA</span>
+   <h2>{selected?active?.short||"Vista anterior":group?group.title:"Atlas humano por segmentos"}<span>.</span></h2>
+   <p>{selected?"Explore estruturas, funções e correlações clínicas por meio de imagens e atividades.":group?group.description:"Biblioteca de anatomia dividida em sistemas. Escolha uma categoria, explore seus atlas e estude com desafios ou flashcards."}</p>
+   <div className={styles.heroStats}><span>{String(1+allViews.length).padStart(2,"0")} atlas</span><span>{fullCount} estruturas</span><span>{groupCatalog.length} segmentos</span><span>3 modos de estudo</span></div>
+  </header>
+  {selected?<button type="button" className={styles.return} onClick={()=>openCategory(categoryOf(selected))}>← Voltar aos atlas de {groupCatalog.find(g=>g.id===categoryOf(selected))?.title||"anatomia"}</button>:category?<button type="button" className={styles.return} onClick={()=>openCategory(null)}>← Todos os sistemas anatômicos</button>:null}
+  {!selected&&<label className={styles.searchBox}><span aria-hidden="true">⌕</span><input type="search" value={term} onChange={e=>setTerm(e.target.value)} placeholder="Buscar atlas, região ou estrutura..." aria-label="Buscar no atlas de anatomia"/></label>}
+  {!selected&&!category&&!term.trim()&&<div className={styles.segmentGrid}>
+    {groupCatalog.map(g=><button key={g.id} type="button" className={styles.segmentCard} onClick={()=>openCategory(g.id)}>
+     <span className={styles.segmentPreview}><img src={g.cover} loading="lazy" alt={"Prévia de "+g.title}/></span>
+     <span className={styles.segmentInfo}><span className={styles.segmentIcon} aria-hidden="true">{g.icon}</span><strong>{g.title}</strong><small>{g.description}</small><em>{g.ids.length} atlas · Explorar →</em></span>
+    </button>)}
+   </div>}
+  {!selected&&(category||term.trim())&&<>
+   <div className={styles.sectionLabel}><strong>{term.trim()?"Resultados da busca":group?.title}</strong><span>{shown.length+(visibleIds.includes("anterior")&&!term.trim()?1:0)} atlas</span></div>
+   <div className={styles.cards}>
+    {visibleIds.includes("anterior")&&!term.trim()&&<button type="button" className={styles.atlasCard} onClick={()=>openView("anterior")}>
+      <span className={styles.cardMedia}><img alt="Esqueleto humano visto pela frente" loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/Human_skeleton_front_no-text_no-color.svg/500px-Human_skeleton_front_no-text_no-color.svg.png"/></span>
+      <span className={styles.cardInfo}><small>ATLAS INTERATIVO</small><strong>Vista anterior</strong><span>{bones.length} estruturas · exploração e revisão</span><em>Explorar atlas →</em></span>
+     </button>}
+    {shown.map(v=><button key={v.id} type="button" className={styles.atlasCard} onClick={()=>openView(v.id)}>
       <span className={styles.cardMedia} style={v.background?{background:v.background}:undefined}><img alt={v.alt} loading="lazy" src={v.image}/></span>
-      <span className={styles.cardInfo}><small>{String(i+2).padStart(2,"0")} · ATLAS ANATÔMICO</small><strong>{v.short}</strong><span>{v.spots.length} estruturas · exercícios e flashcards</span><em>Explorar atlas →</em></span>
+      <span className={styles.cardInfo}><small>{v.spotMode==="list"?"ATLAS DE SISTEMAS":"ATLAS REGIONAL"}</small><strong>{v.short}</strong><span>{v.spots.length} estruturas · desafios e flashcards</span><em>Explorar atlas →</em></span>
      </button>)}
-   </div>:selected==="anterior"?<AnatomyAtlas/>:active?<AtlasStudy key={active.id} view={active}/>:null}
+   </div>
+   {!shown.length&&!visibleIds.includes("anterior")&&<p className={styles.noResults}>Nenhum atlas encontrado. Tente outra palavra ou volte aos sistemas anatômicos.</p>}
+  </>}
+  {selected==="anterior"&&<AnatomyAtlas/>}
+  {selected!=="anterior"&&active&&<AtlasStudy key={active.id} view={active}/>}
  </section>;
 }
