@@ -213,7 +213,7 @@ function AtlasStudy({view}:{view:AtlasView}){
     </article>}
    </div>
   </div>
-  <p className={styles.credit}>{view.credit}. <a href={view.source} target="_blank" rel="noopener noreferrer">Consultar fonte da imagem</a>{view.credit.includes("CC BY 4.0")&&<> · <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">Licença CC BY 4.0</a></>}. Material didático introdutório; não substitui formação ou prática supervisionada. Progresso salvo neste navegador.</p>
+  <p className={styles.credit}>{localizedMode?"Arte esquemática original do Eduverso, sem escala anatômica. Estruturas e explicações apresentadas em português. Referência científica consultada: ":view.credit+". Fonte da ilustração: "}<a href={view.source} target="_blank" rel="noopener noreferrer">Consultar referência anatômica</a>{!localizedMode&&view.credit.includes("CC BY 4.0")&&<> · <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">Licença CC BY 4.0</a></>}. Material didático introdutório; não substitui formação ou prática supervisionada. Progresso salvo neste navegador.</p>
  </div>;
 }
 type AtlasSelection="anterior"|AtlasView["id"]|null;

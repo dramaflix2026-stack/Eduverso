@@ -88,7 +88,7 @@ export default function AnatomyAtlas(){
  }
  function nextQuestion(){if(q===bones.length-1){setCompleted(true);}else{setQ(v=>v+1);setAnswer(null);started.current=Date.now();}}
  function checkFlash(){
-  if(submitted||!typed.trim()||!imageOk)return;
+  if(submitted||!typed.trim())return;
   const correct=isCorrectName(flash,typed);
   setTypedCorrect(correct);setSubmitted(true);setFlashRated(true);
   setScores(prev=>{
@@ -97,7 +97,7 @@ export default function AnatomyAtlas(){
    return {...prev,[flash.id]:{...old,level,remembered:old.remembered+(correct?1:0),forgotten:old.forgotten+(correct?0:1),due:correct?nextReview([1,7,30][level-1]):new Date().toISOString()}};
   });
  }
- function revealFlash(){if(submitted||!imageOk)return;setSubmitted(true);setFlashRated(false);}
+ function revealFlash(){if(submitted)return;setSubmitted(true);setFlashRated(false);}
  function rateFlash(correct:boolean){
   if(!submitted||flashRated)return;
   setTypedCorrect(correct);setFlashRated(true);
@@ -170,7 +170,7 @@ export default function AnatomyAtlas(){
         <input id="atlas-typed-answer" autoComplete="off" autoCapitalize="sentences" spellCheck={false} maxLength={80}
          value={typed} onChange={e=>setTyped(e.target.value)} disabled={submitted} placeholder="Digite ou revele a resposta"/>
         <p>Você pode digitar ou estudar diretamente o verso do cartão.</p>
-        <button type="submit" className={styles.primary} disabled={!imageOk}>{typed.trim()?"Conferir e revelar":"Revelar resposta completa"}</button>
+        <button type="submit" className={styles.primary} >{typed.trim()?"Conferir e revelar":"Revelar resposta completa"}</button>
        </form></>:
        <div className={studyStyles.flashBack} role="region" aria-label={"Verso do cartão "+flash.name}>
         <div className={studyStyles.flashBackTitle}><span>RESPOSTA COMPLETA</span><h4>{flash.name}</h4><p>{studySummary(flash)}</p></div>
