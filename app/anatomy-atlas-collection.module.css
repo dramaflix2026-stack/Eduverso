@@ -157,3 +157,12 @@
  .flashRate button{padding:10px 6px;font-size:11px}
 }
 @media(max-width:345px){.localizedPickers{grid-template-columns:1fr}}
+
+/* Figuras anatômicas científicas dentro das matérias; capas ilustradas apenas na navegação. */
+.legendTitle{grid-column:1/-1;margin:0 0 5px;color:#e2c1ff;font-size:14px;line-height:1.4}
+.auxLegend{padding:13px 14px;border:1px solid #74528f;border-radius:13px;background:#30233d;margin-bottom:15px}
+.auxLegend summary{font-size:13px;font-weight:800;color:#e5caf9;cursor:pointer;list-style-position:inside}
+.auxLegend[open] summary{margin-bottom:12px}
+.auxLegend .structureList{margin-top:9px}
+.figure .diagram img{width:100%;height:100%}
+@media(max-width:520px){.legendTitle{font-size:13px}.auxLegend{padding:12px}}

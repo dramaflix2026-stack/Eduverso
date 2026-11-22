@@ -994,10 +994,20 @@ const sources:Source[]=[
   ]
  }
 ];
+// Priorizar a mesma ilustração anatômica em versão já traduzida no Wikimedia Commons.
+// As demais mantêm o diagrama original e recebem uma legenda interativa em PT-BR.
+const ptBRImageFiles:Record<string,string>={
+ "vasos-sanguineos":"Circulatory System pt.svg",
+ "sistema-digestorio":"Digestive system diagram pt.svg",
+ "olho":"Schematic diagram of the human eye pt.svg",
+ "pulmoes":"Respiratory system-pt.svg",
+ "reprodutor-feminino":"Scheme female reproductive system-pt.svg",
+ "ouvido":"Anatomy of the Human Ear pt.svg"
+};
 export const expandedAtlasViews:AtlasView[]=sources.map(source=>({
  id:source.id,title:source.title,short:source.short,
  subtitle:"Estude as principais estruturas com imagem de referência, descrição, função e correlação clínica.",
- image:image(source.file),source:commons(source.file),
+ image:image(ptBRImageFiles[source.id]||source.file),source:commons(ptBRImageFiles[source.id]||source.file),
  credit:"Ilustração do acervo Wikimedia Commons · autoria e condições de uso descritas no arquivo original",
  ratio:"4 / 5",alt:"Ilustração de referência para "+source.title,
  spotMode:"list",

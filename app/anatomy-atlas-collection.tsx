@@ -51,7 +51,7 @@ function AtlasStudy({view}:{view:AtlasView}){
  const detail=useRef<HTMLDivElement>(null);
  const items=view.spots;
  const listMode=view.spotMode==="list";
- const localizedMode=listMode||["cranio","coluna","torax","membro-inferior"].includes(view.id);
+ const localizedMode=listMode;
  useEffect(()=>{setScores(restore(view.id));setReady(true);},[view.id]);
  useEffect(()=>{if(ready)try{localStorage.setItem(keyFor(view.id),JSON.stringify(scores));}catch{}},[ready,scores,view.id]);
  useEffect(()=>{
@@ -131,38 +131,46 @@ function AtlasStudy({view}:{view:AtlasView}){
   </div>}
   <div className={styles.studyColumns}>
    <figure className={styles.figure}>
-    {localizedMode?
-      <div className={styles.localizedPlate}>
-       <AtlasArt family={atlasFamily(view.id)} id={view.id+"-study"} title={view.short} compact/>
-       {mode==="explorar"&&<div className={styles.localizedPickers} aria-label="Estruturas em português">
-         {items.map((b,i)=><button type="button" key={b.id}
-          aria-pressed={picked===b.id} className={picked===b.id?styles.structureActive:""}
-          onClick={()=>clickPoint(b)}><span>{String(i+1).padStart(2,"0")}</span>{b.name}</button>)}
-        </div>}
-       {mode!=="explorar"&&<div className={styles.localizedHint}>{mode==="desafio"?"Observe a área anatômica e selecione a estrutura correta nas alternativas.":"Observe a representação sem rótulos e tente lembrar a estrutura."}</div>}
-      </div>:
-      imageFailed?<div className={styles.failure} role="alert">Não foi possível carregar a ilustração. <a href={view.source} target="_blank" rel="noreferrer noopener">Consultar fonte</a>.</div>
-      :<div className={styles.diagram} style={{aspectRatio:view.ratio,background:view.background||"#fff"}}>
-       <img alt={view.alt} src={imageFallback?fallbackUrl:view.image} loading="eager"
+    {imageFailed?<div className={styles.failure} role="alert">
+       Não foi possível carregar a ilustração anatômica. <a href={view.source} target="_blank" rel="noreferrer noopener">Abrir a imagem original</a>.
+      </div>
+    :<div className={styles.diagram} style={{aspectRatio:view.ratio,background:view.background||"#fff"}}>
+      <img alt={view.alt} src={imageFallback?fallbackUrl:view.image} loading="eager"
+        style={listMode?{objectFit:"contain"}:undefined}
         onError={()=>{if(imageFallback)setImageFailed(true);else setImageFallback(true);}}/>
-       {items.map((b,i)=>{
-        if(mode==="flashcards"&&flash?.id!==b.id)return null;
-        const pos={left:b.x+"%",top:b.y+"%"};
-        const correct=mode==="desafio"&&answer!==null&&b.id===target?.id;
-        const wrong=mode==="desafio"&&answer===b.id&&b.id!==target?.id;
-        const selectedExplore=mode==="explorar"&&picked===b.id;
-        const cls=styles.pin+" "+(mode==="flashcards"?styles.pinFlash:correct?styles.pinCorrect:wrong?styles.pinWrong:selectedExplore?styles.pinSelected:styles.pinDefault);
-        return mode==="flashcards"?<span key={b.id} className={cls} style={pos} aria-hidden="true">?</span>:
-         <button type="button" key={b.id} className={cls} style={pos}
-           aria-label={mode==="explorar"?"Mostrar "+b.name:"Ponto "+(i+1)}
-           aria-pressed={selectedExplore||Boolean(mode==="desafio"&&answer===b.id)}
-           disabled={mode==="desafio"&&(completed||answer!==null)}
-           onClick={()=>clickPoint(b)}>{i+1}</button>;
-       })}
-      </div>}
-    <figcaption>{localizedMode?"Mapa didático com nomes anatômicos em português. Representação conceitual, sem escala.":"Ilustração anatômica sem legendas · representação didática"}</figcaption>
+      {!listMode&&items.map((b,i)=>{
+       if(mode==="flashcards"&&flash?.id!==b.id)return null;
+       const pos={left:b.x+"%",top:b.y+"%"};
+       const correct=mode==="desafio"&&answer!==null&&b.id===target?.id;
+       const wrong=mode==="desafio"&&answer===b.id&&b.id!==target?.id;
+       const selectedExplore=mode==="explorar"&&picked===b.id;
+       const cls=styles.pin+" "+(mode==="flashcards"?styles.pinFlash:correct?styles.pinCorrect:wrong?styles.pinWrong:selectedExplore?styles.pinSelected:styles.pinDefault);
+       return mode==="flashcards"?<span key={b.id} className={cls} style={pos} aria-hidden="true">?</span>:
+        <button type="button" key={b.id} className={cls} style={pos}
+         aria-label={mode==="explorar"?"Mostrar "+b.name:"Ponto "+(i+1)}
+         aria-pressed={selectedExplore||Boolean(mode==="desafio"&&answer===b.id)}
+         disabled={mode==="desafio"&&(completed||answer!==null)}
+         onClick={()=>clickPoint(b)}>{i+1}</button>;
+      })}
+     </div>}
+    <figcaption>{listMode?
+      "Ilustração anatômica detalhada · consulte as estruturas abaixo com nomenclatura em português.":
+      "Ilustração anatômica detalhada · toque nos marcadores para consultar os nomes em português."}
+    </figcaption>
    </figure>
    <div className={styles.details} ref={detail}>
+    {listMode&&mode==="explorar"&&<div className={styles.structureList} aria-label="Legenda anatômica em português">
+      <h4 className={styles.legendTitle}>Estruturas da imagem — português (Brasil)</h4>
+      {items.map((b,i)=><button type="button" key={b.id}
+       className={picked===b.id?styles.structureActive:""} aria-pressed={picked===b.id}
+       onClick={()=>clickPoint(b)}><span>{String(i+1).padStart(2,"0")}</span>{b.name}</button>)}
+     </div>}
+    {!listMode&&mode==="explorar"&&<details className={styles.auxLegend}>
+     <summary>Ver lista de estruturas em português</summary>
+     <div className={styles.structureList}>
+      {items.map((b,i)=><button key={b.id} type="button" className={picked===b.id?styles.structureActive:""} aria-pressed={picked===b.id} onClick={()=>clickPoint(b)}><span>{String(i+1).padStart(2,"0")}</span>{b.name}</button>)}
+     </div>
+    </details>}
     {localizedMode&&mode==="desafio"&&answer===null&&!completed&&<div className={styles.quizList} role="group" aria-label="Alternativas do desafio">{quizChoices.map((b,i)=><button type="button" key={b.id} onClick={()=>clickPoint(b)}><b>{String.fromCharCode(65+i)})</b> {b.name}</button>)}</div>}
     {mode==="explorar"&&<article className={styles.detailCard}>
      {selected?<><small>{selected.group} · GUIA ANATÔMICO</small><h4>{selected.name}</h4>
@@ -213,7 +221,7 @@ function AtlasStudy({view}:{view:AtlasView}){
     </article>}
    </div>
   </div>
-  <p className={styles.credit}>{localizedMode?"Arte esquemática original do Eduverso, sem escala anatômica. Estruturas e explicações apresentadas em português. Referência científica consultada: ":view.credit+". Fonte da ilustração: "}<a href={view.source} target="_blank" rel="noopener noreferrer">Consultar referência anatômica</a>{!localizedMode&&view.credit.includes("CC BY 4.0")&&<> · <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">Licença CC BY 4.0</a></>}. Material didático introdutório; não substitui formação ou prática supervisionada. Progresso salvo neste navegador.</p>
+  <p className={styles.credit}>{view.credit}. <a href={view.source} target="_blank" rel="noopener noreferrer">Consultar a fonte da imagem</a>{view.credit.includes("CC BY 4.0")&&<> · <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">Licença CC BY 4.0</a></>}. Os nomes anatômicos, as legendas interativas e as explicações do Eduverso estão em português. Algumas imagens de referência preservadas podem conter legendas impressas em inglês. Material didático introdutório; não substitui formação ou prática supervisionada. Progresso salvo neste navegador.</p>
  </div>;
 }
 type AtlasSelection="anterior"|AtlasView["id"]|null;
