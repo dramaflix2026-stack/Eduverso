@@ -110,7 +110,10 @@ export default function MedicineHub({area,onChangeArea,onAtlasStateChange,onOpen
    <p>{area==="vestibular"?"Escolha uma matéria, explore os assuntos e comece a estudar com as trilhas já existentes no Eduverso.":area==="faculdade"?"Explore disciplinas universitárias, aulas comentadas, exercícios e simulados por ciclo e ano.":area==="instituicoes"?"Encontre provas anteriores de vestibulares e a preparação direcionada para cada instituição, respeitando seu edital e processo de ingresso.":"Consulte os exames profissionais e os acervos oficiais de questões anteriores."}</p>
    {area==="faculdade"&&<div className={styles.stats}><span>18 disciplinas universitárias</span><span>108 assuntos iniciais</span></div>}
   </section>
-  <LearningQuality mode={area==="vestibular"?"med-vestibular":area==="faculdade"?"med-faculdade":area==="instituicoes"?"med-instituicoes":"med-exames"}/>
+  <details className={styles.qualityDisclosure}>
+   <summary><span>✦ Padrão acadêmico e fontes do conteúdo</span><small>Ver critérios e referências</small></summary>
+   <div className={styles.qualityContent}><LearningQuality mode={area==="vestibular"?"med-vestibular":area==="faculdade"?"med-faculdade":area==="instituicoes"?"med-instituicoes":"med-exames"}/></div>
+  </details>
   <div className={styles.areaTabs} role="group" aria-label="Áreas de Medicina">
     {([
       {id:"vestibular",label:"🎓 Vestibular"},
@@ -153,11 +156,6 @@ export default function MedicineHub({area,onChangeArea,onAtlasStateChange,onOpen
   </>}
   {area==="faculdade"&&mockOpen?<MedicineMockExam scope={currentDiscipline?.slug} onClose={()=>setMockOpen(false)}/>:null}
   {area==="faculdade"&&!currentDiscipline&&!mockOpen&&!atlasOpen&&<>
-   <button type="button" className={styles.atlasFeature} onClick={openAtlas} aria-label="Abrir Atlas Anatômico Interativo">
-    <span aria-hidden="true" className={styles.atlasIcon}>🦴</span>
-    <span><strong>Atlas Anatômico Interativo</strong><small>Biblioteca com {1+atlasViews.length} atlas · Estruturas interativas · Desafios · Flashcards</small></span>
-    <span aria-hidden="true" className={styles.atlasArrow}>Explorar →</span>
-   </button>
    <div className={styles.sectionHead}><div><span className={styles.eyebrow}>DISCIPLINAS DE GRADUAÇÃO</span><h2>Escolha uma disciplina</h2></div><button className={styles.primary} type="button" onClick={()=>setMockOpen(true)}>📝 Simulado geral</button></div>
    <div className={styles.toolbar}>
     <div className={styles.filters} role="group" aria-label="Filtrar pelo ciclo">
