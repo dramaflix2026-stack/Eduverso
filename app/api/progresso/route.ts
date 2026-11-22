@@ -6,7 +6,7 @@ export async function GET(request:NextRequest){
  try{
   const session=await authenticate(request);
   if(!session)return authResponse(request,{error:"Entre para sincronizar seu progresso."},401);
-  const result=await supabaseRequest<Progress[]>("/rest/v1/eduverso_progress?select=area,subject,topic,last_visited_at,correct_answers,answered_questions&order=last_visited_at.desc&limit=20",{accessToken:session.accessToken});
+  const result=await supabaseRequest<Progress[]>("/rest/v1/eduverso_progress?select=area,subject,topic,last_visited_at,correct_answers,answered_questions&order=last_visited_at.desc&limit=500",{accessToken:session.accessToken});
   if(!result.ok)return authResponse(request,{error:"Erro ao consultar progresso."},502,session);
   return authResponse(request,{items:result.data},200,session);
  }catch{return authResponse(request,{error:"Não foi possível consultar o progresso."},503);}
