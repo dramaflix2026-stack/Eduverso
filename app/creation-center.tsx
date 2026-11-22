@@ -16,7 +16,7 @@ type Props={tool:CreationTool;onNavigate:(tool:CreationTool)=>void;subjects:Subj
 type SavedMaterial={id:string;title:string;kind:string;date:string;pdf:PdfDocumentRequest};
 const STORAGE="eduverso:central-criacao:material:v1";
 const NAV: {id:Exclude<CreationTool,"inicio">;title:string;icon:string;subtitle:string}[]=[
- {id:"provas",title:"Gerador de provas",icon:"📝",subtitle:"Questões do currículo, prova e gabarito em PDFs separados."},
+ {id:"provas",title:"Gerador de provas",icon:"📝",subtitle:"Monte até 100 questões e baixe a prova completa com gabarito comentado ao final."},
  {id:"apostilas",title:"Apostilas e atividades",icon:"📚",subtitle:"Aulas organizadas com exemplos e prática para baixar."},
  {id:"arquivos",title:"Transformar arquivos em materiais",icon:"📄",subtitle:"Importe texto ou PDF e prepare um roteiro de estudo."},
  {id:"biblioteca",title:"Biblioteca de materiais prontos",icon:"▤",subtitle:"Acesse guias do catálogo e seus documentos salvos."}
@@ -49,15 +49,47 @@ function makeBooklet(subject:string,topic:string,limit=10,prepared?:LessonSource
  return {title:"Apostila e atividades — "+topic,subtitle:"Eduverso · "+subject,fileName:"eduverso-apostila-"+fileSafe(topic)+".pdf",sections,
  note:"Material organizado a partir do conteúdo editorial já cadastrado no Eduverso, não gerado por inteligência artificial. Confira as questões e o gabarito antes de distribuir."};
 }
-function makeExam(subject:string,topic:string,items:ExerciseItem[],answers=false):PdfDocumentRequest{
- const sections:PdfSection[]=items.map((q,i)=>({heading:"Questão "+(i+1),paragraphs:[
-  q.question,...q.options.map((choice,j)=>options[j]+") "+choice),
-  ...(answers?["Resposta correta: "+options[q.correct]+") "+q.options[q.correct],"Explicação: "+q.explanation]:[])
- ]}));
- return {title:(answers?"Gabarito comentado":"Prova de revisão")+" — "+topic,
- subtitle:subject+" · "+items.length+" questões · Eduverso",
- fileName:"eduverso-"+(answers?"gabarito":"prova")+"-"+fileSafe(topic)+".pdf",sections,
- note:answers?"Gabarito elaborado com base nas aulas cadastradas. Revisão pedagógica recomendada.":"Prova montada com questões do catálogo Eduverso. Preencha nome, turma e data no espaço disponível."};
+function makeExam(subject:string,topic:string,items:ExerciseItem[],onlyAnswerKey=false):PdfDocumentRequest{
+ const limited=items.slice(0,100);
+ const questionSections:PdfSection[]=limited.map((q,i)=>({
+  heading:"Questão "+String(i+1).padStart(2,"0"),
+  kind:"question",
+  paragraphs:[q.question,...q.options.map((choice,j)=>options[j]+") "+choice)]
+ }));
+ const summaryRows=Array.from({length:Math.ceil(limited.length/10)},(_,row)=>{
+  const from=row*10;
+  return limited.slice(from,from+10).map((q,i)=>{
+   return String(from+i+1).padStart(2,"0")+" - "+options[q.correct];
+  }).join("     ");
+ });
+ const commentarySections:PdfSection[]=limited.map((q,i)=>{
+  const letter=options[q.correct]??"?";
+  const correct=q.options[q.correct]??"";
+  const rationale=q.explanation.trim();
+  return {
+   heading:"Questão "+String(i+1).padStart(2,"0")+" — alternativa "+letter,
+   kind:"answer",
+   paragraphs:[
+    "Resposta correta: "+letter+") "+correct,
+    "Justificativa e resolução: "+(rationale||"A explicação específica ainda não está registrada no catálogo desta questão; confira o material da disciplina antes de usar este gabarito."),
+    "Conteúdo para revisão: "+q.sourceTitle
+   ]
+  };
+ });
+ const answerKey:PdfSection[]=[
+  {heading:"GABARITO COMENTADO",kind:"chapter",pageBreakBefore:!onlyAnswerKey,
+   paragraphs:["Conferência das respostas e resoluções das "+limited.length+" questões. Esta seção é destinada à correção e à revisão pedagógica."]},
+  {heading:"Gabarito rápido — alternativas",kind:"standard",paragraphs:summaryRows},
+  ...commentarySections
+ ];
+ return {
+  title:(onlyAnswerKey?"Gabarito comentado":"Prova com gabarito comentado")+" — "+topic,
+  subtitle:subject+" · "+limited.length+" questões · Eduverso",
+  fileName:"eduverso-"+(onlyAnswerKey?"gabarito":"prova-com-gabarito")+"-"+fileSafe(topic)+".pdf",
+  responseFields:!onlyAnswerKey,
+  sections:onlyAnswerKey?answerKey:[...questionSections,...answerKey],
+  note:"Questões e explicações organizadas a partir do acervo Eduverso. Antes da aplicação, revise enunciados, alternativas, resoluções e adequação à turma. Não se trata de uma avaliação oficial."
+ };
 }
 function readSaved():SavedMaterial[]{
  try{const raw=JSON.parse(localStorage.getItem(STORAGE)||"[]");return Array.isArray(raw)?raw.filter(x=>x&&typeof x.id==="string"&&typeof x.title==="string"&&x.pdf&&Array.isArray(x.pdf.sections)).slice(0,12):[];}catch{return [];}
@@ -189,15 +221,16 @@ export default function CreationCenter({tool,onNavigate,subjects}:Props){
        <option value="">Todos os assuntos disponíveis</option>
        {medTopics.map(t=><option key={t.id} value={t.id}>{t.name}</option>)}
      </select></label>}
-    {tool==="provas"?<label>Quantidade de questões<select value={quantity} onChange={e=>{setQuantity(Number(e.target.value));setNotice("");}}>{[5,10,15,20,30].map(n=><option key={n} value={n}>{n} questões</option>)}</select></label>:
+    {tool==="provas"?<label>Quantidade de questões<select value={quantity} onChange={e=>{setQuantity(Number(e.target.value));setNotice("");}}>{[5,10,15,20,25,30,40,50,60,70,80,90,100].map(n=><option key={n} value={n}>{n} questões</option>)}</select></label>:
       <label>Aulas para incluir<select value={lessonLimit} onChange={e=>setLessonLimit(Number(e.target.value))}>{[5,10,15,20].map(n=><option key={n} value={n}>Até {n} aulas</option>)}</select></label>}
    </div>
    <p className={styles.hint}>{tool==="provas"?"Questões distintas disponíveis nesta rodada: "+exam.length+" de "+quantity+".":"Aulas disponíveis para este assunto: "+lessons.length+"."} Os PDFs utilizam o catálogo existente; não dependem de IA.</p>
+   {tool==="provas"&&exam.length<quantity&&<p className={styles.notice} role="status">Este recorte possui {exam.length} questões distintas disponíveis. O PDF terá somente essas {exam.length} questões — sem repetir perguntas para atingir {quantity}. Para ampliar o banco, selecione todos os assuntos ou outra disciplina.</p>}
    {tool==="provas"&&<button type="button" className={styles.secondary} onClick={()=>{setSeed(v=>v+37);setNotice("");}}>↻ Sortear outra versão</button>}
    <div className={styles.actions}>
     {tool==="provas"?<>
-      <button disabled={busy||!exam.length} className={styles.primary} onClick={()=>create(makeExam(activeSubject,activeTopic,exam),"Prova")}>↓ Baixar prova PDF</button>
-      <button disabled={busy||!exam.length} className={styles.secondary} onClick={()=>create(makeExam(activeSubject,activeTopic,exam,true),"Gabarito")}>↓ Baixar gabarito comentado</button>
+      <button disabled={busy||!exam.length} className={styles.primary} onClick={()=>create(makeExam(activeSubject,activeTopic,exam),"Prova")}>↓ Baixar prova + gabarito comentado (PDF)</button>
+      <button disabled={busy||!exam.length} className={styles.secondary} onClick={()=>create(makeExam(activeSubject,activeTopic,exam,true),"Gabarito")}>↓ Baixar somente o gabarito (PDF)</button>
      </>:<button disabled={busy||!lessons.length} className={styles.primary} onClick={()=>create(makeBooklet(activeSubject,activeTopic,lessonLimit,lessons),"Apostila")}>↓ Criar e baixar apostila PDF</button>}
    </div></>)}
   {tool==="arquivos"&&section("Importar material de estudo",
