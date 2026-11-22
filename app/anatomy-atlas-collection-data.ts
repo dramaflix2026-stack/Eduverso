@@ -34,7 +34,7 @@ export const atlasViews:AtlasView[]=[
   image:"https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Human_skull_front_bones.svg/500px-Human_skull_front_bones.svg.png",
   source:"https://commons.wikimedia.org/wiki/File:Human_skull_front_bones.svg",
   credit:"Mariana Ruiz Villarreal (LadyofHats) · Wikimedia Commons · domínio público",
-  ratio:"500 / 470",alt:"Ilustração anatômica frontal do crânio humano",
+  ratio:"695 / 563",alt:"Ilustração anatômica frontal do crânio humano",
   spots:[
    {id:"frontal",name:"Osso frontal",group:"Neurocrânio",x:51,y:20,description:"Forma a fronte, parte do teto orbitário e a porção anterior do neurocrânio.",function:"Protege os lobos frontais e compõe o limite superior das órbitas.",clinical:"A região supraorbitária é um importante marco de referência."},
    {id:"parietal",name:"Osso parietal",group:"Neurocrânio",x:20,y:24,description:"Osso pareado situado principalmente na calvária e na parede superolateral do crânio.",function:"Forma grande parte do teto e das paredes laterais da caixa craniana.",clinical:"Encontra o frontal na sutura coronal."},
