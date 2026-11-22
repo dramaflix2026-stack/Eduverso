@@ -184,7 +184,6 @@ return <div className="app-shell">
       <button type="button" className="nav-nested-item" onClick={()=>navigatePreparation("vestibulares")}><span className="nav-item-icon" aria-hidden="true">🎓</span><span className="nav-child-label">Vestibulares e universidades</span></button>
       
       <button type="button" className="nav-nested-item" onClick={()=>navigatePreparation("cursos")}><span className="nav-item-icon" aria-hidden="true">◈</span><span className="nav-child-label">Outros cursos superiores</span></button>
-      <button type="button" className="nav-nested-item" onClick={()=>navigateCreation("apostilas",true)}><span className="nav-item-icon" aria-hidden="true">💻</span><span className="nav-child-label">Programação, TI e Design</span></button>
       <button type="button" className="nav-nested-item" onClick={()=>navigatePreparation("concursos")}><span className="nav-item-icon" aria-hidden="true">▣</span><span className="nav-child-label">Concursos públicos</span></button>
       <button type="button" className={"nav-nested-item "+(active==="Concursos"?"active":"")} onClick={()=>navigate("Concursos")}><span className="nav-item-icon" aria-hidden="true">∑</span><span className="nav-child-label">Matérias de concursos</span></button>
       <button type="button" className="nav-nested-item" onClick={()=>navigatePreparation("profissionais")}><span className="nav-item-icon" aria-hidden="true">▤</span><span className="nav-child-label">Exames profissionais</span></button>
