@@ -1,15 +1,46 @@
 import type {LessonSource} from "./exercise-bank";
+import {professionalExtraLessons} from "./professional-extra-lessons";
+const distractors:Record<string,[string,string]>={
+ "Estrutura de uma página HTML":["CSS","SQL"],
+ "Estilos responsivos com CSS":["HTML sem estilos","DNS"],
+ "Interatividade com JavaScript":["PDF","CSS isoladamente"],
+ "Variáveis e tipos de dados":["Laço de repetição","Condição lógica"],
+ "Condições e repetição":["Variável isolada","Comentário de código"],
+ "Arquivos e automações seguras":["Excluir tudo antes de testar","Executar sem conferir entradas"],
+ "Componentes de um computador":["Monitor","Placa de rede"],
+ "Fundamentos de redes":["Editor de texto","Sistema de arquivos"],
+ "Atendimento e documentação":["Somente o nome do cliente","Apenas a marca do equipamento"],
+ "Autenticação e senhas":["Reutilizar a mesma senha","Desativar alertas de acesso"],
+ "Engenharia social e golpes":["Responder ao endereço do remetente sem verificar","Abrir o link recebido e fornecer o código"],
+ "Cópias e atualização":["Guardar uma cópia sem testá-la","Desativar todas as versões anteriores"],
+ "Fluxos e necessidades das pessoas":["Somente uma paleta de cores","A animação da primeira tela"],
+ "Hierarquia visual e componentes":["A mesma ênfase para todos os botões","Apenas elementos decorativos"],
+ "Acessibilidade e validação":["Controles sem rótulos","Links acionados somente com mouse"],
+ "Composição e equilíbrio":["Alinhamento aleatório","Mudança constante de cor"],
+ "Tipografia e legibilidade":["Letras muito pequenas e comprimidas","Ausência de espaçamento entre linhas"],
+ "Cores e entrega final":["Publicar sem revisar","Usar a mesma imagem em todos os formatos sem conferir"],
+ "Organização de uma base":["Misturar títulos e registros na mesma coluna","Usar uma coluna diferente para cada linha"],
+ "Métricas e comparações":["Somente a cor da tabela","A quantidade de abas na planilha"],
+ "Visualização e conclusões":["Gráfico de setores para todos os instantes","Ícone decorativo sem eixo temporal"],
+ "Escopo e objetivos":["Apenas uma opinião informal","Encerrar sem testar o entregável"],
+ "Sequência de trabalho e dependências":["Trocar a cor de todas as tarefas","Criar trabalhos sem responsáveis"],
+ "Riscos e retrospectiva":["Apagar registros de falha","Ignorar defeitos depois da publicação"],
+ "Público e proposta de valor":["Somente o logotipo","A cor de fundo de uma peça"],
+ "Conteúdo e jornada":["Um anúncio sem relação com a oferta","Uma tela vazia sem demonstração"],
+ "Métricas e testes":["Número de curtidas sem compras","Quantidade de cores do anúncio"]
+};
+
 export type ProfessionalLesson=LessonSource&{context:string;pitfall:string;reference:string};
 export type ProfessionalTrack={id:string;name:string;category:string;icon:string;description:string;reference:string;lessons:ProfessionalLesson[]};
 type Entry=[string,string,string,string,string,string,string];
 function makeLessons(reference:string,items:Entry[]):ProfessionalLesson[]{
  return items.map(([title,explain,example,context,pitfall,question,answer])=>({
   title,explain,body:explain,example,context,pitfall,question,
-  options:[answer,"Uma alternativa que contradiz o conceito apresentado","Uma alternativa que não se aplica à situação"] as [string,string,string],
+  options:[answer,...(distractors[title]??["Outra tecnologia não relacionada","Uma prática inadequada"])] as [string,string,string],
   correct:0,feedback:answer+". "+explain,reference
  }));
 }
-export const professionalTracks:ProfessionalTrack[]=[
+const baseProfessionalTracks:ProfessionalTrack[]=[
  {id:"web",name:"Desenvolvimento Web",category:"Programação",icon:"💻",description:"HTML, CSS, JavaScript e páginas acessíveis.",reference:"https://developer.mozilla.org/pt-BR/docs/Learn_web_development",lessons:makeLessons("https://developer.mozilla.org/pt-BR/docs/Learn_web_development",[
   ["Estrutura de uma página HTML","HTML é uma linguagem de marcação, não de programação. Seus elementos descrevem a estrutura e o significado de títulos, parágrafos, links, formulários e regiões de navegação. Uma página bem estruturada funciona como um documento legível por pessoas e tecnologias assistivas. É útil diferenciar conteúdo, apresentação e comportamento: HTML descreve o conteúdo, CSS o apresenta e JavaScript adiciona comportamentos.","Uma página inicial pode conter um cabeçalho com navegação, um elemento principal com artigo e um rodapé com informações complementares. O título principal deve representar o assunto da página.","No planejamento de um site, liste primeiro os blocos de informação antes de escolher as cores. Assim você evita construir a aparência sem pensar na hierarquia.","Usar elementos genéricos para tudo pode prejudicar leitura, semântica e navegação por teclado.","Qual tecnologia define a estrutura semântica de uma página?","HTML"],
   ["Estilos responsivos com CSS","CSS define cores, fontes, espaçamentos, posicionamento e adaptação a diferentes telas. Um layout responsivo não consiste apenas em reduzir fontes: ele reorganiza colunas, mantém áreas clicáveis adequadas e evita rolagem horizontal. Unidades flexíveis, grade e contêineres ajudam a criar uma experiência consistente.","Uma galeria pode usar duas colunas em tela larga e uma coluna no celular, mantendo margens e espaço entre os cartões.","Antes de definir medidas fixas, avalie como o conteúdo cresce. Textos maiores e tamanhos variados de tela devem continuar legíveis.","Usar largura rígida em pixels sem prever telas pequenas pode cortar elementos da interface.","Qual linguagem controla a apresentação e a adaptação visual da página?","CSS"],
@@ -56,4 +87,7 @@ export const professionalTracks:ProfessionalTrack[]=[
  ["Métricas e testes","Avaliar resultados exige separar alcance, visitas, cadastros e compras. Taxas de conversão usam denominadores definidos; testes precisam de tempo e volume suficientes para conclusões razoáveis. Acompanhe indicadores ligados ao objetivo, sem confundir engajamento com receita.","Se 100 pessoas visitam a página e 5 compram, a conversão de visita em compra é 5%.","Compare campanhas em períodos compatíveis e verifique custos, qualidade dos leads e compras confirmadas.","Escolher vencedor com base apenas em curtidas pode ocultar baixa conversão.","Que métrica mede a proporção de visitas que se transformaram em compras?","Taxa de conversão"]
  ])}
 ];
+export const professionalTracks:ProfessionalTrack[]=baseProfessionalTracks.map(track=>({
+ ...track,lessons:[...track.lessons,...(professionalExtraLessons[track.id]??[]).map(lesson=>({...lesson,reference:track.reference}))]
+}));
 export function getProfessionalTrack(id:string):ProfessionalTrack|undefined{return professionalTracks.find(t=>t.id===id);}
