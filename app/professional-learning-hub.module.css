@@ -179,3 +179,14 @@
 }
 
 .catalog{padding:3px 0 20px}
+
+.sectionTitle{display:flex;justify-content:space-between;align-items:end;gap:12px}
+.syllabusTitle{margin-bottom:16px}
+.exerciseHeading{padding-bottom:4px}
+.reviewIntro{max-width:860px}
+.codeSection{border:1px solid #505a85;background:#141d30;padding:21px;margin:0 0 27px;border-radius:16px}
+.codeSection h3{font-size:20px;margin:0 0 11px;color:#fff}
+.codeSection pre{background:#0c1021;color:#cce4fb;border:1px solid #343f60;border-radius:12px;padding:18px;overflow:auto;margin:0;max-width:100%;font-size:12px;line-height:1.65;white-space:pre}
+.codeSection code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:inherit}
+.codeSection p{margin:11px 0 0;color:#b5c2da;font-size:12px;line-height:1.6}
+@media(max-width:650px){.codeSection{padding:15px}.codeSection h3{font-size:17px}.codeSection pre{font-size:11px;padding:13px}}
