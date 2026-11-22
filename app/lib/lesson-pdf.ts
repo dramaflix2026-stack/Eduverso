@@ -1,8 +1,8 @@
 "use client";
-export type PdfSection={heading:string;paragraphs:string[]};
+export type PdfSection={heading:string;paragraphs:string[];pageBreakBefore?:boolean;kind?:"standard"|"chapter"|"question"|"answer"};
 export type PdfDocumentRequest={
  title:string;subtitle:string;fileName:string;
- sections:PdfSection[];note?:string;
+ sections:PdfSection[];note?:string;responseFields?:boolean;
 };
 function clean(text:string):string{
  return text.replace(/[\r\t]+/g," ").replace(/→|⇒|↗/g," -> ").replace(/←/g," <- ")
@@ -61,12 +61,20 @@ export async function downloadStudyPdf(request:PdfDocumentRequest){
  ensure(70);
  paragraph(request.title,21,true);
  paragraph(request.subtitle,11);
+ if(request.responseFields){
+  ensure(48);
+  paragraph("Aluno(a): ____________________________________     Turma: ___________",10);
+  paragraph("Data: ____/____/________     Professor(a): __________________________",10);
+  paragraph("Instrucoes: leia com atencao e assinale somente uma alternativa por questao. O gabarito comentado esta ao final deste documento.",9);
+ }
  y-=8;
  for(const section of request.sections){
-  ensure(56);page.drawLine({start:{x:50,y:y+13},end:{x:545,y:y+13},color:line,thickness:1});
-  paragraph(section.heading,13,true);
-  for(const p of section.paragraphs)paragraph(p);
-  y-=5;
+  if(section.pageBreakBefore)nextPage();
+  ensure(section.kind==="chapter"?90:56);
+  page.drawLine({start:{x:50,y:y+13},end:{x:545,y:y+13},color:section.kind==="chapter"?purple:line,thickness:section.kind==="chapter"?2:1});
+  paragraph(section.heading,section.kind==="chapter"?19:section.kind==="answer"?12:13,true);
+  for(const p of section.paragraphs)paragraph(p,section.kind==="answer"?10:10.5);
+  y-=section.kind==="chapter"?10:5;
  }
  if(request.note){ensure(55);paragraph("Nota sobre este material",12,true);paragraph(request.note,9);}
  const pages=doc.getPages();
