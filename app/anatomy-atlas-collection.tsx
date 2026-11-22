@@ -134,7 +134,7 @@ function AtlasStudy({view}:{view:AtlasView}){
     {imageFailed?<div className={styles.failure} role="alert">
        Não foi possível carregar a ilustração anatômica. <a href={view.source} target="_blank" rel="noreferrer noopener">Abrir a imagem original</a>.
       </div>
-    :<div className={styles.diagram} style={{aspectRatio:view.ratio,background:view.background||"#fff"}}>
+    :<div className={styles.diagram} style={{aspectRatio:view.ratio,background:"#f6f3fa"}}>
       <img alt={view.alt} src={imageFallback?fallbackUrl:view.image} loading="eager"
         style={listMode?{objectFit:"contain"}:undefined}
         onError={()=>{if(imageFallback)setImageFailed(true);else setImageFallback(true);}}/>

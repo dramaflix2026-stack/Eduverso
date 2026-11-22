@@ -67,7 +67,7 @@ export const atlasViews:AtlasView[]=[
   image:"https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Human_Arm_Bones_%28NIH_BioArt_208_-_630553%29.svg/500px-Human_Arm_Bones_%28NIH_BioArt_208_-_630553%29.svg.png",
   source:"https://commons.wikimedia.org/wiki/File:Human_Arm_Bones_(NIH_BioArt_208_-_630553).svg",
   credit:"Ryan Kissinger / NIAID NIH BioArt · Wikimedia Commons · domínio público nos EUA",
-  ratio:"512 / 1042",background:"#110b1e",alt:"Ilustração dos ossos de ambos os membros superiores",
+  ratio:"512 / 1042",background:"#f6f3fa",alt:"Ilustração dos ossos de ambos os membros superiores",
   spots:[
    {id:"umero-ms",name:"Úmero",group:"Braço",x:30,y:25,description:"Osso longo entre ombro e cotovelo.",function:"Age como alavanca para movimentos do braço e integra as articulações do ombro e do cotovelo.",clinical:"A cabeça umeral articula-se com a cavidade glenoidal.",aliases:["umero"]},
    {id:"radio-ms",name:"Rádio",group:"Antebraço",x:20,y:58,description:"Osso lateral do antebraço, do lado do polegar em posição anatômica.",function:"Participa dos movimentos de pronação e supinação e da articulação do punho.",clinical:"A cabeça do rádio participa da articulação radioulnar proximal.",aliases:["radio"]},
@@ -83,7 +83,7 @@ export const atlasViews:AtlasView[]=[
   image:"https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Human_leg_bones_labeled.svg/500px-Human_leg_bones_labeled.svg.png",
   source:"https://commons.wikimedia.org/wiki/File:Human_leg_bones_labeled.svg",
   credit:"Derivado de Mariana Ruiz Villarreal (LadyofHats) · Wikimedia Commons · licença indicada na fonte",
-  ratio:"512 / 775",background:"#110b1e",alt:"Ilustração anterior da pelve e de ambos os membros inferiores",
+  ratio:"512 / 775",background:"#f6f3fa",alt:"Ilustração anterior da pelve e de ambos os membros inferiores",
   spots:[
    {id:"femur-mi",name:"Fêmur",group:"Coxa",x:40,y:29,description:"Maior osso longo do corpo humano, entre quadril e joelho.",function:"Transfere carga e participa da locomoção.",clinical:"A cabeça do fêmur encaixa-se no acetábulo.",aliases:["femur"]},
    {id:"patela-mi",name:"Patela",group:"Joelho",x:40,y:52,description:"Osso sesamoide anterior à articulação do joelho.",function:"Aumenta a eficiência mecânica do músculo quadríceps.",clinical:"Integra o mecanismo extensor do joelho.",aliases:["rotula"]},
@@ -100,7 +100,7 @@ export const atlasViews:AtlasView[]=[
   image:"https://thumb.wikimedia.org/wikipedia/commons/thumb/2/22/Pectoral_girdle_front_diagram.svg/960px-Pectoral_girdle_front_diagram.svg.png",
   source:"https://commons.wikimedia.org/wiki/File:Pectoral_girdle_front_diagram.svg",
   credit:"Mariana Ruiz Villarreal (LadyofHats) · Wikimedia Commons · domínio público",
-  ratio:"512 / 402",background:"#110b1e",alt:"Vista frontal da caixa torácica e cintura escapular humana",
+  ratio:"512 / 402",background:"#f6f3fa",alt:"Vista frontal da caixa torácica e cintura escapular humana",
   spots:[
    {id:"clavicula-torax",name:"Clavícula",group:"Cintura escapular",x:26,y:15,description:"Osso longo em forma de S situado entre o manúbrio do esterno e o acrômio da escápula.",function:"Mantém o membro superior afastado do tronco e transfere forças ao esqueleto axial.",clinical:"Fraturas no terço médio da clavícula são frequentes; o osso é palpável em quase toda sua extensão.",aliases:["clavicula"]},
    {id:"escapula-torax",name:"Escápula",group:"Cintura escapular",x:78,y:36,description:"Osso plano triangular situado sobre a face posterior da parede torácica.",function:"Fornece ampla superfície de inserção muscular e participa da mobilidade do ombro.",clinical:"A cavidade glenoidal da escápula articula-se com a cabeça do úmero.",aliases:["omoplata"]},

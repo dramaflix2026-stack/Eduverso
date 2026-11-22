@@ -38,7 +38,7 @@
 .progress span{display:block;background:linear-gradient(90deg,#8549d6,#c091ff);height:100%}
 .studyColumns{display:grid;grid-template-columns:minmax(0,1fr) minmax(235px,.8fr);gap:16px;align-items:start}
 .figure{display:flex;align-items:center;flex-direction:column;gap:11px;min-width:0;background:#22172d;border:1px solid #62467b;padding:13px;border-radius:18px;margin:0}
-.diagram{width:min(100%,450px);position:relative;background:#fff;border-radius:12px;overflow:hidden}
+.diagram{width:min(100%,450px);position:relative;background:#f6f3fa;border-radius:12px;overflow:hidden}
 .diagram img{display:block;width:100%;height:100%;object-fit:fill}
 .pin{position:absolute;display:flex;align-items:center;justify-content:center;transform:translate(-50%,-50%);height:30px;width:30px;border-radius:50%;border:2px solid white;box-shadow:0 2px 8px #24113288;cursor:pointer;font:900 11px/1 inherit;touch-action:manipulation}
 .pin:hover,.pin:focus-visible{outline:3px solid #bd8df9;outline-offset:2px}
