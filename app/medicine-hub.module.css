@@ -98,3 +98,53 @@
 
 /* Um único atalho para ENEM no Vestibular de Medicina, sem coluna vazia. */
 .entranceResources{grid-template-columns:minmax(0,1fr)}
+
+
+/* Medicina: hierarquia de leitura mais leve, sem painel de metodologia ocupando a tela inteira. */
+.qualityDisclosure{overflow:hidden;border:1px solid #59446f;border-radius:17px;background:linear-gradient(120deg,#231934,#171322)}
+.qualityDisclosure>summary{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:60px;padding:15px 19px;list-style:none;cursor:pointer;color:#e9d6ff;font-size:13px;font-weight:800}
+.qualityDisclosure>summary::-webkit-details-marker{display:none}
+.qualityDisclosure>summary span{min-width:0}
+.qualityDisclosure>summary small{font-size:11px;color:#bcaacb;font-weight:650;text-align:right}
+.qualityDisclosure>summary::after{content:"+";font-size:21px;line-height:1;color:#d0b0ff}
+.qualityDisclosure[open]>summary::after{content:"−"}
+.qualityContent{padding:0 10px 10px}
+.qualityDisclosure:focus-within{border-color:#af8bf4}
+.areaTab{min-width:0}
+@media(max-width:680px){
+ .med{gap:20px;padding-bottom:46px}
+ .hero{padding:24px 21px;min-height:0;border-radius:22px}
+ .hero h1{font-size:clamp(30px,8vw,36px);line-height:1.11;margin-bottom:12px}
+ .hero p{font-size:14px;line-height:1.65}
+ .stats{gap:8px;margin-top:19px}
+ .stats span{font-size:11.5px;padding:9px 10px}
+ .qualityDisclosure{border-radius:15px}
+ .qualityDisclosure>summary{min-height:58px;padding:14px 15px;gap:8px}
+ .qualityDisclosure>summary span{font-size:12px;line-height:1.45}
+ .qualityDisclosure>summary small{display:none}
+ .areaTabs{display:flex;overflow-x:auto;grid-template-columns:none;gap:8px;padding-bottom:6px;scroll-snap-type:x proximity;scrollbar-width:thin;-webkit-overflow-scrolling:touch}
+ .areaTab{flex:0 0 auto;min-height:44px;white-space:nowrap;padding:10px 14px;border-radius:12px;font-size:12px;scroll-snap-align:start}
+ .sectionHead{align-items:stretch;flex-direction:column;gap:14px}
+ .sectionHead h2{font-size:clamp(24px,6.3vw,29px)}
+ .sectionHead .primary{min-height:46px;width:100%;text-align:center}
+ .toolbar{gap:16px}
+ .filters{gap:8px;align-items:center}
+ .filterLabel{flex:0 0 100%;margin-right:0;font-size:11px}
+ .filter{min-height:42px;padding:10px 12px}
+ .search{min-height:52px;padding:13px 15px}
+ .search input{min-width:0;font-size:14px}
+ .note{font-size:12px;line-height:1.65}
+ .discGrid{gap:13px}
+ .cardInfo{padding:13px;gap:7px}
+ .cardInfo strong{font-size:clamp(16px,4.2vw,20px)}
+ .cardInfo small{font-size:11px;line-height:1.45}
+ .cardAction{font-size:11px;line-height:1.35}
+}
+@media(max-width:360px){
+ .hero{padding:21px 17px}
+ .discGrid{gap:9px}
+ .cardInfo{padding:10px;gap:5px}
+ .cardInfo strong{font-size:15px}
+ .cardInfo small{font-size:10px}
+ .filter{padding:9px 10px}
+}
