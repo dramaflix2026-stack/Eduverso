@@ -12,6 +12,7 @@ export type MedicineArea="faculdade"|"vestibular"|"exames";
 type Props={
  area:MedicineArea;
  onChangeArea:(next:MedicineArea)=>void;
+ onAtlasStateChange:(open:boolean)=>void;
  onOpenGoal:(category:"vestibulares"|"cursos"|"profissionais",goal?:string)=>void;
  onOpenTrack:(subject:string,topic:string)=>void;
  getSubjectTopics:(subject:string)=>EntranceTopic[];
@@ -22,7 +23,7 @@ const attemptsKey="eduverso:medicina:tentativas:v1";
 type Attempt={right:number;wrong:number};
 const strip=(v:string)=>v.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
 
-export default function MedicineHub({area,onChangeArea,onOpenGoal,onOpenTrack,getSubjectTopics}:Props){
+export default function MedicineHub({area,onChangeArea,onAtlasStateChange,onOpenGoal,onOpenTrack,getSubjectTopics}:Props){
  const [cycle,setCycle]=useState<Cycle>("todos");
  const [year,setYear]=useState(0);
  const [search,setSearch]=useState("");
@@ -45,7 +46,7 @@ export default function MedicineHub({area,onChangeArea,onOpenGoal,onOpenTrack,ge
    const params=new URLSearchParams(window.location.search);
    setDiscipline(getMedDiscipline(params.get("materia"))?.slug??null);
    setTopic(params.get("assunto")??null);
-   setAtlasOpen(params.get("atlas")==="1");
+   const isAtlas=params.get("atlas")==="1";setAtlasOpen(isAtlas);onAtlasStateChange(isAtlas);
   };
   restore();window.addEventListener("popstate",restore);
   try{const saved=window.localStorage.getItem(localKey);if(saved){const obj=JSON.parse(saved);if(obj&&typeof obj==="object"&&!Array.isArray(obj))setCompleted(obj)}
@@ -63,7 +64,7 @@ export default function MedicineHub({area,onChangeArea,onOpenGoal,onOpenTrack,ge
   if(t)url.searchParams.set("assunto",t);else url.searchParams.delete("assunto");
   url.searchParams.delete("atlas");
   window.history.pushState({},"",url.pathname+url.search+url.hash);
-  setDiscipline(d);setTopic(t);setChosen(null);setChecked(false);setMockOpen(false);setAtlasOpen(false);
+  setDiscipline(d);setTopic(t);setChosen(null);setChecked(false);setMockOpen(false);setAtlasOpen(false);onAtlasStateChange(false);
   window.scrollTo({top:0,behavior:"smooth"});
  }
  function changeArea(next:MedicineArea){
@@ -71,11 +72,11 @@ export default function MedicineHub({area,onChangeArea,onOpenGoal,onOpenTrack,ge
   pushLocation(null,null);setSearch("");setCycle("todos");setYear(0);onChangeArea(next);
  }
  function openAtlas(){
+  if(area!=="faculdade")onChangeArea("faculdade");
   const url=new URL(window.location.href);
   url.searchParams.delete("materia");url.searchParams.delete("assunto");url.searchParams.set("atlas","1");
   window.history.pushState({},"",url.pathname+url.search+url.hash);
-  setDiscipline(null);setTopic(null);setAtlasOpen(true);setMockOpen(false);setSearch("");
-  if(area!=="faculdade")onChangeArea("faculdade");
+  setDiscipline(null);setTopic(null);setAtlasOpen(true);onAtlasStateChange(true);setMockOpen(false);setSearch("");
   window.scrollTo({top:0,behavior:"smooth"});
  }
  function verify(){
