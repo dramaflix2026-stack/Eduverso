@@ -5,7 +5,7 @@ import styles from "./medicine-hub.module.css";
 import MedicineMockExam from "./medicine-mock-exam";
 import MedicineEntrance,{type EntranceTopic} from "./medicine-entrance";
 import MedicineDeepChapter from "./medicine-deep-chapter";
-import AnatomyAtlas from "./anatomy-atlas";
+import AnatomyAtlasCollection from "./anatomy-atlas-collection";
 import {advancedMedCourses} from "./medicine-advanced-catalog";
 
 export type MedicineArea="faculdade"|"vestibular"|"exames";
@@ -62,7 +62,7 @@ export default function MedicineHub({area,onChangeArea,onAtlasStateChange,onOpen
   const url=new URL(window.location.href);
   if(d)url.searchParams.set("materia",d);else url.searchParams.delete("materia");
   if(t)url.searchParams.set("assunto",t);else url.searchParams.delete("assunto");
-  url.searchParams.delete("atlas");
+  url.searchParams.delete("atlas");url.searchParams.delete("atlasVista");
   window.history.pushState({},"",url.pathname+url.search+url.hash);
   setDiscipline(d);setTopic(t);setChosen(null);setChecked(false);setMockOpen(false);setAtlasOpen(false);onAtlasStateChange(false);
   window.scrollTo({top:0,behavior:"smooth"});
@@ -74,7 +74,7 @@ export default function MedicineHub({area,onChangeArea,onAtlasStateChange,onOpen
  function openAtlas(){
   if(area!=="faculdade")onChangeArea("faculdade");
   const url=new URL(window.location.href);
-  url.searchParams.delete("materia");url.searchParams.delete("assunto");url.searchParams.set("atlas","1");
+  url.searchParams.delete("materia");url.searchParams.delete("assunto");url.searchParams.delete("atlasVista");url.searchParams.set("atlas","1");
   window.history.pushState({},"",url.pathname+url.search+url.hash);
   setDiscipline(null);setTopic(null);setAtlasOpen(true);onAtlasStateChange(true);setMockOpen(false);setSearch("");
   window.scrollTo({top:0,behavior:"smooth"});
@@ -130,7 +130,7 @@ export default function MedicineHub({area,onChangeArea,onAtlasStateChange,onOpen
   {area==="faculdade"&&!currentDiscipline&&!mockOpen&&!atlasOpen&&<>
    <button type="button" className={styles.atlasFeature} onClick={openAtlas} aria-label="Abrir Atlas Anatômico Interativo">
     <span aria-hidden="true" className={styles.atlasIcon}>🦴</span>
-    <span><strong>Atlas Anatômico Interativo</strong><small>Ferramenta de estudo visual · 12 estruturas ósseas · Desafios de identificação · Flashcards</small></span>
+    <span><strong>Atlas Anatômico Interativo</strong><small>Biblioteca com 6 atlas · Estruturas interativas · Desafios · Flashcards</small></span>
     <span aria-hidden="true" className={styles.atlasArrow}>Explorar →</span>
    </button>
    <div className={styles.sectionHead}><div><span className={styles.eyebrow}>DISCIPLINAS DE GRADUAÇÃO</span><h2>Escolha uma disciplina</h2></div><button className={styles.primary} type="button" onClick={()=>setMockOpen(true)}>📝 Simulado geral</button></div>
@@ -160,7 +160,7 @@ export default function MedicineHub({area,onChangeArea,onAtlasStateChange,onOpen
   </>}
   {area==="faculdade"&&!currentDiscipline&&atlasOpen&&!mockOpen&&<>
    <button type="button" className={styles.back} onClick={()=>changeArea("faculdade")}>← Voltar às 18 disciplinas</button>
-   <AnatomyAtlas/>
+   <AnatomyAtlasCollection/>
   </>}
   {area==="faculdade"&&currentDiscipline&&!currentTopic&&!mockOpen&&!atlasOpen&&<>
    <button type="button" className={styles.back} onClick={()=>pushLocation(null,null)}>← Voltar às 18 disciplinas</button>
@@ -168,7 +168,7 @@ export default function MedicineHub({area,onChangeArea,onAtlasStateChange,onOpen
     <span className={styles.eyebrow}>{medCycles.find(c=>c.value===currentDiscipline.cycle)?.label} · {currentDiscipline.years}</span><h1>{currentDiscipline.title}<span>.</span></h1><p>{currentDiscipline.description}. Abra uma trilha para acessar explicação, exemplo aplicado e exercício comentado.</p>
     <div className={styles.stats}><span>{currentDiscipline.topics.length} módulos</span>{advancedMedCourses[currentDiscipline.slug]&&<><span>{advancedMedCourses[currentDiscipline.slug].metrics.lessons} aulas aprofundadas</span><span>{advancedMedCourses[currentDiscipline.slug].metrics.extraQuestions+currentDiscipline.topics.length} questões de revisão</span></>}<span>{currentDiscipline.topics.filter(t=>completed[t.id]).length} revisados corretamente</span></div>
    </section>
-   {currentDiscipline.slug==="anatomia-humana"&&<button type="button" className={styles.atlasFeature} onClick={openAtlas}><span aria-hidden="true" className={styles.atlasIcon}>🦴</span><span><strong>Atlas Anatômico Interativo</strong><small>Explore 12 estruturas · Desafios · Flashcards</small></span><span aria-hidden="true" className={styles.atlasArrow}>Explorar →</span></button>}
+   {currentDiscipline.slug==="anatomia-humana"&&<button type="button" className={styles.atlasFeature} onClick={openAtlas}><span aria-hidden="true" className={styles.atlasIcon}>🦴</span><span><strong>Atlas Anatômico Interativo</strong><small>Explore 6 atlas · Desafios · Flashcards</small></span><span aria-hidden="true" className={styles.atlasArrow}>Explorar →</span></button>}
    <div className={styles.sectionHead}><h2>Assuntos de {currentDiscipline.title}</h2><button type="button" className={styles.primary} onClick={()=>setMockOpen(true)}>📝 Simulado da matéria</button></div>
    <div className={styles.topicGrid}>
     {currentDiscipline.topics.map((t,i)=><button type="button" key={t.id} className={styles.topicCard} onClick={()=>pushLocation(currentDiscipline.slug,t.id)}>
