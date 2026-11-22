@@ -159,7 +159,7 @@ export async function downloadStudyPdf(request:PdfDocumentRequest):Promise<void>
  if(request.note){
   ensure(105);
   page.drawLine({start:{x:LEFT,y:y+11},end:{x:RIGHT,y:y+11},color:line,thickness:1});
-  textBlock("NOTA EDITORIAL",{bold:true,color:purple,after:7,size:10});
+  textBlock("NOTA EDITORIAL",10,{bold:true,color:purple,after:7});
   textBlock(request.note,9.5,{color:muted,leading:14.5,after:5});
  }
  const pages=doc.getPages();
