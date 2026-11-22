@@ -2,6 +2,7 @@
 import {useEffect,useMemo,useState} from "react";
 import {getProfessionalTrack,professionalTracks} from "./learning-professions";
 import {getProfessionalDepth} from "./professional-depth";
+import {getProfessionalCodeExample} from "./professional-code-examples";
 import styles from "./professional-learning-hub.module.css";
 
 type Props={trackId:string;onSelectTrack:(id:string)=>void;onOpenBooklet:(id:string)=>void};
@@ -41,6 +42,7 @@ export default function ProfessionalLearningHub({trackId,onSelectTrack,onOpenBoo
  const lesson=track.lessons[Math.min(lessonIndex,track.lessons.length-1)];
  const depth=getProfessionalDepth(track.id,lessonIndex);
  const secondQuiz=depth?.quiz;
+ const exampleCode=getProfessionalCodeExample(track.id,lessonIndex);
  const reviewItems=track.lessons.flatMap((item,i)=>{const extra=getProfessionalDepth(track.id,i)?.quiz;return [{chapter:i,title:item.title,question:item.question,options:item.options,correct:item.correct,explanation:item.feedback||item.explain},...(extra?[{chapter:i,title:item.title,question:extra.question,options:extra.options,correct:extra.correct,explanation:extra.explanation}]:[])];});
  const progress=Math.round(100*completed.length/Math.max(track.lessons.length,1));
  const chapterOrder=useMemo(()=>orderFor(lessonIndex,track.id.length),[lessonIndex,track.id]);
@@ -116,6 +118,7 @@ export default function ProfessionalLearningHub({trackId,onSelectTrack,onOpenBoo
     {depth&&<section className={styles.deepSection}><span className={styles.deepKicker}>OBJETIVO DE APRENDIZAGEM</span><h3>{depth.objective}</h3><p>{depth.explanation}</p></section>}
     <section className={styles.example}><div className={styles.noteIcon}>✦</div><div><h3>Exemplo aplicado</h3><p>{lesson.example}</p></div></section>
     <section className={styles.reading}><h3>Na prática profissional</h3><p>{lesson.context}</p></section>
+    {exampleCode&&<section className={styles.codeSection}><span className={styles.deepKicker}>EXEMPLO PRÁTICO DE CÓDIGO</span><h3>Veja a aplicação</h3><pre><code>{exampleCode}</code></pre><p>Exemplo didático para estudar a sintaxe e compreender o raciocínio. Teste em um ambiente apropriado antes de aplicar em sistemas reais.</p></section>}
     {depth&&<section className={styles.stepsSection}><span className={styles.deepKicker}>APRENDA FAZENDO</span><h3>Passo a passo</h3><ol>{depth.steps.map((step,i)=><li key={i}><span>{i+1}</span><p>{step}</p></li>)}</ol></section>}
     <section className={styles.warning}><span aria-hidden="true">!</span><div><h3>Erro comum que você deve evitar</h3><p>{lesson.pitfall}</p></div></section>
     {depth&&<section className={styles.challenge}><span className={styles.deepKicker}>DESAFIO PRÁTICO</span><h3>Experimente resolver</h3><p>{depth.practice}</p><button type="button" aria-expanded={practiceOpen} onClick={()=>setPracticeOpen(v=>!v)}>{practiceOpen?"Ocultar resolução comentada":"Ver resolução comentada"} <span aria-hidden="true">{practiceOpen?"▴":"▾"}</span></button>{practiceOpen&&<div role="note" className={styles.solution}><strong>Resolução orientada</strong><p>{depth.solution}</p></div>}</section>}
