@@ -2,6 +2,7 @@
 import {useMemo,useState} from "react";
 import {medicineDisciplines,type MedTopic} from "./medicine-curriculum";
 import {advancedMedCourses} from "./medicine-advanced-catalog";
+import {isValidExercise} from "./exercise-bank";
 import styles from "./medicine-hub.module.css";
 type Question=MedTopic&{discipline:string};
 export default function MedicineMockExam({scope,onClose,profile="faculdade"}:{scope?:string|null;onClose:()=>void;profile?:"faculdade"|"revalida"}){
@@ -21,7 +22,7 @@ export default function MedicineMockExam({scope,onClose,profile="faculdade"}:{sc
  const [finished,setFinished]=useState(false);
  const questions=useMemo(()=>{
    // Variar seleção entre tentativas sem depender de serviços de IA.
-   const eligible=pool.filter(q=>q.bank===level);
+   const eligible=pool.filter(q=>q.bank===level&&isValidExercise({question:q.question,options:q.options,correct:q.correct,explanation:q.feedback||q.theory}));
    const sorted=eligible.map((t,i)=>({t,sort:(i*23+seed*19)%Math.max(eligible.length,1)})).sort((a,b)=>a.sort-b.sort);
    return sorted.slice(0,Math.min(scope?10:15,sorted.length)).map(x=>x.t);
  },[pool,seed,scope,level]);
@@ -52,7 +53,7 @@ export default function MedicineMockExam({scope,onClose,profile="faculdade"}:{sc
     </div>:<div className={styles.quiz}>
      <h3>Resultado: {score} de {total} acertos ({Math.round(100*score/total)}%)</h3>
      <p>Revise especialmente as questões em que você errou. Um simulado introdutório não mede competência clínica ou substitui avaliações acadêmicas.</p>
-     {questions.map((q,i)=><div key={q.id} className={styles.feedback}><strong>{answers[q.id]===q.correct?"✓":"✕"} {i+1}. {q.discipline} — {q.name}</strong><p>{q.question}</p><p>Resposta: {q.options[q.correct]}. {q.theory}</p></div>)}
+     {questions.map((q,i)=><div key={q.id} className={styles.feedback}><strong>{answers[q.id]===q.correct?"✓":"✕"} {i+1}. {q.discipline} — {q.name}</strong><p>{q.question}</p><p><strong>Resposta esperada:</strong> {q.options[q.correct]}</p><p><strong>Resolução e justificativa:</strong> {q.feedback}</p>{q.bank==="aprofundado"&&<p><strong>Contexto do módulo:</strong> {q.example}</p>}</div>)}
      <div className={styles.actions}><button className={styles.primary} onClick={restart}>Novo simulado ↗</button><button className={styles.secondary} onClick={onClose}>Voltar à faculdade</button></div>
     </div>}
   </section>;

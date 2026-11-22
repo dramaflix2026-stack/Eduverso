@@ -67,7 +67,12 @@ export function makeBooklet(subject:string,topic:string,limit:number,items:Lesso
    "Este material foi preparado para leitura, compreensão e revisão do tema "+topic+". Leia a explicação antes de resolver qualquer atividade. Retome exemplos e anote dúvidas ao longo dos capítulos.",
    "Ao concluir, você deverá ser capaz de reconhecer os conceitos apresentados, explicar seu significado com suas palavras e relacioná-los às aplicações demonstradas."
   ]},
-  {heading:"O que você vai estudar",kind:"summary",paragraphs:lessons.map((l,i)=>String(i+1).padStart(2,"0")+"  "+l.title)}
+  {heading:"O que você vai estudar",kind:"summary",paragraphs:lessons.map((l,i)=>String(i+1).padStart(2,"0")+"  "+l.title)},
+  {heading:"Transparência pedagógica: origem e nível",kind:"standard",paragraphs:[
+   "Origem do conteúdo: esta apostila utiliza as aulas e o acervo editorial do Eduverso. Quando uma referência externa é indicada, ela orienta o aprofundamento e não significa que cada frase ou questão tenha sido retirada dessa instituição.",
+   "Critério de dificuldade: a exigência precisa respeitar a formação escolhida e aumentar progressivamente. Os itens presentes no acervo têm níveis variados; o documento não deve ser divulgado como prova oficial, certificação ou treinamento integralmente validado para um edital.",
+   "Critério de qualidade: procure compreender mecanismos e relações antes de memorizar; resolva exemplos, explique cada etapa do raciocínio e confira os conceitos com as leituras de referência atualizadas."
+  ]}
  ];
  if(prepared){
   sections.push({heading:"Fundamentos essenciais",kind:"chapter",paragraphs:prepared.introduction});

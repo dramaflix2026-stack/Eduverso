@@ -77,7 +77,11 @@ function makeExam(subject:string,topic:string,items:ExerciseItem[],onlyAnswerKey
   subtitle:subject+" · "+limited.length+" questões · Eduverso",
   fileName:"eduverso-"+(onlyAnswerKey?"gabarito":"prova-com-gabarito")+"-"+fileSafe(topic)+".pdf",
   responseFields:!onlyAnswerKey,
-  sections:onlyAnswerKey?answerKey:[...questionSections,...answerKey],
+  sections:onlyAnswerKey?answerKey:[{heading:"Origem e critérios de estudo",kind:"chapter",paragraphs:[
+    "Questões de treinamento originadas do banco editorial Eduverso. Não são provas oficiais de universidades, do ENEM, do Revalida ou de outras instituições, salvo quando identificadas expressamente como documento oficial.",
+    "Dificuldade: a seleção considera o acervo existente e a abrangência escolhida. O material pode reunir níveis diferentes e não deve ser apresentado como máxima complexidade sem revisão pedagógica específica.",
+    "O gabarito comentado está reunido ao final. Confira cada resolução, a pertinência das alternativas e a matriz do processo seletivo ou curso antes de aplicar a prova."
+   ]},...questionSections,...answerKey],
   note:"Questões e explicações organizadas a partir do acervo Eduverso. Antes da aplicação, revise enunciados, alternativas, resoluções e adequação à turma. Não se trata de uma avaliação oficial."
  };
 }

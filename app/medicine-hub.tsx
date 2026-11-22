@@ -134,8 +134,14 @@ export default function MedicineHub({area,onChangeArea,onAtlasStateChange,onOpen
     </div>:<div className={styles.empty}>Nenhuma instituição encontrada para essa busca.</div>}
     <div className={styles.resource}><strong>📘 ENEM — provas por ano e cor</strong><p>Para processos de ingresso que usam notas do ENEM, os cadernos e gabaritos estão separados por edição e cor no acervo do Eduverso.</p><button type="button" className={styles.primary} onClick={()=>onOpenTrack("ENEM e Vestibulares","Provas Passadas")}>Abrir provas do ENEM ↗</button></div>
    </section>}
-  {area==="exames"&&<>
+  {area==="exames"&&mockOpen&&<MedicineMockExam profile="revalida" onClose={()=>setMockOpen(false)}/>}
+  {area==="exames"&&!mockOpen&&<>
    <div className={styles.sectionHead}><div><span className={styles.eyebrow}>EXAMES E ESPECIALIZAÇÃO</span><h2>Revalida, Enamed e Residência</h2></div></div>
+   <div className={styles.resource}>
+    <strong>🔥 Treino clínico com questões aprofundadas</strong>
+    <p>Simulado autoral sobre áreas clínicas, internato e saúde coletiva. Comece pelo banco de aprofundamento, confira as justificativas e retome os conceitos não dominados. Não reproduz provas oficiais do Revalida ou de programas de residência.</p>
+    <button type="button" className={styles.primary} onClick={()=>setMockOpen(true)}>Iniciar simulado clínico ↗</button>
+   </div>
    <div className={styles.pathNotes}>
     {[
      {title:"Revalida",desc:"Revalidação de diplomas médicos obtidos no exterior, com acesso a acervo de provas e gabaritos oficiais.",id:"revalida",url:"https://www.gov.br/inep/pt-br/areas-de-atuacao/avaliacao-e-exames-educacionais/revalida/provas-e-gabaritos"},
