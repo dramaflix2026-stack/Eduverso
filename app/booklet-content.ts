@@ -1,6 +1,7 @@
 import type {LessonSource} from "./exercise-bank";
 import type {PdfDocumentRequest,PdfSection} from "./lib/lesson-pdf";
 import type {ProfessionalLesson} from "./learning-professions";
+import {getDeepChapter,richChapterCount} from "./booklet-rich-content";
 export type BookletFormat="teoria"|"com-atividades";
 type Enrichment={introduction:string[];sections:{heading:string;paragraphs:string[]}[];sources:{name:string;url:string}[]};
 const percent:Enrichment={
@@ -69,7 +70,7 @@ export function makeBooklet(subject:string,topic:string,limit:number,items:Lesso
   {heading:"O que você vai estudar",kind:"summary",paragraphs:lessons.map((l,i)=>String(i+1).padStart(2,"0")+"  "+l.title)}
  ];
  if(prepared){
-  sections.push({heading:"Fundamentos essenciais",kind:"chapter",pageBreakBefore:true,paragraphs:prepared.introduction});
+  sections.push({heading:"Fundamentos essenciais",kind:"chapter",paragraphs:prepared.introduction});
   for(const block of prepared.sections)sections.push({heading:block.heading,kind:"standard",paragraphs:block.paragraphs});
  }
  lessons.forEach((lesson,i)=>{
@@ -78,13 +79,18 @@ export function makeBooklet(subject:string,topic:string,limit:number,items:Lesso
   const example=sentence(lesson.example||"");
   const ownContext=typeof professional.context==="string"?professional.context:"";
   const pitfall=typeof professional.pitfall==="string"?professional.pitfall:"";
-  const paragraphs=[explanation];
-  sections.push({heading:String(i+1).padStart(2,"0")+"  "+lesson.title,kind:"chapter",pageBreakBefore:i>0||Boolean(prepared),paragraphs});
-  if(example)sections.push({heading:"Exemplo comentado",kind:"example",paragraphs:[example]});
-  if(ownContext)sections.push({heading:"Aplicação no mundo real",kind:"standard",paragraphs:[ownContext]});
-  if(pitfall)sections.push({heading:"Atenção aos erros comuns",kind:"highlight",paragraphs:[pitfall]});
-  const recap=[explanation,example].filter(Boolean);
-  if(recap.length>1)sections.push({heading:"Para fixar",kind:"summary",paragraphs:recap});
+  const deep=getDeepChapter(subject,topic,lesson.title);
+  const heading=String(i+1).padStart(2,"0")+"  "+lesson.title;
+  // Nunca apresentar um resumo de uma linha como se fosse uma aula aprofundada.
+  // O banco de questões fornece a base; os capítulos editoriais complementam a teoria.
+  const theory=deep?.theory?.length?deep.theory:[explanation];
+  sections.push({heading,kind:"chapter",paragraphs:theory});
+  if(deep?.worked?.length)sections.push({heading:"Resolução orientada passo a passo",kind:"example",paragraphs:deep.worked});
+  else if(example)sections.push({heading:"Exemplo aplicado",kind:"example",paragraphs:[example]});
+  if(ownContext)sections.push({heading:"Conexão com a prática",kind:"standard",paragraphs:[ownContext]});
+  const caution=deep?.warnings?.length?deep.warnings:(pitfall?[pitfall]:[]);
+  if(caution.length)sections.push({heading:"Erros que merecem atenção",kind:"highlight",paragraphs:caution});
+  if(deep?.check?.length)sections.push({heading:"Verifique se compreendeu",kind:"standard",paragraphs:deep.check});
  });
  if(isActivities){
   sections.push({heading:"Atividades de fixação",kind:"chapter",pageBreakBefore:true,
@@ -94,15 +100,22 @@ export function makeBooklet(subject:string,topic:string,limit:number,items:Lesso
   ]}));
   sections.push({heading:"Gabarito e explicações",kind:"chapter",pageBreakBefore:true,
    paragraphs:["Compare suas respostas com os comentários e volte ao capítulo relacionado para revisar dúvidas."]});
-  lessons.forEach((lesson,i)=>sections.push({heading:"Atividade "+String(i+1).padStart(2,"0")+" — "+letters[lesson.correct],
-   kind:"answer",paragraphs:["Resposta: "+letters[lesson.correct]+") "+(lesson.options[lesson.correct]||""),"Explicação: "+(lesson.feedback||lesson.body||lesson.explain||"")]}));
+  lessons.forEach((lesson,i)=>{
+   const deep=getDeepChapter(subject,topic,lesson.title);
+   const details=["Resposta: "+letters[lesson.correct]+") "+(lesson.options[lesson.correct]||""),
+    "Explicação: "+(lesson.feedback||lesson.body||lesson.explain||"")];
+   if(deep?.worked?.length)details.push("Resolução orientada: "+deep.worked.join(" "));
+   if(deep?.warnings?.length)details.push("Cuidado: "+deep.warnings.join(" "));
+   sections.push({heading:"Atividade "+String(i+1).padStart(2,"0")+" — "+letters[lesson.correct],kind:"answer",paragraphs:details});
+  });
  }
  const professionalSources=isProfessional?Array.from(new Set(lessons.map(l=>(l as ProfessionalLesson).reference).filter(Boolean))).map((u,i)=>({name:"Leitura de referência "+(i+1),url:u})):[];
  const sources=[...(prepared?.sources||[]),...professionalSources];
  if(sources.length)sections.push({heading:"Referências e leituras complementares",kind:"chapter",pageBreakBefore:true,
   paragraphs:[...sources.map(item=>item.name+"\n"+item.url),
    "As explicações deste documento foram redigidas e organizadas editorialmente; as referências são sugestões de aprofundamento, e não uma certificação acadêmica ou revisão institucional do material."]});
- const subtitle=[subject,topic,isActivities?"Teoria e atividades":"Apostila teórica"].filter(Boolean).join(" · ");
+ const reviewedCount=richChapterCount(subject,topic,lessons.map(l=>l.title));
+ const subtitle=[subject,topic,isActivities?"Teoria e atividades":"Apostila teórica",reviewedCount?"Capítulos aprofundados: "+reviewedCount:""].filter(Boolean).join(" · ");
  return {
   title:"Apostila de estudos — "+topic,subtitle,fileName:"eduverso-apostila-"+topic.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"-").slice(0,55)+".pdf",
   coverPage:true,

@@ -121,40 +121,57 @@ export async function downloadStudyPdf(request:PdfDocumentRequest):Promise<void>
   const kind=section.kind||"standard";
   if(section.pageBreakBefore&&y<720)newPage();
   const bodySize=kind==="answer"?10.3:kind==="question"?11:fontSize;
-  const narrow=kind==="example"||kind==="highlight"||kind==="question"?WIDTH-28:WIDTH;
-  const full=estimateParagraphs(section.paragraphs,bodySize,narrow)+wrap(section.heading,kind==="chapter"?21:13.5,bold,WIDTH).length*25+22;
-  if(kind==="chapter"){ensure(Math.min(Math.max(full,100),170));chapterNumber++;
-   page.drawRectangle({x:LEFT,y:y-4,width:36,height:20,color:purple});
-   page.drawText(String(chapterNumber).padStart(2,"0"),{x:LEFT+7,y:y+2,font:bold,size:10,color:white});
-   y-=30;
-   for(const row of wrap(section.heading,21,bold,WIDTH)){ensure(31);page.drawText(row,{x:LEFT,y,size:21,font:bold,color:navy});y-=29;}
-   y-=7;page.drawLine({start:{x:LEFT,y:y+8},end:{x:RIGHT,y:y+8},color:line,thickness:1});
-   for(const paragraph of section.paragraphs)textBlock(paragraph,11.1,{leading:17.6,after:12});
-   y-=11;
+  const isPanel=kind==="example"||kind==="highlight"||kind==="question";
+  const contentWidth=isPanel?WIDTH-32:WIDTH;
+  const contentX=isPanel?LEFT+16:LEFT;
+  const headingSize=kind==="chapter"?20:13.4;
+  const headingLines=wrap(section.heading,headingSize,bold,contentWidth);
+  const lineH=bodySize+5.7;
+  const pAfter=kind==="question"?6:9;
+  const textHeight=section.paragraphs.reduce((sum,p)=>sum+wrap(p,bodySize,font,contentWidth).length*lineH+pAfter,0);
+  const headingHeight=headingLines.length*(kind==="chapter"?27:22);
+  const totalHeight=headingHeight+textHeight+(kind==="chapter"?53:isPanel?35:25);
+  if(kind==="chapter"){
+   // Capítulos curtos continuam na mesma página; mudanças ocorrem pelo espaço real.
+   ensure(Math.min(totalHeight,155));
+   chapterNumber++;
+   page.drawRectangle({x:LEFT,y:y-6,width:42,height:21,color:purple});
+   page.drawText(String(chapterNumber).padStart(2,"0"),{x:LEFT+11,y:y,font:bold,size:10,color:white});
+   y-=34;
+   for(const row of headingLines){
+    ensure(30);page.drawText(row,{x:LEFT,y,size:20,font:bold,color:navy});y-=27;
+   }
+   y-=5;
+   page.drawLine({start:{x:LEFT,y:y+9},end:{x:RIGHT,y:y+9},color:line,thickness:1});
+   y-=12;
+   for(const paragraph of section.paragraphs)textBlock(paragraph,11.1,{leading:17.3,after:11});
+   y-=14;
    continue;
   }
-  if((kind==="question"||kind==="answer")&&full<=620)ensure(full+15);
-  else ensure(Math.min(full+10,115));
-  const box=kind==="example"||kind==="highlight"||kind==="question";
-  const boxFill=kind==="highlight"?rgb(.985,.965,.947):subtle;
-  const x=box?LEFT+14:LEFT,width=box?WIDTH-28:WIDTH;
-  if(box&&full<650){
-   page.drawRectangle({x:LEFT,y:y-full+8,width:WIDTH,height:full+3,color:boxFill,
+  // A caixa deve abranger todo o texto, nunca cruzar o bloco seguinte.
+  // Para conteúdo muito longo, a caixa é omitida e o texto flui entre páginas.
+  const availableHeight=y-MIN;
+  const wholeBlock=totalHeight<=availableHeight||totalHeight<570;
+  if(wholeBlock&&totalHeight<660)ensure(totalHeight+5);
+  else ensure(45);
+  const panelCanFit=isPanel&&totalHeight<650&&y-totalHeight>MIN;
+  if(panelCanFit){
+   page.drawRectangle({x:LEFT,y:y-totalHeight+2,width:WIDTH,height:totalHeight,
+    color:kind==="highlight"?rgb(.991,.970,.936):subtle,
     borderColor:kind==="question"?line:rgb(.87,.82,.95),borderWidth:.8});
   }
   if(kind==="summary"){
    y-=5;
-   page.drawLine({start:{x:LEFT,y:y+7},end:{x:RIGHT,y:y+7},thickness:1,color:line});
+   page.drawLine({start:{x:LEFT,y:y+8},end:{x:RIGHT,y:y+8},color:line,thickness:.8});
   }
-  const headingTone=kind==="highlight"?rgb(.55,.31,.23):purple;
-  for(const row of wrap(section.heading,kind==="question"?13.6:13.5,bold,width)){
-   ensure(25);page.drawText(row,{x,y,size:kind==="question"?13.6:13.5,font:bold,color:headingTone});y-=23;
+  y-=isPanel?14:6;
+  const tone=kind==="highlight"?rgb(.52,.29,.19):purple;
+  for(const row of headingLines){ensure(24);page.drawText(row,{x:contentX,y,size:headingSize,font:bold,color:tone});y-=22;}
+  y-=5;
+  for(const paragraph of section.paragraphs){
+   textBlock(paragraph,bodySize,{x:contentX,width:contentWidth,leading:lineH,after:pAfter,color:ink});
   }
-  y-=2;
-  for(const text of section.paragraphs){
-   textBlock(text,bodySize,{x,width,leading:bodySize+5.7,after:kind==="question"?7:10,color:ink});
-  }
-  y-=kind==="question"?17:kind==="example"?19:13;
+  y-=isPanel?13:8;
  }
  if(request.note){
   ensure(105);

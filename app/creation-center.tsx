@@ -14,7 +14,7 @@ import styles from "./creation-center.module.css";
 
 export type CreationTool="inicio"|"provas"|"apostilas"|"arquivos"|"biblioteca";
 type SubjectOption={name:string;topics:{name:string}[]};
-type Props={tool:CreationTool;onNavigate:(tool:CreationTool)=>void;subjects:SubjectOption[];initialProfessional?:boolean};
+type Props={tool:CreationTool;onNavigate:(tool:CreationTool,professional?:boolean,trackId?:string)=>void;subjects:SubjectOption[];initialProfessional?:boolean;initialProfessionalTrack?:string};
 type SavedMaterial={id:string;title:string;kind:string;date:string;pdf:PdfDocumentRequest};
 const STORAGE="eduverso:central-criacao:material:v1";
 const NAV: {id:Exclude<CreationTool,"inicio">;title:string;icon:string;subtitle:string}[]=[
@@ -84,10 +84,10 @@ function makeExam(subject:string,topic:string,items:ExerciseItem[],onlyAnswerKey
 function readSaved():SavedMaterial[]{
  try{const raw=JSON.parse(localStorage.getItem(STORAGE)||"[]");return Array.isArray(raw)?raw.filter(x=>x&&typeof x.id==="string"&&typeof x.title==="string"&&x.pdf&&Array.isArray(x.pdf.sections)).slice(0,12):[];}catch{return [];}
 }
-export default function CreationCenter({tool,onNavigate,subjects,initialProfessional=false}:Props){
+export default function CreationCenter({tool,onNavigate,subjects,initialProfessional=false,initialProfessionalTrack="web"}:Props){
  const choices=useMemo(()=>subjects.filter(s=>availableSubjects.includes(s.name)&&s.topics.length),[subjects]);
  const [sourceArea,setSourceArea]=useState<"escolar"|"profissional"|MedicalTrack>(initialProfessional?"profissional":"escolar");
- const [professionalId,setProfessionalId]=useState("web");
+ const [professionalId,setProfessionalId]=useState(initialProfessionalTrack);
  const [bookletFormat,setBookletFormat]=useState<BookletFormat>("teoria");
  const [medChoice,setMedChoice]=useState("geral");
  const [medTopic,setMedTopic]=useState("");
@@ -191,7 +191,7 @@ export default function CreationCenter({tool,onNavigate,subjects,initialProfessi
    {tool!=="inicio"&&<button type="button" className={styles.back} onClick={()=>onNavigate("inicio")}>← Voltar para as ferramentas</button>}
   </header>
   {tool==="inicio"&&<><div className={styles.grid}>{NAV.map(t=><button key={t.id} type="button" className={styles.tile} onClick={()=>onNavigate(t.id)}><span className={styles.tileIcon}>{t.icon}</span><strong>{t.title}</strong><small>{t.subtitle}</small><span className={styles.tileAction}>Abrir ferramenta ↗</span></button>)}</div>
-   <div className={styles.highlightFeature}><span>✦ NOVAS FORMAÇÕES</span><strong>Programação, TI, Design, Dados e Negócios</strong><p>Trilhas introdutórias com capítulos explicativos e apostilas para baixar. Selecione Criador de Apostilas e escolha a área Formação profissional.</p><button type="button" onClick={()=>onNavigate("apostilas")}>Explorar trilhas e apostilas →</button></div></>}
+   <div className={styles.highlightFeature}><span>✦ NOVAS FORMAÇÕES</span><strong>Programação, TI, Design, Dados e Negócios</strong><p>Trilhas introdutórias com capítulos explicativos e apostilas para baixar. Selecione Criador de Apostilas e escolha a área Formação profissional.</p><button type="button" onClick={()=>onNavigate("apostilas",true)}>Explorar trilhas e apostilas →</button></div></>}
   {(tool==="provas"||tool==="apostilas")&&section(tool==="provas"?"Monte sua prova":"Crie sua apostila",
    <><div className={styles.subjectPicker}>
      <span className={styles.subjectTitle}>Área de conhecimento</span>
@@ -203,7 +203,7 @@ export default function CreationCenter({tool,onNavigate,subjects,initialProfessi
    </div>
    {professionalMode?<div className={styles.professionalArea}>
      <div className={styles.subjectPicker}>
-      <span className={styles.subjectTitle}>Escolha uma trilha profissional <small>· {professionalTracks.length} trilhas introdutórias</small></span>
+      <span className={styles.subjectTitle}>Formações profissionais · escolha sua área <small>· {professionalTracks.length} trilhas disponíveis</small></span>
       <div className={styles.professionalGrid}>{professionalTracks.map(track=><button type="button" key={track.id}
        className={styles.professionalCard} aria-pressed={professionalId===track.id} onClick={()=>{setProfessionalId(track.id);setNotice("");}}>
        <span className={styles.professionalIcon}>{track.icon}</span><span><small>{track.category}</small><strong>{track.name}</strong><em>{track.description}</em></span>
