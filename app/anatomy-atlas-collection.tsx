@@ -118,7 +118,7 @@ function AtlasStudy({view}:{view:AtlasView}){
      <div className={styles.failure} role="alert">
       Não foi possível carregar esta ilustração. <a href={view.source} target="_blank" rel="noreferrer noopener">Abrir fonte original</a>.
      </div>
-    :<div className={styles.diagram} style={{aspectRatio:view.ratio}}>
+    :<div className={styles.diagram} style={{aspectRatio:view.ratio,background:view.background||"#fff"}}>
       <img alt={view.alt} src={imageFallback?fallbackUrl:view.image} loading="eager"
         onError={()=>{if(imageFallback)setImageFailed(true);else setImageFallback(true);}}/>
       {items.map((b,i)=>{
@@ -218,7 +218,7 @@ export default function AnatomyAtlasCollection(){
      <span className={styles.cardInfo}><small>01 · ESQUELETO</small><strong>Vista anterior</strong><span>12 pontos anatômicos · corpo inteiro</span><em>Explorar atlas →</em></span>
     </button>
     {galleryViews.map((v,i)=><button key={v.id} type="button" className={styles.atlasCard} onClick={()=>openView(v.id)}>
-      <span className={styles.cardMedia}><img alt={v.alt} loading="lazy" src={v.image}/></span>
+      <span className={styles.cardMedia} style={v.background?{background:v.background}:undefined}><img alt={v.alt} loading="lazy" src={v.image}/></span>
       <span className={styles.cardInfo}><small>{String(i+2).padStart(2,"0")} · ATLAS ANATÔMICO</small><strong>{v.short}</strong><span>{v.spots.length} estruturas · exercícios e flashcards</span><em>Explorar atlas →</em></span>
      </button>)}
    </div>:selected==="anterior"?<AnatomyAtlas/>:active?<AtlasStudy key={active.id} view={active}/>:null}

@@ -4,7 +4,7 @@ export type AtlasSpot={
 };
 export type AtlasView={
  id:string;title:string;short:string;subtitle:string;image:string;source:string;
- credit:string;ratio:string;alt:string;spots:AtlasSpot[];
+ credit:string;ratio:string;alt:string;background?:string;spots:AtlasSpot[];
 };
 export const atlasViews:AtlasView[]=[
  {
@@ -100,17 +100,17 @@ export const atlasViews:AtlasView[]=[
   image:"https://thumb.wikimedia.org/wikipedia/commons/thumb/2/22/Pectoral_girdle_front_diagram.svg/960px-Pectoral_girdle_front_diagram.svg.png",
   source:"https://commons.wikimedia.org/wiki/File:Pectoral_girdle_front_diagram.svg",
   credit:"Mariana Ruiz Villarreal (LadyofHats) · Wikimedia Commons · domínio público",
-  ratio:"512 / 402",alt:"Vista frontal da caixa torácica e cintura escapular humana",
+  ratio:"512 / 402",background:"#110b1e",alt:"Vista frontal da caixa torácica e cintura escapular humana",
   spots:[
    {id:"clavicula-torax",name:"Clavícula",group:"Cintura escapular",x:26,y:15,description:"Osso longo em forma de S situado entre o manúbrio do esterno e o acrômio da escápula.",function:"Mantém o membro superior afastado do tronco e transfere forças ao esqueleto axial.",clinical:"Fraturas no terço médio da clavícula são frequentes; o osso é palpável em quase toda sua extensão.",aliases:["clavicula"]},
    {id:"escapula-torax",name:"Escápula",group:"Cintura escapular",x:78,y:36,description:"Osso plano triangular situado sobre a face posterior da parede torácica.",function:"Fornece ampla superfície de inserção muscular e participa da mobilidade do ombro.",clinical:"A cavidade glenoidal da escápula articula-se com a cabeça do úmero.",aliases:["omoplata"]},
    {id:"manubrio",name:"Manúbrio do esterno",group:"Esterno",x:50,y:24,description:"Parte superior do esterno, onde se articulam as clavículas e as primeiras cartilagens costais.",function:"Compõe a parede anterior do tórax e estabelece conexão com a cintura escapular.",clinical:"A incisura jugular e o ângulo esternal são marcos palpáveis importantes.",aliases:["manubrio"]},
-   {id:"corpo-esterno",name:"Corpo do esterno",group:"Esterno",x:50,y:48,description:"Segmento mais extenso do esterno, entre o manúbrio e o processo xifoide.",function:"Fornece articulação às cartilagens de várias costelas e protege estruturas mediastinais.",clinical:"A parede esternal participa da proteção de coração e grandes vasos.",aliases:["esterno","corpo do esterno"]},
-   {id:"xifoide",name:"Processo xifoide",group:"Esterno",x:50,y:68,description:"Pequena extremidade inferior do esterno, inicialmente cartilaginosa.",function:"Serve de inserção ao diafragma e a músculos da parede abdominal.",clinical:"A posição do xifoide deve ser respeitada em manobras compressivas no tórax.",aliases:["apendice xifoide","xifoide"]},
+   {id:"corpo-esterno",name:"Corpo do esterno",group:"Esterno",x:54,y:36,description:"Segmento mais extenso do esterno, entre o manúbrio e o processo xifoide.",function:"Fornece articulação às cartilagens de várias costelas e protege estruturas mediastinais.",clinical:"A parede esternal participa da proteção de coração e grandes vasos.",aliases:["esterno","corpo do esterno"]},
+   {id:"xifoide",name:"Processo xifoide",group:"Esterno",x:55,y:52,description:"Pequena extremidade inferior do esterno, inicialmente cartilaginosa.",function:"Serve de inserção ao diafragma e a músculos da parede abdominal.",clinical:"A posição do xifoide deve ser respeitada em manobras compressivas no tórax.",aliases:["apendice xifoide","xifoide"]},
    {id:"costelas-verdadeiras",name:"Costelas verdadeiras",group:"Costelas 1–7",x:33,y:37,description:"Os sete primeiros pares de costelas, que se conectam diretamente ao esterno por cartilagens próprias.",function:"Compõem o arcabouço torácico e participam da expansão durante a inspiração.",clinical:"A identificação dos espaços intercostais auxilia em exames físicos.",aliases:["costelas superiores"]},
    {id:"costelas-falsas",name:"Costelas falsas",group:"Costelas 8–10",x:71,y:65,description:"Pares de costelas cujas cartilagens se conectam indiretamente ao esterno pelo arco costal.",function:"Formam a porção inferior móvel da caixa torácica.",clinical:"A margem costal é um marco da transição toracoabdominal.",aliases:["costelas inferiores"]},
-   {id:"costelas-flutuantes",name:"Costelas flutuantes",group:"Costelas 11–12",x:37,y:79,description:"Os dois últimos pares de costelas, sem conexão anterior com o esterno.",function:"Protegem parcialmente estruturas posteriores do tronco e servem de inserção muscular.",clinical:"As extremidades anteriores são livres, ao contrário das costelas superiores.",aliases:["flutuantes"]},
-   {id:"cartilagens-costais",name:"Cartilagens costais",group:"Junções costocondrais",x:63,y:51,description:"Segmentos de cartilagem hialina que prolongam anteriormente as costelas.",function:"Acrescentam elasticidade à caixa torácica e viabilizam sua movimentação.",clinical:"O ângulo esternal permite localizar a segunda cartilagem costal.",aliases:["cartilagens"]},
+   {id:"costelas-flutuantes",name:"Costelas flutuantes",group:"Costelas 11–12",x:40,y:75,description:"Os dois últimos pares de costelas, sem conexão anterior com o esterno.",function:"Protegem parcialmente estruturas posteriores do tronco e servem de inserção muscular.",clinical:"As extremidades anteriores são livres, ao contrário das costelas superiores.",aliases:["flutuantes"]},
+   {id:"cartilagens-costais",name:"Cartilagens costais",group:"Junções costocondrais",x:63,y:42,description:"Segmentos de cartilagem hialina que prolongam anteriormente as costelas.",function:"Acrescentam elasticidade à caixa torácica e viabilizam sua movimentação.",clinical:"O ângulo esternal permite localizar a segunda cartilagem costal.",aliases:["cartilagens"]},
    {id:"umero-torax",name:"Úmero proximal",group:"Articulação do ombro",x:14,y:53,description:"Extremidade proximal do osso do braço, relacionada à cavidade glenoidal.",function:"Integra a articulação glenoumeral e permite amplitude de movimentos do ombro.",clinical:"A cabeça do úmero articula-se com a escápula.",aliases:["umero","úmero"]}
   ]
  },
