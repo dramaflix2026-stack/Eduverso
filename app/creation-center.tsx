@@ -10,6 +10,7 @@ import {buildExercises,type LessonSource,type ExerciseItem} from "./exercise-ban
 import {downloadStudyPdf,type PdfDocumentRequest,type PdfSection} from "./lib/lesson-pdf";
 import {makeBooklet,type BookletFormat} from "./booklet-content";
 import {professionalTracks,getProfessionalTrack} from "./learning-professions";
+import {makeProfessionalBooklet} from "./professional-course-pdf";
 import styles from "./creation-center.module.css";
 
 export type CreationTool="inicio"|"provas"|"apostilas"|"arquivos"|"biblioteca";
@@ -258,7 +259,7 @@ export default function CreationCenter({tool,onNavigate,subjects,initialProfessi
     {tool==="provas"?<>
       <button disabled={busy||!exam.length} className={styles.primary} onClick={()=>create(makeExam(activeSubject,activeTopic,exam),"Prova")}>↓ Baixar prova + gabarito comentado (PDF)</button>
       <button disabled={busy||!exam.length} className={styles.secondary} onClick={()=>create(makeExam(activeSubject,activeTopic,exam,true),"Gabarito")}>↓ Baixar somente o gabarito (PDF)</button>
-     </>:<button disabled={busy||!lessons.length} className={styles.primary} onClick={()=>create(makeBooklet(activeSubject,activeTopic,lessonLimit,lessons,bookletFormat),"Apostila")}>↓ Baixar {bookletFormat==="teoria"?"apostila teórica":"apostila com atividades"} (PDF)</button>}
+     </>:<button disabled={busy||!lessons.length} className={styles.primary} onClick={()=>create(professionalMode?makeProfessionalBooklet(professional,lessonLimit,bookletFormat):makeBooklet(activeSubject,activeTopic,lessonLimit,lessons,bookletFormat),"Apostila")}>↓ Baixar {bookletFormat==="teoria"?"apostila teórica":"apostila com atividades"} (PDF)</button>}
    </div></>)}
   {tool==="arquivos"&&section("Importar material de estudo",
     <><p className={styles.hint}>Envie um PDF com texto selecionável ou um arquivo TXT. A leitura acontece no navegador; nesta etapa, o arquivo é organizado em um PDF de revisão, sem reescrita por IA.</p>
@@ -272,7 +273,7 @@ export default function CreationCenter({tool,onNavigate,subjects,initialProfessi
     {section("Formações profissionais — apostilas introdutórias",<div className={styles.readyGrid}>
      {professionalTracks.map(t=><div className={styles.readyCard} key={t.id}><span>{t.icon} {t.category}</span><strong>{t.name}</strong>
       <p className={styles.hint}>{t.description}</p>
-      <button type="button" disabled={busy} onClick={()=>create(makeBooklet(t.category,t.name,20,t.lessons,"teoria"),"Apostila profissional")}>↓ Apostila teórica PDF</button>
+      <button type="button" disabled={busy} onClick={()=>create(makeProfessionalBooklet(t,20,"teoria"),"Apostila profissional")}>↓ Apostila teórica PDF</button>
      </div>)}
     </div>)}
     {section("Meus materiais salvos",<><p className={styles.hint}>Cópias dos materiais gerados nesta Central. Armazenadas somente neste navegador, não sincronizadas entre dispositivos.</p>
