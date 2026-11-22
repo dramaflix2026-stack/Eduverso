@@ -18,9 +18,11 @@ const plain=(value:string)=>decode(value.replace(/<script\b[\s\S]*?<\/script>/gi
 export function isOfficialEnemDocument(value:string):boolean{
  try{
   const u=new URL(value);
-  return u.protocol==="https:"&&["download.inep.gov.br","www.gov.br"].includes(u.hostname)
-   &&(u.hostname==="download.inep.gov.br"?u.pathname.includes("/enem/"):u.pathname.includes("/inep/"))
-   &&(/\.pdf$/i.test(u.pathname)||u.pathname.includes("@@download/")||u.pathname.includes("/download/"));
+  return u.protocol==="https:"&&(
+   (u.hostname==="download.inep.gov.br"&&u.pathname.includes("/enem/")&&/\.pdf$/i.test(u.pathname))||
+   (u.hostname==="www.gov.br"&&u.pathname.includes("/inep/")&&(/\.pdf$/i.test(u.pathname)||u.pathname.includes("@@download/")))||
+   (u.hostname==="fep.if.usp.br"&&u.pathname.startsWith("/~profis/arquivo/avaliacao/enem/provas_gabaritos/")&&/\.pdf$/i.test(u.pathname))
+  );
  }catch{return false;}
 }
 function findHeader(html:string,anchorIndex:number){
@@ -92,6 +94,53 @@ export function parseEnemArchive(html:string,year:number):EnemCatalog{
  });
  return {year,source,books:found,warning:!found.length?"O acervo oficial não retornou documentos PDF identificáveis para este ano.":undefined};
 }
+
+/** Cópias históricas dos exames e gabaritos, preservadas pelo Instituto de Física da USP.
+ * Os nomes abaixo foram verificados no índice público de cada edição.
+ */
+const USP_ARCHIVE="https://fep.if.usp.br/~profis/arquivo/avaliacao/enem/provas_gabaritos/";
+function uspDocument(year:number,kind:"prova"|"gabarito",color:string,day?:number):EnemFile{
+ const colorCode=({Amarelo:"AMARELA",Azul:"AZUL",Branco:"BRANCA",Rosa:"ROSA",Cinza:"CINZA"} as Record<string,string>)[color];
+ const prefix=year===2010?
+  "PROVA_ENEM_"+year+"_"+colorCode+"_"+day+"D"+(kind==="gabarito"?"_GAB":""):
+  (kind==="gabarito"?"GABARITO":"PROVA")+"_ENEM_"+year+"_"+colorCode;
+ return {id:"usp-"+year+"-"+kind+"-"+color.toLowerCase()+"-"+(day||0),kind,label:kind==="prova"?"Prova":"Gabarito",
+  url:USP_ARCHIVE+year+"/"+prefix+".pdf"};
+}
+function enrichHistorics(catalog:EnemCatalog):EnemCatalog{
+ const year=catalog.year;
+ if(year<1998||year>2010||year===2009)return catalog;
+ const books=catalog.books.map(book=>({...book,documents:[...book.documents]}));
+ if(year<=2006){
+  let book=books.find(b=>b.color==="Amarelo");
+  if(!book){book={id:"historic-"+year+"-amarelo",day:null,number:null,color:"Amarelo",
+   application:"Aplicação regular",special:null,documents:[]};books.push(book);}
+  if(!book.documents.some(f=>f.kind==="prova"))book.documents.push(uspDocument(year,"prova","Amarelo"));
+  if(!book.documents.some(f=>f.kind==="gabarito"))book.documents.push(uspDocument(year,"gabarito","Amarelo"));
+ }
+ if(year===2007||year===2008){
+  for(const color of ["Amarelo","Azul","Branco","Rosa"]){
+   let book=books.find(b=>b.color===color);
+   if(!book){book={id:"historic-"+year+"-"+color.toLowerCase(),day:null,number:null,color,
+    application:"Aplicação regular",special:null,documents:[]};books.push(book);}
+   if(!book.documents.some(f=>f.kind==="prova"))book.documents.push(uspDocument(year,"prova",color));
+   if(!book.documents.some(f=>f.kind==="gabarito"))book.documents.push(uspDocument(year,"gabarito",color));
+  }
+ }
+ if(year===2010){
+  const pairs:[number,string][]=[[1,"Amarelo"],[1,"Azul"],[1,"Branco"],[1,"Rosa"],
+   [2,"Amarelo"],[2,"Azul"],[2,"Cinza"],[2,"Rosa"]];
+  for(const [day,color] of pairs){
+   let book=books.find(b=>b.day===day&&b.color===color&&b.application==="Aplicação regular");
+   if(!book){book={id:"usp-2010-"+day+"-"+color.toLowerCase(),day,number:null,color,
+    application:"Aplicação regular",special:null,documents:[]};books.push(book);}
+   if(!book.documents.some(f=>f.kind==="prova"))book.documents.push(uspDocument(year,"prova",color,day));
+   if(!book.documents.some(f=>f.kind==="gabarito"))book.documents.push(uspDocument(year,"gabarito",color,day));
+  }
+ }
+ books.sort((a,b)=>(a.day||1)-(b.day||1)||a.color.localeCompare(b.color,"pt-BR"));
+ return {...catalog,books};
+}
 export async function getEnemCatalog(year:number):Promise<EnemCatalog>{
  if(!Number.isInteger(year)||year<1998||year>2026)throw Error("Ano do ENEM inválido");
  const source=ENEM_BASE+"/"+year;
@@ -100,9 +149,9 @@ export async function getEnemCatalog(year:number):Promise<EnemCatalog>{
   if(!response.ok)throw Error("Falha HTTP "+response.status);
   const html=await response.text();
   const catalog=parseEnemArchive(html,year);
-  if(catalog.books.length)return catalog;
-  if(year!==2025)return catalog;
+  if(catalog.books.length)return enrichHistorics(catalog);
+  if(year!==2025)return enrichHistorics(catalog);
  }catch{/* Os documentos de 2025 já possuem URLs oficiais conhecidas. */}
  if(year===2025)return {year,source,books:manual2025(year)};
- return {year,source,books:[],warning:"O catálogo do Inep está indisponível. Tente novamente ou consulte a página oficial."};
+ return enrichHistorics({year,source,books:[],warning:"O catálogo do Inep está indisponível. Os arquivos históricos podem estar disponíveis no acervo da USP."});
 }

@@ -3,8 +3,9 @@ import {useEffect,useRef,useState} from "react";
 import type {PDFDocumentProxy, PDFDocumentLoadingTask, RenderTask} from "pdfjs-dist";
 import styles from "./enem-past-papers.module.css";
 
-type Props={src:string;officialUrl:string;title:string};
-export default function EnemPdfViewer({src,officialUrl,title}:Props){
+type Props={src:string;officialUrl:string;title:string;sourceLabel?:string};
+export default function EnemPdfViewer({src,officialUrl,title,sourceLabel="Fonte original do Inep"}:Props){
+ const [mode,setMode]=useState<"embedded"|"pages"|"alternate">("embedded");
  const canvasRef=useRef<HTMLCanvasElement>(null);
  const frameRef=useRef<HTMLDivElement>(null);
  const [doc,setDoc]=useState<PDFDocumentProxy|null>(null);
@@ -28,6 +29,7 @@ export default function EnemPdfViewer({src,officialUrl,title}:Props){
   let cancelled=false;
   let task:PDFDocumentLoadingTask|undefined;
   setLoading(true);setError(null);setNumPages(0);setDoc(null);setPage(1);
+  if(mode!=="pages"){setLoading(false);return;}
   (async()=>{
    const pdfjs=await import("pdfjs-dist/legacy/build/pdf.mjs");
    if(cancelled)return;
@@ -37,13 +39,13 @@ export default function EnemPdfViewer({src,officialUrl,title}:Props){
    if(cancelled){void document.destroy();return;}
    setDoc(document);setNumPages(document.numPages);setLoading(false);
   })().catch(()=>{
-   if(!cancelled){setLoading(false);setError("Não foi possível carregar este arquivo no leitor. Você pode abrir o PDF oficial diretamente no Inep.");}
+   if(!cancelled){setLoading(false);setError("Não foi possível carregar este PDF pelo servidor. Use o modo de leitura integrada ou a visualização alternativa.");}
   });
   return()=>{
    cancelled=true;
    if(task)void task.destroy().catch(()=>{});
   };
- },[src,retry]);
+ },[src,retry,mode]);
  useEffect(()=>{
   if(!doc)return;
   let cancelled=false;
@@ -70,7 +72,7 @@ export default function EnemPdfViewer({src,officialUrl,title}:Props){
    await renderingTask.promise;
    if(!cancelled){setRendering(false);setError(null);}
   })().catch(err=>{
-   if(!cancelled&&err?.name!=="RenderingCancelledException"){setRendering(false);setError("Não foi possível mostrar esta página. Abra o PDF oficial para consultar o conteúdo.");}
+   if(!cancelled&&err?.name!=="RenderingCancelledException"){setRendering(false);setError("Não foi possível mostrar esta página. Use o modo de leitura integrada ou a visualização alternativa.");}
   });
   return()=>{
    cancelled=true;
@@ -80,22 +82,33 @@ export default function EnemPdfViewer({src,officialUrl,title}:Props){
  return <div className={styles.viewer} aria-label={title}>
   <div className={styles.viewerTop}>
    <div><strong>Leitor de PDF · ENEM</strong><small>{title}</small></div>
-   <span className={styles.officialBadge}>Fonte oficial Inep</span>
+   <span className={styles.officialBadge}>{sourceLabel}</span>
   </div>
   <div className={styles.readerActions}>
-   <a href={officialUrl} target="_blank" rel="noopener noreferrer">↗ Abrir PDF oficial</a>
+   <a href={officialUrl} target="_blank" rel="noopener noreferrer">↗ Abrir arquivo original</a>
    <a href={src} download={title.toLowerCase().replace(/[^a-z0-9]+/g,"-")+".pdf"}>↓ Baixar PDF</a>
   </div>
-  {numPages>0&&<div className={styles.pageBar} role="group" aria-label="Navegação pelas páginas">
+  <div className={styles.embeddedOptions} role="group" aria-label="Modo de leitura">
+   <button type="button" className={mode==="embedded"?styles.activeReaderMode:""} onClick={()=>setMode("embedded")}>📖 Leitura integrada</button>
+   <button type="button" className={mode==="alternate"?styles.activeReaderMode:""} onClick={()=>setMode("alternate")}>Visualização alternativa</button>
+   <button type="button" className={mode==="pages"?styles.activeReaderMode:""} onClick={()=>{setMode("pages");setRetry(v=>v+1)}}>Páginas individuais</button>
+  </div>
+  {mode!=="pages"&&<div className={styles.embeddedFrame}>
+   <iframe title={title+" · leitor integrado"} loading="lazy"
+    src={mode==="alternate"?"https://docs.google.com/gview?embedded=1&url="+encodeURIComponent(officialUrl):officialUrl+"#toolbar=1"}
+    referrerPolicy="no-referrer" />
+   <p>Se o PDF não aparecer neste navegador, use “Visualização alternativa” ou “Abrir arquivo original”. A visualização alternativa utiliza o Google Document Viewer.</p>
+  </div>}
+  {mode==="pages"&&numPages>0&&<div className={styles.pageBar} role="group" aria-label="Navegação pelas páginas">
    <button type="button" disabled={page<=1} onClick={()=>setPage(n=>Math.max(1,n-1))}>← Anterior</button>
    <span>Página <strong>{page}</strong> de {numPages}</span>
    <button type="button" disabled={page>=numPages} onClick={()=>setPage(n=>Math.min(numPages,n+1))}>Próxima →</button>
   </div>}
-  <div className={styles.viewerFrame} ref={frameRef}>
+  <div className={styles.viewerFrame} ref={frameRef} style={mode==="pages"?undefined:{display:"none"}}>
    {(loading||rendering)&&!error&&<div className={styles.loader} role="status">{loading?"Carregando documento oficial...":"Renderizando página "+page+"..."}</div>}
    {error?<div role="alert" className={styles.readerError}><strong>O PDF não carregou.</strong><p>{error}</p><button type="button" onClick={()=>setRetry(n=>n+1)}>Tentar novamente</button><a href={officialUrl} target="_blank" rel="noopener noreferrer">Abrir documento original ↗</a></div>:<canvas ref={canvasRef} className={styles.pageCanvas} aria-label={`Página ${page} de ${numPages||"?"} do PDF`}/>}
   </div>
-  {numPages>1&&<div className={styles.pageBar} role="group" aria-label="Navegação inferior das páginas">
+  {mode==="pages"&&numPages>1&&<div className={styles.pageBar} role="group" aria-label="Navegação inferior das páginas">
    <button type="button" disabled={page<=1} onClick={()=>setPage(n=>Math.max(1,n-1))}>← Página anterior</button>
    <button type="button" disabled={page>=numPages} onClick={()=>setPage(n=>Math.min(numPages,n+1))}>Próxima página →</button>
   </div>}

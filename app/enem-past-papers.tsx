@@ -87,7 +87,7 @@ export default function EnemPastPapers(){
     <button type="button" className={styles.back} onClick={()=>navigate(empty)}>← Todos os anos</button>
     <div className={styles.archiveHero}>
      <div><span className={styles.eyebrow}>ACERVO OFICIAL · {nav.year}</span><h3>ENEM {nav.year}</h3>
-      <p>Escolha o caderno pela cor original. Os documentos são carregados do acervo do Inep sem sair da plataforma.</p></div>
+      <p>Escolha o caderno pela cor original. Os documentos podem ser consultados na própria página, com indicação de sua fonte de origem.</p></div>
      {catalog&&<strong>{books.length} caderno{books.length===1?"":"s"} listado{books.length===1?"":"s"}</strong>}
     </div>
     {pending&&<div className={styles.status} role="status">Consultando provas e gabaritos oficiais de {nav.year}...</div>}
@@ -131,9 +131,9 @@ export default function EnemPastPapers(){
      <span className={styles.eyebrow}>LEITURA INTEGRADA · DOCUMENTO ORIGINAL</span>
      <h4>{labelFor(currentBook)} · {currentFile.kind==="prova"?"Prova":"Gabarito"}</h4>
      <EnemPdfViewer key={currentFile.id} src={"/api/enem/pdf?ano="+nav.year+"&livro="+encodeURIComponent(currentBook.id)+"&documento="+encodeURIComponent(currentFile.id)}
-       officialUrl={currentFile.url} title={"ENEM "+nav.year+" · "+labelFor(currentBook)+" · "+currentFile.label}/>
+       officialUrl={currentFile.url} title={"ENEM "+nav.year+" · "+labelFor(currentBook)+" · "+currentFile.label} sourceLabel={currentFile.url.includes("fep.if.usp.br")?"Acervo histórico · USP":"Fonte oficial · Inep"}/>
     </div>}
-    {catalog&&<p className={styles.official}>Arquivos oficiais do Inep. A disponibilidade de cores, cadernos e gabaritos varia conforme o ano. <a href={source} target="_blank" rel="noopener noreferrer">Ver fonte original.</a></p>}
+    {catalog&&<p className={styles.official}>A disponibilidade de cores, cadernos e gabaritos varia por ano. Para as edições históricas, o catálogo inclui cópias e gabaritos preservados pelo Instituto de Física da USP. <a href={source} target="_blank" rel="noopener noreferrer">Índice oficial do Inep.</a>{nav.year!==null&&nav.year<=2010&&<><span> · </span><a href={"https://fep.if.usp.br/~profis/arquivo/avaliacao/enem/provas_gabaritos/"+nav.year+"/"} target="_blank" rel="noopener noreferrer">Acervo histórico USP.</a></>}</p>}
    </>}
   </div>
  </section>;
