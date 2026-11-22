@@ -3,6 +3,7 @@ import {useEffect,useMemo,useState} from "react";
 import {subjectMetadata,type FundamentalGrade,type FundamentalSubjectId} from "./fundamental-curriculum";
 import {fundamentalTopicCount,getFundamentalTopics,type FundamentalTopic} from "./fundamental-topic-catalog";
 import styles from "./fundamental-hub.module.css";
+import {recordStudyActivity} from "./lib/study-activity";
 
 const grades=[1,2,3,4,5,6,7,8,9] as FundamentalGrade[];
 type Stage="aula"|"exemplo"|"atividade"|"revisao";
@@ -90,6 +91,7 @@ export default function FundamentalHub(){
   syncUrl(year,next,null);
  }
  function chooseTopic(next:string|null){
+  if(next&&subject){const selected=getFundamentalTopics(year,subject).find(item=>item.id===next);recordStudyActivity("Ensino Fundamental",selected?.title||next);}
   setTopicId(next);setStage("aula");restartQuiz();setVoiceError(false);
   syncUrl(year,subject,next);
  }
@@ -116,6 +118,7 @@ export default function FundamentalHub(){
     sessions:(old.sessions??0)+1,bestPercent:Math.max(old.bestPercent??0,percentage),lastPercent:percentage
    }};
   });
+  recordStudyActivity("Ensino Fundamental",topic.title,"completed");
   setQuizDone(true);
  }
  function readAloud(text:string){
