@@ -6,16 +6,20 @@ export type ExerciseItem={
  question:string;options:string[];correct:number;explanation:string;
  sourceTitle:string;kind:"original"|"aplicacao"|"conceito"|"calculado";
  sourceIndex:number;
+ level?:"fundamentos"|"aprofundado";
 };
+/** Integridade estrutural: ainda exige conferência editorial do conhecimento. */
+export function isValidExercise(q:Pick<ExerciseItem,"question"|"options"|"correct"|"explanation">):boolean{
+ const norm=(v:string)=>v.normalize("NFD").replace(/[\u0300-\u036f]/g,"").trim().toLowerCase();
+ if(q.question.trim().length<16||q.options.length<3||q.correct<0||q.correct>=q.options.length)return false;
+ if(!q.options[q.correct]||q.explanation.trim().length<24)return false;
+ if(q.options.some(o=>!o||!o.trim()))return false;
+ return new Set(q.options.map(norm)).size===q.options.length;
+}
 function order(indices:number[],seed:number){
  if(!indices.length)return [];
  const offset=Math.abs(seed)%indices.length;
  return [...indices.slice(offset),...indices.slice(0,offset)];
-}
-function optionsFor(answer:string,d1:string,d2:string,seed:number){
- const values=[answer,d1,d2];
- const rotate=Math.abs(seed)%3;
- return {options:[...values.slice(rotate),...values.slice(0,rotate)],correct:(3-rotate)%3};
 }
 function numberQuestion(question:string,answer:number,wrong1:number,wrong2:number,explanation:string,sourceIndex=0):ExerciseItem{
  const answers=[answer,wrong1,wrong2];
@@ -51,31 +55,13 @@ export function buildExercises(lessons:LessonSource[],requested:number,seed:numb
  const remaining=order(all.filter(i=>!selected.includes(i)),seed+1);
  const result:ExerciseItem[]=[];const seen=new Set<string>();
  function add(item:ExerciseItem){
-  const text=item.question.trim();
-  if(!text||!item.options[item.correct]||seen.has(text))return;
-  if(new Set(item.options.map(x=>x.trim())).size!==item.options.length)return;
-  result.push(item);seen.add(text);
+  const key=item.question.normalize("NFD").replace(/[\u0300-\u036f]/g,"").trim().toLowerCase();
+  if(!isValidExercise(item)||seen.has(key))return;
+  result.push(item);seen.add(key);
  }
  function originals(indices:number[]){
   for(const i of indices){const l=lessons[i];if(l.correct<0||l.correct>=l.options.length)continue;
    add({question:l.question,options:[...l.options],correct:l.correct,explanation:l.feedback||l.example+" "+(l.body||l.explain||""),sourceTitle:l.title,kind:"original",sourceIndex:i});
-  }
- }
- function variants(indices:number[],mode:"aplicacao"|"conceito"){
-  for(const i of indices){
-   const lesson=lessons[i],text=mode==="aplicacao"?lesson.example:(lesson.body||lesson.explain||"");
-   if(!text||text.trim().length<12)continue;
-   const distractors=order(all.filter(j=>j!==i),seed+i+3)
-    .map(j=>mode==="aplicacao"?lessons[j].example:(lessons[j].body||lessons[j].explain||""))
-    .filter(x=>x&&x!==text&&x.trim().length>=12);
-   const distinct=[...new Set(distractors)];
-   if(distinct.length<2)continue;
-   const answer=optionsFor(text,distinct[0],distinct[1],i+seed);
-   add({
-    question:mode==="aplicacao"?`Qual exemplo foi apresentado especificamente na aula “${lesson.title}”?`:`Qual explicação corresponde ao conteúdo da aula “${lesson.title}”?`,
-    ...answer,explanation:(lesson.body||lesson.explain||"")+" Exemplo apresentado: "+lesson.example,
-    sourceTitle:lesson.title,kind:mode,sourceIndex:i
-   });
   }
  }
  originals(first);
@@ -85,10 +71,7 @@ export function buildExercises(lessons:LessonSource[],requested:number,seed:numb
    if(q)add(q);
   }
  }
- if(result.length<requested)variants(first,"aplicacao");
+ // Não gerar perguntas de memorização artificial sobre o próprio texto da aula.
  if(result.length<requested)originals(remaining);
- if(result.length<requested)variants(first,"conceito");
- if(result.length<requested)variants(remaining,"aplicacao");
- if(result.length<requested)variants(remaining,"conceito");
  return result.slice(0,requested);
 }

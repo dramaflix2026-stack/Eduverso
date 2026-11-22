@@ -5,7 +5,7 @@ import {bones} from "./anatomy-atlas-data";
 import {getMathLessons} from "./math-curriculum";
 import {fractionUnits} from "./fraction-curriculum";
 import {getLessons} from "./course-catalog";
-import type {LessonSource,ExerciseItem} from "./exercise-bank";
+import {isValidExercise,type LessonSource,type ExerciseItem} from "./exercise-bank";
 
 export type MedicalTrack="vestibular"|"faculdade"|"revalida"|"atlas";
 export type MedicalChoice={id:string;name:string;description:string};
@@ -56,14 +56,14 @@ function medEntries(d:MedDiscipline,topicFilter:string):{lessons:LessonSource[];
    lessons.push(lesson);
    questions.push({
     question:topic.question,options:[...topic.options],correct:topic.correct,
-    explanation:topic.feedback,sourceTitle:lesson.title,kind:"original",sourceIndex:questions.length
+    explanation:topic.feedback,sourceTitle:lesson.title,kind:"original",sourceIndex:questions.length,level:"fundamentos"
    });
   }
   for(const q of chapter?.questions??[]){
    if(!q.prompt||!Array.isArray(q.options)||q.options.length<2||q.correct<0||q.correct>=q.options.length)continue;
    questions.push({
     question:q.prompt,options:[...q.options],correct:q.correct,explanation:q.explanation,
-    sourceTitle:lesson.title,kind:"original",sourceIndex:questions.length
+    sourceTitle:lesson.title,kind:"original",sourceIndex:questions.length,level:"aprofundado"
    });
   }
  }
@@ -120,10 +120,10 @@ export function getMedicalContent(track:MedicalTrack,id:string,topicId:string,sc
  const name=id==="geral"?(track==="revalida"?"Revisão clínica geral":"Todas as disciplinas"):(disciplines[0]?.title||"Medicina");
  const topicName=topicId?disciplines[0]?.topics.find(t=>t.id===topicId)?.name:undefined;
  return {label:name+(topicName?" — "+topicName:""),subjectLabel:(track==="revalida"?"Revalida e Residência":"Faculdade de Medicina")+" · questões autorais",
-  lessons:chunks.flatMap(c=>c.lessons),questions:[...distinctQuestions.values()]};
+  lessons:chunks.flatMap(c=>c.lessons),questions:[...distinctQuestions.values()].filter(isValidExercise)};
 }
 export function chooseMedicalQuestions(pool:ExerciseItem[],quantity:number,seed:number):ExerciseItem[]{
- const items=[...pool];let x=(seed+1)*2654435761>>>0;
+ const items=[...pool].filter(isValidExercise);let x=(seed+1)*2654435761>>>0;
  for(let i=items.length-1;i>0;i--){x=(Math.imul(x,1664525)+1013904223)>>>0;const j=x%(i+1);[items[i],items[j]]=[items[j],items[i]];}
- return items.slice(0,Math.min(quantity,items.length));
+ return items.sort((a,b)=>(a.level==="aprofundado"?0:1)-(b.level==="aprofundado"?0:1)).slice(0,Math.min(quantity,items.length));
 }

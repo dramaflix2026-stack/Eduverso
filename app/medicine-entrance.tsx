@@ -78,7 +78,6 @@ export default function MedicineEntrance({getTopics,onOpenTrack,onOpenGoal}:Prop
     </div>:<div className={styles.empty}>Nenhuma matéria encontrada.</div>}
     <div className={styles.entranceResources}>
      <div className={styles.resource}><strong>📄 Provas anteriores do ENEM</strong><p>Acesse os cadernos e gabaritos por ano, separados das questões criadas para estudo.</p><button className={styles.primary} type="button" onClick={()=>onOpenTrack("ENEM e Vestibulares","Provas Passadas")}>Explorar provas anteriores ↗</button></div>
-     <div className={styles.resource}><strong>🎓 Provas de Medicina por instituição</strong><p>FUVEST, ENEM e outros processos seletivos têm regras e cadernos próprios.</p><button className={styles.primary} type="button" onClick={()=>onOpenGoal("cursos","medicina")}>Escolher vestibular ↗</button></div>
     </div>
    </>}
  </section>;

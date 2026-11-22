@@ -85,6 +85,13 @@
 @media(max-width:600px){.atlasFeature{padding:15px;gap:10px;flex-wrap:wrap}.atlasIcon{font-size:26px}.atlasArrow{width:100%;padding-left:37px}}
 
 /* Persistent four-way Medicina navigation: the Atlas remains visible in all views. */
-.areaTabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}
+.areaTabs{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px}
 .areaTab{min-height:49px;line-height:1.35;white-space:normal;text-align:center;border-radius:13px}
 @media(max-width:680px){.areaTabs{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.areaTab{min-height:51px;padding:11px 7px;font-size:12px}}
+
+/* Acesso premium às provas por instituição, sempre no mesmo nível das demais áreas. */
+.institutions{display:flex;flex-direction:column;gap:16px}
+.institutions .resource{min-height:165px;justify-content:flex-start}
+.institutions .resource button{margin-top:auto}
+@media(max-width:900px) and (min-width:681px){.areaTabs{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:680px){.areaTabs{grid-template-columns:repeat(2,minmax(0,1fr))}.institutions .resource{min-height:0}}

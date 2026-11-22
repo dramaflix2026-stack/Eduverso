@@ -8,8 +8,10 @@ import MedicineDeepChapter from "./medicine-deep-chapter";
 import AnatomyAtlasCollection from "./anatomy-atlas-collection";
 import {atlasViews} from "./anatomy-atlas-collection-data";
 import {advancedMedCourses} from "./medicine-advanced-catalog";
+import {prepCatalog} from "./preparation-catalog";
+import LearningQuality from "./learning-quality";
 
-export type MedicineArea="faculdade"|"vestibular"|"exames";
+export type MedicineArea="faculdade"|"vestibular"|"exames"|"instituicoes";
 type Props={
  area:MedicineArea;
  onChangeArea:(next:MedicineArea)=>void;
@@ -59,6 +61,7 @@ export default function MedicineHub({area,onChangeArea,onAtlasStateChange,onOpen
  const currentTopic=currentDiscipline?.topics.find(t=>t.id===topic);
  const yearMatch=(range:string,year:number)=>{const parts=[...range.matchAll(/\d/g)].map(m=>Number(m[0]));return !year||(parts.length>1?year>=parts[0]&&year<=parts[parts.length-1]:parts.includes(year));};
  const visible=useMemo(()=>medicineDisciplines.filter(d=>(cycle==="todos"||d.cycle===cycle)&&yearMatch(d.years,year)&&strip(d.title+" "+d.description+" "+d.topics.map(t=>t.name).join(" ")).includes(strip(search))),[cycle,year,search]);
+ const institutionGoals=useMemo(()=>prepCatalog.filter(g=>g.group==="vestibulares"&&strip(g.title+" "+g.subtitle).includes(strip(search))),[search]);
  function pushLocation(d:string|null,t:string|null){
   const url=new URL(window.location.href);
   if(d)url.searchParams.set("materia",d);else url.searchParams.delete("materia");
@@ -102,11 +105,12 @@ export default function MedicineHub({area,onChangeArea,onAtlasStateChange,onOpen
  const suggestedReviews=medicineDisciplines.flatMap(d=>d.topics.map(t=>({discipline:d.slug,disciplineTitle:d.title,topic:t,errors:attempts[t.id]?.wrong??0,acertos:attempts[t.id]?.right??0}))).filter(v=>v.errors>0).sort((a,b)=>(b.errors-b.acertos)-(a.errors-a.acertos)||b.errors-a.errors).slice(0,4);
  return <div className={styles.med}>
   <section className={styles.hero+" "+(area==="vestibular"?styles.heroCompact:"")}>
-   <span className={styles.eyebrow}>✦ {area==="vestibular"?"EDUVERSO · PREPARAÇÃO":area==="faculdade"?"EDUVERSO · FACULDADE":"EDUVERSO · ESPECIALIZAÇÃO"}</span>
-   <h1>{area==="vestibular"?<>Vestibular de <span>Medicina.</span></>:area==="faculdade"?<>Faculdade de <span>Medicina.</span></>:<>Revalida e <span>Residência.</span></>}</h1>
-   <p>{area==="vestibular"?"Escolha uma matéria, explore os assuntos e comece a estudar com as trilhas já existentes no Eduverso.":area==="faculdade"?"Explore disciplinas universitárias, aulas comentadas, exercícios e simulados por ciclo e ano.":"Consulte os exames profissionais e os acervos oficiais de questões anteriores."}</p>
+   <span className={styles.eyebrow}>✦ {area==="vestibular"?"EDUVERSO · PREPARAÇÃO":area==="faculdade"?"EDUVERSO · FACULDADE":area==="instituicoes"?"EDUVERSO · ACERVOS DE VESTIBULARES":"EDUVERSO · ESPECIALIZAÇÃO"}</span>
+   <h1>{area==="vestibular"?<>Vestibular de <span>Medicina.</span></>:area==="faculdade"?<>Faculdade de <span>Medicina.</span></>:area==="instituicoes"?<>Provas de Medicina <span>por instituição.</span></>:<>Revalida e <span>Residência.</span></>}</h1>
+   <p>{area==="vestibular"?"Escolha uma matéria, explore os assuntos e comece a estudar com as trilhas já existentes no Eduverso.":area==="faculdade"?"Explore disciplinas universitárias, aulas comentadas, exercícios e simulados por ciclo e ano.":area==="instituicoes"?"Encontre provas anteriores de vestibulares e a preparação direcionada para cada instituição, respeitando seu edital e processo de ingresso.":"Consulte os exames profissionais e os acervos oficiais de questões anteriores."}</p>
    {area==="faculdade"&&<div className={styles.stats}><span>18 disciplinas universitárias</span><span>108 assuntos iniciais</span></div>}
   </section>
+  <LearningQuality mode={area==="vestibular"?"med-vestibular":area==="faculdade"?"med-faculdade":area==="instituicoes"?"med-instituicoes":"med-exames"}/>
   <div className={styles.areaTabs} role="group" aria-label="Áreas de Medicina">
     {([
       {id:"vestibular",label:"🎓 Vestibular"},
@@ -114,8 +118,22 @@ export default function MedicineHub({area,onChangeArea,onAtlasStateChange,onOpen
       {id:"exames",label:"📋 Revalida e residência"}
     ] as const).map(item=><button type="button" key={item.id} onClick={()=>changeArea(item.id)} aria-pressed={area===item.id&&!atlasOpen} className={styles.areaTab+" "+(area===item.id&&!atlasOpen?styles.areaTabActive:"")}>{item.label}</button>)}
     <button type="button" aria-pressed={area==="faculdade"&&atlasOpen} className={styles.areaTab+" "+(area==="faculdade"&&atlasOpen?styles.areaTabActive:"")} onClick={openAtlas}>🦴 Atlas Interativo</button>
+    <button type="button" aria-pressed={area==="instituicoes"} className={styles.areaTab+" "+(area==="instituicoes"?styles.areaTabActive:"")} onClick={()=>changeArea("instituicoes")}>🏛️ Provas por Instituição</button>
   </div>
   {area==="vestibular"&&<MedicineEntrance getTopics={getSubjectTopics} onOpenGoal={onOpenGoal} onOpenTrack={onOpenTrack}/>}
+  {area==="instituicoes"&&<section className={styles.institutions} aria-label="Vestibulares e provas por instituição">
+    <div className={styles.sectionHead}><div><span className={styles.eyebrow}>ACERVOS E PROCESSOS SELETIVOS</span><h2>Escolha a instituição</h2></div><small>{institutionGoals.length} resultados</small></div>
+    <p className={styles.note}>O ingresso em Medicina pode ocorrer via ENEM/Sisu, vestibular próprio ou modalidades específicas. Consulte o edital do curso e o ano escolhido. Questões de treinamento autorais não são provas oficiais.</p>
+    <label className={styles.search}><span aria-hidden="true">⌕</span><input value={search} onChange={event=>setSearch(event.target.value)} placeholder="Buscar universidade ou vestibular..." aria-label="Buscar instituição para provas de Medicina"/></label>
+    {institutionGoals.length?<div className={styles.pathNotes}>
+     {institutionGoals.map(goal=><article key={goal.id} className={styles.resource}>
+      <strong>🏛️ {goal.title}</strong><p>{goal.subtitle}</p>
+      <button type="button" className={styles.primary} onClick={()=>onOpenGoal("vestibulares",goal.id)}>Ver roteiro e provas cadastradas ↗</button>
+      {goal.officialUrl&&<a href={goal.officialUrl} target="_blank" rel="noopener noreferrer">Consultar instituição ↗</a>}
+     </article>)}
+    </div>:<div className={styles.empty}>Nenhuma instituição encontrada para essa busca.</div>}
+    <div className={styles.resource}><strong>📘 ENEM — provas por ano e cor</strong><p>Para processos de ingresso que usam notas do ENEM, os cadernos e gabaritos estão separados por edição e cor no acervo do Eduverso.</p><button type="button" className={styles.primary} onClick={()=>onOpenTrack("ENEM e Vestibulares","Provas Passadas")}>Abrir provas do ENEM ↗</button></div>
+   </section>}
   {area==="exames"&&<>
    <div className={styles.sectionHead}><div><span className={styles.eyebrow}>EXAMES E ESPECIALIZAÇÃO</span><h2>Revalida, Enamed e Residência</h2></div></div>
    <div className={styles.pathNotes}>
