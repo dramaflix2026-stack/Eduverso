@@ -1009,7 +1009,7 @@ const ptBRImageFiles:Record<string,string>={
 export const expandedAtlasViews:AtlasView[]=sources.map(source=>({
  id:source.id,title:source.title,short:source.short,
  subtitle:"Estude as principais estruturas com imagem de referência, descrição, função e correlação clínica.",
- image:image(ptBRImageFiles[source.id]||source.file),source:commons(ptBRImageFiles[source.id]||source.file),
+ image:image(ptBRImageFiles[source.id]||source.file),fallbackImage:image(source.file),source:commons(ptBRImageFiles[source.id]||source.file),
  credit:"Ilustração do acervo Wikimedia Commons · autoria e condições de uso descritas no arquivo original",
  ratio:"4 / 5",alt:"Ilustração de referência para "+source.title,
  spotMode:"list",

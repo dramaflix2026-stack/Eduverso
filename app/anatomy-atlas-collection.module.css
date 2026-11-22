@@ -166,3 +166,7 @@
 .auxLegend .structureList{margin-top:9px}
 .figure .diagram img{width:100%;height:100%}
 @media(max-width:520px){.legendTitle{font-size:13px}.auxLegend{padding:12px}}
+
+/* Apenas os cards principais usam as capas premium; matérias recuperam imagens reais do atlas. */
+.scientificMedia{background:#f6f3fb!important;padding:10px!important;overflow:hidden}
+.scientificMedia img{width:100%;height:100%;max-width:100%;max-height:100%;display:block;object-fit:contain}

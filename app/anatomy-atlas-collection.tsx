@@ -63,7 +63,7 @@ function AtlasStudy({view}:{view:AtlasView}){
  },[scores,items]);
  const selected=items.find(b=>b.id===picked),target=items[q],flash=items[f];
  const quizChoices=target?(()=>{const others=items.filter(v=>v.id!==target.id),pool=[target,...[0,2,4].map((step)=>others[(q*3+step)%others.length])];const offset=q%pool.length;return [...pool.slice(offset),...pool.slice(0,offset)];})():[];
- const fallbackUrl=view.source.replace("/wiki/File:","/wiki/Special:FilePath/");
+ const fallbackUrl=view.fallbackImage||view.source.replace("/wiki/File:","/wiki/Special:FilePath/");
  function selectMode(next:Mode){
   setMode(next);setPicked(null);setAnswer(null);setTyped("");setSubmitted(false);setFlashRated(false);
   if(next==="desafio"){setQ(0);setHits(0);setCompleted(false);}
@@ -302,11 +302,17 @@ export default function AnatomyAtlasCollection(){
    <div className={styles.sectionLabel}><strong>{term.trim()?"Resultados da busca":group?.title}</strong><span>{shown.length+(visibleIds.includes("anterior")&&!term.trim()?1:0)} atlas</span></div>
    <div className={styles.cards}>
     {visibleIds.includes("anterior")&&!term.trim()&&<button type="button" className={styles.atlasCard} onClick={()=>openView("anterior")}>
-      <span className={styles.cardMedia}><AtlasArt family="ossos" id="capa-anterior" title="Vista anterior"/></span>
+      <span className={styles.cardMedia+" "+styles.scientificMedia}><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/Human_skeleton_front_no-text_no-color.svg/500px-Human_skeleton_front_no-text_no-color.svg.png" loading="lazy" alt="Esqueleto humano detalhado em vista anterior"/></span>
       <span className={styles.cardInfo}><small>ATLAS INTERATIVO</small><strong>Vista anterior</strong><span>{bones.length} estruturas · exploração e revisão</span><em>Explorar atlas →</em></span>
      </button>}
     {shown.map(v=><button key={v.id} type="button" className={styles.atlasCard} onClick={()=>openView(v.id)}>
-      <span className={styles.cardMedia}><AtlasArt family={atlasFamily(v.id)} id={"capa-"+v.id} title={v.short}/></span>
+      <span className={styles.cardMedia+" "+styles.scientificMedia}>
+        <img src={v.image} loading="lazy" alt={v.alt}
+          onError={event=>{const el=event.currentTarget;const original=v.fallbackImage;
+            if(original&&el.getAttribute("data-fallback")!=="1"){el.setAttribute("data-fallback","1");el.src=original;}
+            else{el.style.opacity="0";el.alt="Ilustração indisponível — "+v.short;}
+          }}/>
+      </span>
       <span className={styles.cardInfo}><small>{v.spotMode==="list"?"ATLAS DE SISTEMAS":"ATLAS REGIONAL"}</small><strong>{v.short}</strong><span>{v.spots.length} estruturas · desafios e flashcards</span><em>Explorar atlas →</em></span>
      </button>)}
    </div>
