@@ -70,10 +70,14 @@ export async function downloadStudyPdf(request:PdfDocumentRequest){
  y-=8;
  for(const section of request.sections){
   if(section.pageBreakBefore)nextPage();
-  ensure(section.kind==="chapter"?90:56);
+  // Mantenha o enunciado e as alternativas na mesma página quando couberem juntos.
+  const fontSize=section.kind==="answer"?10:10.5;
+  const sectionHeight=32+section.paragraphs.reduce((total,p)=>total+
+    p.split("\n").reduce((lines,lineText)=>lines+split(lineText,fontSize,regular).length*(fontSize+5)+9,0)+6,0);
+  ensure(section.kind==="chapter"?90:section.kind==="question"&&sectionHeight<640?sectionHeight:56);
   page.drawLine({start:{x:50,y:y+13},end:{x:545,y:y+13},color:section.kind==="chapter"?purple:line,thickness:section.kind==="chapter"?2:1});
   paragraph(section.heading,section.kind==="chapter"?19:section.kind==="answer"?12:13,true);
-  for(const p of section.paragraphs)paragraph(p,section.kind==="answer"?10:10.5);
+  for(const p of section.paragraphs)paragraph(p,fontSize);
   y-=section.kind==="chapter"?10:5;
  }
  if(request.note){ensure(55);paragraph("Nota sobre este material",12,true);paragraph(request.note,9);}
