@@ -1,6 +1,7 @@
 "use client";
 import {useEffect,useMemo,useState} from "react";
 import {getMathLessons} from "./math-curriculum";
+import {fractionUnits} from "./fraction-curriculum";
 import {getLessons} from "./course-catalog";
 import {buildExercises,type LessonSource,type ExerciseItem} from "./exercise-bank";
 import {downloadStudyPdf,type PdfDocumentRequest,type PdfSection} from "./lib/lesson-pdf";
@@ -29,7 +30,8 @@ const starterMaterials=[
 const fileSafe=(value:string)=>value.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,60)||"material";
 const options=["A","B","C","D","E","F"];
 function allLessons(subject:string,topic:string):LessonSource[]{
- if(subject==="Matemática"&&topic!=="Frações")return getMathLessons(topic).map(l=>({...l,explain:l.body}));
+ if(subject==="Matemática"&&topic==="Frações")return fractionUnits.map(l=>({...l,feedback:l.explain}));
+ if(subject==="Matemática")return getMathLessons(topic).map(l=>({...l,explain:l.body}));
  return getLessons(subject,topic).map(l=>({...l,body:l.explain}));
 }
 function makeBooklet(subject:string,topic:string,limit=10):PdfDocumentRequest|null{
