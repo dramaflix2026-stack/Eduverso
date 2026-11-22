@@ -1002,7 +1002,9 @@ const ptBRImageFiles:Record<string,string>={
  "olho":"Schematic diagram of the human eye pt.svg",
  "pulmoes":"Respiratory system-pt.svg",
  "reprodutor-feminino":"Scheme female reproductive system-pt.svg",
- "ouvido":"Anatomy of the Human Ear pt.svg"
+ "ouvido":"Anatomy of the Human Ear pt.svg",
+ "coracao":"Diagram of the human heart (cropped) pt.svg",
+ "medula-espinal":"Gray770-pt.svg"
 };
 export const expandedAtlasViews:AtlasView[]=sources.map(source=>({
  id:source.id,title:source.title,short:source.short,
