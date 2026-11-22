@@ -75,7 +75,12 @@ function schoolLessons(subject:string,topic:string):LessonSource[]{
  return getLessons(subject,topic).map(l=>({...l,body:l.explain}));
 }
 function asExercises(lessons:LessonSource[]):ExerciseItem[]{
- return lessons.filter(safeLesson).map((l,i)=>({
+ const seen=new Set<string>();
+ return lessons.filter(safeLesson).filter(l=>{
+  const key=l.question.normalize("NFD").replace(/[\u0300-\u036f]/g,"").trim().toLowerCase();
+  if(!key||seen.has(key))return false;
+  seen.add(key);return true;
+ }).map((l,i)=>({
   question:l.question,options:[...l.options],correct:l.correct,
   explanation:l.feedback||l.body||l.explain||"",sourceTitle:l.title,kind:"original" as const,sourceIndex:i
  }));
