@@ -95,3 +95,6 @@
 .institutions .resource button{margin-top:auto}
 @media(max-width:900px) and (min-width:681px){.areaTabs{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:680px){.areaTabs{grid-template-columns:repeat(2,minmax(0,1fr))}.institutions .resource{min-height:0}}
+
+/* Um único atalho para ENEM no Vestibular de Medicina, sem coluna vazia. */
+.entranceResources{grid-template-columns:minmax(0,1fr)}
