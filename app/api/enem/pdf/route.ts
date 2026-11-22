@@ -53,3 +53,27 @@ export async function GET(request:NextRequest){
   return jsonError("Não foi possível carregar o documento do Inep. Tente novamente ou consulte a fonte oficial.",502);
  }
 }
+
+/** Teste transitório de documentos oficiais, sem baixar o corpo inteiro. */
+export async function POST(request:NextRequest){
+ const year=Number(request.nextUrl.searchParams.get("ano"));
+ const role=request.nextUrl.searchParams.get("tipo")==="gabarito"?"gabarito":"prova";
+ const bookNum=Number(request.nextUrl.searchParams.get("caderno")||1);
+ if(!Number.isInteger(year)||year<1998||year>2026)return jsonError("Ano inválido.",400);
+ const catalog=await getEnemCatalog(year);
+ const b=catalog.books.find(book=>book.number===bookNum&&book.application==="Aplicação regular")||catalog.books[0];
+ const doc=b?.documents.find(file=>file.kind===role);
+ if(!doc)return jsonError("Arquivo ausente no índice.",404);
+ try{
+  const response=await fetch(doc.url,{method:"GET",redirect:"manual",signal:AbortSignal.timeout(23000),
+   headers:{"Accept":"application/pdf","User-Agent":"Eduverso/1.0"}});
+  const result={year,book:b.id,kind:role,url:doc.url,status:response.status,type:response.headers.get("content-type")||""};
+  await response.body?.cancel().catch(()=>{});
+  console.info("ENEM-PDF-PROBE",JSON.stringify(result));
+  if(!response.ok||!(/pdf|octet-stream/i).test(result.type))return NextResponse.json(result,{status:502});
+  return NextResponse.json(result);
+ }catch(error){
+  console.error("ENEM-PDF-PROBE",year,String(error));
+  return jsonError("Falha ao abrir PDF oficial.",502);
+ }
+}
