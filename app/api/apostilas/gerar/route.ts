@@ -108,6 +108,10 @@ export async function POST(request:NextRequest){
    "Quando tratar de Medicina, trate o material como recurso introdutório educacional, sem substituir diretrizes clínicas ou formação supervisionada.",
    "Não invente estatísticas, citações, normas, datas, instituições, fontes ou questões oficiais. Não afirme que foi validado pelo MEC, Inep ou por bancas.",
    "Nenhuma página deve repetir a explicação de outra. Evite conclusões e introduções vazias.",
+   ...(subject.toLocaleLowerCase("pt-BR").includes("geografia")&&/bioma|vegetação|vegetacao/i.test(topic)?[
+    "Para Biomas e Vegetação, desenvolva a diferença entre bioma, vegetação e ecossistema, e cubra explicitamente os SEIS biomas brasileiros: Amazônia, Cerrado, Caatinga, Mata Atlântica, Pantanal e Pampa. Não omita Pantanal nem Pampa por limitações do catálogo original.",
+    "Explique clima, regime de chuvas, tipos de vegetação, solo, adaptação de espécies, relações ecológicas, ocupação humana, impactos ambientais e proteção, com comparações fundamentadas entre biomas e exemplos concretos do Brasil."
+   ]:[]),
    format==="com-atividades"?"Inclua 4 atividades autorais de fixação com respostas explicadas de pelo menos 35 palavras cada em activities.":"Devolva activities como um array vazio.",
    "Responda apenas com o JSON definido no formato de saída."
   ].join("\n");
