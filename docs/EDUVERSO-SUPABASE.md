@@ -9,6 +9,7 @@ All have RLS enabled. Existing Toledo and Método EIXO tables are untouched.
 - `SUPABASE_URL` — HTTPS URL of the shared Eduverso Supabase project.
 - `SUPABASE_PUBLISHABLE_KEY` — publishable key (never a secret role key).
 - `EDUVERSO_PUBLIC_URL=https://eduversoai.com.br` — canonical web origin.
+- `EDUVERSO_AUTH_CONFIRM_REDIRECT_URL=https://eduverso-web-production.up.railway.app/entrar?confirmado=1` — existing allowlisted Supabase callback; the `/entrar` path redirects to the canonical domain without changing other projects' Auth settings.
 - `EDUVERSO_REQUIRE_PURCHASE=false` — keep purchase enforcement disabled until QA is complete.
 - `EDUVERSO_KIWIFY_PRODUCT_ID_ESTUDANTE` — Kiwify `Product.product_id` (not the checkout's short URL code).
 - `EDUVERSO_KIWIFY_PRODUCT_ID_PROFESSOR` — the separate Kiwify `Product.product_id` for the Professor product.
@@ -33,7 +34,7 @@ In Kiwify > Apps > Webhooks, use TWO independently configured webhooks, both wit
 
 `https://eduverso-web-production.up.railway.app/api/webhooks/kiwify?plano=professor`
 
-In each Kiwify webhook's **Token** field, paste the value of the matching Railway secret variable (24+ characters). Kiwify sends a `signature` query parameter generated with HMAC-SHA1 over the raw JSON body and that Token; our receiver verifies it in constant time. Do NOT add the secret to the URL. The `plano` URL query is only for readability; it does not authorize access.
+In each Kiwify webhook's **Token** field, paste the value of the matching Railway secret variable. Use a new high-entropy token of 24+ characters if possible; preexisting Kiwify-generated tokens of 8+ characters are accepted for the HMAC-only path, while legacy plain URL tokens require 24+ characters. Kiwify sends a `signature` query parameter generated with HMAC-SHA1 over the raw JSON body and that Token; our receiver verifies it in constant time. Do NOT add the secret to the URL. The `plano` URL query is only for readability; it does not authorize access.
 
 The legacy `?token=<secret>` URL is temporarily supported for migration from older webhooks, but remove it after verifying HMAC. Do not disclose secret values in screenshots, logs, chat or Git.
 
@@ -47,7 +48,9 @@ In Supabase > Authentication > URL Configuration, **add** this URL to the allow 
 
 `https://eduversoai.com.br/entrar?confirmado=1`
 
-Keep the previous Railway redirect as a fallback. Do NOT overwrite the shared project's Site URL or remove existing Toledo/EIXO URLs.
+Until this is done, `EDUVERSO_AUTH_CONFIRM_REDIRECT_URL` uses the already allowlisted Railway URL and the app redirects `/entrar` to the canonical domain. After verifying the new canonical URL is allowlisted, you can set the Railway variable to `https://eduversoai.com.br/entrar?confirmado=1`.
+
+Do NOT overwrite the shared project's Site URL or remove existing Toledo/EIXO URLs.
 
 ## QA checklist
 

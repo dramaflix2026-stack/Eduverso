@@ -41,7 +41,7 @@ function configuredProducts(): ProductConfig[] {
     },
   ];
   // Fail closed: incomplete / repeated secrets or product IDs are not safe.
-  if (products.some((p) => p.productId.length < 3 || p.secret.length < 24) ||
+  if (products.some((p) => p.productId.length < 3 || p.secret.length < 8) ||
       products[0].secret === products[1].secret ||
       products[0].productId === products[1].productId) return [];
   return products;
@@ -62,7 +62,7 @@ function authenticateWebhook(request: NextRequest, rawBody: string, products: Pr
   // high-entropy token via HTTPS query or an internal header. Prefer HMAC.
   const legacy = request.nextUrl.searchParams.get("token") ||
     request.headers.get("x-eduverso-webhook-token") || "";
-  const matching = products.filter((p) => sameSecret(legacy, p.secret));
+  const matching = products.filter((p) => p.secret.length >= 24 && sameSecret(legacy, p.secret));
   return matching.length === 1 ? matching[0] : null;
 }
 
@@ -70,8 +70,18 @@ export async function POST(request: NextRequest) {
   const products = configuredProducts();
   const serverKey = process.env.SUPABASE_SERVICE_ROLE_KEY || "";
   const supabase = process.env.SUPABASE_URL || "";
-  if (products.length !== 2 || !serverKey || !supabase)
+  if (products.length !== 2 || !serverKey || !supabase) {
+    // Emit only boolean flags, never sensitive secret values or buyer details.
+    console.warn("[Eduverso Kiwify] Configuração incompleta", {
+      estudanteId: Boolean(process.env.EDUVERSO_KIWIFY_PRODUCT_ID_ESTUDANTE),
+      professorId: Boolean(process.env.EDUVERSO_KIWIFY_PRODUCT_ID_PROFESSOR),
+      estudanteTokenValido: (process.env.EDUVERSO_KIWIFY_WEBHOOK_TOKEN_ESTUDANTE || "").length >= 8,
+      professorTokenValido: (process.env.EDUVERSO_KIWIFY_WEBHOOK_TOKEN_PROFESSOR || "").length >= 8,
+      chaveServidor: Boolean(serverKey),
+      supabaseUrl: Boolean(supabase),
+    });
     return deny("Webhook não configurado.", 503);
+  }
 
   const contentLength = Number(request.headers.get("content-length") || 0);
   if (contentLength > 1024 * 96) return deny("Payload excede limite.", 413);
