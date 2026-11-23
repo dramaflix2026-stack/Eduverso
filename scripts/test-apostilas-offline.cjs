@@ -49,6 +49,8 @@ async function validatePdf(){
  assert.ok(pdf.getPageCount()>=5,"PDF contém poucas páginas: "+pdf.getPageCount());
 
  // Real page text extraction: detect empty pages and verify all chapters appear.
+ // Use the real Node.js runtime for pdfjs; the browser mocks are no longer needed.
+ delete global.window;delete global.document;
  const pdfjs=await import("pdfjs-dist/legacy/build/pdf.mjs");
  const reader=await pdfjs.getDocument({data:new Uint8Array(bytes),useSystemFonts:true,disableFontFace:true}).promise;
  const perPage=[];
