@@ -82,7 +82,7 @@ function validatedChapters(document:PdfDocumentRequest,titles:string[]):{missing
  const starts=sections.map((section,index)=>({section,index})).filter(({section})=>section.kind==="chapter"&&
   (/^\d{2}\s{2}/.test(section.heading)||/^Capítulo \d+\s*[-–]/.test(section.heading)));
  // Section titles in question/gabarito blocks must never count as content chapters.
- const theoryEnd=sections.findIndex(section=>/^(Atividades de fixação|Caderno de exercícios|Gabarito)/i.test(section.heading));
+ const theoryEnd=sections.findIndex(section=>/^(Atividades de fixação|Caderno de exercícios|Gabarito|Referências|Leitura de referência)/i.test(section.heading));
  const validStarts=starts.filter(x=>theoryEnd<0||x.index<theoryEnd);
  const missing:string[]=[];let reviewed=0;
  titles.forEach((title,index)=>{
