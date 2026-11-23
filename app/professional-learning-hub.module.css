@@ -190,3 +190,42 @@
 .codeSection code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:inherit}
 .codeSection p{margin:11px 0 0;color:#b5c2da;font-size:12px;line-height:1.6}
 @media(max-width:650px){.codeSection{padding:15px}.codeSection h3{font-size:17px}.codeSection pre{font-size:11px;padding:13px}}
+
+/* Module learning hierarchy and interactive practice */
+.levelHeader{grid-column:1 / -1;border-bottom:1px solid rgba(186,144,255,.22);padding:17px 5px 9px;margin:5px 0 2px;display:flex;flex-direction:column;gap:3px}
+.levelHeader>span{font-weight:850;font-size:11px;letter-spacing:.08em;color:#c7a0ff;text-transform:uppercase}
+.levelHeader>small{font-size:11px;color:#a99dbf}
+.pythonToggle{margin:0 0 28px}
+.pythonToggle>button{border:1px solid #4ba7a1;border-radius:13px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:16px;width:100%;background:#183b3a;color:#c6fff6;font-weight:850!important;text-align:left}
+.pythonToggle>button:hover{background:#20504b}
+.challengeLabel{display:block;color:#dcfaee;font-size:13px;font-weight:750;margin:19px 0 9px;line-height:1.5}
+.challengeAnswer{display:block;width:100%;resize:vertical;min-height:112px;border:1px solid #82ad9e;border-radius:12px;background:#0f2723;color:#edfff7;padding:14px;font:14px/1.65 inherit;outline:none}
+.challengeAnswer:focus{border-color:#a2f3d5;box-shadow:0 0 0 3px #b3ffd822}
+.challengeAnswer::placeholder{color:#91b2aa}
+.challenge button:disabled{opacity:.46;cursor:not-allowed}
+.challengeHint{display:block;color:#9bcbba;font-size:11px;margin-top:11px;line-height:1.4}
+.selfRating{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.selfRating button{font-size:12px!important;margin:0!important;padding:9px 12px!important;background:#1e5847!important}
+.selfRating button[aria-pressed="true"]{border-color:#d3ffea!important;background:#327e66!important}
+.selfNotice{margin:12px 0 0!important;padding:9px 12px;border-radius:9px;background:#123d2e;color:#d5ffee!important;font-size:12px!important}
+@media(max-width:650px){
+ .root .hero{padding:15px 15px 13px;border-radius:18px}
+ .root .heroMain{margin:10px 0 0}
+ .root .heroCopy{gap:10px}
+ .root .heroIcon{width:39px;height:39px;font-size:21px;border-radius:12px}
+ .root .hero h1{font-size:23px;line-height:1.15}
+ .root .description{font-size:11px;line-height:1.45;margin:4px 0 0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+ .courseNavigation{font-size:11px}
+ .courseStats{gap:5px;margin:10px 0}
+ .courseStats span{padding:5px 8px;font-size:10px}
+ .courseFooter{flex-direction:row;gap:9px;align-items:center}
+ .courseProgress{max-width:none;min-width:0;flex:1}
+ .progressText{font-size:10px;gap:3px;margin-bottom:6px}
+ .progressBar{height:7px}
+ .courseFooter .bookletButton{width:auto;white-space:nowrap;font-size:11px!important;padding:9px 11px;margin:0}
+ .root .tabBar{margin:12px 0 10px}
+ .root .tabBar button{padding:11px 9px;font-size:11px!important}
+ .chaptersToggle{margin-bottom:10px;padding:10px 12px;font-size:12px!important}
+ .levelHeader{padding-top:12px}
+ .challengeAnswer{font-size:13px}
+}
