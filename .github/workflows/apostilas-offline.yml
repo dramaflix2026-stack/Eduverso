@@ -1,0 +1,40 @@
+name: Apostilas editoriais (sem API)
+
+on:
+  pull_request:
+    paths:
+      - "app/booklet-offline.ts"
+      - "app/creation-center.tsx"
+      - "app/lib/lesson-pdf.ts"
+      - "scripts/test-apostilas-offline.cjs"
+      - ".github/workflows/apostilas-offline.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  apostilas:
+    name: Build + PDF de Climas
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+      - name: Test editorial motor and render real PDF
+        run: node scripts/test-apostilas-offline.cjs
+      - name: TypeScript + Next.js production build
+        run: npm run build
+      - name: Save actual PDF for manual review
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: eduverso-climas-pdf-sem-ia
+          path: test-artifacts/climas-sem-ia-5-capitulos.pdf
+          if-no-files-found: ignore
