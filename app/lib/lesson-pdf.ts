@@ -202,7 +202,8 @@ export async function downloadStudyPdf(request:PdfDocumentRequest):Promise<void>
   for(const paragraph of section.paragraphs){
    textBlock(paragraph,bodySize,{x:contentX,width:contentWidth,leading:lineH,after:pAfter,color:ink});
   }
-  y-=isPanel?13:8;
+  // Espaço visual real entre cartões e capítulo seguinte; evita número roxo colado/por cima da caixa.
+  y-=isPanel?27:8;
  }
  if(request.note){
   ensure(105);
