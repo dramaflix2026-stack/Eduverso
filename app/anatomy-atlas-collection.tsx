@@ -125,13 +125,13 @@ function AtlasStudy({view}:{view:AtlasView}){
   </div>
   {mode==="desafio"&&!completed&&target&&<div className={styles.question} role="status">
    <small>QUESTÃO {q+1} DE {items.length}</small><strong>{localizedMode?"Qual estrutura corresponde à descrição?":"Encontre: "+target.name}</strong>
-   <p>{localizedMode?target.description:skullMode?"Toque diretamente na região óssea pedida, sem usar marcadores.":"Toque no ponto numerado que corresponde à estrutura solicitada."}</p>
+   <p>{localizedMode?target.description:skullMode?"Toque no marcador correspondente à estrutura solicitada.":"Toque no ponto numerado que corresponde à estrutura solicitada."}</p>
    <div className={styles.progress} role="progressbar" aria-label="Progresso do desafio" aria-valuemin={0} aria-valuemax={items.length} aria-valuenow={q}><span style={{width:(q/items.length*100)+"%"}}/></div>
   </div>}
   {mode==="flashcards"&&flash&&<div className={styles.question}>
    <small>CARTÃO {f+1} DE {items.length}</small>
    <strong>{localizedMode?"Identifique a estrutura descrita:":"Que estrutura está marcada em amarelo?"}</strong>
-   <p>{localizedMode?flash.description:skullMode?"Observe o osso colorido em amarelo e escreva seu nome antes de revelar a resposta.":"Observe a imagem e escreva o nome sem consultar a resposta."}</p>
+   <p>{localizedMode?flash.description:skullMode?"Observe o marcador amarelo e digite o nome da estrutura antes de revelar a resposta.":"Observe a imagem e escreva o nome sem consultar a resposta."}</p>
   </div>}
   <div className={styles.studyColumns}>
    <figure className={styles.figure}>
@@ -162,7 +162,7 @@ function AtlasStudy({view}:{view:AtlasView}){
          onClick={()=>clickPoint(b)}>{i+1}</button>;
       })}
      </div>}
-    <figcaption>{skullMode?"Crânio vetorial original do Eduverso · toque diretamente nas regiões coloridas.":listMode?
+    <figcaption>{skullMode?"Ilustração anatômica com marcadores interativos · selecione os pontos para estudar.":listMode?
       "Ilustração anatômica detalhada · consulte as estruturas abaixo com nomenclatura em português.":
       "Ilustração anatômica detalhada · toque nos marcadores para consultar os nomes em português."}
     </figcaption>
@@ -185,11 +185,11 @@ function AtlasStudy({view}:{view:AtlasView}){
      {selected?<><small>{selected.group} · GUIA ANATÔMICO</small><h4>{selected.name}</h4>
        {studySections(selected,view).map(block=><div className={styles.studySection} key={block.title}><strong>{block.title}</strong><p>{block.text}</p></div>)}
        <div className={styles.reviewPrompt}><strong>Pergunta de revisão</strong><p>{reviewPrompt(selected)}</p></div>
-      </>:<><h4>{localizedMode?"Escolha uma estrutura":skullMode?"Toque em um osso":"Selecione um ponto"}</h4><p>{localizedMode?"Toque em uma das estruturas em português para estudar o que é, a função, a aplicação clínica e revisar o assunto.":skullMode?"Toque diretamente em uma região colorida do crânio. O nome, a função, a relação clínica e uma pergunta de revisão aparecerão aqui.":"Toque nos marcadores numerados para explorar cada estrutura, entender sua função e conhecer uma correlação clínica."}</p></>}
+      </>:<><h4>{localizedMode?"Escolha uma estrutura":skullMode?"Selecione um ponto":"Selecione um ponto"}</h4><p>{localizedMode?"Toque em uma das estruturas em português para estudar o que é, a função, a aplicação clínica e revisar o assunto.":skullMode?"Toque nos pontos numerados da imagem para abrir o nome, a função e a explicação clínica da estrutura.":"Toque nos marcadores numerados para explorar cada estrutura, entender sua função e conhecer uma correlação clínica."}</p></>}
      <button type="button" className={styles.primary} onClick={()=>selectMode("desafio")}>Praticar identificação →</button>
     </article>}
     {mode==="desafio"&&<article className={styles.detailCard}>
-     {!completed?<>{answer===null?<p>{localizedMode?"Escolha uma das alternativas para conferir a resposta.":skullMode?"Toque no osso solicitado diretamente na figura para conferir sua resposta.":"Escolha um marcador na ilustração para conferir a resposta."}</p>:
+     {!completed?<>{answer===null?<p>{localizedMode?"Escolha uma das alternativas para conferir a resposta.":skullMode?"Selecione o ponto correspondente à estrutura solicitada para conferir sua resposta.":"Escolha um marcador na ilustração para conferir a resposta."}</p>:
        <div className={styles.feedback} role="status">
         <strong>{answer===target.id?"✓ Resposta correta!":"↻ Resposta diferente da esperada"}</strong>
         <p><b>{target.name}</b> — {target.description}</p>
@@ -206,7 +206,7 @@ function AtlasStudy({view}:{view:AtlasView}){
      {!submitted?<div className={styles.flashFront}>
        <span className={styles.flashQuestionIcon} aria-hidden="true">?</span>
        <h4>Você consegue identificar a estrutura?</h4>
-       <p>{localizedMode?flash.description:skullMode?"Observe a região amarela do crânio e tente lembrar o nome do osso.":"Observe o marcador amarelo e recorde a estrutura destacada."}</p>
+       <p>{localizedMode?flash.description:skullMode?"Observe o ponto amarelo e tente lembrar o nome da estrutura.":"Observe o marcador amarelo e recorde a estrutura destacada."}</p>
        <form className={styles.answerForm} onSubmit={e=>{e.preventDefault();submitFlash();}}>
         <label htmlFor={"atlas-answer-"+view.id}>Sua resposta (opcional)</label>
         <input id={"atlas-answer-"+view.id} value={typed} onChange={e=>setTyped(e.target.value)}
@@ -230,7 +230,7 @@ function AtlasStudy({view}:{view:AtlasView}){
     </article>}
    </div>
   </div>
-  <p className={styles.credit}>{view.credit}. <a href={view.source} target="_blank" rel="noopener noreferrer">Consultar a fonte da imagem</a>{view.credit.includes("CC BY 4.0")&&<> · <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">Licença CC BY 4.0</a></>}{skullMode&&<> · <a href="https://creativecommons.org/licenses/by-sa/2.1/jp/deed.en" target="_blank" rel="noopener noreferrer">Licença CC BY-SA 2.1 JP</a></>}. Os nomes anatômicos, as legendas interativas e as explicações do Eduverso estão em português. Algumas imagens de referência preservadas podem conter legendas impressas em inglês. Material didático introdutório; não substitui formação ou prática supervisionada. Progresso salvo neste navegador.</p>
+  <p className={styles.credit}>{view.credit}. <a href={view.source} target="_blank" rel="noopener noreferrer">Consultar a fonte da imagem</a>{view.credit.includes("CC BY 4.0")&&<> · <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">Licença CC BY 4.0</a></>}{view.credit.includes("CC BY-SA 2.1 JP")&&<> · <a href="https://creativecommons.org/licenses/by-sa/2.1/jp/deed.en" target="_blank" rel="noopener noreferrer">Licença CC BY-SA 2.1 JP</a></>}. Os nomes anatômicos, as legendas interativas e as explicações do Eduverso estão em português. Algumas imagens de referência preservadas podem conter legendas impressas em inglês. Material didático introdutório; não substitui formação ou prática supervisionada. Progresso salvo neste navegador.</p>
  </div>;
 }
 type AtlasSelection="anterior"|AtlasView["id"]|null;
