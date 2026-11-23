@@ -1,6 +1,7 @@
 "use client";
 import {useEffect,useMemo,useRef,useState} from "react";
-import {bones,imageUrl,sourceUrl,type Bone} from "./anatomy-atlas-data";
+import {bones,sourceUrl,type Bone} from "./anatomy-atlas-data";
+import AnatomySkeletonVector from "./anatomy-atlas-vector";
 import styles from "./anatomy-atlas.module.css";
 import studyStyles from "./anatomy-atlas-collection.module.css";
 import {studySections,studySummary,reviewPrompt} from "./anatomy-atlas-flash-content";
@@ -50,7 +51,6 @@ export default function AnatomyAtlas(){
  const [picked,setPicked]=useState<string|null>(null);
  const [scores,setScores]=useState<RecordMap>({});
  const [loaded,setLoaded]=useState(false);
- const [imageOk,setImageOk]=useState(true);
  const [q,setQ]=useState(0);
  const [answer,setAnswer]=useState<string|null>(null);
  const [sessionHits,setSessionHits]=useState(0);
@@ -80,7 +80,7 @@ export default function AnatomyAtlas(){
  }
  function selectBone(b:Bone){
   if(mode==="explorar"){setPicked(b.id);return;}
-  if(mode!=="desafio"||answer!==null||completed||!imageOk)return;
+  if(mode!=="desafio"||answer!==null||completed)return;
   const correct=b.id===target.id;
   setAnswer(b.id);if(correct)setSessionHits(v=>v+1);
   const ms=Math.max(0,Math.min(600000,Date.now()-started.current));
@@ -125,46 +125,36 @@ export default function AnatomyAtlas(){
   </div>
   <div className={styles.panel}>
    <div className={styles.title}><div><h3>{mode==="explorar"?"Explore os ossos":mode==="desafio"?"Identifique na imagem":"Memorização ativa"}</h3>
-    <p>{mode==="explorar"?"Toque nos números para conhecer cada estrutura.":mode==="desafio"?"Encontre o osso solicitado tocando em um dos pontos.":"Observe o marcador amarelo, digite o nome do osso e confira seu resultado."}</p>
+    <p>{mode==="explorar"?"Toque nos ossos para conhecer cada estrutura.":mode==="desafio"?"Encontre o osso tocando diretamente na região correta.":"Observe o osso amarelo, digite seu nome e confira o resultado."}</p>
    </div><small>{mode==="explorar"?"12 estruturas":mode==="desafio"?(completed?"Concluído":q+1+" de 12"):f+1+" de 12"}</small></div>
    {mode==="desafio"&&<div className={styles.progress} role="progressbar" aria-label="Progresso do desafio" aria-valuemin={0} aria-valuemax={bones.length} aria-valuenow={completed?bones.length:q}><span style={{width:(100*(completed?bones.length:q)/bones.length)+"%"}}/></div>}
-   {mode==="desafio"&&!completed&&<div className={styles.mobilePrompt}><small>QUESTÃO {q+1} DE {bones.length}</small><strong>Onde está {target.name}?</strong><p>Toque no número correspondente na imagem abaixo.</p></div>}
+   {mode==="desafio"&&!completed&&<div className={styles.mobilePrompt}><small>QUESTÃO {q+1} DE {bones.length}</small><strong>Onde está {target.name}?</strong><p>Toque diretamente no osso correspondente no desenho.</p></div>}
    {mode==="flashcards"&&<div className={styles.mobilePrompt}><small>FLASHCARD {f+1} DE {bones.length}</small><strong>Qual é o osso destacado em amarelo?</strong><p>Observe a imagem e depois escreva o nome no campo de resposta.</p></div>}
    <div className={styles.columns+" "+(mode==="explorar"?styles.exploreColumns:"")}>
     <div className={styles.imageArea}>
-     {imageOk?<div className={styles.diagram}>
-      <img src={imageUrl} width={500} height={1015} alt="Esqueleto humano em vista anterior e sem identificação de ossos" onError={()=>setImageOk(false)}/>
-      {bones.map((b,i)=>{
-       if(mode==="flashcards"&&flash.id!==b.id)return null;
-       const style={left:b.x+"%",top:b.y+"%"};
-       const hit=mode==="desafio"&&answer!==null&&b.id===target.id;
-       const fail=mode==="desafio"&&answer===b.id&&b.id!==target.id;
-       const selectedExplore=mode==="explorar"&&picked===b.id;
-       const cls=styles.dot+" "+(mode==="flashcards"?styles.flashDot:hit?styles.hit:fail?styles.fail:selectedExplore?styles.selectedDot:styles.normalDot);
-       return mode==="flashcards"?<span key={b.id} style={style} className={cls} aria-hidden="true">?</span>:
-        <button key={b.id} type="button" className={cls} style={style} aria-label={mode==="explorar"?"Mostrar "+b.name:"Ponto "+(i+1)}
-         aria-pressed={selectedExplore||Boolean(mode==="desafio"&&answer===b.id)} disabled={mode==="desafio"&&(answer!==null||completed)} onClick={()=>selectBone(b)}>{i+1}</button>;
-      })}
-     </div>:<div role="alert" className={styles.error}>Não foi possível carregar a imagem. Confira sua conexão ou <a href={sourceUrl} target="_blank" rel="noopener noreferrer">abra a imagem original</a>. O desafio fica indisponível sem a imagem.</div>}
+     <AnatomySkeletonVector mode={mode} selectedId={picked}
+      targetId={mode==="flashcards"?flash.id:mode==="desafio"?target.id:null}
+      answerId={mode==="desafio"?answer:null} disabled={mode==="desafio"&&(completed||answer!==null)}
+      onSelect={selectBone}/>
      <small>Vista anterior · representação didática</small>
     </div>
     <div className={styles.sidebar} ref={exploreDetailRef}>
      {mode==="explorar"&&<div className={styles.card}>
-      {selected?<><small>{selected.group} · GUIA DE ESTUDO</small><h4>{selected.name}</h4>{studySections(selected,anteriorView).map(section=><div className={studyStyles.studySection} key={section.title}><strong>{section.title}</strong><p>{section.text}</p></div>)}<div className={studyStyles.reviewPrompt}><strong>Pergunta de revisão</strong><p>{reviewPrompt(selected)}</p></div></>:<><h4>Selecione uma estrutura</h4><p>Toque em um ponto numerado para descobrir o nome e uma explicação sobre o osso.</p></>}
+      {selected?<><small>{selected.group} · GUIA DE ESTUDO</small><h4>{selected.name}</h4>{studySections(selected,anteriorView).map(section=><div className={studyStyles.studySection} key={section.title}><strong>{section.title}</strong><p>{section.text}</p></div>)}<div className={studyStyles.reviewPrompt}><strong>Pergunta de revisão</strong><p>{reviewPrompt(selected)}</p></div></>:<><h4>Selecione uma estrutura</h4><p>Toque diretamente no osso para descobrir o nome e sua função.</p></>}
       <button type="button" className={styles.primary} onClick={()=>show("desafio")}>Praticar identificação →</button>
      </div>}
      {mode==="desafio"&&<div className={styles.card}>
       {!completed?<>{answer!==null?<div className={styles.feedback} role="status">
         <strong>{answer===target.id?"✓ Correto!":"↻ Ainda não. A resposta correta está destacada em verde."}</strong>
         <p><b>{target.name}:</b> {target.description}</p>
-       </div>:<p className={styles.actionHint}>Selecione um dos pontos do esqueleto para liberar a próxima estrutura.</p>}
+       </div>:<p className={styles.actionHint}>Selecione uma região óssea no desenho para continuar.</p>}
        <button type="button" className={styles.primary} disabled={answer===null} onClick={nextQuestion}>{q===bones.length-1?"Ver resultado":"Próxima estrutura →"}</button>
       </>:<><h4>Rodada concluída!</h4><p>Você acertou {sessionHits} de {bones.length} identificações nesta rodada.</p>
        <button type="button" className={styles.primary} onClick={()=>show("desafio")}>Refazer desafio</button><button type="button" className={styles.secondary} onClick={()=>show("flashcards")}>Revisar flashcards</button></>}
      </div>}
      {mode==="flashcards"&&<div className={styles.card+" "+styles.flashCard}>
       <small>{flash.group} · cartão {f+1} de {bones.length}</small>
-      {!submitted?<><h4>Que osso está destacado?</h4><p>Observe o marcador amarelo e tente lembrar a estrutura.</p>
+      {!submitted?<><h4>Que osso está destacado?</h4><p>Observe a região em amarelo e tente lembrar o nome.</p>
        <form className={styles.answerForm} onSubmit={e=>{e.preventDefault();if(typed.trim())checkFlash();else revealFlash();}}>
         <label htmlFor="atlas-typed-answer">Nome anatômico (opcional)</label>
         <input id="atlas-typed-answer" autoComplete="off" autoCapitalize="sentences" spellCheck={false} maxLength={80}
@@ -189,6 +179,6 @@ export default function AnatomyAtlas(){
     </div>
    </div>
   </div>
-  <p className={styles.foot}>Progresso salvo apenas neste navegador e separado do histórico de aulas. Ilustração em domínio público: Mariana Ruiz Villarreal (LadyofHats), <a href={sourceUrl} target="_blank" rel="noopener noreferrer">Wikimedia Commons</a>. Conteúdo introdutório, não substitui atlas especializado ou aulas práticas.</p>
+  <p className={styles.foot}>Progresso salvo apenas neste navegador e separado do histórico de aulas. Arte vetorial didática original do Eduverso, com formas simplificadas. Referência adicional de Mariana Ruiz Villarreal (domínio público) no <a href={sourceUrl} target="_blank" rel="noopener noreferrer">Wikimedia Commons</a>. Não substitui atlas clínico nem ensino prático supervisionado.</p>
  </section>;
 }
