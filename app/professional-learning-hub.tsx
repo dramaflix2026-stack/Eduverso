@@ -1,31 +1,34 @@
 "use client";
-import {useEffect,useMemo,useState} from "react";
+import {Fragment,useEffect,useMemo,useState} from "react";
 import {getProfessionalTrack,professionalTracks} from "./learning-professions";
 import {getProfessionalDepth} from "./professional-depth";
 import {getProfessionalCodeExample} from "./professional-code-examples";
+import {useProfessionalProgress} from "./professional-progress-client";
+import ProfessionalPythonLab from "./professional-python-lab";
 import styles from "./professional-learning-hub.module.css";
 
-type Props={trackId:string;onSelectTrack:(id:string)=>void;onOpenBooklet:(id:string)=>void};
+type Props={trackId:string;userId:string|null;onSelectTrack:(id:string)=>void;onOpenBooklet:(id:string)=>void};
 type Tab="aulas"|"revisao";
-const storageKey=(id:string)=>"eduverso:profissionais:concluidas:v1:"+id;
-
-function readProgress(id:string,max:number):number[]{
- try{
-  const parsed:unknown=JSON.parse(localStorage.getItem(storageKey(id))||"[]");
-  return Array.isArray(parsed)?[...new Set(parsed.filter((i):i is number=>Number.isInteger(i)&&i>=0&&i<max))].sort((a,b)=>a-b):[];
- }catch{return [];}
+function chapterLevel(index:number){
+ if(index<3)return {name:"Fundamentos",step:1,description:"Conceitos essenciais"};
+ if(index<5)return {name:"Prática aplicada",step:2,description:"Exemplos e exercícios"};
+ return {name:"Integração",step:3,description:"Aplicações profissionais"};
 }
+
 function orderFor(index:number,offset:number):number[]{
  const base=[0,1,2];const shift=(index+offset)%base.length;
  return [...base.slice(shift),...base.slice(0,shift)];
 }
-export default function ProfessionalLearningHub({trackId,onSelectTrack,onOpenBooklet}:Props){
+export default function ProfessionalLearningHub({trackId,userId,onSelectTrack,onOpenBooklet}:Props){
  const track=getProfessionalTrack(trackId)??professionalTracks[0];
  const [tab,setTab]=useState<Tab>("aulas");
  const [lessonIndex,setLessonIndex]=useState(0);
  const [choice,setChoice]=useState<number|null>(null);
  const [checked,setChecked]=useState(false);
- const [completed,setCompleted]=useState<number[]>([]);
+ const {completed,syncState,complete}=useProfessionalProgress(trackId,track.lessons.length,userId);
+ const [challengeAnswer,setChallengeAnswer]=useState("");
+ const [practiceFeedback,setPracticeFeedback]=useState<"none"|"understood"|"review">("none");
+ const [playgroundOpen,setPlaygroundOpen]=useState(false);
  const [reviewAnswers,setReviewAnswers]=useState<Record<number,number>>({});
  const [reviewChecked,setReviewChecked]=useState(false);
  const [chaptersOpen,setChaptersOpen]=useState(false);
@@ -34,9 +37,9 @@ export default function ProfessionalLearningHub({trackId,onSelectTrack,onOpenBoo
  const [secondChecked,setSecondChecked]=useState(false);
 
  useEffect(()=>{
-  setCompleted(readProgress(track.id,track.lessons.length));
   setLessonIndex(0);setTab("aulas");setChoice(null);setChecked(false);
   setReviewAnswers({});setReviewChecked(false);setChaptersOpen(false);setPracticeOpen(false);setSecondChoice(null);setSecondChecked(false);
+  setChallengeAnswer("");setPracticeFeedback("none");setPlaygroundOpen(false);
  },[track.id,track.lessons.length]);
 
  const lesson=track.lessons[Math.min(lessonIndex,track.lessons.length-1)];
@@ -49,17 +52,10 @@ export default function ProfessionalLearningHub({trackId,onSelectTrack,onOpenBoo
  const reviewScore=reviewItems.reduce((total,item,i)=>total+(reviewAnswers[i]===item.correct?1:0),0);
 
  function openLesson(index:number){
-  setTab("aulas");setLessonIndex(index);setChoice(null);setChecked(false);setSecondChoice(null);setSecondChecked(false);setPracticeOpen(false);setChaptersOpen(false);
+  setTab("aulas");setLessonIndex(index);setChoice(null);setChecked(false);setSecondChoice(null);setSecondChecked(false);setPracticeOpen(false);setChaptersOpen(false);setChallengeAnswer("");setPracticeFeedback("none");setPlaygroundOpen(false);
   if(typeof window!=="undefined")requestAnimationFrame(()=>document.getElementById("eduverso-professional-lesson")?.scrollIntoView({behavior:"smooth",block:"start"}));
  }
- function markCompleted(index:number){
-  setCompleted(current=>{
-   if(current.includes(index))return current;
-   const updated=[...current,index].sort((a,b)=>a-b);
-   try{localStorage.setItem(storageKey(track.id),JSON.stringify(updated));}catch{/* private browsing */}
-   return updated;
-  });
- }
+ function markCompleted(index:number){complete(index);}
  function verify(){
   if(choice===null||checked)return;
   setChecked(true);
@@ -90,8 +86,8 @@ export default function ProfessionalLearningHub({trackId,onSelectTrack,onOpenBoo
     <div className={styles.heroIcon}>{track.icon}</div>
     <div><h1>{track.name}<span>.</span></h1><p className={styles.description}>{track.description}</p></div>
    </div></div>
-   <div className={styles.courseStats}><span>📚 {track.lessons.length} aulas</span><span>✍️ {track.lessons.length*3} atividades de estudo</span><span>✓ {completed.length} concluídas</span></div>
-   <div className={styles.courseFooter}><div className={styles.courseProgress}><div className={styles.progressText}><span>Minha evolução</span><b>{progress}%</b></div><div className={styles.progressBar} role="progressbar" aria-valuenow={progress} aria-valuemin={0} aria-valuemax={100} aria-label="Aulas concluídas"><span style={{width:progress+"%"}}/></div></div>
+   <div className={styles.courseStats}><span>📚 {track.lessons.length} aulas</span><span>✍️ {track.lessons.length*3} atividades</span><span>✓ {completed.length} concluídas</span></div>
+   <div className={styles.courseFooter}><div className={styles.courseProgress}><div className={styles.progressText}><span>Minha evolução · {syncState==="synced"?"salva na conta":syncState==="syncing"?"sincronizando":syncState==="offline"?"salva no dispositivo":"neste navegador"}</span><b>{progress}%</b></div><div className={styles.progressBar} role="progressbar" aria-valuenow={progress} aria-valuemin={0} aria-valuemax={100} aria-label="Aulas concluídas"><span style={{width:progress+"%"}}/></div></div>
    <button type="button" className={styles.bookletButton} onClick={()=>onOpenBooklet(track.id)}>↓ Apostila PDF</button></div>
   </header>
   <div className={styles.tabBar} role="group" aria-label="Modo de aprendizado">
@@ -112,7 +108,7 @@ export default function ProfessionalLearningHub({trackId,onSelectTrack,onOpenBoo
    </aside>
 
    <article id="eduverso-professional-lesson" className={styles.lessonCard}>
-    <div className={styles.lessonTop}><span>CAPÍTULO {String(lessonIndex+1).padStart(2,"0")} DE {String(track.lessons.length).padStart(2,"0")}</span><span>{completed.includes(lessonIndex)?"✓ Concluído":"Leitura + atividade"}</span></div>
+    <div className={styles.lessonTop}><span>CAPÍTULO {String(lessonIndex+1).padStart(2,"0")} DE {String(track.lessons.length).padStart(2,"0")} · NÍVEL {chapterLevel(lessonIndex).step} — {chapterLevel(lessonIndex).name}</span><span>{completed.includes(lessonIndex)?"✓ Concluído":"Leitura + atividade"}</span></div>
     <h2>{lesson.title}</h2>
     <section className={styles.reading}><h3>Entenda o conteúdo</h3><p>{lesson.explain||lesson.body}</p></section>
     {depth&&<section className={styles.deepSection}><span className={styles.deepKicker}>OBJETIVO DE APRENDIZAGEM</span><h3>{depth.objective}</h3><p>{depth.explanation}</p></section>}
@@ -133,7 +129,7 @@ export default function ProfessionalLearningHub({trackId,onSelectTrack,onOpenBoo
        <b>{["A","B","C"][displayIndex]}</b><span>{lesson.options[answerIndex]}</span>
       </button>)}</div>
      {!checked?<button className={styles.verifyButton} type="button" disabled={choice===null} onClick={verify}>Conferir resposta</button>:
-      <div className={styles.feedback} role="status"><strong>{choice===lesson.correct?"✓ Resposta correta! Capítulo concluído.":"Revise a explicação e tente novamente."}</strong>
+      <div className={styles.feedback} role="status"><strong>{choice===lesson.correct?"✓ Primeira resposta correta! Continue para a próxima questão.":"Revise a explicação e tente novamente."}</strong>
        <p>{lesson.feedback||lesson.explain}</p>
        {choice!==lesson.correct&&<button type="button" onClick={()=>{setChoice(null);setChecked(false)}}>↻ Tentar novamente</button>}
       </div>}
