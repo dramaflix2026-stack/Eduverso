@@ -14,7 +14,7 @@ function Region({id,mode,selectedId,targetId,answerId,disabled,spots,onSelect,ch
  const isWrong=mode==="desafio"&&answerId!==null&&answerId===id&&answerId!==targetId;
  const cls=[styles.region,id===reveal?(mode==="flashcards"?styles.flash:mode==="desafio"?styles.correct:styles.active):"",isWrong?styles.wrong:"",reveal&&id!==reveal&&!isWrong?styles.dim:""].filter(Boolean).join(" ");
  const inactive=disabled||mode==="flashcards";
- function select(){if(!inactive)onSelect(spot);}
+ function select(){if(!inactive&&spot)onSelect(spot);}
  return <g className={cls} role="button" aria-disabled={inactive} aria-label={mode==="explorar"?spot.name:"Selecionar região anatômica"} tabIndex={inactive?-1:0}
   onClick={select} onKeyDown={e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();select();}}}>
   <title>{mode==="explorar"?spot.name:"Região anatômica"}</title>{children}
