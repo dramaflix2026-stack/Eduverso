@@ -18,6 +18,7 @@
 .formGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px}
 .formGrid label{display:grid;gap:10px;color:#d3c9e3;font-weight:700;font-size:13px}
 .formGrid select{padding:13px 12px;background:#2b223c;border:1px solid #6e5786;border-radius:12px;color:#f8f4ff;width:100%;min-width:0;outline-offset:3px}
+.formGrid input{padding:13px 12px;background:#2b223c;border:1px solid #6e5786;border-radius:12px;color:#f8f4ff;width:100%;min-width:0;outline-offset:3px;font:inherit}.formGrid input::placeholder{color:#aa9abf}
 .actions{display:flex;flex-wrap:wrap;gap:12px}
 .primary,.secondary{padding:14px 19px;border:1px solid #9e80ed;border-radius:12px;font-weight:800;line-height:1.35}
 .primary{background:#8059d9;color:white}.primary:hover{background:#936bed}
