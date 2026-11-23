@@ -9,6 +9,7 @@ import {upperLimbViews,upperLimbViewIsValid} from "./anatomy-upper-limb-views";
 import {lowerLimbViews,lowerLimbViewIsValid} from "./anatomy-lower-limb-views";
 import {pelvisViews,pelvisViewIsValid} from "./anatomy-pelvis-views";
 import {footViews,footViewIsValid} from "./anatomy-foot-views";
+import {anteriorViews,anteriorViewIsValid} from "./anatomy-anterior-views";
 import {bones,imageUrl} from "./anatomy-atlas-data";
 import {atlasViews,type AtlasSpot,type AtlasView} from "./anatomy-atlas-collection-data";
 import {expandedAtlasViews} from "./anatomy-atlas-extension";
@@ -65,7 +66,7 @@ function AtlasStudy({view}:{view:AtlasView}){
  const detail=useRef<HTMLDivElement>(null);
  const items=view.spots;
  const listMode=view.spotMode==="list";
- const skullMode=skullViewIsValid(view.id)||spineViewIsValid(view.id)||thoraxViewIsValid(view.id)||upperLimbViewIsValid(view.id)||lowerLimbViewIsValid(view.id)||pelvisViewIsValid(view.id)||footViewIsValid(view.id);
+ const skullMode=skullViewIsValid(view.id)||spineViewIsValid(view.id)||thoraxViewIsValid(view.id)||upperLimbViewIsValid(view.id)||lowerLimbViewIsValid(view.id)||pelvisViewIsValid(view.id)||footViewIsValid(view.id)||anteriorViewIsValid(view.id);
  const localizedMode=listMode;
  useEffect(()=>{setScores(restore(view.id));setReady(true);},[view.id]);
  useEffect(()=>{if(ready)try{localStorage.setItem(keyFor(view.id),JSON.stringify(scores));}catch{}},[ready,scores,view.id]);
@@ -150,7 +151,7 @@ function AtlasStudy({view}:{view:AtlasView}){
       targetId={mode==="flashcards"?flash?.id??null:mode==="desafio"?target?.id??null:null}
       answerId={mode==="desafio"?answer:null}
       disabled={mode==="desafio"&&(completed||answer!==null)} onSelect={clickPoint}
-      src={view.image} alt={view.alt} heading={view.short} subject={spineViewIsValid(view.id)?"Coluna":thoraxViewIsValid(view.id)?"Tórax":upperLimbViewIsValid(view.id)?"Membro Superior":lowerLimbViewIsValid(view.id)?"Membro Inferior":pelvisViewIsValid(view.id)?"Pelve":footViewIsValid(view.id)?"Pé":"Crânio"} ratio={view.ratio} imageCrop={view.imageCrop}/>:
+      src={view.image} alt={view.alt} heading={view.short} subject={spineViewIsValid(view.id)?"Coluna":thoraxViewIsValid(view.id)?"Tórax":upperLimbViewIsValid(view.id)?"Membro Superior":lowerLimbViewIsValid(view.id)?"Membro Inferior":pelvisViewIsValid(view.id)?"Pelve":footViewIsValid(view.id)?"Pé":anteriorViewIsValid(view.id)?"Vista anterior":"Crânio"} ratio={view.ratio} imageCrop={view.imageCrop}/>:
       imageFailed?<div className={styles.failure} role="alert">
        Não foi possível carregar a ilustração anatômica. <a href={view.source} target="_blank" rel="noreferrer noopener">Abrir a imagem original</a>.
       </div>
@@ -285,12 +286,13 @@ const groupCatalog:{id:Category;title:string;description:string;icon:string;cove
   cover:expandedAtlasViews.find(v=>v.id==="olho")?.image||"",
   ids:["endocrino","olho","ouvido","pele","linfatico"]}
 ];
-const allViews:AtlasView[]=[...atlasViews,...expandedAtlasViews,...skullViews,...spineViews,...thoraxViews,...upperLimbViews,...lowerLimbViews,...pelvisViews,...footViews];
-const groupParentIds=["cranio","coluna","torax","membro-superior","membro-inferior","pelve","pe"];
-const fullCount=bones.length+allViews.filter(v=>!groupParentIds.includes(v.id)).reduce((n,v)=>n+v.spots.length,0);
-const interactiveAtlasCount=1+allViews.filter(v=>!groupParentIds.includes(v.id)).length; // vista anterior + atlas regionais, sem contar cards que apenas abrem subcards
+const allViews:AtlasView[]=[...atlasViews,...expandedAtlasViews,...skullViews,...spineViews,...thoraxViews,...upperLimbViews,...lowerLimbViews,...pelvisViews,...footViews,...anteriorViews];
+const groupParentIds=["anterior","cranio","coluna","torax","membro-superior","membro-inferior","pelve","pe"];
+// O corpo completo usa o componente antigo com 12 ossos; não duplicar essas estruturas nas métricas.
+const fullCount=bones.length+allViews.filter(v=>!groupParentIds.includes(v.id)&&v.id!=="anterior-corpo").reduce((n,v)=>n+v.spots.length,0);
+const interactiveAtlasCount=allViews.filter(v=>!groupParentIds.includes(v.id)).length;
 function categoryOf(id:AtlasSelection):Category|null{
- if(skullViewIsValid(id)||spineViewIsValid(id)||thoraxViewIsValid(id)||upperLimbViewIsValid(id)||lowerLimbViewIsValid(id)||pelvisViewIsValid(id)||footViewIsValid(id))return "ossos";
+ if(skullViewIsValid(id)||spineViewIsValid(id)||thoraxViewIsValid(id)||upperLimbViewIsValid(id)||lowerLimbViewIsValid(id)||pelvisViewIsValid(id)||footViewIsValid(id)||anteriorViewIsValid(id))return "ossos";
  return groupCatalog.find(g=>id!==null&&g.ids.includes(id))?.id??null;
 }
 function fromLocation():{view:AtlasSelection;category:Category|null}{
@@ -325,8 +327,8 @@ export default function AnatomyAtlasCollection(){
  const searchResults=term.trim()?allViews.filter(v=>(v.short+" "+v.title+" "+v.subtitle+" "+v.spots.map(p=>p.name).join(" ")).normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().includes(term.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().trim())):[];
  const shown=term.trim()?searchResults:allViews.filter(v=>visibleIds.includes(v.id));
  const active=allViews.find(v=>v.id===selected);
- const subGroup=selected==="cranio"?{title:"Crânio",views:skullViews}:selected==="coluna"?{title:"Coluna",views:spineViews}:selected==="torax"?{title:"Tórax",views:thoraxViews}:selected==="membro-superior"?{title:"Membro Superior",views:upperLimbViews}:selected==="membro-inferior"?{title:"Membro Inferior",views:lowerLimbViews}:selected==="pelve"?{title:"Pelve",views:pelvisViews}:selected==="pe"?{title:"Pé",views:footViews}:null;
- const subParent=skullViewIsValid(selected)?"cranio":spineViewIsValid(selected)?"coluna":thoraxViewIsValid(selected)?"torax":upperLimbViewIsValid(selected)?"membro-superior":lowerLimbViewIsValid(selected)?"membro-inferior":pelvisViewIsValid(selected)?"pelve":footViewIsValid(selected)?"pe":null;
+ const subGroup=selected==="anterior"?{title:"Vista anterior",views:anteriorViews}:selected==="cranio"?{title:"Crânio",views:skullViews}:selected==="coluna"?{title:"Coluna",views:spineViews}:selected==="torax"?{title:"Tórax",views:thoraxViews}:selected==="membro-superior"?{title:"Membro Superior",views:upperLimbViews}:selected==="membro-inferior"?{title:"Membro Inferior",views:lowerLimbViews}:selected==="pelve"?{title:"Pelve",views:pelvisViews}:selected==="pe"?{title:"Pé",views:footViews}:null;
+ const subParent=anteriorViewIsValid(selected)?"anterior":skullViewIsValid(selected)?"cranio":spineViewIsValid(selected)?"coluna":thoraxViewIsValid(selected)?"torax":upperLimbViewIsValid(selected)?"membro-superior":lowerLimbViewIsValid(selected)?"membro-inferior":pelvisViewIsValid(selected)?"pelve":footViewIsValid(selected)?"pe":null;
  return <section className={styles.collection} aria-label="Biblioteca de atlas de anatomia">
   <header className={styles.collectionHero}>
    <span>✦ EDUVERSO · ATLAS DE ANATOMIA</span>
@@ -334,7 +336,7 @@ export default function AnatomyAtlasCollection(){
    <p>{subGroup?"Escolha uma das cinco imagens interativas de "+subGroup.title+". Cada vista tem estruturas, desafios e flashcards próprios.":selected?"Explore estruturas, funções e correlações clínicas por meio de imagens e atividades.":group?group.description:"Biblioteca de anatomia dividida em sistemas. Escolha uma categoria, explore seus atlas e estude com desafios ou flashcards."}</p>
    <div className={styles.heroStats}><span>{String(interactiveAtlasCount).padStart(2,"0")} atlas interativos</span><span>{fullCount} estruturas</span><span>{groupCatalog.length} segmentos</span><span>3 modos de estudo</span></div>
   </header>
-  {selected?<button type="button" className={styles.return} onClick={()=>subParent?navigate(subParent,"ossos"):openCategory(categoryOf(selected))}>{subParent?"← Voltar às 5 vistas de "+(subParent==="cranio"?"Crânio":subParent==="coluna"?"Coluna":subParent==="torax"?"Tórax":subParent==="membro-superior"?"Membro Superior":subParent==="membro-inferior"?"Membro Inferior":subParent==="pelve"?"Pelve":"Pé"):"← Voltar aos atlas de "+(groupCatalog.find(g=>g.id===categoryOf(selected))?.title||"anatomia")}</button>:category?<button type="button" className={styles.return} onClick={()=>openCategory(null)}>← Todos os sistemas anatômicos</button>:null}
+  {selected?<button type="button" className={styles.return} onClick={()=>subParent?navigate(subParent,"ossos"):openCategory(categoryOf(selected))}>{subParent?"← Voltar às 5 vistas de "+(subParent==="cranio"?"Crânio":subParent==="coluna"?"Coluna":subParent==="torax"?"Tórax":subParent==="membro-superior"?"Membro Superior":subParent==="membro-inferior"?"Membro Inferior":subParent==="pelve"?"Pelve":subParent==="pe"?"Pé":"Vista anterior"):"← Voltar aos atlas de "+(groupCatalog.find(g=>g.id===categoryOf(selected))?.title||"anatomia")}</button>:category?<button type="button" className={styles.return} onClick={()=>openCategory(null)}>← Todos os sistemas anatômicos</button>:null}
   {!selected&&<label className={styles.searchBox}><span aria-hidden="true">⌕</span><input type="search" value={term} onChange={e=>setTerm(e.target.value)} placeholder="Buscar atlas, região ou estrutura..." aria-label="Buscar no atlas de anatomia"/></label>}
   {!selected&&!category&&!term.trim()&&<div className={styles.segmentGrid}>
     {groupCatalog.map(g=><button key={g.id} type="button" className={styles.segmentCard} onClick={()=>openCategory(g.id)}>
@@ -347,7 +349,7 @@ export default function AnatomyAtlasCollection(){
    <div className={styles.cards}>
     {visibleIds.includes("anterior")&&!term.trim()&&<button type="button" className={styles.atlasCard} onClick={()=>openView("anterior")}>
       <span className={styles.cardMedia+" "+styles.scientificMedia}><img src={imageUrl} loading="lazy" alt="Ilustração colorida do esqueleto humano em vista anterior"/></span>
-      <span className={styles.cardInfo}><small>ATLAS INTERATIVO</small><strong>Vista anterior</strong><span>{bones.length} estruturas · exploração e revisão</span><em>Explorar atlas →</em></span>
+      <span className={styles.cardInfo}><small>5 VISTAS INTERATIVAS</small><strong>Vista anterior</strong><span>5 imagens internas · Explorar, Desafio e Flashcards</span><em>Ver as 5 vistas →</em></span>
      </button>}
     {shown.map(v=><button key={v.id} type="button" className={styles.atlasCard} onClick={()=>openView(v.id)}>
       <span className={styles.cardMedia+" "+styles.scientificMedia}>
@@ -378,7 +380,7 @@ export default function AnatomyAtlasCollection(){
    </div>
    <p className={styles.skullIndexNote}>Cinco imagens anatômicas com marcadores e perguntas próprios. Os pontos estão em fase de validação didática.</p>
   </>}
-  {selected==="anterior"&&<AnatomyAtlas/>}
-  {selected!=="anterior"&&!subGroup&&active&&<AtlasStudy key={active.id} view={active}/>}
+  {selected==="anterior-corpo"&&<AnatomyAtlas/>}
+  {selected!=="anterior-corpo"&&!subGroup&&active&&<AtlasStudy key={active.id} view={active}/>}
  </section>;
 }
