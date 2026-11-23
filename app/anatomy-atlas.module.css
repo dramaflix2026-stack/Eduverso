@@ -40,3 +40,6 @@
 .answerForm button{width:100%}
 .actionHint{color:#bdacd0;font-size:12px}
 @media(max-width:760px){.sidebar{order:initial}.exploreColumns .sidebar{order:-1}}
+
+/* The image is primary on phones; show the explanation after selecting a bone. */
+@media(max-width:760px){.exploreColumns .sidebar{order:initial}.imageArea{padding:7px}.imageArea>small{font-size:10px}}
