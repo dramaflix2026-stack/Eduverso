@@ -77,73 +77,141 @@ const geographyClimates:ReviewedChapter[]=[
  ],diagram:{title:"Etapas da leitura de um climograma",labels:["Eixos","Meses","Padrão sazonal","Interpretação"],caption:"Não representa uma série real de observações meteorológicas."}}
 ];
 
+
+/** Identificação dos blocos de aula, sem contar sumário, fontes ou respostas. */
 function validatedChapters(document:PdfDocumentRequest,titles:string[]):{missing:string[];reviewed:number}{
  const sections=document.sections;
- const starts=sections.map((section,index)=>({section,index})).filter(({section})=>section.kind==="chapter"&&
+ const end=sections.findIndex(section=>/^(Atividades de fixação|Caderno de exercícios|Gabarito|Referências|Leitura de referência)/i.test(section.heading));
+ const starts=sections.map((section,index)=>({section,index})).filter(({section,index})=>
+  (end<0||index<end)&&section.kind==="chapter"&&
   (/^\d{2}\s{2}/.test(section.heading)||/^Capítulo \d+\s*[-–]/.test(section.heading)));
- // Section titles in question/gabarito blocks must never count as content chapters.
- const theoryEnd=sections.findIndex(section=>/^(Atividades de fixação|Caderno de exercícios|Gabarito|Referências|Leitura de referência)/i.test(section.heading));
- const validStarts=starts.filter(x=>theoryEnd<0||x.index<theoryEnd);
  const missing:string[]=[];let reviewed=0;
  titles.forEach((title,index)=>{
-  const start=validStarts[index]?.index;
-  const next=validStarts[index+1]?.index??(theoryEnd>=0?theoryEnd:sections.length);
+  const start=starts[index]?.index;
+  const next=starts[index+1]?.index??(end>=0?end:sections.length);
   if(start===undefined){missing.push(title);return;}
-  const paragraphs=sections.slice(start,next).filter(s=>s.kind!=="summary").flatMap(s=>s.paragraphs);
-  const words=count(paragraphs.join(" "));
-  const hasExample=sections.slice(start,next).some(s=>s.kind==="example"||/exemplo|resolução|aplicação|prátic/i.test(s.heading));
-  if(words<150||!hasExample){missing.push(title);return;}
+  const body=sections.slice(start,next);
+  const text=body.filter(s=>s.kind!=="summary").flatMap(s=>s.paragraphs);
+  const words=count(text.join(" "));
+  const isApplied=body.some(s=>s.kind==="example"||/exemplo|resolução|aplicação|prátic/i.test(s.heading));
+  // Automatic criteria are structural, not factual or pedagogical certification.
+  if(words<200||!isApplied){missing.push(title);return;}
   reviewed++;
  });
  return {missing,reviewed};
 }
-export function createOfflineBooklet(args:{
- subject:string;topic:string;limit:number;lessons:LessonSource[];format:BookletFormat;professional?:ProfessionalTrack
+type Practice={question:string;answer:string};
+const biomePractice:Practice[]=[
+ {question:"Por que uma floresta de terra firme e uma floresta inundável podem fazer parte do mesmo bioma, apesar de apresentarem vegetação diferente?",
+  answer:"Ambas pertencem ao contexto ecológico amazônico, mas as condições locais de inundação, solo e disponibilidade de água variam e favorecem conjuntos vegetais distintos."},
+ {question:"Quais condições ajudam a explicar a presença de formações campestres, savânicas e florestais no Cerrado?",
+  answer:"A sazonalidade de chuvas, a umidade local, características dos solos, profundidade das raízes e dinâmica histórica de perturbações contribuem para o mosaico do Cerrado."},
+ {question:"Por que a perda das folhas na estação seca não significa necessariamente a morte de uma planta da Caatinga?",
+  answer:"A caducifolia reduz a perda de água durante a seca. Muitas plantas preservam estruturas vivas e retomam o crescimento com a disponibilidade de água."},
+ {question:"Como a fragmentação da Mata Atlântica pode alterar a conservação da biodiversidade?",
+  answer:"A separação de áreas de floresta pode dificultar o deslocamento de organismos e alterar condições nas bordas. Conectividade e recuperação de ambientes são relevantes."},
+ {question:"Compare um fator ecológico central para a organização das paisagens do Pantanal e do Pampa.",
+  answer:"No Pantanal, pulsos de cheias e secas afetam os habitats; no Pampa, formações campestres e condições climáticas e edáficas são centrais, sem excluir outros fatores."}
+];
+const climatePractice:Practice[]=[
+ {question:"Por que uma frente fria em um dia isolado não comprova mudança do clima de uma região?",
+  answer:"Uma frente fria descreve tempo atmosférico. Mudanças climáticas dependem de padrões avaliados em séries históricas longas, não de um evento único."},
+ {question:"Como duas cidades na mesma latitude podem apresentar temperaturas médias diferentes?",
+  answer:"Altitude, relevo, influência marítima, circulação atmosférica e condições locais podem produzir diferentes padrões térmicos mesmo na mesma latitude."},
+ {question:"Compare a formação de chuva convectiva e a influência do relevo sobre a precipitação.",
+  answer:"A convecção envolve ascensão de ar associada ao aquecimento; a chuva orográfica envolve subida de ar úmido ao encontrar barreiras topográficas. Ambos podem provocar condensação."},
+ {question:"Quais cuidados são necessários ao interpretar um mapa com os diferentes climas do Brasil?",
+  answer:"Verifique legenda e critérios de classificação, pois as categorias podem variar. Relacione os padrões à circulação, latitude, altitude, relevo e oceanos."},
+ {question:"Quais informações de um climograma permitem identificar sazonalidade de chuvas?",
+  answer:"Leia os eixos e unidades, o período de observação e a distribuição da precipitação pelos doze meses, identificando meses mais secos e chuvosos."}
+];
+function curatedBooklet(args:{
+ topic:string;limit:number;format:BookletFormat;chapters:ReviewedChapter[];
+ practice:Practice[];file:string;sourceLines:string[];
 }):OfflineBookletResult{
- const limit=Math.max(1,Math.min(20,Math.floor(args.limit)));
- const subject=normalize(args.subject),topic=normalize(args.topic);
- if((subject.includes("geografia")||subject==="geo")&&/bioma|vegetac/.test(topic)){
-  const selected=geographyBiomes.slice(0,limit);
-  const sections:PdfSection[]=selected.map((chapter,i)=>({
-   heading:String(i+1).padStart(2,"0")+"  "+chapter.title,kind:"chapter",
-   pageBreakBefore:i>0,paragraphs:chapter.paragraphs,diagram:chapter.diagram
-  }));
-  sections.push({heading:"Fontes para aprofundamento",kind:"standard",paragraphs:[
-   "IBGE — Biomas do Brasil: https://www.ibge.gov.br/geociencias/cartas-e-mapas/informacoes-ambientais/15842-biomas.html",
-   "IBGE Educa — Biomas brasileiros: https://educa.ibge.gov.br/jovens/conheca-o-brasil/territorio/18307-biomas-brasileiros.html",
-   "Esquemas visuais autorais elaborados para estudo; não são mapas, fotografias ou medições em escala."
-  ]});
-  return {document:{
-   title:"Apostila editorial — "+args.topic,subtitle:"Geografia · "+selected.length+" capítulos desenvolvidos · Sem IA",
-   fileName:"eduverso-biomas-editorial-sem-ia.pdf",coverPage:true,sections,
-   note:"Material editorial para estudo. Os diagramas são esquemáticos e não substituem imagens científicas. Revisar antes de uso em sala."
-  },reviewed:selected.length,requested:selected.length,missing:[],reason:"Acervo editorial específico disponível."};
+ const requested=args.limit,available=args.chapters.length;
+ if(requested>available){
+  return {document:null,reviewed:available,requested,missing:Array.from({length:requested-available},(_,i)=>
+   "Capítulo "+(available+i+1)+" ainda não desenvolvido"),
+   reason:"Este tema possui somente "+available+" capítulos aprofundados. Você solicitou "+
+    requested+". Para não entregar tópicos vazios ou repetidos, a geração foi bloqueada. Selecione 5 tópicos ou aguarde a ampliação do acervo."};
  }
- if(subject.includes("geografia")&&/clima|climat/.test(topic)){
-  const selected=geographyClimates.slice(0,limit);
-  const sections:PdfSection[]=selected.map((chapter,i)=>({
-   heading:String(i+1).padStart(2,"0")+"  "+chapter.title,kind:"chapter",
-   pageBreakBefore:i>0,paragraphs:chapter.paragraphs,diagram:chapter.diagram
+ const chapters=args.chapters.slice(0,requested);
+ const sections:PdfSection[]=chapters.map((chapter,i)=>({
+  heading:String(i+1).padStart(2,"0")+"  "+chapter.title,
+  kind:"chapter",
+  // Never force a new page when there is still room; avoid excessive blank space.
+  paragraphs:chapter.paragraphs,diagram:chapter.diagram
+ }));
+ if(args.format==="com-atividades"){
+  sections.push({heading:"Atividades de fixação",kind:"chapter",pageBreakBefore:true,
+   paragraphs:["Responda às questões depois de estudar os capítulos. São exercícios de interpretação, não questões oficiais de vestibulares."]});
+  args.practice.slice(0,chapters.length).forEach((practice,i)=>sections.push({
+   heading:"Atividade "+String(i+1).padStart(2,"0"),kind:"question",paragraphs:[practice.question]
   }));
-  sections.push({heading:"Fontes para estudo e verificação",kind:"standard",paragraphs:[
-   "INMET — Normais Climatológicas: https://portal.inmet.gov.br/servicos/normais-climatológicas",
-   "IBGE Educa — Tipos de clima no Brasil: https://educa.ibge.gov.br/professores/educa-atividades/17613-os-tipos-de-clima-no-brasil.html",
-   "Diagramas autorais ilustrativos, sem medições ou escalas."
-  ]});
-  return {document:{
-   title:"Apostila editorial — "+args.topic,subtitle:"Geografia · "+selected.length+" capítulos desenvolvidos · Sem IA",
-   fileName:"eduverso-climas-editorial-sem-ia.pdf",coverPage:true,sections,
-   note:"Material editorial para estudo e revisão. Confira os dados e as referências oficiais antes de uso em sala."
-  },reviewed:selected.length,requested:selected.length,missing:[],reason:"Acervo editorial específico disponível."};
+  sections.push({heading:"Gabarito orientativo",kind:"chapter",pageBreakBefore:true,
+   paragraphs:["Estas respostas são modelos de raciocínio. Outras formulações podem ser corretas quando bem justificadas."]});
+  args.practice.slice(0,chapters.length).forEach((practice,i)=>sections.push({
+   heading:"Atividade "+String(i+1).padStart(2,"0"),kind:"answer",paragraphs:[practice.answer]
+  }));
  }
- const lessons=args.lessons.slice(0,limit);
- if(!lessons.length)return {document:null,reviewed:0,requested:0,missing:[],reason:"Não há capítulos cadastrados para essa seleção."};
- const document=args.professional?makeProfessionalBooklet(args.professional,limit,args.format):
+ sections.push({heading:"Fontes para estudo e verificação",kind:"standard",paragraphs:args.sourceLines});
+ return {document:{
+  title:"Apostila editorial — "+args.topic,
+  subtitle:"Geografia · "+chapters.length+" capítulos · "+(args.format==="teoria"?"Somente teoria":"Teoria e atividades")+" · Sem IA",
+  fileName:args.file.replace(".pdf",args.format==="teoria"?"-teoria.pdf":"-atividades.pdf"),
+  coverPage:true,sections,
+  note:"Material didático do acervo Eduverso. Diagramas esquemáticos, sem escala ou dados medidos. Confira fontes e precisão antes do uso em sala."
+ },reviewed:chapters.length,requested,missing:[],reason:"Acervo editorial disponível para a quantidade selecionada."};
+}
+/** Sem API: seleciona somente capítulos existentes, sem inventar para preencher o número solicitado. */
+export function createOfflineBooklet(args:{
+ subject:string;topic:string;limit:number;lessons:LessonSource[];format:BookletFormat;
+ professional?:ProfessionalTrack;sourceSubject?:string;sourceTopic?:string
+}):OfflineBookletResult{
+ const limit=Number.isFinite(args.limit)?Math.max(1,Math.min(20,Math.floor(args.limit))):5;
+ const subject=normalize(args.subject.trim()),topic=normalize(args.topic.trim());
+ if(subject==="geografia"&&/bioma|vegetac/.test(topic)){
+  return curatedBooklet({topic:args.topic,limit,format:args.format,chapters:geographyBiomes,
+   practice:biomePractice,file:"eduverso-biomas-editorial-sem-ia.pdf",
+   sourceLines:[
+    "IBGE — Biomas do Brasil: https://www.ibge.gov.br/geociencias/cartas-e-mapas/informacoes-ambientais/15842-biomas.html",
+    "IBGE Educa — Biomas brasileiros: https://educa.ibge.gov.br/jovens/conheca-o-brasil/territorio/18307-biomas-brasileiros.html",
+    "Esquemas vetoriais autorais e simplificados, não são mapas, fotografias ou medições."
+   ]});
+ }
+ if(subject==="geografia"&&/clima|climat/.test(topic)){
+  return curatedBooklet({topic:args.topic,limit,format:args.format,chapters:geographyClimates,
+   practice:climatePractice,file:"eduverso-climas-editorial-sem-ia.pdf",
+   sourceLines:[
+    "INMET — Normais Climatológicas: https://portal.inmet.gov.br/servicos/normais-climatologicas",
+    "IBGE Educa — Tipos de clima no Brasil: https://educa.ibge.gov.br/professores/educa-atividades/17613-os-tipos-de-clima-no-brasil.html",
+    "Diagramas autorais ilustrativos, sem medição e sem escala."
+   ]});
+ }
+ // A custom subject cannot silently inherit the lesson bank from the previously selected subject.
+ // This would output an unrelated booklet with a misleading title.
+ if((args.sourceSubject&&normalize(args.sourceSubject)!==subject)||
+    (args.sourceTopic&&normalize(args.sourceTopic)!==topic)){
+  return {document:null,reviewed:0,requested:limit,missing:[],
+   reason:"Este assunto personalizado ainda não possui acervo editorial próprio. Selecione um tema cadastrado; nunca misturaremos conteúdos de disciplinas diferentes."};
+ }
+ const all=args.professional?.lessons??args.lessons;
+ if(all.length<limit){
+  return {document:null,reviewed:0,requested:limit,missing:Array.from({length:limit-all.length},(_,i)=>
+   "Capítulo "+(all.length+i+1)+" não cadastrado"),
+   reason:"Este assunto possui "+all.length+" tópicos de referência, mas você solicitou "+limit+
+    ". Não criaremos capítulos artificiais nem repetidos."};
+ }
+ const lessons=all.slice(0,limit);
+ const doc=args.professional?makeProfessionalBooklet(args.professional,limit,args.format):
   makeBooklet(args.subject,args.topic,limit,lessons,args.format);
- if(!document)return {document:null,reviewed:0,requested:lessons.length,missing:lessons.map(l=>l.title),reason:"Faltam capítulos publicados."};
- const audit=validatedChapters(document,lessons.map(l=>l.title));
- if(audit.missing.length)return {document:null,reviewed:audit.reviewed,requested:lessons.length,missing:audit.missing,
-  reason:"Há capítulos resumidos que ainda precisam de desenvolvimento editorial. A apostila não será anunciada como completa."};
- return {document:{...document,subtitle:document.subtitle+" · Conteúdo editorial sem IA"},reviewed:audit.reviewed,
-  requested:lessons.length,missing:[],reason:"Capítulos cadastrados atingiram o critério estrutural mínimo; ainda requerem revisão pedagógica."};
+ if(!doc)return {document:null,reviewed:0,requested:limit,missing:lessons.map(l=>l.title),
+  reason:"Ainda não há conteúdo editorial suficiente."};
+ const audit=validatedChapters(doc,lessons.map(l=>l.title));
+ if(audit.missing.length)return {document:null,reviewed:audit.reviewed,requested:limit,missing:audit.missing,
+  reason:"Faltam explicações aprofundadas e exemplos em um ou mais capítulos. A apostila completa não será gerada com resumos curtos."};
+ return {document:{...doc,subtitle:doc.subtitle+" · Material editorial sem IA"},
+  reviewed:audit.reviewed,requested:limit,missing:[],
+  reason:"Cobertura estrutural mínima verificada. A precisão pedagógica exige revisão editorial."};
 }
