@@ -180,3 +180,16 @@
  object-fit:cover;
  object-position:center top;
 }
+
+/* Redesenho exclusivo do Atlas do Crânio: não interfere nos demais 29 atlas. */
+.skullStudy .studyHeader{background:radial-gradient(ellipse at 95% 0%,#9e65df55,transparent 55%),linear-gradient(135deg,#3d2953,#1e162b);border-color:#8864a8;border-radius:20px}
+.skullStudy .studyColumns{grid-template-columns:minmax(0,1.1fr) minmax(255px,.85fr);gap:20px;align-items:start}
+.skullStudy .figure{background:#23192f;border:1px solid #795695;border-radius:20px;padding:13px}
+.skullStudy .detailCard{background:radial-gradient(ellipse at right top,#60407977,transparent 60%),#2a1d3c;border-color:#865faf;border-radius:20px;padding:23px}
+.skullStudy .detailCard h4{font-size:clamp(21px,2.5vw,27px)}
+.skullStudy .modes button{min-height:51px;border-radius:14px;font-size:13px}
+.skullStudy .question{border-radius:16px;background:radial-gradient(circle at 95% 0%,#7b4caf44,transparent 65%),#2e203f}
+.skullStudy .figure figcaption{color:#d3bde8;font-size:11px;padding:9px 3px 1px;line-height:1.5}
+.skullStudy .credit{padding:12px 16px;background:#21162e;border:1px solid #5a4271;border-radius:13px}
+@media(max-width:920px){.skullStudy .studyColumns{grid-template-columns:1fr}.skullStudy .figure{padding:9px}}
+@media(max-width:520px){.skullStudy .studyHeader{padding:17px}.skullStudy .modes button{min-height:47px;font-size:11px;padding:9px 4px}.skullStudy .detailCard{padding:17px}.skullStudy .figure{padding:8px}}

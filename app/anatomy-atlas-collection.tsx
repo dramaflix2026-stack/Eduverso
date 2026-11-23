@@ -1,6 +1,7 @@
 "use client";
 import {useEffect,useMemo,useRef,useState} from "react";
 import AnatomyAtlas from "./anatomy-atlas";
+import AnatomySkullInteractive from "./anatomy-skull-interactive";
 import {bones,imageUrl} from "./anatomy-atlas-data";
 import {atlasViews,type AtlasSpot,type AtlasView} from "./anatomy-atlas-collection-data";
 import {expandedAtlasViews} from "./anatomy-atlas-extension";
@@ -51,6 +52,7 @@ function AtlasStudy({view}:{view:AtlasView}){
  const detail=useRef<HTMLDivElement>(null);
  const items=view.spots;
  const listMode=view.spotMode==="list";
+ const skullMode=view.id==="cranio";
  const localizedMode=listMode;
  useEffect(()=>{setScores(restore(view.id));setReady(true);},[view.id]);
  useEffect(()=>{if(ready)try{localStorage.setItem(keyFor(view.id),JSON.stringify(scores));}catch{}},[ready,scores,view.id]);
@@ -103,7 +105,7 @@ function AtlasStudy({view}:{view:AtlasView}){
   if(!submitted||!flashRated)return;
   setF(v=>(v+1)%items.length);setTyped("");setSubmitted(false);setFlashCorrect(false);setFlashRated(false);
  }
- return <div className={styles.study}>
+ return <div className={styles.study+(skullMode?" "+styles.skullStudy:"")}>
   <header className={styles.studyHeader}>
    <span>ATLAS INTERATIVO · {view.spots.length} ESTRUTURAS</span>
    <h3>{view.title}</h3>
@@ -121,17 +123,21 @@ function AtlasStudy({view}:{view:AtlasView}){
   </div>
   {mode==="desafio"&&!completed&&target&&<div className={styles.question} role="status">
    <small>QUESTÃO {q+1} DE {items.length}</small><strong>{localizedMode?"Qual estrutura corresponde à descrição?":"Encontre: "+target.name}</strong>
-   <p>{localizedMode?target.description:"Toque no ponto numerado que corresponde à estrutura solicitada."}</p>
+   <p>{localizedMode?target.description:skullMode?"Toque diretamente na região óssea pedida, sem usar marcadores.":"Toque no ponto numerado que corresponde à estrutura solicitada."}</p>
    <div className={styles.progress} role="progressbar" aria-label="Progresso do desafio" aria-valuemin={0} aria-valuemax={items.length} aria-valuenow={q}><span style={{width:(q/items.length*100)+"%"}}/></div>
   </div>}
   {mode==="flashcards"&&flash&&<div className={styles.question}>
    <small>CARTÃO {f+1} DE {items.length}</small>
    <strong>{localizedMode?"Identifique a estrutura descrita:":"Que estrutura está marcada em amarelo?"}</strong>
-   <p>{localizedMode?flash.description:"Observe a imagem e escreva o nome sem consultar a resposta."}</p>
+   <p>{localizedMode?flash.description:skullMode?"Observe o osso colorido em amarelo e escreva seu nome antes de revelar a resposta.":"Observe a imagem e escreva o nome sem consultar a resposta."}</p>
   </div>}
   <div className={styles.studyColumns}>
    <figure className={styles.figure}>
-    {imageFailed?<div className={styles.failure} role="alert">
+    {skullMode?<AnatomySkullInteractive mode={mode} spots={items} selectedId={picked}
+      targetId={mode==="flashcards"?flash?.id??null:mode==="desafio"?target?.id??null:null}
+      answerId={mode==="desafio"?answer:null}
+      disabled={mode==="desafio"&&(completed||answer!==null)} onSelect={clickPoint}/>:
+      imageFailed?<div className={styles.failure} role="alert">
        Não foi possível carregar a ilustração anatômica. <a href={view.source} target="_blank" rel="noreferrer noopener">Abrir a imagem original</a>.
       </div>
     :<div className={styles.diagram} style={{aspectRatio:view.ratio,background:"#f6f3fa"}}>
@@ -153,7 +159,7 @@ function AtlasStudy({view}:{view:AtlasView}){
          onClick={()=>clickPoint(b)}>{i+1}</button>;
       })}
      </div>}
-    <figcaption>{listMode?
+    <figcaption>{skullMode?"Crânio vetorial original do Eduverso · toque diretamente nas regiões coloridas.":listMode?
       "Ilustração anatômica detalhada · consulte as estruturas abaixo com nomenclatura em português.":
       "Ilustração anatômica detalhada · toque nos marcadores para consultar os nomes em português."}
     </figcaption>
@@ -165,7 +171,7 @@ function AtlasStudy({view}:{view:AtlasView}){
        className={picked===b.id?styles.structureActive:""} aria-pressed={picked===b.id}
        onClick={()=>clickPoint(b)}><span>{String(i+1).padStart(2,"0")}</span>{b.name}</button>)}
      </div>}
-    {!listMode&&mode==="explorar"&&<details className={styles.auxLegend}>
+    {!listMode&&!skullMode&&mode==="explorar"&&<details className={styles.auxLegend}>
      <summary>Ver lista de estruturas em português</summary>
      <div className={styles.structureList}>
       {items.map((b,i)=><button key={b.id} type="button" className={picked===b.id?styles.structureActive:""} aria-pressed={picked===b.id} onClick={()=>clickPoint(b)}><span>{String(i+1).padStart(2,"0")}</span>{b.name}</button>)}
@@ -176,11 +182,11 @@ function AtlasStudy({view}:{view:AtlasView}){
      {selected?<><small>{selected.group} · GUIA ANATÔMICO</small><h4>{selected.name}</h4>
        {studySections(selected,view).map(block=><div className={styles.studySection} key={block.title}><strong>{block.title}</strong><p>{block.text}</p></div>)}
        <div className={styles.reviewPrompt}><strong>Pergunta de revisão</strong><p>{reviewPrompt(selected)}</p></div>
-      </>:<><h4>{localizedMode?"Escolha uma estrutura":"Selecione um ponto"}</h4><p>{localizedMode?"Toque em uma das estruturas em português para estudar o que é, a função, a aplicação clínica e revisar o assunto.":"Toque nos marcadores numerados para explorar cada estrutura, entender sua função e conhecer uma correlação clínica."}</p></>}
+      </>:<><h4>{localizedMode?"Escolha uma estrutura":skullMode?"Toque em um osso":"Selecione um ponto"}</h4><p>{localizedMode?"Toque em uma das estruturas em português para estudar o que é, a função, a aplicação clínica e revisar o assunto.":skullMode?"Toque diretamente em uma região colorida do crânio. O nome, a função, a relação clínica e uma pergunta de revisão aparecerão aqui.":"Toque nos marcadores numerados para explorar cada estrutura, entender sua função e conhecer uma correlação clínica."}</p></>}
      <button type="button" className={styles.primary} onClick={()=>selectMode("desafio")}>Praticar identificação →</button>
     </article>}
     {mode==="desafio"&&<article className={styles.detailCard}>
-     {!completed?<>{answer===null?<p>{localizedMode?"Escolha uma das alternativas para conferir a resposta.":"Escolha um marcador na ilustração para conferir a resposta."}</p>:
+     {!completed?<>{answer===null?<p>{localizedMode?"Escolha uma das alternativas para conferir a resposta.":skullMode?"Toque no osso solicitado diretamente na figura para conferir sua resposta.":"Escolha um marcador na ilustração para conferir a resposta."}</p>:
        <div className={styles.feedback} role="status">
         <strong>{answer===target.id?"✓ Resposta correta!":"↻ Resposta diferente da esperada"}</strong>
         <p><b>{target.name}</b> — {target.description}</p>
@@ -197,7 +203,7 @@ function AtlasStudy({view}:{view:AtlasView}){
      {!submitted?<div className={styles.flashFront}>
        <span className={styles.flashQuestionIcon} aria-hidden="true">?</span>
        <h4>Você consegue identificar a estrutura?</h4>
-       <p>{localizedMode?flash.description:"Observe o marcador amarelo e recorde a estrutura destacada."}</p>
+       <p>{localizedMode?flash.description:skullMode?"Observe a região amarela do crânio e tente lembrar o nome do osso.":"Observe o marcador amarelo e recorde a estrutura destacada."}</p>
        <form className={styles.answerForm} onSubmit={e=>{e.preventDefault();submitFlash();}}>
         <label htmlFor={"atlas-answer-"+view.id}>Sua resposta (opcional)</label>
         <input id={"atlas-answer-"+view.id} value={typed} onChange={e=>setTyped(e.target.value)}
