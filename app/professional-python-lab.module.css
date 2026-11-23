@@ -1,0 +1,21 @@
+.root{margin:18px 0 30px;padding:22px;background:linear-gradient(150deg,#162b39,#152030);border:1px solid #43748d;border-radius:18px;color:#e8f7ff}
+.heading{display:flex;align-items:start;justify-content:space-between;gap:16px;margin-bottom:17px}
+.eyebrow{font-size:11px;font-weight:850;letter-spacing:.09em;color:#9cdcf2}
+.heading h3{font-size:22px;line-height:1.3;margin:7px 0 8px;color:#fff}
+.heading p{font-size:13px;line-height:1.65;color:#bdcad8;margin:0}
+.state,.ready{white-space:nowrap;font-size:11px;font-weight:750;border:1px solid #62869e;border-radius:100px;padding:8px 11px;color:#d6ebf5}
+.ready{color:#a0f3d0;border-color:#4d987d;background:#173f34}
+.label{display:block;font-size:13px;font-weight:800;color:#d7eeff;margin:14px 0 9px}
+.editor{resize:vertical;width:100%;min-height:185px;border:1px solid #53647d;border-radius:13px;outline:none;background:#0c1423;color:#eaf7ff;padding:17px;font:13px/1.65 ui-monospace,SFMono-Regular,Consolas,monospace;white-space:pre;overflow:auto;tab-size:4}
+.editor:focus{border-color:#9dbbff;box-shadow:0 0 0 3px #8fafff22}
+.actions{display:flex;flex-wrap:wrap;gap:9px;margin:13px 0}
+.run,.secondary{font-weight:800!important;border-radius:11px;padding:11px 15px;min-height:42px}
+.run{border:1px solid #78daaa;background:#288866;color:#fff}
+.run:disabled{cursor:not-allowed;opacity:.5}
+.secondary{background:#21344b;border:1px solid #536d8c;color:#d9e9ff}
+.help{font-size:11px;color:#9fbbcf;line-height:1.6;margin:9px 0 17px}
+.console{background:#090f1b;border:1px solid #405775;border-radius:12px;padding:17px;min-height:90px}
+.console strong{display:block;color:#9dd1ff;font-size:12px;margin-bottom:11px}
+.console pre{white-space:pre-wrap;overflow-wrap:anywhere;font:13px/1.65 ui-monospace,SFMono-Regular,Consolas,monospace;color:#d7eaf6;margin:0}
+.isolatedFrame{position:absolute;width:0;height:0;overflow:hidden;border:0;opacity:0;pointer-events:none}
+@media(max-width:670px){.root{padding:16px}.heading{display:block}.heading h3{font-size:18px}.state,.ready{display:inline-block;margin-top:12px}.editor{font-size:12px;padding:12px}.actions button{flex:1;font-size:12px!important;min-width:140px}.console{padding:13px}}
