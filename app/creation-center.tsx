@@ -305,12 +305,18 @@ export default function CreationCenter({tool,onNavigate,subjects,initialProfessi
     {fileText&&<div className={styles.preview}><strong>{fileName}</strong><p>{fileText.slice(0,600)}{fileText.length>600?"...":""}</p><span>{fileText.length.toLocaleString("pt-BR")} caracteres extraídos</span></div>}
     <button type="button" className={styles.primary} disabled={busy||fileReading||!fileText} onClick={()=>create(fromFile(),"Roteiro de arquivo")}>↓ Preparar roteiro de estudo PDF</button></>)}
   {tool==="biblioteca"&&<>
-    {section("Materiais do catálogo prontos para baixar",<div className={styles.readyGrid}>{starterMaterials.map(entry=><div className={styles.readyCard} key={entry.subject+"-"+entry.topic}><span>▤ {entry.subject}</span><strong>{entry.topic}</strong><button type="button" disabled={busy} onClick={()=>create(makeBooklet(entry.subject,entry.topic,10,allLessons(entry.subject,entry.topic),"teoria"),"Material pronto")}>↓ Baixar PDF</button></div>)}</div>)}
-    {section("Medicina — apostilas das 18 disciplinas",<div className={styles.readyGrid}>{medicineDisciplines.map(d=><div className={styles.readyCard} key={d.slug}><span>🫀 Faculdade de Medicina</span><strong>{d.title}</strong><button type="button" disabled={busy} onClick={()=>{const content=getMedicalContent("faculdade",d.slug,"");void create(makeBooklet("Faculdade de Medicina",d.title,10,content.lessons,"teoria"),"Apostila de Medicina");}}>↓ Baixar PDF</button></div>)}</div>)}
+    <div className={styles.panel}>
+     <h2>Apostilas aprofundadas com IA</h2>
+     <p className={styles.hint}>Selecione a extensão desejada. A capa é adicional às páginas teóricas. A IA deve desenvolver conceitos, exemplos e explicações em cada página, sem preencher espaço artificialmente.</p>
+     <div className={styles.formGrid}><label>Páginas de teoria<select value={bookletPages} onChange={e=>setBookletPages(Number(e.target.value))}>{[3,5,8,10].map(n=><option key={n} value={n}>{n} páginas de conteúdo (+ capa)</option>)}</select></label></div>
+     {aiChecked&&!aiAvailable&&<p className={styles.notice} role="status">Geração aprofundada aguardando configuração segura da IA no Railway. Materiais resumidos não serão oferecidos como apostilas completas.</p>}
+    </div>
+    {section("Materiais do catálogo — gerar versão aprofundada",<div className={styles.readyGrid}>{starterMaterials.map(entry=><div className={styles.readyCard} key={entry.subject+"-"+entry.topic}><span>▤ {entry.subject}</span><strong>{entry.topic}</strong><button type="button" disabled={busy||!aiAvailable} onClick={()=>{void createDeepBooklet({subject:entry.subject,topic:entry.topic,level:"Ensino Fundamental e Médio",chapters:allLessons(entry.subject,entry.topic).map(l=>l.title)});}}>✦ Gerar apostila com IA</button></div>)}</div>)}
+    {section("Medicina — apostilas das 18 disciplinas",<div className={styles.readyGrid}>{medicineDisciplines.map(d=><div className={styles.readyCard} key={d.slug}><span>🫀 Faculdade de Medicina</span><strong>{d.title}</strong><button type="button" disabled={busy||!aiAvailable} onClick={()=>{const content=getMedicalContent("faculdade",d.slug,"");void createDeepBooklet({subject:"Faculdade de Medicina",topic:d.title,level:"Faculdade de Medicina — estudo acadêmico",chapters:content.lessons.map(l=>l.title)});}}>✦ Gerar apostila com IA</button></div>)}</div>)}
     {section("Formações profissionais — apostilas introdutórias",<div className={styles.readyGrid}>
      {professionalTracks.map(t=><div className={styles.readyCard} key={t.id}><span>{t.icon} {t.category}</span><strong>{t.name}</strong>
       <p className={styles.hint}>{t.description}</p>
-      <button type="button" disabled={busy} onClick={()=>create(makeProfessionalBooklet(t,20,"teoria"),"Apostila profissional")}>↓ Apostila teórica PDF</button>
+      <button type="button" disabled={busy||!aiAvailable} onClick={()=>{void createDeepBooklet({subject:t.category,topic:t.name,level:"Formação profissional introdutória",chapters:t.lessons.map(l=>l.title)});}}>✦ Gerar apostila com IA</button>
      </div>)}
     </div>)}
     {section("Meus materiais salvos",<><p className={styles.hint}>Cópias dos materiais gerados nesta Central. Armazenadas somente neste navegador, não sincronizadas entre dispositivos.</p>
