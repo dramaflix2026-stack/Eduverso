@@ -8,9 +8,9 @@ import {entranceSubjects} from "./medicine-entrance";
 import {medicalTracks,getMedicalChoices,getMedicalTopics,getMedicalContent,chooseMedicalQuestions,type MedicalTrack} from "./creation-medical-catalog";
 import {buildExercises,type LessonSource,type ExerciseItem} from "./exercise-bank";
 import {downloadStudyPdf,type PdfDocumentRequest,type PdfSection} from "./lib/lesson-pdf";
-import {makeBooklet,type BookletFormat} from "./booklet-content";
+import type {BookletFormat} from "./booklet-content";
 import {professionalTracks,getProfessionalTrack} from "./learning-professions";
-import {makeProfessionalBooklet} from "./professional-course-pdf";
+
 import styles from "./creation-center.module.css";
 
 export type CreationTool="inicio"|"provas"|"apostilas"|"arquivos"|"biblioteca";
@@ -101,6 +101,9 @@ export default function CreationCenter({tool,onNavigate,subjects,initialProfessi
  const [quantity,setQuantity]=useState(10);
  const [seed,setSeed]=useState(0);
  const [lessonLimit,setLessonLimit]=useState(10);
+ const [bookletPages,setBookletPages]=useState(5);
+ const [aiAvailable,setAiAvailable]=useState(false);
+ const [aiChecked,setAiChecked]=useState(false);
  const [saved,setSaved]=useState<SavedMaterial[]>([]);
  const [busy,setBusy]=useState(false);
  const [notice,setNotice]=useState("");
@@ -109,6 +112,15 @@ export default function CreationCenter({tool,onNavigate,subjects,initialProfessi
  const [fileReading,setFileReading]=useState(false);
  useEffect(()=>{setSaved(readSaved());},[]);
  useEffect(()=>{setNotice("");},[tool]);
+ useEffect(()=>{
+  if(tool!=="apostilas"&&tool!=="biblioteca")return;
+  let active=true;setAiChecked(false);
+  fetch("/api/apostilas/gerar",{cache:"no-store"})
+   .then(res=>res.json())
+   .then((data:{available?:boolean})=>{if(active){setAiAvailable(data.available===true);setAiChecked(true);}})
+   .catch(()=>{if(active){setAiAvailable(false);setAiChecked(true);}});
+  return ()=>{active=false;};
+ },[tool]);
  const topics=choices.find(s=>s.name===subject)?.topics??[];
  const resolvedTopic=topics.some(t=>t.name===topic)?topic:(topics[0]?.name||"");
  const medChoices=useMemo(()=>sourceArea==="escolar"||sourceArea==="profissional"?[]:getMedicalChoices(sourceArea),[sourceArea]);
@@ -143,6 +155,29 @@ export default function CreationCenter({tool,onNavigate,subjects,initialProfessi
   try{await downloadStudyPdf(pdf);const wasSaved=save?store(pdf,kind):false;
    setNotice("PDF preparado para download."+(save?(wasSaved?" Uma cópia ficou na biblioteca deste navegador.":" Seu navegador não permitiu salvar uma cópia."):""));
   }catch{setNotice("O PDF não pôde ser preparado. Tente novamente.");}
+  finally{setBusy(false);}
+ }
+ type DeepOverride={subject:string;topic:string;chapters:string[];level:string};
+ async function createDeepBooklet(override?:DeepOverride){
+  if(busy)return;
+  setBusy(true);setNotice("Gerando explicações aprofundadas e verificando a qualidade das páginas...");
+  try{
+   const payload={
+    subject:override?.subject??activeSubject,
+    topic:override?.topic??activeTopic,
+    level:override?.level??(sourceArea==="profissional"?"Formação profissional":sourceArea==="escolar"?"Educação básica, com rigor adequado à matéria":"Medicina e preparação para provas"),
+    chapters:override?.chapters??lessons.slice(0,lessonLimit).map(l=>l.title),
+    pageCount:bookletPages,format:bookletFormat
+   };
+   const response=await fetch("/api/apostilas/gerar",{method:"POST",credentials:"same-origin",
+    headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
+   const data=await response.json() as {document?:PdfDocumentRequest;error?:string};
+   if(!response.ok||!data.document)throw new Error(data.error||"A apostila não pôde ser gerada.");
+   await downloadStudyPdf(data.document);
+   const wasSaved=store(data.document,"Apostila aprofundada");
+   setNotice("Apostila aprofundada criada: "+bookletPages+" páginas teóricas"+(bookletFormat==="teoria"?" mais a capa.":" mais capa, atividades e respostas.")+
+    (wasSaved?" Cópia salva na biblioteca deste navegador.":" PDF baixado; o navegador não permitiu salvar uma cópia."));
+  }catch(error){setNotice(error instanceof Error?error.message:"Não foi possível gerar a apostila. Nenhum PDF superficial foi entregue.");}
   finally{setBusy(false);}
  }
  async function receiveFile(file?:File){
@@ -237,7 +272,8 @@ export default function CreationCenter({tool,onNavigate,subjects,initialProfessi
        {medTopics.map(t=><option key={t.id} value={t.id}>{t.name}</option>)}
      </select></label>}
     {tool==="provas"?<label>Quantidade de questões<select value={quantity} onChange={e=>{setQuantity(Number(e.target.value));setNotice("");}}>{[5,10,15,20,25,30,40,50,60,70,80,90,100].map(n=><option key={n} value={n}>{n} questões</option>)}</select></label>:
-      <label>Aulas para incluir<select value={lessonLimit} onChange={e=>setLessonLimit(Number(e.target.value))}>{[5,10,15,20].map(n=><option key={n} value={n}>Até {n} aulas</option>)}</select></label>}
+      <><label>Tópicos de referência<select value={lessonLimit} onChange={e=>setLessonLimit(Number(e.target.value))}>{[5,10,15,20].map(n=><option key={n} value={n}>Até {n} tópicos</option>)}</select></label>
+      <label>Páginas de teoria<select value={bookletPages} onChange={e=>{setBookletPages(Number(e.target.value));setNotice("");}}>{[3,5,8,10].map(n=><option key={n} value={n}>{n} páginas aprofundadas (+ capa)</option>)}</select></label></>}
    </div>
    {tool==="apostilas"&&<div className={styles.bookletMode}>
      <div className={styles.bookletIntro}><span>ESCOLHA O FORMATO</span><strong>Você quer estudar ou aplicar atividades?</strong>
@@ -252,14 +288,15 @@ export default function CreationCenter({tool,onNavigate,subjects,initialProfessi
        <div>{lessons.slice(0,lessonLimit).map((l,i)=><small key={i}>{String(i+1).padStart(2,"0")} · {l.title}</small>)}</div>
      </div>
     </div>}
-   <p className={styles.hint}>{tool==="provas"?"Questões distintas disponíveis nesta rodada: "+exam.length+" de "+quantity+".":"Capítulos disponíveis para este assunto: "+Math.min(lessons.length,lessonLimit)+"."} Os PDFs utilizam o catálogo existente e conteúdo editorial; não dependem de IA.</p>
+   <p className={styles.hint}>{tool==="provas"?"Questões distintas disponíveis nesta rodada: "+exam.length+" de "+quantity+". Os PDFs de provas utilizam o banco editorial existente.":"Apostila aprofundada com inteligência artificial: "+bookletPages+" páginas DE CONTEÚDO, mais capa"+(bookletFormat==="com-atividades"?", atividades e gabarito.":".")+" A geração é validada antes do PDF; capítulos superficiais ou repetidos são recusados."}</p>
+   {tool==="apostilas"&&aiChecked&&!aiAvailable&&<p className={styles.notice} role="status">A geração aprofundada por IA ainda não foi ativada neste servidor. É necessário configurar EDUVERSO_AI_API_KEY e EDUVERSO_AI_ENABLED no Railway. A versão superficial não será apresentada como material completo.</p>}
    {tool==="provas"&&exam.length<quantity&&<p className={styles.notice} role="status">Este recorte possui {exam.length} questões distintas disponíveis. O PDF terá somente essas {exam.length} questões — sem repetir perguntas para atingir {quantity}. Para ampliar o banco, selecione todos os assuntos ou outra disciplina.</p>}
    {tool==="provas"&&<button type="button" className={styles.secondary} onClick={()=>{setSeed(v=>v+37);setNotice("");}}>↻ Sortear outra versão</button>}
    <div className={styles.actions}>
     {tool==="provas"?<>
       <button disabled={busy||!exam.length} className={styles.primary} onClick={()=>create(makeExam(activeSubject,activeTopic,exam),"Prova")}>↓ Baixar prova + gabarito comentado (PDF)</button>
       <button disabled={busy||!exam.length} className={styles.secondary} onClick={()=>create(makeExam(activeSubject,activeTopic,exam,true),"Gabarito")}>↓ Baixar somente o gabarito (PDF)</button>
-     </>:<button disabled={busy||!lessons.length} className={styles.primary} onClick={()=>create(professionalMode?makeProfessionalBooklet(professional,lessonLimit,bookletFormat):makeBooklet(activeSubject,activeTopic,lessonLimit,lessons,bookletFormat),"Apostila")}>↓ Baixar {bookletFormat==="teoria"?"apostila teórica":"apostila com atividades"} (PDF)</button>}
+     </>:<button disabled={busy||!lessons.length||!aiAvailable} className={styles.primary} onClick={()=>{void createDeepBooklet();}}>✦ Gerar {bookletPages} páginas aprofundadas {bookletFormat==="com-atividades"?"+ atividades ":""}com IA (PDF)</button>}
    </div></>)}
   {tool==="arquivos"&&section("Importar material de estudo",
     <><p className={styles.hint}>Envie um PDF com texto selecionável ou um arquivo TXT. A leitura acontece no navegador; nesta etapa, o arquivo é organizado em um PDF de revisão, sem reescrita por IA.</p>
