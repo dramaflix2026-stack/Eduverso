@@ -1,7 +1,7 @@
 "use client";
 import {useEffect,useMemo,useRef,useState} from "react";
 import AnatomyAtlas from "./anatomy-atlas";
-import {bones} from "./anatomy-atlas-data";
+import {bones,imageUrl} from "./anatomy-atlas-data";
 import {atlasViews,type AtlasSpot,type AtlasView} from "./anatomy-atlas-collection-data";
 import {expandedAtlasViews} from "./anatomy-atlas-extension";
 import AtlasArt,{atlasFamily} from "./anatomy-atlas-art";
@@ -321,7 +321,7 @@ export default function AnatomyAtlasCollection(){
    <div className={styles.sectionLabel}><strong>{term.trim()?"Resultados da busca":group?.title}</strong><span>{shown.length+(visibleIds.includes("anterior")&&!term.trim()?1:0)} atlas</span></div>
    <div className={styles.cards}>
     {visibleIds.includes("anterior")&&!term.trim()&&<button type="button" className={styles.atlasCard} onClick={()=>openView("anterior")}>
-      <span className={styles.cardMedia+" "+styles.scientificMedia}><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/Human_skeleton_front_no-text_no-color.svg/500px-Human_skeleton_front_no-text_no-color.svg.png" loading="lazy" alt="Esqueleto humano detalhado em vista anterior"/></span>
+      <span className={styles.cardMedia+" "+styles.scientificMedia}><img src={imageUrl} loading="lazy" alt="Ilustração colorida do esqueleto humano em vista anterior"/></span>
       <span className={styles.cardInfo}><small>ATLAS INTERATIVO</small><strong>Vista anterior</strong><span>{bones.length} estruturas · exploração e revisão</span><em>Explorar atlas →</em></span>
      </button>}
     {shown.map(v=><button key={v.id} type="button" className={styles.atlasCard} onClick={()=>openView(v.id)}>
