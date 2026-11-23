@@ -1,0 +1,94 @@
+.eduverso-cookies-banner {
+  position: fixed;
+  bottom: 18px;
+  left: 18px;
+  z-index: 9999;
+  width: min(520px, calc(100vw - 36px));
+  padding: 18px 20px;
+  background: #17152c;
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, .22);
+  border-radius: 16px;
+  box-shadow: 0 12px 45px rgba(0, 0, 0, .26);
+  font-family: inherit;
+}
+
+.eduverso-cookies-text strong {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.eduverso-cookies-text p {
+  margin: 0;
+  color: #e8e5fc;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.eduverso-cookies-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.eduverso-cookies-actions button {
+  padding: 10px 18px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.eduverso-cookies-accept {
+  background: #facc15;
+  color: #17152c;
+}
+
+.eduverso-cookies-decline {
+  background: transparent;
+  border-color: #aaa2d6 !important;
+  color: #ffffff;
+}
+
+.eduverso-cookies-settings {
+  position: fixed;
+  left: 12px;
+  bottom: 10px;
+  z-index: 9999;
+  border: 1px solid rgba(0, 0, 0, .12);
+  border-radius: 999px;
+  background: #fff;
+  color: #282638;
+  font: inherit;
+  font-size: 11px;
+  padding: 6px 11px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, .1);
+  cursor: pointer;
+  opacity: .85;
+}
+
+.eduverso-cookies-settings:hover,
+.eduverso-cookies-settings:focus-visible {
+  opacity: 1;
+}
+
+@media (max-width: 600px) {
+  .eduverso-cookies-banner {
+    left: 12px;
+    bottom: 12px;
+    width: calc(100vw - 24px);
+    padding: 16px;
+    border-radius: 14px;
+  }
+  .eduverso-cookies-actions button {
+    min-height: 40px;
+    flex: 1;
+  }
+}
