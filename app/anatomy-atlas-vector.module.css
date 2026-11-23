@@ -38,3 +38,7 @@
 .quickList button[aria-pressed=true]{background:#6743a3;border-color:#d9b7ff}
 .quickList button:hover{border-color:#bd8fe5}
 @media(max-width:500px){.toolbar{align-items:flex-start}.controls{width:100%;justify-content:flex-start}.controls button{min-height:36px}.toolbarSecondary button{min-height:35px}.hint{font-size:11px}}
+
+.nameLabels{pointer-events:none}
+.nameLabels text{font-weight:850;font-size:13px;fill:#fff6d9;paint-order:stroke;stroke:#1b1830;stroke-width:5;stroke-linejoin:round;letter-spacing:.15px}
+.region.incorrect{opacity:1}
