@@ -7,25 +7,13 @@ type Mode="explorar"|"desafio"|"flashcards";
 type Props={
  mode:Mode;spots:AtlasSpot[];selectedId:string|null;targetId:string|null;
  answerId:string|null;disabled:boolean;onSelect:(spot:AtlasSpot)=>void;
- src:string;alt:string;
+ src:string;alt:string;heading:string;
 };
 
-/** Coordenadas percentuais sobre a imagem frontal 900×900 do Anatomography.
- * Os sete pontos foram posicionados manualmente, não por reconhecimento automático.
- * As regiões laterais estão representadas por um ponto em cada osso pareado.
- */
-const hotspots:Record<string,{x:number;y:number}>={
- frontal:{x:51,y:24},
- parietal:{x:22,y:27},
- temporal:{x:23,y:45},
- nasal:{x:50,y:52},
- zigomatico:{x:27,y:61},
- maxila:{x:40,y:72},
- "mandibula-cranio":{x:50,y:87},
-};
+/** Cada vista recebe coordenadas próprias de seus AtlasSpot. */
 const bound=(n:number)=>Math.max(1,Math.min(2.5,Math.round(n*10)/10));
 
-export default function AnatomySkullInteractive({mode,spots,selectedId,targetId,answerId,disabled,onSelect,src,alt}:Props){
+export default function AnatomySkullInteractive({mode,spots,selectedId,targetId,answerId,disabled,onSelect,src,alt,heading}:Props){
  const [zoom,setZoom]=useState(1);
  const [failed,setFailed]=useState(false);
  const pinch=useRef<{distance:number;zoom:number}|null>(null);
@@ -40,9 +28,9 @@ export default function AnatomySkullInteractive({mode,spots,selectedId,targetId,
   setZoom(bound(pinch.current.zoom*Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY)/pinch.current.distance));
  }
  const showCorrect=mode==="desafio"&&answerId!==null;
- return <section className={styles.root} aria-label="Atlas do crânio, vista anterior com sete pontos interativos">
+ return <section className={styles.root} aria-label={"Atlas interativo do crânio: "+heading}>
   <div className={styles.heading}>
-   <div className={styles.headingText}><small>✦ ANATOMIA INTERATIVA</small><strong>Crânio · Vista anterior</strong></div>
+   <div className={styles.headingText}><small>✦ ANATOMIA INTERATIVA</small><strong>Crânio · {heading}</strong></div>
    <div className={styles.controls} role="group" aria-label="Ampliação da imagem">
     <button type="button" aria-label="Diminuir zoom" disabled={zoom===1} onClick={()=>setZoom(n=>bound(n-.5))}>−</button>
     <output aria-live="polite">{Math.round(zoom*100)}%</output>
@@ -56,8 +44,7 @@ export default function AnatomySkullInteractive({mode,spots,selectedId,targetId,
     <div className={styles.canvas} style={{width:(zoom*100)+"%"}}>
      <img src={src} alt={alt} onError={()=>setFailed(true)} width={900} height={900} draggable={false}/>
      {spots.map((spot,index)=>{
-      const p=hotspots[spot.id];
-      if(!p)return null;
+      const p={x:spot.x,y:spot.y};
       const isFlash=mode==="flashcards";
       if(isFlash&&targetId!==spot.id)return null;
       const selected=mode==="explorar"&&selectedId===spot.id;
@@ -78,7 +65,7 @@ export default function AnatomySkullInteractive({mode,spots,selectedId,targetId,
      })}
     </div>
    </div>}
-  <p className={styles.help}>Selecione os pontos sobre os ossos. No Desafio, toque no ponto pedido; nos Flashcards, identifique o ponto amarelo e digite o nome. Use +/− para ampliar.</p>
+  <p className={styles.help}>Toque nos marcadores desta vista. No Desafio, escolha a estrutura solicitada; nos Flashcards, identifique o ponto amarelo e escreva o nome. Use +/− para ampliar.</p>
   {mode==="explorar"&&<div className={styles.legend}><strong>Seleção rápida</strong><div>{spots.map(spot=><button type="button" key={spot.id} aria-pressed={selectedId===spot.id} onClick={()=>onSelect(spot)}>{spot.name}</button>)}</div></div>}
  </section>;
 }

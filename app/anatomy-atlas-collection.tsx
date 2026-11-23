@@ -2,6 +2,7 @@
 import {useEffect,useMemo,useRef,useState} from "react";
 import AnatomyAtlas from "./anatomy-atlas";
 import AnatomySkullInteractive from "./anatomy-skull-interactive";
+import {skullViews,skullViewIsValid} from "./anatomy-skull-views";
 import {bones,imageUrl} from "./anatomy-atlas-data";
 import {atlasViews,type AtlasSpot,type AtlasView} from "./anatomy-atlas-collection-data";
 import {expandedAtlasViews} from "./anatomy-atlas-extension";
@@ -12,7 +13,7 @@ import styles from "./anatomy-atlas-collection.module.css";
 type Mode="explorar"|"desafio"|"flashcards";
 type RecordScore={right:number;wrong:number;due:string|null};
 type Progress=Record<string,RecordScore>;
-const keyFor=(id:string)=>"eduverso:atlas:vistas:"+id+":v1";
+const keyFor=(id:string)=>"eduverso:atlas:vistas:"+(id==="cranio-frontal"?"cranio":id)+":v1";
 const normalize=(s:string)=>s.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLocaleLowerCase("pt-BR")
  .replace(/[^a-z0-9 ]/g," ").replace(/\s+/g," ").trim().replace(/^(o|a|os|as)\s+/,"");
 function matches(spot:AtlasSpot,value:string){
@@ -52,7 +53,7 @@ function AtlasStudy({view}:{view:AtlasView}){
  const detail=useRef<HTMLDivElement>(null);
  const items=view.spots;
  const listMode=view.spotMode==="list";
- const skullMode=view.id==="cranio";
+ const skullMode=skullViewIsValid(view.id);
  const localizedMode=listMode;
  useEffect(()=>{setScores(restore(view.id));setReady(true);},[view.id]);
  useEffect(()=>{if(ready)try{localStorage.setItem(keyFor(view.id),JSON.stringify(scores));}catch{}},[ready,scores,view.id]);
@@ -137,7 +138,7 @@ function AtlasStudy({view}:{view:AtlasView}){
       targetId={mode==="flashcards"?flash?.id??null:mode==="desafio"?target?.id??null:null}
       answerId={mode==="desafio"?answer:null}
       disabled={mode==="desafio"&&(completed||answer!==null)} onSelect={clickPoint}
-      src={view.image} alt={view.alt}/>:
+      src={view.image} alt={view.alt} heading={view.short}/>:
       imageFailed?<div className={styles.failure} role="alert">
        Não foi possível carregar a ilustração anatômica. <a href={view.source} target="_blank" rel="noreferrer noopener">Abrir a imagem original</a>.
       </div>
@@ -272,9 +273,11 @@ const groupCatalog:{id:Category;title:string;description:string;icon:string;cove
   cover:expandedAtlasViews.find(v=>v.id==="olho")?.image||"",
   ids:["endocrino","olho","ouvido","pele","linfatico"]}
 ];
-const allViews:AtlasView[]=[...atlasViews,...expandedAtlasViews];
-const fullCount=bones.length+allViews.reduce((n,v)=>n+v.spots.length,0);
+const allViews:AtlasView[]=[...atlasViews,...expandedAtlasViews,...skullViews];
+const fullCount=bones.length+allViews.filter(v=>v.id!=="cranio").reduce((n,v)=>n+v.spots.length,0);
+const interactiveAtlasCount=allViews.length; // substitui o atlas antigo do Crânio por cinco vistas
 function categoryOf(id:AtlasSelection):Category|null{
+ if(skullViewIsValid(id))return "ossos";
  return groupCatalog.find(g=>id!==null&&g.ids.includes(id))?.id??null;
 }
 function fromLocation():{view:AtlasSelection;category:Category|null}{
@@ -309,14 +312,16 @@ export default function AnatomyAtlasCollection(){
  const searchResults=term.trim()?allViews.filter(v=>(v.short+" "+v.title+" "+v.subtitle+" "+v.spots.map(p=>p.name).join(" ")).normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().includes(term.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().trim())):[];
  const shown=term.trim()?searchResults:allViews.filter(v=>visibleIds.includes(v.id));
  const active=allViews.find(v=>v.id===selected);
+ const skullIndex=selected==="cranio";
+ const skullInside=skullViewIsValid(selected);
  return <section className={styles.collection} aria-label="Biblioteca de atlas de anatomia">
   <header className={styles.collectionHero}>
    <span>✦ EDUVERSO · ATLAS DE ANATOMIA</span>
    <h2>{selected?active?.short||"Vista anterior":group?group.title:"Atlas humano por segmentos"}<span>.</span></h2>
-   <p>{selected?"Explore estruturas, funções e correlações clínicas por meio de imagens e atividades.":group?group.description:"Biblioteca de anatomia dividida em sistemas. Escolha uma categoria, explore seus atlas e estude com desafios ou flashcards."}</p>
-   <div className={styles.heroStats}><span>{String(1+allViews.length).padStart(2,"0")} atlas</span><span>{fullCount} estruturas</span><span>{groupCatalog.length} segmentos</span><span>3 modos de estudo</span></div>
+   <p>{skullIndex?"Escolha uma das cinco vistas anatômicas do crânio. Cada imagem tem estruturas, desafios e flashcards próprios.":selected?"Explore estruturas, funções e correlações clínicas por meio de imagens e atividades.":group?group.description:"Biblioteca de anatomia dividida em sistemas. Escolha uma categoria, explore seus atlas e estude com desafios ou flashcards."}</p>
+   <div className={styles.heroStats}><span>{String(interactiveAtlasCount).padStart(2,"0")} atlas interativos</span><span>{fullCount} estruturas</span><span>{groupCatalog.length} segmentos</span><span>3 modos de estudo</span></div>
   </header>
-  {selected?<button type="button" className={styles.return} onClick={()=>openCategory(categoryOf(selected))}>← Voltar aos atlas de {groupCatalog.find(g=>g.id===categoryOf(selected))?.title||"anatomia"}</button>:category?<button type="button" className={styles.return} onClick={()=>openCategory(null)}>← Todos os sistemas anatômicos</button>:null}
+  {selected?<button type="button" className={styles.return} onClick={()=>skullInside?navigate("cranio","ossos"):openCategory(categoryOf(selected))}>{skullInside?"← Voltar às 5 vistas do Crânio":"← Voltar aos atlas de "+(groupCatalog.find(g=>g.id===categoryOf(selected))?.title||"anatomia")}</button>:category?<button type="button" className={styles.return} onClick={()=>openCategory(null)}>← Todos os sistemas anatômicos</button>:null}
   {!selected&&<label className={styles.searchBox}><span aria-hidden="true">⌕</span><input type="search" value={term} onChange={e=>setTerm(e.target.value)} placeholder="Buscar atlas, região ou estrutura..." aria-label="Buscar no atlas de anatomia"/></label>}
   {!selected&&!category&&!term.trim()&&<div className={styles.segmentGrid}>
     {groupCatalog.map(g=><button key={g.id} type="button" className={styles.segmentCard} onClick={()=>openCategory(g.id)}>
@@ -339,12 +344,25 @@ export default function AnatomyAtlasCollection(){
             else{el.style.opacity="0";el.alt="Ilustração indisponível — "+v.short;}
           }}/>
       </span>
-      <span className={styles.cardInfo}><small>{v.spotMode==="list"?"ATLAS DE SISTEMAS":"ATLAS REGIONAL"}</small><strong>{v.short}</strong><span>{v.spots.length} estruturas · desafios e flashcards</span><em>Explorar atlas →</em></span>
+      <span className={styles.cardInfo}><small>{v.id==="cranio"?"5 VISTAS INTERATIVAS":v.spotMode==="list"?"ATLAS DE SISTEMAS":"ATLAS REGIONAL"}</small><strong>{v.short}</strong><span>{v.id==="cranio"?"5 imagens internas · Explorar, Desafio e Flashcards":v.spots.length+" estruturas · desafios e flashcards"}</span><em>{v.id==="cranio"?"Ver as 5 vistas →":"Explorar atlas →"}</em></span>
      </button>)}
    </div>
    {!shown.length&&!visibleIds.includes("anterior")&&<p className={styles.noResults}>Nenhum atlas encontrado. Tente outra palavra ou volte aos sistemas anatômicos.</p>}
   </>}
+  {skullIndex&&<>
+   <div className={styles.sectionLabel}><strong>Escolha a vista do crânio</strong><span>5 imagens interativas</span></div>
+   <div className={styles.skullSubGrid}>
+    {skullViews.map((view,index)=><button type="button" key={view.id} className={styles.skullSubCard}
+      onClick={()=>navigate(view.id,"ossos")} aria-label={"Abrir "+view.short+" do Crânio"}>
+      <span className={styles.skullSubImage}><img src={view.image} alt={view.alt} loading="lazy"
+       onError={event=>{event.currentTarget.style.opacity="0";}}/></span>
+      <span className={styles.skullSubInfo}><small>{String(index+1).padStart(2,"0")} · ATLAS INTERATIVO</small>
+       <strong>{view.short}</strong><span>{view.spots.length} estruturas · Explorar, Desafio e Flashcards</span><em>Estudar esta vista →</em></span>
+     </button>)}
+   </div>
+   <p className={styles.skullIndexNote}>As cinco imagens representam orientações diferentes do crânio. Cada uma possui marcadores e perguntas próprios; as posições dos pontos estão em validação didática.</p>
+  </>}
   {selected==="anterior"&&<AnatomyAtlas/>}
-  {selected!=="anterior"&&active&&<AtlasStudy key={active.id} view={active}/>}
+  {selected!=="anterior"&&!skullIndex&&active&&<AtlasStudy key={active.id} view={active}/>}
  </section>;
 }
