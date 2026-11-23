@@ -1,31 +1,34 @@
 "use client";
-import {useEffect,useMemo,useState} from "react";
+import {Fragment,useEffect,useMemo,useState} from "react";
 import {getProfessionalTrack,professionalTracks} from "./learning-professions";
 import {getProfessionalDepth} from "./professional-depth";
 import {getProfessionalCodeExample} from "./professional-code-examples";
+import {useProfessionalProgress} from "./professional-progress-client";
+import ProfessionalPythonLab from "./professional-python-lab";
 import styles from "./professional-learning-hub.module.css";
 
-type Props={trackId:string;onSelectTrack:(id:string)=>void;onOpenBooklet:(id:string)=>void};
+type Props={trackId:string;userId:string|null;onSelectTrack:(id:string)=>void;onOpenBooklet:(id:string)=>void};
 type Tab="aulas"|"revisao";
-const storageKey=(id:string)=>"eduverso:profissionais:concluidas:v1:"+id;
-
-function readProgress(id:string,max:number):number[]{
- try{
-  const parsed:unknown=JSON.parse(localStorage.getItem(storageKey(id))||"[]");
-  return Array.isArray(parsed)?[...new Set(parsed.filter((i):i is number=>Number.isInteger(i)&&i>=0&&i<max))].sort((a,b)=>a-b):[];
- }catch{return [];}
+function chapterLevel(index:number){
+ if(index<3)return {name:"Fundamentos",step:1,description:"Conceitos essenciais"};
+ if(index<5)return {name:"Prática aplicada",step:2,description:"Exemplos e exercícios"};
+ return {name:"Integração",step:3,description:"Aplicações profissionais"};
 }
+
 function orderFor(index:number,offset:number):number[]{
  const base=[0,1,2];const shift=(index+offset)%base.length;
  return [...base.slice(shift),...base.slice(0,shift)];
 }
-export default function ProfessionalLearningHub({trackId,onSelectTrack,onOpenBooklet}:Props){
+export default function ProfessionalLearningHub({trackId,userId,onSelectTrack,onOpenBooklet}:Props){
  const track=getProfessionalTrack(trackId)??professionalTracks[0];
  const [tab,setTab]=useState<Tab>("aulas");
  const [lessonIndex,setLessonIndex]=useState(0);
  const [choice,setChoice]=useState<number|null>(null);
  const [checked,setChecked]=useState(false);
- const [completed,setCompleted]=useState<number[]>([]);
+ const {completed,syncState,complete}=useProfessionalProgress(trackId,track.lessons.length,userId);
+ const [challengeAnswer,setChallengeAnswer]=useState("");
+ const [practiceFeedback,setPracticeFeedback]=useState<"none"|"understood"|"review">("none");
+ const [playgroundOpen,setPlaygroundOpen]=useState(false);
  const [reviewAnswers,setReviewAnswers]=useState<Record<number,number>>({});
  const [reviewChecked,setReviewChecked]=useState(false);
  const [chaptersOpen,setChaptersOpen]=useState(false);
@@ -34,9 +37,9 @@ export default function ProfessionalLearningHub({trackId,onSelectTrack,onOpenBoo
  const [secondChecked,setSecondChecked]=useState(false);
 
  useEffect(()=>{
-  setCompleted(readProgress(track.id,track.lessons.length));
   setLessonIndex(0);setTab("aulas");setChoice(null);setChecked(false);
   setReviewAnswers({});setReviewChecked(false);setChaptersOpen(false);setPracticeOpen(false);setSecondChoice(null);setSecondChecked(false);
+  setChallengeAnswer("");setPracticeFeedback("none");setPlaygroundOpen(false);
  },[track.id,track.lessons.length]);
 
  const lesson=track.lessons[Math.min(lessonIndex,track.lessons.length-1)];
@@ -49,17 +52,10 @@ export default function ProfessionalLearningHub({trackId,onSelectTrack,onOpenBoo
  const reviewScore=reviewItems.reduce((total,item,i)=>total+(reviewAnswers[i]===item.correct?1:0),0);
 
  function openLesson(index:number){
-  setTab("aulas");setLessonIndex(index);setChoice(null);setChecked(false);setSecondChoice(null);setSecondChecked(false);setPracticeOpen(false);setChaptersOpen(false);
+  setTab("aulas");setLessonIndex(index);setChoice(null);setChecked(false);setSecondChoice(null);setSecondChecked(false);setPracticeOpen(false);setChaptersOpen(false);setChallengeAnswer("");setPracticeFeedback("none");setPlaygroundOpen(false);
   if(typeof window!=="undefined")requestAnimationFrame(()=>document.getElementById("eduverso-professional-lesson")?.scrollIntoView({behavior:"smooth",block:"start"}));
  }
- function markCompleted(index:number){
-  setCompleted(current=>{
-   if(current.includes(index))return current;
-   const updated=[...current,index].sort((a,b)=>a-b);
-   try{localStorage.setItem(storageKey(track.id),JSON.stringify(updated));}catch{/* private browsing */}
-   return updated;
-  });
- }
+ function markCompleted(index:number){complete(index);}
  function verify(){
   if(choice===null||checked)return;
   setChecked(true);
@@ -90,8 +86,8 @@ export default function ProfessionalLearningHub({trackId,onSelectTrack,onOpenBoo
     <div className={styles.heroIcon}>{track.icon}</div>
     <div><h1>{track.name}<span>.</span></h1><p className={styles.description}>{track.description}</p></div>
    </div></div>
-   <div className={styles.courseStats}><span>📚 {track.lessons.length} aulas</span><span>✍️ {track.lessons.length*3} atividades de estudo</span><span>✓ {completed.length} concluídas</span></div>
-   <div className={styles.courseFooter}><div className={styles.courseProgress}><div className={styles.progressText}><span>Minha evolução</span><b>{progress}%</b></div><div className={styles.progressBar} role="progressbar" aria-valuenow={progress} aria-valuemin={0} aria-valuemax={100} aria-label="Aulas concluídas"><span style={{width:progress+"%"}}/></div></div>
+   <div className={styles.courseStats}><span>📚 {track.lessons.length} aulas</span><span>✍️ {track.lessons.length*3} atividades</span><span>✓ {completed.length} concluídas</span></div>
+   <div className={styles.courseFooter}><div className={styles.courseProgress}><div className={styles.progressText}><span>Minha evolução · {syncState==="synced"?"salva na conta":syncState==="syncing"?"sincronizando":syncState==="offline"?"salva no dispositivo":"neste navegador"}</span><b>{progress}%</b></div><div className={styles.progressBar} role="progressbar" aria-valuenow={progress} aria-valuemin={0} aria-valuemax={100} aria-label="Aulas concluídas"><span style={{width:progress+"%"}}/></div></div>
    <button type="button" className={styles.bookletButton} onClick={()=>onOpenBooklet(track.id)}>↓ Apostila PDF</button></div>
   </header>
   <div className={styles.tabBar} role="group" aria-label="Modo de aprendizado">
@@ -103,25 +99,41 @@ export default function ProfessionalLearningHub({trackId,onSelectTrack,onOpenBoo
   {tab==="aulas"?<div className={styles.studyLayout}>
    <aside className={styles.syllabus+(chaptersOpen?" "+styles.syllabusOpen:"")}>
     <div className={styles.syllabusTitle}><span>SEU ROTEIRO DE ESTUDO</span><h2>Capítulos</h2><p>Selecione um para abrir a aula completa.</p></div>
-    <div className={styles.chapterList}>{track.lessons.map((item,i)=>
-     <button type="button" key={item.title} aria-current={lessonIndex===i?"step":undefined}
+    <div className={styles.chapterList}>{track.lessons.map((item,i)=><Fragment key={item.title}>
+     {(i===0||i===3||i===5)&&<div className={styles.levelHeader}><span>NÍVEL {chapterLevel(i).step} · {chapterLevel(i).name}</span><small>{chapterLevel(i).description}</small></div>}
+     <button type="button" aria-current={lessonIndex===i?"step":undefined}
       className={styles.chapter+(lessonIndex===i?" "+styles.chapterCurrent:"")} onClick={()=>openLesson(i)}>
       <span className={styles.chapterNumber}>{completed.includes(i)?"✓":String(i+1).padStart(2,"0")}</span>
       <span><strong>{item.title}</strong><small>{completed.includes(i)?"Concluído":"Abrir aula e praticar"}</small></span><span aria-hidden="true">›</span>
-     </button>)}</div>
+     </button></Fragment>)}</div>
    </aside>
 
    <article id="eduverso-professional-lesson" className={styles.lessonCard}>
-    <div className={styles.lessonTop}><span>CAPÍTULO {String(lessonIndex+1).padStart(2,"0")} DE {String(track.lessons.length).padStart(2,"0")}</span><span>{completed.includes(lessonIndex)?"✓ Concluído":"Leitura + atividade"}</span></div>
+    <div className={styles.lessonTop}><span>CAPÍTULO {String(lessonIndex+1).padStart(2,"0")} DE {String(track.lessons.length).padStart(2,"0")} · NÍVEL {chapterLevel(lessonIndex).step} — {chapterLevel(lessonIndex).name}</span><span>{completed.includes(lessonIndex)?"✓ Concluído":"Leitura + atividade"}</span></div>
     <h2>{lesson.title}</h2>
     <section className={styles.reading}><h3>Entenda o conteúdo</h3><p>{lesson.explain||lesson.body}</p></section>
     {depth&&<section className={styles.deepSection}><span className={styles.deepKicker}>OBJETIVO DE APRENDIZAGEM</span><h3>{depth.objective}</h3><p>{depth.explanation}</p></section>}
     <section className={styles.example}><div className={styles.noteIcon}>✦</div><div><h3>Exemplo aplicado</h3><p>{lesson.example}</p></div></section>
     <section className={styles.reading}><h3>Na prática profissional</h3><p>{lesson.context}</p></section>
     {exampleCode&&<section className={styles.codeSection}><span className={styles.deepKicker}>EXEMPLO PRÁTICO DE CÓDIGO</span><h3>Veja a aplicação</h3><pre><code>{exampleCode}</code></pre><p>Exemplo didático para estudar a sintaxe e compreender o raciocínio. Teste em um ambiente apropriado antes de aplicar em sistemas reais.</p></section>}
+    {track.id==="python"&&exampleCode&&<div className={styles.pythonToggle}>
+     <button type="button" aria-expanded={playgroundOpen} onClick={()=>setPlaygroundOpen(v=>!v)}>{playgroundOpen?"Fechar laboratório Python":"▶ Abrir laboratório interativo de Python"} <span aria-hidden="true">{playgroundOpen?"▴":"↗"}</span></button>
+     {playgroundOpen&&<ProfessionalPythonLab key={track.id+"-"+lessonIndex} initialCode={exampleCode} chapter={lessonIndex+1}/>}
+    </div>}
     {depth&&<section className={styles.stepsSection}><span className={styles.deepKicker}>APRENDA FAZENDO</span><h3>Passo a passo</h3><ol>{depth.steps.map((step,i)=><li key={i}><span>{i+1}</span><p>{step}</p></li>)}</ol></section>}
     <section className={styles.warning}><span aria-hidden="true">!</span><div><h3>Erro comum que você deve evitar</h3><p>{lesson.pitfall}</p></div></section>
-    {depth&&<section className={styles.challenge}><span className={styles.deepKicker}>DESAFIO PRÁTICO</span><h3>Experimente resolver</h3><p>{depth.practice}</p><button type="button" aria-expanded={practiceOpen} onClick={()=>setPracticeOpen(v=>!v)}>{practiceOpen?"Ocultar resolução comentada":"Ver resolução comentada"} <span aria-hidden="true">{practiceOpen?"▴":"▾"}</span></button>{practiceOpen&&<div role="note" className={styles.solution}><strong>Resolução orientada</strong><p>{depth.solution}</p></div>}</section>}
+    {depth&&<section className={styles.challenge}>
+     <span className={styles.deepKicker}>DESAFIO PRÁTICO · ATIVIDADE ABERTA</span><h3>Experimente resolver</h3><p>{depth.practice}</p>
+     <label className={styles.challengeLabel} htmlFor={"resposta-desafio-"+track.id+"-"+lessonIndex}>Escreva como resolveria esse desafio, antes de conferir a solução.</label>
+     <textarea id={"resposta-desafio-"+track.id+"-"+lessonIndex} className={styles.challengeAnswer} value={challengeAnswer} maxLength={2000} onChange={event=>{setChallengeAnswer(event.target.value);setPracticeOpen(false);setPracticeFeedback("none");}} rows={4} placeholder="Explique seu raciocínio, etapas e resultado esperado..."/>
+     <button type="button" disabled={challengeAnswer.trim().length<20} aria-expanded={practiceOpen} onClick={()=>setPracticeOpen(v=>!v)}>{practiceOpen?"Ocultar resolução comentada":"Comparar com a resolução"} <span aria-hidden="true">{practiceOpen?"▴":"▾"}</span></button>
+     {challengeAnswer.trim().length<20&&!practiceOpen&&<small className={styles.challengeHint}>Escreva pelo menos 20 caracteres para liberar a resolução orientada.</small>}
+     {practiceOpen&&<div role="note" className={styles.solution}><strong>Resolução orientada</strong><p>{depth.solution}</p>
+      <p>Compare sua resposta com os critérios apresentados. Esta resposta aberta é de autoavaliação; ainda não recebe nota automática.</p>
+      <div className={styles.selfRating}><button type="button" aria-pressed={practiceFeedback==="understood"} onClick={()=>setPracticeFeedback("understood")}>✓ Consegui resolver</button><button type="button" aria-pressed={practiceFeedback==="review"} onClick={()=>setPracticeFeedback("review")}>↻ Preciso revisar</button></div>
+      {practiceFeedback!=="none"&&<p className={styles.selfNotice}>{practiceFeedback==="understood"?"Boa! Faça as duas questões para validar a conclusão do capítulo.":"Revise a teoria e o exemplo acima. Você pode tentar escrever outra resposta antes de continuar."}</p>}
+     </div>}
+    </section>}
     <section className={styles.exercise}>
      <div className={styles.exerciseHeading}><span>FIXAÇÃO DO CAPÍTULO</span><h3>Teste sua compreensão</h3><p>Duas questões comentadas por aula, além do desafio prático. Responda e confira sua justificativa.</p></div>
      <span className={styles.questionCount}>QUESTÃO 1 DE {secondQuiz?2:1}</span>
@@ -133,7 +145,7 @@ export default function ProfessionalLearningHub({trackId,onSelectTrack,onOpenBoo
        <b>{["A","B","C"][displayIndex]}</b><span>{lesson.options[answerIndex]}</span>
       </button>)}</div>
      {!checked?<button className={styles.verifyButton} type="button" disabled={choice===null} onClick={verify}>Conferir resposta</button>:
-      <div className={styles.feedback} role="status"><strong>{choice===lesson.correct?"✓ Resposta correta! Capítulo concluído.":"Revise a explicação e tente novamente."}</strong>
+      <div className={styles.feedback} role="status"><strong>{choice===lesson.correct?"✓ Primeira resposta correta! Continue para a próxima questão.":"Revise a explicação e tente novamente."}</strong>
        <p>{lesson.feedback||lesson.explain}</p>
        {choice!==lesson.correct&&<button type="button" onClick={()=>{setChoice(null);setChecked(false)}}>↻ Tentar novamente</button>}
       </div>}
