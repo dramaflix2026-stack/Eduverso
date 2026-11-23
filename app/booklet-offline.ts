@@ -2,6 +2,7 @@ import type {LessonSource} from "./exercise-bank";
 import type {BookletFormat} from "./booklet-content";
 import {makeBooklet} from "./booklet-content";
 import {makeProfessionalBooklet} from "./professional-course-pdf";
+import {makeMechanicsBooklet,mechanicsChapters} from "./booklet-mechanics";
 import type {ProfessionalTrack} from "./learning-professions";
 import type {PdfDocumentRequest,PdfSection} from "./lib/lesson-pdf";
 
@@ -179,6 +180,18 @@ export function createOfflineBooklet(args:{
     "IBGE Educa — Biomas brasileiros: https://educa.ibge.gov.br/jovens/conheca-o-brasil/territorio/18307-biomas-brasileiros.html",
     "Esquemas vetoriais autorais e simplificados, não são mapas, fotografias ou medições."
    ]});
+ }
+ if(subject==="fisica"&&/mecanica/.test(topic)){
+  if(limit>mechanicsChapters.length)return {
+   document:null,reviewed:mechanicsChapters.length,requested:limit,
+   missing:Array.from({length:limit-mechanicsChapters.length},(_,i)=>
+    "Capítulo "+(mechanicsChapters.length+i+1)+" ainda não desenvolvido"),
+   reason:"Mecânica já conta com "+mechanicsChapters.length+" capítulos completos, mas você solicitou "+limit+
+    ". Selecione 5 ou 10 capítulos. Não repetiremos explicações para inflar o PDF."
+  };
+  const document=makeMechanicsBooklet(args.topic,limit,args.format);
+  return {document,reviewed:limit,requested:limit,missing:[],
+   reason:"Mecânica com explicações, resolução de problemas e revisão elaboradas sem API."};
  }
  if(subject==="geografia"&&/clima|climat/.test(topic)){
   return curatedBooklet({topic:args.topic,limit,format:args.format,chapters:geographyClimates,
