@@ -1,0 +1,39 @@
+.root{width:100%;min-width:0;display:flex;flex-direction:column;gap:12px;color:#f6edff}
+.header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;padding:2px 4px}
+.header>div:first-child{display:flex;flex-direction:column;gap:5px}
+.header span{font-size:10px;letter-spacing:.13em;font-weight:900;color:#cea9ff}
+.header strong{font-size:17px;letter-spacing:-.03em;color:white}
+.zoom{display:flex;gap:6px;align-items:center}
+.zoom button,.options button{background:#3a2850;color:#f3e7ff;border:1px solid #7c5d9b;border-radius:10px;min-height:39px;padding:8px 11px;font:800 12px/1.1 inherit;cursor:pointer}
+.zoom button{min-width:37px;font-size:16px}.zoom button:last-child{font-size:11px}
+.zoom output{color:#e4d0ff;font-size:12px;min-width:45px;text-align:center;font-variant-numeric:tabular-nums}
+.zoom button:disabled,.options button:disabled{opacity:.37;cursor:default}
+.options{display:flex;flex-wrap:wrap;gap:8px;padding:0 4px}
+.options button[aria-pressed=true]{background:#65408e;border-color:#bf8ffd}
+.guide{background:#322440;border:1px solid #66517d;border-radius:12px;color:#dbcbe9;padding:13px;font-size:12px;line-height:1.7;margin:0}
+.viewport{width:100%;background:#f4f0fb;border:1px solid #65527c;overflow:hidden;overscroll-behavior:contain;border-radius:16px;touch-action:pan-x pan-y}
+.zoomed{overflow:auto;max-height:min(74vh,860px)}
+.svg{display:block;width:100%;height:auto;max-width:none;min-width:100%;user-select:none}
+.backBone{fill:#ece2db;stroke:#685a7a;stroke-width:4.5;pointer-events:none}
+.region{stroke:#59455e;stroke-width:4;stroke-linecap:round;stroke-linejoin:round;cursor:pointer;transition:opacity .17s ease,filter .17s ease}
+.region path{pointer-events:visiblePainted}
+.region:hover,.region:focus-visible{outline:none;filter:brightness(1.12) drop-shadow(0 0 9px #8159e5)}
+.region.active path{fill:#ad7bf0!important;stroke:#5d1fb4!important;stroke-width:6}
+.region.flash path{fill:#ffc84d!important;stroke:#b97906!important;stroke-width:7}
+.region.correct path{fill:#55dfa5!important;stroke:#078354!important;stroke-width:7}
+.region.wrong path{fill:#ff829b!important;stroke:#ba2e57!important;stroke-width:7}
+.region.dim{opacity:.48}
+.detail,.visibleLabels,.canvasCaption{pointer-events:none}
+.orbit{fill:#332344;stroke:#7d6389;stroke-width:7}
+.hole{fill:#2d223c;stroke:#8a6b86;stroke-width:3}
+.nasalHole{fill:#35253b;stroke:#987b8d;stroke-width:4}
+.visibleLabels text{fill:#fff9db;stroke:#35223e;stroke-width:7;stroke-linejoin:round;paint-order:stroke;font-weight:900;font-size:13px;letter-spacing:.02em}
+.canvasCaption{font-size:11px;letter-spacing:1.3px;fill:#9a8aab;font-weight:800}
+.hint{font-size:12px;line-height:1.6;color:#cdb9df;margin:0 4px}
+.quick{border-top:1px solid #634e78;padding:14px 4px 4px}
+.quick strong{font-size:12px;display:block;margin-bottom:10px;color:#dbc3fa}
+.quick>div{display:flex;flex-wrap:wrap;gap:7px}
+.quick button{font:inherit;border:1px solid #775790;border-radius:10px;background:#30213f;color:#ead5ff;font-size:11px;font-weight:750;padding:9px 12px;min-height:37px;cursor:pointer}
+.quick button[aria-pressed=true]{background:#7945b1;border-color:#d0a4ff;color:white}
+@media(max-width:520px){.header{align-items:start}.zoom{width:100%;justify-content:flex-start}.header strong{font-size:16px}.hint{font-size:11px}.options button{min-height:35px}}
+@media(prefers-reduced-motion:reduce){.region{transition:none}}
