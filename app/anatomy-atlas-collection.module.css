@@ -210,3 +210,7 @@
 @media(max-width:520px){.skullSubGrid{gap:10px}.skullSubCard{border-radius:14px}.skullSubImage{height:146px}.skullSubInfo{min-height:143px;padding:12px;gap:8px}.skullSubInfo small{font-size:9px}.skullSubInfo strong{font-size:15px}.skullSubInfo span{font-size:10px}.skullSubInfo em{font-size:10px}}
 @media(max-width:355px){.skullSubGrid{grid-template-columns:1fr}.skullSubImage{height:190px}.skullSubInfo{min-height:120px}}
 @media(prefers-reduced-motion:reduce){.skullSubCard{transition:none}}
+
+/* Miniatura do atlas com imagem de contexto: mostrar apenas a região realmente estudada. */
+.skullCropThumb{position:relative;display:block;height:100%;width:auto;max-width:100%;overflow:hidden;background:#fff;flex:none}
+.skullCropThumb img{position:absolute!important;display:block;max-width:none!important;object-fit:fill!important}
