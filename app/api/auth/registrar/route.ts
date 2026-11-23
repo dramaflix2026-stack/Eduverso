@@ -12,7 +12,18 @@ export async function POST(request:NextRequest){
   const confirm=typeof input.confirm==="string"?input.confirm:"";
   if(name.length<2||name.length>120||email.length>254||!/^\S+@\S+\.\S+$/.test(email)||password.length<8||password.length>128||password!==confirm)
    return NextResponse.json({error:"Confira nome, e-mail e senhas (mínimo de 8 caracteres, duas senhas iguais)."},{status:400});
-  const redirect=new URL("/entrar?confirmado=1",publicOrigin(request)).toString();
+  const canonical=new URL("/entrar?confirmado=1",publicOrigin(request)).toString();
+  // Railway URL is already allowed by the shared Supabase Auth allowlist.
+  // It immediately redirects to the canonical custom domain, preserving the query.
+  const configured=process.env.EDUVERSO_AUTH_CONFIRM_REDIRECT_URL;
+  let redirect=canonical;
+  if(configured){
+   const url=new URL(configured);
+   if(url.protocol!=="https:"||!["eduversoai.com.br","eduverso-web-production.up.railway.app"].includes(url.hostname)||
+      url.pathname!=="/entrar"||url.search!=="?confirmado=1"||url.hash||url.username||url.password)
+    throw new Error("Invalid Eduverso confirmation redirect URL");
+   redirect=url.toString();
+  }
   const result=await supabaseRequest<Signup&{error_code?:string}>("/auth/v1/signup?redirect_to="+encodeURIComponent(redirect),{
    method:"POST",body:{email,password,data:{full_name:name,app:"eduverso"}}
   });
