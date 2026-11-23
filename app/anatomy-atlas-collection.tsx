@@ -274,7 +274,8 @@ const groupCatalog:{id:Category;title:string;description:string;icon:string;cove
   ids:["endocrino","olho","ouvido","pele","linfatico"]}
 ];
 const allViews:AtlasView[]=[...atlasViews,...expandedAtlasViews,...skullViews];
-const fullCount=bones.length+allViews.reduce((n,v)=>n+v.spots.length,0);
+const fullCount=bones.length+allViews.filter(v=>v.id!=="cranio").reduce((n,v)=>n+v.spots.length,0);
+const interactiveAtlasCount=allViews.length; // substitui o atlas antigo do Crânio por cinco vistas
 function categoryOf(id:AtlasSelection):Category|null{
  if(skullViewIsValid(id))return "ossos";
  return groupCatalog.find(g=>id!==null&&g.ids.includes(id))?.id??null;
@@ -318,7 +319,7 @@ export default function AnatomyAtlasCollection(){
    <span>✦ EDUVERSO · ATLAS DE ANATOMIA</span>
    <h2>{selected?active?.short||"Vista anterior":group?group.title:"Atlas humano por segmentos"}<span>.</span></h2>
    <p>{skullIndex?"Escolha uma das cinco vistas anatômicas do crânio. Cada imagem tem estruturas, desafios e flashcards próprios.":selected?"Explore estruturas, funções e correlações clínicas por meio de imagens e atividades.":group?group.description:"Biblioteca de anatomia dividida em sistemas. Escolha uma categoria, explore seus atlas e estude com desafios ou flashcards."}</p>
-   <div className={styles.heroStats}><span>{String(1+allViews.length).padStart(2,"0")} atlas</span><span>{fullCount} estruturas</span><span>{groupCatalog.length} segmentos</span><span>3 modos de estudo</span></div>
+   <div className={styles.heroStats}><span>{String(interactiveAtlasCount).padStart(2,"0")} atlas interativos</span><span>{fullCount} estruturas</span><span>{groupCatalog.length} segmentos</span><span>3 modos de estudo</span></div>
   </header>
   {selected?<button type="button" className={styles.return} onClick={()=>skullInside?navigate("cranio","ossos"):openCategory(categoryOf(selected))}>{skullInside?"← Voltar às 5 vistas do Crânio":"← Voltar aos atlas de "+(groupCatalog.find(g=>g.id===categoryOf(selected))?.title||"anatomia")}</button>:category?<button type="button" className={styles.return} onClick={()=>openCategory(null)}>← Todos os sistemas anatômicos</button>:null}
   {!selected&&<label className={styles.searchBox}><span aria-hidden="true">⌕</span><input type="search" value={term} onChange={e=>setTerm(e.target.value)} placeholder="Buscar atlas, região ou estrutura..." aria-label="Buscar no atlas de anatomia"/></label>}
@@ -343,7 +344,7 @@ export default function AnatomyAtlasCollection(){
             else{el.style.opacity="0";el.alt="Ilustração indisponível — "+v.short;}
           }}/>
       </span>
-      <span className={styles.cardInfo}><small>{v.spotMode==="list"?"ATLAS DE SISTEMAS":"ATLAS REGIONAL"}</small><strong>{v.short}</strong><span>{v.spots.length} estruturas · desafios e flashcards</span><em>Explorar atlas →</em></span>
+      <span className={styles.cardInfo}><small>{v.id==="cranio"?"5 VISTAS INTERATIVAS":v.spotMode==="list"?"ATLAS DE SISTEMAS":"ATLAS REGIONAL"}</small><strong>{v.short}</strong><span>{v.id==="cranio"?"5 imagens internas · Explorar, Desafio e Flashcards":v.spots.length+" estruturas · desafios e flashcards"}</span><em>{v.id==="cranio"?"Ver as 5 vistas →":"Explorar atlas →"}</em></span>
      </button>)}
    </div>
    {!shown.length&&!visibleIds.includes("anterior")&&<p className={styles.noResults}>Nenhum atlas encontrado. Tente outra palavra ou volte aos sistemas anatômicos.</p>}
