@@ -1,6 +1,7 @@
 "use client";
 export type PdfSection={
  heading:string;paragraphs:string[];pageBreakBefore?:boolean;
+ diagram?:{title:string;labels:string[];caption:string};
  kind?:"standard"|"chapter"|"question"|"answer"|"example"|"highlight"|"summary";
 };
 export type PdfDocumentRequest={
@@ -102,6 +103,35 @@ export async function downloadStudyPdf(request:PdfDocumentRequest):Promise<void>
   page.drawText("MATERIAL DIDÁTICO  -  EDUVERSO",{x:LEFT,y:66,size:8.5,font:bold,color:rgb(.70,.60,.82)});
   newPage();
  }
+ function drawDidacticDiagram(diagram:NonNullable<PdfSection["diagram"]>){
+  const labels=diagram.labels.map(label=>clean(label).slice(0,64)).filter(Boolean).slice(0,5);
+  if(labels.length<2)return;
+  const diagramH=131;
+  ensure(diagramH);
+  const top=y+7;
+  page.drawRectangle({x:LEFT,y:top-diagramH+5,width:WIDTH,height:diagramH,
+    color:subtle,borderColor:line,borderWidth:.9});
+  page.drawText(clean(diagram.title).slice(0,72),{x:LEFT+12,y:top-14,font:bold,size:11,color:purple});
+  const gap=12;
+  const boxW=(WIDTH-32-(labels.length-1)*gap)/labels.length;
+  const boxY=top-79;
+  labels.forEach((label,i)=>{
+   const x=LEFT+16+i*(boxW+gap);
+   page.drawRectangle({x,y:boxY,width:boxW,height:38,color:white,borderColor:violet,borderWidth:1});
+   const rows=wrap(label,8.7,bold,boxW-10).slice(0,2);
+   rows.forEach((row,j)=>page.drawText(row,{x:x+5,y:boxY+23-j*11,font:bold,size:8.7,color:navy}));
+   if(i<labels.length-1){
+    const ax=x+boxW,ay=boxY+19;
+    page.drawLine({start:{x:ax+1,y:ay},end:{x:ax+gap-3,y:ay},thickness:1,color:violet});
+    page.drawLine({start:{x:ax+gap-7,y:ay+3},end:{x:ax+gap-3,y:ay},thickness:1,color:violet});
+    page.drawLine({start:{x:ax+gap-7,y:ay-3},end:{x:ax+gap-3,y:ay},thickness:1,color:violet});
+   }
+  });
+  wrap(diagram.caption,8.2,font,WIDTH-32).slice(0,2).forEach((row,j)=>{
+   page.drawText(row,{x:LEFT+16,y:boxY-18-j*11,font,size:8.2,color:muted});
+  });
+  y=top-diagramH-12;
+ }
  if(request.coverPage)drawCover();
  else{topBar(page);y=749;}
  let chapterNumber=0;
@@ -145,6 +175,7 @@ export async function downloadStudyPdf(request:PdfDocumentRequest):Promise<void>
    page.drawLine({start:{x:LEFT,y:y+9},end:{x:RIGHT,y:y+9},color:line,thickness:1});
    y-=12;
    for(const paragraph of section.paragraphs)textBlock(paragraph,11.1,{leading:17.3,after:11});
+   if(section.diagram)drawDidacticDiagram(section.diagram);
    y-=14;
    continue;
   }
