@@ -105,7 +105,7 @@ function AtlasStudy({view}:{view:AtlasView}){
   if(!submitted||!flashRated)return;
   setF(v=>(v+1)%items.length);setTyped("");setSubmitted(false);setFlashCorrect(false);setFlashRated(false);
  }
- return <div className={styles.study}>
+ return <div className={styles.study+(skullMode?" "+styles.skullStudy:"")}>
   <header className={styles.studyHeader}>
    <span>ATLAS INTERATIVO · {view.spots.length} ESTRUTURAS</span>
    <h3>{view.title}</h3>
