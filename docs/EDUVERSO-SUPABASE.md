@@ -21,19 +21,23 @@ All have RLS enabled. Existing Toledo and Método EIXO tables are untouched.
 ## Two-product Kiwify integration
 
 Before deploying the new webhook handler, apply the database migration in
-`docs/sql/eduverso-kiwify-two-products.sql` to the existing Supabase database.
+`docs/sql/eduverso-kiwify-two-products.sql` and `docs/sql/eduverso-confirmation-reconcile.sql` to the existing Supabase database.
 
 In Kiwify > Apps > Webhooks, use TWO independently configured webhooks, both with the three events Compra aprovada, Reembolso and Chargeback.
 
 **1. Eduverso Estudante / Universitário**, select ONLY that product:
-`https://eduverso-web-production.up.railway.app/api/webhooks/kiwify?token=<EDUVERSO_KIWIFY_WEBHOOK_TOKEN_ESTUDANTE>`
+
+`https://eduverso-web-production.up.railway.app/api/webhooks/kiwify?plano=estudante`
 
 **2. Eduverso Professor**, select ONLY that product:
-`https://eduverso-web-production.up.railway.app/api/webhooks/kiwify?token=<EDUVERSO_KIWIFY_WEBHOOK_TOKEN_PROFESSOR>`
 
-Replace each placeholder in the URL with its corresponding 24+ character secret from Railway. The token appended to the URL is your own random secret, NOT the shorter Token field shown by Kiwify. Do not disclose secrets in screenshots, chat or Git.
+`https://eduverso-web-production.up.railway.app/api/webhooks/kiwify?plano=professor`
 
-The webhook checks both the plan-specific secret and exact product ID. The purchase table stores `plan_type` so the entitlement reconciliation selects Professor when both plans are active, and falls back to Estudante if a Professor purchase is refunded or charged back.
+In each Kiwify webhook's **Token** field, paste the value of the matching Railway secret variable (24+ characters). Kiwify sends a `signature` query parameter generated with HMAC-SHA1 over the raw JSON body and that Token; our receiver verifies it in constant time. Do NOT add the secret to the URL. The `plano` URL query is only for readability; it does not authorize access.
+
+The legacy `?token=<secret>` URL is temporarily supported for migration from older webhooks, but remove it after verifying HMAC. Do not disclose secret values in screenshots, logs, chat or Git.
+
+The webhook verifies the plan-specific HMAC or legacy token **and** exact product ID. The purchase table stores `plan_type` so the entitlement reconciliation selects Professor when both plans are active, and falls back to Estudante if a Professor purchase is refunded or charged back.
 
 Initial paid-campaign scope is **Estudante**. Professor's bulk-generation feature is still in development; do not advertise the unavailable functionality as already delivered.
 
