@@ -226,6 +226,25 @@ function AtlasStudy({view}:{view:AtlasView}){
 }
 type AtlasSelection="anterior"|AtlasView["id"]|null;
 type Category="ossos"|"muscular"|"neuro"|"cardio"|"orgaos"|"outros";
+const atlasCoverNames:Record<Category,string>={
+ ossos:"sistema-esqueletico.webp",
+ muscular:"musculos-movimento.webp",
+ neuro:"neuroanatomia.webp",
+ cardio:"cardiovascular-respiratorio.webp",
+ orgaos:"orgaos-sistemas-internos.webp",
+ outros:"sentidos-outros-sistemas.webp"
+};
+
+function AtlasCategoryCover({family,title}:{family:Category;title:string}){
+ const [missing,setMissing]=useState(false);
+ if(missing)return <AtlasArt family={family} id={"capa-"+family} title={title}/>;
+ return <img className={styles.atlasCoverImage}
+  src={"/images/anatomia/capas/"+atlasCoverNames[family]}
+  alt={"Capa ilustrativa — "+title}
+  loading="lazy"
+  onError={()=>setMissing(true)}/>;
+}
+
 const groupCatalog:{id:Category;title:string;description:string;icon:string;cover:string;ids:string[]}[]=[
  {id:"ossos",title:"Sistema esquelético",description:"Esqueleto, crânio, coluna, tórax, pelve e membros. Osteologia por regiões.",icon:"🦴",
   cover:"https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/Human_skeleton_front_no-text_no-color.svg/500px-Human_skeleton_front_no-text_no-color.svg.png",
@@ -294,7 +313,7 @@ export default function AnatomyAtlasCollection(){
   {!selected&&<label className={styles.searchBox}><span aria-hidden="true">⌕</span><input type="search" value={term} onChange={e=>setTerm(e.target.value)} placeholder="Buscar atlas, região ou estrutura..." aria-label="Buscar no atlas de anatomia"/></label>}
   {!selected&&!category&&!term.trim()&&<div className={styles.segmentGrid}>
     {groupCatalog.map(g=><button key={g.id} type="button" className={styles.segmentCard} onClick={()=>openCategory(g.id)}>
-     <span className={styles.segmentPreview}><AtlasArt family={g.id} id={"capa-"+g.id} title={g.title}/></span>
+     <span className={styles.segmentPreview}><AtlasCategoryCover family={g.id} title={g.title}/></span>
      <span className={styles.segmentInfo}><span className={styles.segmentIcon} aria-hidden="true">{g.icon}</span><strong>{g.title}</strong><small>{g.description}</small><em>{g.ids.length} atlas · Explorar →</em></span>
     </button>)}
    </div>}
