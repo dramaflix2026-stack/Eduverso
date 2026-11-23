@@ -8,8 +8,9 @@ import {entranceSubjects} from "./medicine-entrance";
 import {medicalTracks,getMedicalChoices,getMedicalTopics,getMedicalContent,chooseMedicalQuestions,type MedicalTrack} from "./creation-medical-catalog";
 import {buildExercises,type LessonSource,type ExerciseItem} from "./exercise-bank";
 import {downloadStudyPdf,type PdfDocumentRequest,type PdfSection} from "./lib/lesson-pdf";
-import type {BookletFormat} from "./booklet-content";
+import {makeBooklet,type BookletFormat} from "./booklet-content";
 import {professionalTracks,getProfessionalTrack} from "./learning-professions";
+import {makeProfessionalBooklet} from "./professional-course-pdf";
 
 import styles from "./creation-center.module.css";
 
@@ -102,6 +103,8 @@ export default function CreationCenter({tool,onNavigate,subjects,initialProfessi
  const [seed,setSeed]=useState(0);
  const [lessonLimit,setLessonLimit]=useState(10);
  const [bookletPages,setBookletPages]=useState(5);
+ const [customSubject,setCustomSubject]=useState("");
+ const [customTopic,setCustomTopic]=useState("");
  const [aiAvailable,setAiAvailable]=useState(false);
  const [aiChecked,setAiChecked]=useState(false);
  const [saved,setSaved]=useState<SavedMaterial[]>([]);
@@ -141,6 +144,12 @@ export default function CreationCenter({tool,onNavigate,subjects,initialProfessi
  function switchSubject(next:string){setSubject(next);setTopic(choices.find(s=>s.name===next)?.topics[0]?.name||"");setSeed(0);setNotice("");}
  function switchArea(next:"escolar"|"profissional"|MedicalTrack){setSourceArea(next);setMedChoice(next==="vestibular"?"biologia":next==="atlas"?"esqueleto":"geral");setMedTopic("");setSeed(0);setNotice("");}
  function switchMedicineChoice(next:string){setMedChoice(next);setMedTopic("");setSeed(0);setNotice("");}
+ function summaryLabel(pdf:PdfDocumentRequest|null):PdfDocumentRequest|null{
+  if(!pdf)return null;
+  return {...pdf,title:"Resumo do acervo - "+pdf.title.replace("Apostila de estudos - ",""),
+   subtitle:pdf.subtitle+" · RESUMO DO CATÁLOGO, NÃO É APOSTILA APROFUNDADA",
+   fileName:pdf.fileName.replace("apostila","resumo"),expectedContentPages:undefined};
+ }
  function store(pdf:PdfDocumentRequest,kind:string){
   const entry:SavedMaterial={id:String(Date.now())+"-"+Math.round(Math.random()*100000),title:pdf.title,kind,date:new Date().toLocaleDateString("pt-BR"),pdf};
   try{
@@ -163,10 +172,10 @@ export default function CreationCenter({tool,onNavigate,subjects,initialProfessi
   setBusy(true);setNotice("Gerando explicações aprofundadas e verificando a qualidade das páginas...");
   try{
    const payload={
-    subject:override?.subject??activeSubject,
-    topic:override?.topic??activeTopic,
+    subject:override?.subject??(customSubject.trim()||activeSubject),
+    topic:override?.topic??(customTopic.trim()||activeTopic),
     level:override?.level??(sourceArea==="profissional"?"Formação profissional":sourceArea==="escolar"?"Educação básica, com rigor adequado à matéria":"Medicina e preparação para provas"),
-    chapters:override?.chapters??lessons.slice(0,lessonLimit).map(l=>l.title),
+    chapters:override?.chapters??((customSubject.trim()||customTopic.trim())?[]:lessons.slice(0,lessonLimit).map(l=>l.title)),
     pageCount:bookletPages,format:bookletFormat
    };
    const response=await fetch("/api/apostilas/gerar",{method:"POST",credentials:"same-origin",
@@ -275,6 +284,10 @@ export default function CreationCenter({tool,onNavigate,subjects,initialProfessi
       <><label>Tópicos de referência<select value={lessonLimit} onChange={e=>setLessonLimit(Number(e.target.value))}>{[5,10,15,20].map(n=><option key={n} value={n}>Até {n} tópicos</option>)}</select></label>
       <label>Páginas de teoria<select value={bookletPages} onChange={e=>{setBookletPages(Number(e.target.value));setNotice("");}}>{[3,5,8,10].map(n=><option key={n} value={n}>{n} páginas aprofundadas (+ capa)</option>)}</select></label></>}
    </div>
+   {tool==="apostilas"&&<div className={styles.formGrid}>
+     <label>Outra disciplina (opcional)<input value={customSubject} onChange={e=>{setCustomSubject(e.target.value);setNotice("");}} placeholder="Ex.: Filosofia, Sociologia, Engenharia" maxLength={90}/></label>
+     <label>Outro assunto (opcional)<input value={customTopic} onChange={e=>{setCustomTopic(e.target.value);setNotice("");}} placeholder="Ex.: Biomas e vegetação" maxLength={110}/></label>
+   </div>}
    {tool==="apostilas"&&<div className={styles.bookletMode}>
      <div className={styles.bookletIntro}><span>ESCOLHA O FORMATO</span><strong>Você quer estudar ou aplicar atividades?</strong>
       <p>Apostilas começam com teoria e explicação. As perguntas são opcionais e nunca aparecem misturadas às explicações.</p></div>
@@ -284,7 +297,7 @@ export default function CreationCenter({tool,onNavigate,subjects,initialProfessi
       <button type="button" className={styles.bookletChoice} aria-pressed={bookletFormat==="com-atividades"} onClick={()=>setBookletFormat("com-atividades")}>
        <span>📝</span><strong>Teoria + atividades</strong><small>O mesmo conteúdo teórico, com exercícios ao final e gabarito comentado em seção separada.</small></button>
      </div>
-     <div className={styles.bookletPreview}><span>PRÉVIA DO SUMÁRIO</span><strong>{activeTopic}</strong>
+     <div className={styles.bookletPreview}><span>PRÉVIA DO SUMÁRIO</span><strong>{customTopic.trim()||activeTopic}</strong>
        <div>{lessons.slice(0,lessonLimit).map((l,i)=><small key={i}>{String(i+1).padStart(2,"0")} · {l.title}</small>)}</div>
      </div>
     </div>}
@@ -296,7 +309,10 @@ export default function CreationCenter({tool,onNavigate,subjects,initialProfessi
     {tool==="provas"?<>
       <button disabled={busy||!exam.length} className={styles.primary} onClick={()=>create(makeExam(activeSubject,activeTopic,exam),"Prova")}>↓ Baixar prova + gabarito comentado (PDF)</button>
       <button disabled={busy||!exam.length} className={styles.secondary} onClick={()=>create(makeExam(activeSubject,activeTopic,exam,true),"Gabarito")}>↓ Baixar somente o gabarito (PDF)</button>
-     </>:<button disabled={busy||!lessons.length||!aiAvailable} className={styles.primary} onClick={()=>{void createDeepBooklet();}}>✦ Gerar {bookletPages} páginas aprofundadas {bookletFormat==="com-atividades"?"+ atividades ":""}com IA (PDF)</button>}
+     </>:<>
+      <button disabled={busy||!aiAvailable} className={styles.primary} onClick={()=>{void createDeepBooklet();}}>✦ Gerar {bookletPages} páginas aprofundadas {bookletFormat==="com-atividades"?"+ atividades ":""}com IA (PDF)</button>
+      <button disabled={busy||!lessons.length} className={styles.secondary} onClick={()=>create(summaryLabel(professionalMode?makeProfessionalBooklet(professional,lessonLimit,bookletFormat):makeBooklet(activeSubject,activeTopic,lessonLimit,lessons,bookletFormat)),"Resumo do acervo")}>↓ Baixar resumo do catálogo (sem IA)</button>
+     </>}
    </div></>)}
   {tool==="arquivos"&&section("Importar material de estudo",
     <><p className={styles.hint}>Envie um PDF com texto selecionável ou um arquivo TXT. A leitura acontece no navegador; nesta etapa, o arquivo é organizado em um PDF de revisão, sem reescrita por IA.</p>
@@ -311,12 +327,13 @@ export default function CreationCenter({tool,onNavigate,subjects,initialProfessi
      <div className={styles.formGrid}><label>Páginas de teoria<select value={bookletPages} onChange={e=>setBookletPages(Number(e.target.value))}>{[3,5,8,10].map(n=><option key={n} value={n}>{n} páginas de conteúdo (+ capa)</option>)}</select></label></div>
      {aiChecked&&!aiAvailable&&<p className={styles.notice} role="status">Geração aprofundada aguardando configuração segura da IA no Railway. Materiais resumidos não serão oferecidos como apostilas completas.</p>}
     </div>
-    {section("Materiais do catálogo — gerar versão aprofundada",<div className={styles.readyGrid}>{starterMaterials.map(entry=><div className={styles.readyCard} key={entry.subject+"-"+entry.topic}><span>▤ {entry.subject}</span><strong>{entry.topic}</strong><button type="button" disabled={busy||!aiAvailable} onClick={()=>{void createDeepBooklet({subject:entry.subject,topic:entry.topic,level:"Ensino Fundamental e Médio",chapters:allLessons(entry.subject,entry.topic).map(l=>l.title)});}}>✦ Gerar apostila com IA</button></div>)}</div>)}
-    {section("Medicina — apostilas das 18 disciplinas",<div className={styles.readyGrid}>{medicineDisciplines.map(d=><div className={styles.readyCard} key={d.slug}><span>🫀 Faculdade de Medicina</span><strong>{d.title}</strong><button type="button" disabled={busy||!aiAvailable} onClick={()=>{const content=getMedicalContent("faculdade",d.slug,"");void createDeepBooklet({subject:"Faculdade de Medicina",topic:d.title,level:"Faculdade de Medicina — estudo acadêmico",chapters:content.lessons.map(l=>l.title)});}}>✦ Gerar apostila com IA</button></div>)}</div>)}
+    {section("Materiais do catálogo — gerar versão aprofundada",<div className={styles.readyGrid}>{starterMaterials.map(entry=><div className={styles.readyCard} key={entry.subject+"-"+entry.topic}><span>▤ {entry.subject}</span><strong>{entry.topic}</strong><button type="button" disabled={busy||!aiAvailable} onClick={()=>{void createDeepBooklet({subject:entry.subject,topic:entry.topic,level:"Ensino Fundamental e Médio",chapters:allLessons(entry.subject,entry.topic).map(l=>l.title)});}}>✦ Gerar apostila com IA</button><button type="button" disabled={busy} onClick={()=>create(summaryLabel(makeBooklet(entry.subject,entry.topic,10,allLessons(entry.subject,entry.topic),"teoria")),"Resumo do acervo")}>↓ Resumo do catálogo</button></div>)}</div>)}
+    {section("Medicina — apostilas das 18 disciplinas",<div className={styles.readyGrid}>{medicineDisciplines.map(d=><div className={styles.readyCard} key={d.slug}><span>🫀 Faculdade de Medicina</span><strong>{d.title}</strong><button type="button" disabled={busy||!aiAvailable} onClick={()=>{const content=getMedicalContent("faculdade",d.slug,"");void createDeepBooklet({subject:"Faculdade de Medicina",topic:d.title,level:"Faculdade de Medicina — estudo acadêmico",chapters:content.lessons.map(l=>l.title)});}}>✦ Gerar apostila com IA</button><button type="button" disabled={busy} onClick={()=>{const content=getMedicalContent("faculdade",d.slug,"");void create(summaryLabel(makeBooklet("Faculdade de Medicina",d.title,10,content.lessons,"teoria")),"Resumo do acervo");}}>↓ Resumo do catálogo</button></div>)}</div>)}
     {section("Formações profissionais — apostilas introdutórias",<div className={styles.readyGrid}>
      {professionalTracks.map(t=><div className={styles.readyCard} key={t.id}><span>{t.icon} {t.category}</span><strong>{t.name}</strong>
       <p className={styles.hint}>{t.description}</p>
       <button type="button" disabled={busy||!aiAvailable} onClick={()=>{void createDeepBooklet({subject:t.category,topic:t.name,level:"Formação profissional introdutória",chapters:t.lessons.map(l=>l.title)});}}>✦ Gerar apostila com IA</button>
+      <button type="button" disabled={busy} onClick={()=>create(summaryLabel(makeProfessionalBooklet(t,20,"teoria")),"Resumo do acervo")}>↓ Resumo do catálogo</button>
      </div>)}
     </div>)}
     {section("Meus materiais salvos",<><p className={styles.hint}>Cópias dos materiais gerados nesta Central. Armazenadas somente neste navegador, não sincronizadas entre dispositivos.</p>
