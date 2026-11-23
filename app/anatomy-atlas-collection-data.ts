@@ -31,10 +31,10 @@ export const atlasViews:AtlasView[]=[
  {
   id:"cranio",title:"Crânio — ossos da face e neurocrânio",short:"Crânio",
   subtitle:"Reconheça os principais ossos visíveis na vista frontal do crânio.",
-  image:"/images/anatomia/atlas/cranio-interativo.svg",
-  source:"/images/anatomia/atlas/cranio-interativo.svg",
-  credit:"Ilustração anatômica esquemática original do Eduverso · protótipo em validação",
-  ratio:"7 / 8",alt:"Ilustração anatômica frontal do crânio humano",
+  image:"https://upload.wikimedia.org/wikipedia/commons/1/14/Human_skull_-_anterior_view2.png",
+  source:"https://commons.wikimedia.org/wiki/File:Human_skull_-_anterior_view2.png",
+  credit:"Anatomography / Database Center for Life Science (DBCLS) · CC BY-SA 2.1 JP · hotspots do Eduverso",
+  ratio:"1 / 1",alt:"Crânio humano frontal com sete regiões ósseas coloridas em visualização tridimensional",
   spots:[
    {id:"frontal",name:"Osso frontal",group:"Neurocrânio",x:64,y:18,description:"Forma a fronte, parte do teto orbitário e a porção anterior do neurocrânio.",function:"Protege os lobos frontais e compõe o limite superior das órbitas.",clinical:"A região supraorbitária é um importante marco de referência."},
    {id:"parietal",name:"Osso parietal",group:"Neurocrânio",x:41,y:32,description:"Osso pareado situado principalmente na calvária e na parede superolateral do crânio.",function:"Forma grande parte do teto e das paredes laterais da caixa craniana.",clinical:"Encontra o frontal na sutura coronal."},
