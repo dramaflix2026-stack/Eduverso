@@ -1,0 +1,35 @@
+.root{width:100%;min-width:0;display:flex;flex-direction:column;gap:10px;color:#f3e9ff}
+.topbar{display:flex;gap:9px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:10px 9px 0}
+.topbar>span{font-size:10px;font-weight:850;letter-spacing:.07em;color:#d0bafa}
+.zoomButtons{display:flex;align-items:center;gap:5px}
+.zoomButtons button,.actions button{font:inherit;cursor:pointer;border:1px solid #7a5da0;background:#332543;color:#f0e1ff;border-radius:9px;min-height:36px;padding:7px 10px;font-size:12px;font-weight:800}
+.zoomButtons button{min-width:36px;font-size:16px}
+.zoomButtons button:last-child{font-size:11px}
+.zoomButtons button:disabled,.actions button:disabled{opacity:.4;cursor:not-allowed}
+.zoomButtons output{min-width:46px;text-align:center;font-size:11px;font-variant-numeric:tabular-nums}
+.actions{display:flex;flex-wrap:wrap;gap:6px;padding:0 9px}
+.actions button[aria-pressed=true]{background:#65418c;border-color:#c9a8ef}
+.guide{background:#342442;border:1px solid #796093;border-radius:11px;padding:12px;margin:0 9px;color:#e1cdee;font-size:12px;line-height:1.65}
+.viewport{width:100%;border:1px solid #69538a;overflow:hidden;border-radius:12px;background:#f7f3fc;overscroll-behavior:contain;touch-action:pan-x pan-y}
+.zoomed{max-height:min(75vh,820px);overflow:auto}
+.canvas{position:relative;aspect-ratio:1086/1448;min-width:100%;max-width:none;flex:none}
+.canvas img{display:block;width:100%;height:100%;object-fit:fill;position:absolute;inset:0;user-select:none;pointer-events:none}
+.overlay{display:block;position:absolute;inset:0;width:100%;height:100%;overflow:visible;user-select:none}
+.area polygon{fill:rgba(112,73,209,.015);stroke:transparent;stroke-width:7;stroke-linejoin:round;cursor:pointer;pointer-events:all;transition:fill .15s ease,stroke .15s ease}
+.area.outlined polygon{fill:rgba(117,65,205,.07);stroke:rgba(126,72,217,.64);stroke-width:6}
+.area:hover:not(.locked) polygon,.area:focus-visible polygon{fill:rgba(142,81,230,.23);stroke:#9e64eb;stroke-width:10}
+.area.active polygon,.area.active:hover polygon{fill:rgba(128,57,218,.3);stroke:#742bd5;stroke-width:12}
+.area.flash polygon,.area.flash:hover polygon{fill:rgba(255,198,48,.45);stroke:#f6ab0f;stroke-width:13;cursor:default}
+.area.correct polygon,.area.correct:hover polygon{fill:rgba(34,208,120,.34);stroke:#16b477;stroke-width:12;cursor:default}
+.area.incorrect polygon,.area.incorrect:hover polygon{fill:rgba(242,65,94,.39);stroke:#d62f5a;stroke-width:12;cursor:default}
+.area.locked polygon{cursor:default;pointer-events:none}
+.areaNumber{font:850 27px/1 sans-serif;fill:#fff;stroke:#43146e;paint-order:stroke;stroke-width:9;stroke-linejoin:round;pointer-events:none}
+.hint{font-size:11px;color:#d0bde6;line-height:1.6;margin:0;padding:0 9px}
+.quickList{border-top:1px solid #5b4675;margin-top:5px;padding:12px 9px 2px}
+.quickList strong{display:block;color:#d9c5ee;font-size:12px;margin-bottom:10px}
+.quickList>div{display:flex;flex-wrap:wrap;gap:6px}
+.quickList button{font:inherit;font-size:11px;cursor:pointer;background:#342443;color:#eedcff;border:1px solid #755a90;border-radius:9px;padding:8px 10px;min-height:34px}
+.quickList button[aria-pressed=true]{background:#7043ab;border-color:#d3b2ff}
+.fallback>p{color:#fff;font-size:12px;padding:9px;background:#57364e;border-radius:9px}
+@media(max-width:480px){.topbar{align-items:flex-start}.zoomButtons{width:100%}.actions button{font-size:11px}.areaNumber{font-size:23px}}
+@media(prefers-reduced-motion:reduce){.area polygon{transition:none}}

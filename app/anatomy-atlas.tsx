@@ -1,7 +1,7 @@
 "use client";
 import {useEffect,useMemo,useRef,useState} from "react";
 import {bones,sourceUrl,type Bone} from "./anatomy-atlas-data";
-import AnatomySkeletonVector from "./anatomy-atlas-vector";
+import AnatomySkeletonInteractiveImage from "./anatomy-atlas-interactive-image";
 import styles from "./anatomy-atlas.module.css";
 import studyStyles from "./anatomy-atlas-collection.module.css";
 import {studySections,studySummary,reviewPrompt} from "./anatomy-atlas-flash-content";
@@ -132,11 +132,11 @@ export default function AnatomyAtlas(){
    {mode==="flashcards"&&<div className={styles.mobilePrompt}><small>FLASHCARD {f+1} DE {bones.length}</small><strong>Qual é o osso destacado em amarelo?</strong><p>Observe a imagem e depois escreva o nome no campo de resposta.</p></div>}
    <div className={styles.columns+" "+(mode==="explorar"?styles.exploreColumns:"")}>
     <div className={styles.imageArea}>
-     <AnatomySkeletonVector mode={mode} selectedId={picked}
+     <AnatomySkeletonInteractiveImage mode={mode} selectedId={picked}
       targetId={mode==="flashcards"?flash.id:mode==="desafio"?target.id:null}
       answerId={mode==="desafio"?answer:null} disabled={mode==="desafio"&&(completed||answer!==null)}
       onSelect={selectBone}/>
-     <small>Vista anterior · representação didática</small>
+     <small>Vista anterior · imagem criada para o Eduverso · áreas clicáveis em validação</small>
     </div>
     <div className={styles.sidebar} ref={exploreDetailRef}>
      {mode==="explorar"&&<div className={styles.card}>
@@ -179,6 +179,6 @@ export default function AnatomyAtlas(){
     </div>
    </div>
   </div>
-  <p className={styles.foot}>Progresso salvo apenas neste navegador e separado do histórico de aulas. Arte vetorial didática original do Eduverso, com formas simplificadas. Referência adicional de Mariana Ruiz Villarreal (domínio público) no <a href={sourceUrl} target="_blank" rel="noopener noreferrer">Wikimedia Commons</a>. Não substitui atlas clínico nem ensino prático supervisionado.</p>
+  <p className={styles.foot}>Progresso salvo apenas neste navegador e separado do histórico de aulas. Imagem didática original do Eduverso, com áreas anatômicas interativas mapeadas manualmente e limites aproximados. Primeiro teste visual. Referência adicional de Mariana Ruiz Villarreal (domínio público) no <a href={sourceUrl} target="_blank" rel="noopener noreferrer">Wikimedia Commons</a>. Não substitui atlas clínico nem ensino prático supervisionado.</p>
  </section>;
 }

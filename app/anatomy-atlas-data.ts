@@ -1,5 +1,5 @@
 export type Bone={id:string;name:string;group:string;x:number;y:number;description:string;function:string;clinical:string};
-export const imageUrl="https://thumb.wikimedia.org/wikipedia/commons/thumb/a/ac/Human_skeleton_front_no-text_no-color.svg/500px-Human_skeleton_front_no-text_no-color.svg.png";
+export const imageUrl="/images/anatomia/atlas/esqueleto-vista-anterior.png";
 export const sourceUrl="https://commons.wikimedia.org/wiki/File:Human_skeleton_front_no-text_no-color.svg";
 export const bones:Bone[]=[
 {id:"cranio",name:"Crânio",group:"Cabeça",x:45,y:6.5,description:"O neurocrânio envolve e protege o encéfalo; o crânio também inclui ossos da face.",function:"Forma a caixa protetora do encéfalo e dá suporte a estruturas da face.",clinical:"Suturas e forames cranianos ajudam a compreender trajetos vasculares e nervosos."},
