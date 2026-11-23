@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 800" role="img" aria-label="Crânio colorido, vista frontal: ilustração didática original do Eduverso"><defs>
+ <linearGradient id="bg" x2=".9" y2="1"><stop stop-color="#faf7ff"/><stop offset="1" stop-color="#e9e3f4"/></linearGradient>
+ <linearGradient id="fore" x2=".6" y2="1"><stop stop-color="#e6cefd"/><stop offset="1" stop-color="#ac82d1"/></linearGradient>
+</defs>
+<rect width="700" height="800" rx="30" fill="url(#bg)"/>
+<g stroke="#675b78" stroke-width="4" stroke-linejoin="round">
+<path d="M350 54C231 54 147 120 140 252C129 349 155 423 195 463L193 552C198 656 277 740 350 745C426 740 503 654 507 551L505 463C547 420 572 345 560 249C553 122 467 54 350 54Z" fill="#e5d8cd"/>
+<path d="M346 64C230 59 166 120 159 234L165 317Q190 329 220 312L238 247Q240 161 293 117ZM354 64C470 59 534 120 541 234L535 317Q510 329 480 312L462 247Q460 161 407 117Z" fill="#9dc1ee"/>
+<path d="M350 65C280 65 216 91 191 162Q173 204 182 271L203 315Q226 302 247 288Q292 268 350 275Q408 268 453 288Q476 302 497 315L518 271Q527 204 509 162C484 91 421 65 350 65Z" fill="url(#fore)"/>
+<path d="M166 282L197 293L215 346L201 438L170 468Q142 431 143 381Q143 325 166 282ZM534 282L503 293L485 346L499 438L530 468Q558 431 557 381Q557 325 534 282Z" fill="#9dd9b4"/>
+<path d="M205 336Q181 352 170 389L160 430Q171 472 216 494L260 455L270 411L244 381Q218 379 205 336ZM495 336Q519 352 530 389L540 430Q529 472 484 494L440 455L430 411L456 381Q482 379 495 336Z" fill="#ffdc93"/>
+<path d="M278 404Q317 411 350 425Q383 411 422 404L464 450L460 536L420 594Q390 614 350 613Q310 614 280 594L240 536L236 450Z" fill="#f4b49c"/>
+<path d="M326 316L345 304L350 318L355 304L374 316L383 396L354 425L346 425L317 396Z" fill="#7bd5c9"/>
+<path d="M185 489Q183 464 201 457L227 489L237 565Q255 606 291 633L323 646Q350 652 377 646L409 633Q445 606 463 565L473 489L499 457Q517 464 515 489L502 617Q479 690 405 718Q350 739 295 718Q221 690 198 617Z" fill="#ed9eae"/>
+<path d="M210 339Q247 307 296 327Q305 335 306 354Q300 395 270 410Q228 411 202 372Q198 353 210 339ZM490 339Q453 307 404 327Q395 335 394 354Q400 395 430 410Q472 411 498 372Q502 353 490 339Z" fill="#332344"/>
+<path d="M301 446Q331 435 350 447Q369 435 399 446Q417 462 411 497Q387 513 350 510Q313 513 289 497Q283 462 301 446Z" fill="#322539"/>
+</g><g fill="#fff7ea" stroke="#987b86" stroke-width="1.5">
+<rect x="263.0" y="534.0" width="13" height="19.1" rx="4"/><rect x="264.0" y="560.9" width="12" height="17.8" rx="4"/><rect x="277.8" y="532.0" width="13" height="20.9" rx="4"/><rect x="278.8" y="560.1" width="12" height="19.3" rx="4"/><rect x="292.6" y="530.0" width="13" height="22.7" rx="4"/><rect x="293.6" y="559.5" width="12" height="20.8" rx="4"/><rect x="307.4" y="528.0" width="13" height="24.5" rx="4"/><rect x="308.4" y="558.8" width="12" height="22.3" rx="4"/><rect x="322.2" y="526.0" width="13" height="26.3" rx="4"/><rect x="323.2" y="558.0" width="12" height="23.8" rx="4"/><rect x="337.0" y="524.0" width="13" height="28.1" rx="4"/><rect x="338.0" y="557.4" width="12" height="25.3" rx="4"/><rect x="351.8" y="524.0" width="13" height="28.1" rx="4"/><rect x="352.8" y="557.4" width="12" height="25.3" rx="4"/><rect x="366.6" y="526.0" width="13" height="26.3" rx="4"/><rect x="367.6" y="558.0" width="12" height="23.8" rx="4"/><rect x="381.4" y="528.0" width="13" height="24.5" rx="4"/><rect x="382.4" y="558.8" width="12" height="22.3" rx="4"/><rect x="396.2" y="530.0" width="13" height="22.7" rx="4"/><rect x="397.2" y="559.5" width="12" height="20.8" rx="4"/><rect x="411.0" y="532.0" width="13" height="20.9" rx="4"/><rect x="412.0" y="560.1" width="12" height="19.3" rx="4"/><rect x="425.8" y="534.0" width="13" height="19.1" rx="4"/><rect x="426.8" y="560.9" width="12" height="17.8" rx="4"/></g>
+</svg>
