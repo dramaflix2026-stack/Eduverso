@@ -45,10 +45,14 @@ export function useProfessionalProgress(trackId:string,chapterCount:number,userI
   setCompleted(initial);
   if(!userId){setState("local");return;}
   let canceled=false;
+  let inFlight=false;
   const controller=new AbortController();
   setState("syncing");
 
   const sync=async()=>{
+   if(canceled||inFlight)return;
+   inFlight=true;
+   setState("syncing");
    try{
     const response=await fetch("/api/progresso?area=profissionais&subject="+encodeURIComponent(trackId),{
      method:"GET",credentials:"same-origin",cache:"no-store",signal:controller.signal
@@ -72,10 +76,13 @@ export function useProfessionalProgress(trackId:string,chapterCount:number,userI
     if(!canceled)setState("synced");
    }catch{
     if(!canceled)setState("offline");
-   }
+   }finally{inFlight=false;}
   };
+  const resume=()=>{if(document.visibilityState==="visible")void sync();};
   void sync();
-  return()=>{canceled=true;controller.abort();};
+  window.addEventListener("online",resume);
+  window.addEventListener("focus",resume);
+  return()=>{canceled=true;controller.abort();window.removeEventListener("online",resume);window.removeEventListener("focus",resume);};
  },[trackId,chapterCount,userId]);
 
  function complete(index:number){
