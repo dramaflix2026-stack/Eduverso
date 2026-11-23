@@ -9,6 +9,7 @@ import {medicalTracks,getMedicalChoices,getMedicalTopics,getMedicalContent,choos
 import {buildExercises,type LessonSource,type ExerciseItem} from "./exercise-bank";
 import {downloadStudyPdf,type PdfDocumentRequest,type PdfSection} from "./lib/lesson-pdf";
 import {makeBooklet,type BookletFormat} from "./booklet-content";
+import {createOfflineBooklet} from "./booklet-offline";
 import {professionalTracks,getProfessionalTrack} from "./learning-professions";
 import {makeProfessionalBooklet} from "./professional-course-pdf";
 
@@ -102,11 +103,8 @@ export default function CreationCenter({tool,onNavigate,subjects,initialProfessi
  const [quantity,setQuantity]=useState(10);
  const [seed,setSeed]=useState(0);
  const [lessonLimit,setLessonLimit]=useState(10);
- const [bookletPages,setBookletPages]=useState(5);
  const [customSubject,setCustomSubject]=useState("");
  const [customTopic,setCustomTopic]=useState("");
- const [aiAvailable,setAiAvailable]=useState(false);
- const [aiChecked,setAiChecked]=useState(false);
  const [saved,setSaved]=useState<SavedMaterial[]>([]);
  const [busy,setBusy]=useState(false);
  const [notice,setNotice]=useState("");
@@ -115,15 +113,6 @@ export default function CreationCenter({tool,onNavigate,subjects,initialProfessi
  const [fileReading,setFileReading]=useState(false);
  useEffect(()=>{setSaved(readSaved());},[]);
  useEffect(()=>{setNotice("");},[tool]);
- useEffect(()=>{
-  if(tool!=="apostilas"&&tool!=="biblioteca")return;
-  let active=true;setAiChecked(false);
-  fetch("/api/apostilas/gerar",{cache:"no-store"})
-   .then(res=>res.json())
-   .then((data:{available?:boolean})=>{if(active){setAiAvailable(data.available===true);setAiChecked(true);}})
-   .catch(()=>{if(active){setAiAvailable(false);setAiChecked(true);}});
-  return ()=>{active=false;};
- },[tool]);
  const topics=choices.find(s=>s.name===subject)?.topics??[];
  const resolvedTopic=topics.some(t=>t.name===topic)?topic:(topics[0]?.name||"");
  const medChoices=useMemo(()=>sourceArea==="escolar"||sourceArea==="profissional"?[]:getMedicalChoices(sourceArea),[sourceArea]);
@@ -141,6 +130,13 @@ export default function CreationCenter({tool,onNavigate,subjects,initialProfessi
  const exam=useMemo(()=>medContent?chooseMedicalQuestions(medContent.questions,quantity,seed):buildExercises(lessons,quantity,seed,undefined,subject,resolvedTopic),[medContent,lessons,quantity,seed,subject,resolvedTopic]);
  const activeSubject=professionalMode?professional.category:(medContent?.subjectLabel??subject);
  const activeTopic=professionalMode?professional.name:(medContent?.label??resolvedTopic);
+ const offlineMaterial=useMemo(()=>createOfflineBooklet({
+  subject:customSubject.trim()||activeSubject,
+  topic:customTopic.trim()||activeTopic,
+  limit:lessonLimit,lessons,format:bookletFormat,
+  professional:professionalMode?professional:undefined
+ }),[customSubject,customTopic,activeSubject,activeTopic,lessonLimit,lessons,bookletFormat,professionalMode,professional]);
+
  function switchSubject(next:string){setSubject(next);setTopic(choices.find(s=>s.name===next)?.topics[0]?.name||"");setSeed(0);setNotice("");}
  function switchArea(next:"escolar"|"profissional"|MedicalTrack){setSourceArea(next);setMedChoice(next==="vestibular"?"biologia":next==="atlas"?"esqueleto":"geral");setMedTopic("");setSeed(0);setNotice("");}
  function switchMedicineChoice(next:string){setMedChoice(next);setMedTopic("");setSeed(0);setNotice("");}
@@ -166,28 +162,17 @@ export default function CreationCenter({tool,onNavigate,subjects,initialProfessi
   }catch{setNotice("O PDF não pôde ser preparado. Tente novamente.");}
   finally{setBusy(false);}
  }
- type DeepOverride={subject:string;topic:string;chapters:string[];level:string};
- async function createDeepBooklet(override?:DeepOverride){
+ async function createEditorialBooklet(override?:{subject:string;topic:string;chapters:LessonSource[];professional?:typeof professional}){
   if(busy)return;
-  setBusy(true);setNotice("Gerando explicações aprofundadas e verificando a qualidade das páginas...");
-  try{
-   const payload={
-    subject:override?.subject??(customSubject.trim()||activeSubject),
-    topic:override?.topic??(customTopic.trim()||activeTopic),
-    level:override?.level??(sourceArea==="profissional"?"Formação profissional":sourceArea==="escolar"?"Educação básica, com rigor adequado à matéria":"Medicina e preparação para provas"),
-    chapters:override?.chapters??((customSubject.trim()||customTopic.trim())?[]:lessons.slice(0,lessonLimit).map(l=>l.title)),
-    pageCount:bookletPages,format:bookletFormat
-   };
-   const response=await fetch("/api/apostilas/gerar",{method:"POST",credentials:"same-origin",
-    headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
-   const data=await response.json() as {document?:PdfDocumentRequest;error?:string};
-   if(!response.ok||!data.document)throw new Error(data.error||"A apostila não pôde ser gerada.");
-   await downloadStudyPdf(data.document);
-   const wasSaved=store(data.document,"Apostila aprofundada");
-   setNotice("Apostila aprofundada criada: "+bookletPages+" páginas teóricas"+(bookletFormat==="teoria"?" mais a capa.":" mais capa, atividades e respostas.")+
-    (wasSaved?" Cópia salva na biblioteca deste navegador.":" PDF baixado; o navegador não permitiu salvar uma cópia."));
-  }catch(error){setNotice(error instanceof Error?error.message:"Não foi possível gerar a apostila. Nenhum PDF superficial foi entregue.");}
-  finally{setBusy(false);}
+  const result=override?createOfflineBooklet({
+   subject:override.subject,topic:override.topic,limit:lessonLimit,
+   lessons:override.chapters,professional:override.professional,format:bookletFormat
+  }):offlineMaterial;
+  if(!result.document){
+   setNotice(result.reason+" "+(result.missing.length?"Ainda sem aprofundamento: "+result.missing.slice(0,5).join("; ")+(result.missing.length>5?" e outros.":"."):""));
+   return;
+  }
+  await create(result.document,"Apostila editorial sem IA");
  }
  async function receiveFile(file?:File){
   if(!file)return;
@@ -282,7 +267,7 @@ export default function CreationCenter({tool,onNavigate,subjects,initialProfessi
      </select></label>}
     {tool==="provas"?<label>Quantidade de questões<select value={quantity} onChange={e=>{setQuantity(Number(e.target.value));setNotice("");}}>{[5,10,15,20,25,30,40,50,60,70,80,90,100].map(n=><option key={n} value={n}>{n} questões</option>)}</select></label>:
       <><label>Tópicos de referência<select value={lessonLimit} onChange={e=>setLessonLimit(Number(e.target.value))}>{[5,10,15,20].map(n=><option key={n} value={n}>Até {n} tópicos</option>)}</select></label>
-      <label>Páginas de teoria<select value={bookletPages} onChange={e=>{setBookletPages(Number(e.target.value));setNotice("");}}>{[3,5,8,10].map(n=><option key={n} value={n}>{n} páginas aprofundadas (+ capa)</option>)}</select></label></>}
+      <div className={styles.hint}>A quantidade de páginas acompanha o conteúdo editorial revisado, sem preenchimento artificial.</div></>}
    </div>
    {tool==="apostilas"&&<div className={styles.formGrid}>
      <label>Outra disciplina (opcional)<input value={customSubject} onChange={e=>{setCustomSubject(e.target.value);setNotice("");}} placeholder="Ex.: Filosofia, Sociologia, Engenharia" maxLength={90}/></label>
@@ -301,8 +286,8 @@ export default function CreationCenter({tool,onNavigate,subjects,initialProfessi
        <div>{lessons.slice(0,lessonLimit).map((l,i)=><small key={i}>{String(i+1).padStart(2,"0")} · {l.title}</small>)}</div>
      </div>
     </div>}
-   <p className={styles.hint}>{tool==="provas"?"Questões distintas disponíveis nesta rodada: "+exam.length+" de "+quantity+". Os PDFs de provas utilizam o banco editorial existente.":"Apostila aprofundada com inteligência artificial: "+bookletPages+" páginas DE CONTEÚDO, mais capa"+(bookletFormat==="com-atividades"?", atividades e gabarito.":".")+" A geração é validada antes do PDF; capítulos superficiais ou repetidos são recusados."}</p>
-   {tool==="apostilas"&&aiChecked&&!aiAvailable&&<p className={styles.notice} role="status">A geração aprofundada por IA ainda não foi ativada neste servidor. É necessário configurar EDUVERSO_AI_API_KEY e EDUVERSO_AI_ENABLED no Railway. A versão superficial não será apresentada como material completo.</p>}
+   <p className={styles.hint}>{tool==="provas"?"Questões distintas disponíveis nesta rodada: "+exam.length+" de "+quantity+". Os PDFs de provas utilizam o banco editorial existente.":"Gerador editorial sem IA e sem custo por chamada. Capítulos disponíveis: "+offlineMaterial.reviewed+" de "+offlineMaterial.requested+". Sem quantidade fixa de páginas: o PDF cresce de acordo com o conteúdo validado."}</p>
+   {tool==="apostilas"&&!offlineMaterial.document&&<p className={styles.notice} role="status">{offlineMaterial.reason}{offlineMaterial.missing.length?" Tópicos que exigem revisão: "+offlineMaterial.missing.slice(0,6).join("; "):""}</p>}
    {tool==="provas"&&exam.length<quantity&&<p className={styles.notice} role="status">Este recorte possui {exam.length} questões distintas disponíveis. O PDF terá somente essas {exam.length} questões — sem repetir perguntas para atingir {quantity}. Para ampliar o banco, selecione todos os assuntos ou outra disciplina.</p>}
    {tool==="provas"&&<button type="button" className={styles.secondary} onClick={()=>{setSeed(v=>v+37);setNotice("");}}>↻ Sortear outra versão</button>}
    <div className={styles.actions}>
@@ -310,7 +295,7 @@ export default function CreationCenter({tool,onNavigate,subjects,initialProfessi
       <button disabled={busy||!exam.length} className={styles.primary} onClick={()=>create(makeExam(activeSubject,activeTopic,exam),"Prova")}>↓ Baixar prova + gabarito comentado (PDF)</button>
       <button disabled={busy||!exam.length} className={styles.secondary} onClick={()=>create(makeExam(activeSubject,activeTopic,exam,true),"Gabarito")}>↓ Baixar somente o gabarito (PDF)</button>
      </>:<>
-      <button disabled={busy||!aiAvailable} className={styles.primary} onClick={()=>{void createDeepBooklet();}}>✦ Gerar {bookletPages} páginas aprofundadas {bookletFormat==="com-atividades"?"+ atividades ":""}com IA (PDF)</button>
+      <button disabled={busy||!offlineMaterial.document} className={styles.primary} onClick={()=>{void createEditorialBooklet();}}>↓ Gerar apostila editorial sem IA (PDF)</button>
       <button disabled={busy||!lessons.length} className={styles.secondary} onClick={()=>create(summaryLabel(professionalMode?makeProfessionalBooklet(professional,lessonLimit,bookletFormat):makeBooklet(activeSubject,activeTopic,lessonLimit,lessons,bookletFormat)),"Resumo do acervo")}>↓ Baixar resumo do catálogo (sem IA)</button>
      </>}
    </div></>)}
@@ -322,17 +307,15 @@ export default function CreationCenter({tool,onNavigate,subjects,initialProfessi
     <button type="button" className={styles.primary} disabled={busy||fileReading||!fileText} onClick={()=>create(fromFile(),"Roteiro de arquivo")}>↓ Preparar roteiro de estudo PDF</button></>)}
   {tool==="biblioteca"&&<>
     <div className={styles.panel}>
-     <h2>Apostilas aprofundadas com IA</h2>
-     <p className={styles.hint}>Selecione a extensão desejada. A capa é adicional às páginas teóricas. A IA deve desenvolver conceitos, exemplos e explicações em cada página, sem preencher espaço artificialmente.</p>
-     <div className={styles.formGrid}><label>Páginas de teoria<select value={bookletPages} onChange={e=>setBookletPages(Number(e.target.value))}>{[3,5,8,10].map(n=><option key={n} value={n}>{n} páginas de conteúdo (+ capa)</option>)}</select></label></div>
-     {aiChecked&&!aiAvailable&&<p className={styles.notice} role="status">Geração aprofundada aguardando configuração segura da IA no Railway. Materiais resumidos não serão oferecidos como apostilas completas.</p>}
+     <h2>Apostilas editoriais sem IA</h2>
+     <p className={styles.hint}>O sistema só libera materiais aprovados no controle de cobertura. Conteúdos ainda curtos permanecem disponíveis como resumos claramente identificados, sem serem chamados de apostilas aprofundadas.</p>
     </div>
-    {section("Materiais do catálogo — gerar versão aprofundada",<div className={styles.readyGrid}>{starterMaterials.map(entry=><div className={styles.readyCard} key={entry.subject+"-"+entry.topic}><span>▤ {entry.subject}</span><strong>{entry.topic}</strong><button type="button" disabled={busy||!aiAvailable} onClick={()=>{void createDeepBooklet({subject:entry.subject,topic:entry.topic,level:"Ensino Fundamental e Médio",chapters:allLessons(entry.subject,entry.topic).map(l=>l.title)});}}>✦ Gerar apostila com IA</button><button type="button" disabled={busy} onClick={()=>create(summaryLabel(makeBooklet(entry.subject,entry.topic,10,allLessons(entry.subject,entry.topic),"teoria")),"Resumo do acervo")}>↓ Resumo do catálogo</button></div>)}</div>)}
-    {section("Medicina — apostilas das 18 disciplinas",<div className={styles.readyGrid}>{medicineDisciplines.map(d=><div className={styles.readyCard} key={d.slug}><span>🫀 Faculdade de Medicina</span><strong>{d.title}</strong><button type="button" disabled={busy||!aiAvailable} onClick={()=>{const content=getMedicalContent("faculdade",d.slug,"");void createDeepBooklet({subject:"Faculdade de Medicina",topic:d.title,level:"Faculdade de Medicina — estudo acadêmico",chapters:content.lessons.map(l=>l.title)});}}>✦ Gerar apostila com IA</button><button type="button" disabled={busy} onClick={()=>{const content=getMedicalContent("faculdade",d.slug,"");void create(summaryLabel(makeBooklet("Faculdade de Medicina",d.title,10,content.lessons,"teoria")),"Resumo do acervo");}}>↓ Resumo do catálogo</button></div>)}</div>)}
+    {section("Materiais do catálogo — gerar versão aprofundada",<div className={styles.readyGrid}>{starterMaterials.map(entry=><div className={styles.readyCard} key={entry.subject+"-"+entry.topic}><span>▤ {entry.subject}</span><strong>{entry.topic}</strong><button type="button" disabled={busy} onClick={()=>{void createEditorialBooklet({subject:entry.subject,topic:entry.topic,chapters:allLessons(entry.subject,entry.topic)});}}>↓ Apostila editorial sem IA</button><button type="button" disabled={busy} onClick={()=>create(summaryLabel(makeBooklet(entry.subject,entry.topic,10,allLessons(entry.subject,entry.topic),"teoria")),"Resumo do acervo")}>↓ Resumo do catálogo</button></div>)}</div>)}
+    {section("Medicina — apostilas das 18 disciplinas",<div className={styles.readyGrid}>{medicineDisciplines.map(d=><div className={styles.readyCard} key={d.slug}><span>🫀 Faculdade de Medicina</span><strong>{d.title}</strong><button type="button" disabled={busy} onClick={()=>{const content=getMedicalContent("faculdade",d.slug,"");void createEditorialBooklet({subject:"Faculdade de Medicina",topic:d.title,chapters:content.lessons});}}>↓ Apostila editorial sem IA</button><button type="button" disabled={busy} onClick={()=>{const content=getMedicalContent("faculdade",d.slug,"");void create(summaryLabel(makeBooklet("Faculdade de Medicina",d.title,10,content.lessons,"teoria")),"Resumo do acervo");}}>↓ Resumo do catálogo</button></div>)}</div>)}
     {section("Formações profissionais — apostilas introdutórias",<div className={styles.readyGrid}>
      {professionalTracks.map(t=><div className={styles.readyCard} key={t.id}><span>{t.icon} {t.category}</span><strong>{t.name}</strong>
       <p className={styles.hint}>{t.description}</p>
-      <button type="button" disabled={busy||!aiAvailable} onClick={()=>{void createDeepBooklet({subject:t.category,topic:t.name,level:"Formação profissional introdutória",chapters:t.lessons.map(l=>l.title)});}}>✦ Gerar apostila com IA</button>
+      <button type="button" disabled={busy} onClick={()=>{void createEditorialBooklet({subject:t.category,topic:t.name,chapters:t.lessons,professional:t});}}>↓ Apostila editorial sem IA</button>
       <button type="button" disabled={busy} onClick={()=>create(summaryLabel(makeProfessionalBooklet(t,20,"teoria")),"Resumo do acervo")}>↓ Resumo do catálogo</button>
      </div>)}
     </div>)}
