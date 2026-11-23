@@ -147,7 +147,7 @@ function AtlasStudy({view}:{view:AtlasView}){
       targetId={mode==="flashcards"?flash?.id??null:mode==="desafio"?target?.id??null:null}
       answerId={mode==="desafio"?answer:null}
       disabled={mode==="desafio"&&(completed||answer!==null)} onSelect={clickPoint}
-      src={view.image} alt={view.alt} heading={view.short} subject={spineViewIsValid(view.id)?"Coluna":thoraxViewIsValid(view.id)?"Tórax":upperLimbViewIsValid(view.id)?"Membro Superior":"Crânio"} ratio={view.ratio}/>:
+      src={view.image} alt={view.alt} heading={view.short} subject={spineViewIsValid(view.id)?"Coluna":thoraxViewIsValid(view.id)?"Tórax":upperLimbViewIsValid(view.id)?"Membro Superior":"Crânio"} ratio={view.ratio} imageCrop={view.imageCrop}/>:
       imageFailed?<div className={styles.failure} role="alert">
        Não foi possível carregar a ilustração anatômica. <a href={view.source} target="_blank" rel="noreferrer noopener">Abrir a imagem original</a>.
       </div>
@@ -364,8 +364,11 @@ export default function AnatomyAtlasCollection(){
    <div className={styles.skullSubGrid}>
     {subGroup.views.map((view,index)=><button type="button" key={view.id} className={styles.skullSubCard}
       onClick={()=>navigate(view.id,"ossos")} aria-label={"Abrir "+view.short+" de "+subGroup.title}>
-      <span className={styles.skullSubImage}><img src={view.image} alt={view.alt} loading="lazy"
-       onError={event=>{event.currentTarget.style.opacity="0";}}/></span>
+      <span className={styles.skullSubImage}>{view.imageCrop?
+       <span className={styles.skullCropThumb} style={{aspectRatio:`${view.imageCrop.width}/${view.imageCrop.height}`}}>
+        <img src={view.image} alt={view.alt} loading="lazy" style={{position:"absolute",maxWidth:"none",objectFit:"fill",width:(10000/view.imageCrop.width)+"%",height:(10000/view.imageCrop.height)+"%",left:-(100*view.imageCrop.left/view.imageCrop.width)+"%",top:-(100*view.imageCrop.top/view.imageCrop.height)+"%"}} onError={event=>{event.currentTarget.style.opacity="0";}}/>
+       </span>:
+       <img src={view.image} alt={view.alt} loading="lazy" onError={event=>{event.currentTarget.style.opacity="0";}}/>}</span>
       <span className={styles.skullSubInfo}><small>{String(index+1).padStart(2,"0")} · ATLAS INTERATIVO</small>
        <strong>{view.short}</strong><span>{view.spots.length} estruturas · Explorar, Desafio e Flashcards</span><em>Estudar esta vista →</em></span>
      </button>)}
