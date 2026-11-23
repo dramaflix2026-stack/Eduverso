@@ -48,6 +48,35 @@ const geographyBiomes:ReviewedChapter[]=[
  ],diagram:{title:"Duas dinâmicas de paisagem",labels:["Pantanal","Cheias e secas","Pampa","Campos nativos"],caption:"Comparação didática; os biomas têm também outros fatores ecológicos."}}
 ];
 
+
+const geographyClimates:ReviewedChapter[]=[
+ {title:"Tempo atmosférico, clima e variáveis",paragraphs:[
+  "Tempo atmosférico é a condição observada da atmosfera em determinado momento, como uma tarde chuvosa, uma manhã seca ou uma passagem de frente fria. Clima corresponde ao comportamento estatístico dessas condições ao longo de períodos extensos. Não se pode concluir que o clima de uma cidade mudou porque fez frio em um único dia. Para investigar tendências, analisam-se séries históricas de temperatura, precipitação, umidade e outras variáveis, considerando a qualidade e a duração dos registros.",
+  "As normais climatológicas do INMET apresentam estatísticas calculadas a partir de períodos históricos, como 1991 a 2020, e permitem comparar características médias de diferentes localidades. A temperatura pode ser descrita por médias e extremos; a precipitação pode ser apresentada por acumulados mensais e anuais. A distribuição das chuvas importa tanto quanto o total anual: dois municípios podem registrar volumes anuais parecidos e, ainda assim, ter estações secas muito diferentes.",
+  "Para aplicar esses conceitos, imagine dois gráficos mensais: em um, as chuvas estão concentradas em poucos meses; no outro, estão distribuídas ao longo do ano. Mesmo que os totais sejam equivalentes, agricultura, disponibilidade de água e vegetação podem responder de forma distinta. Na interpretação, identifique unidades, eixos, período e estação de coleta antes de concluir. Descrever um padrão médio não significa prever com exatidão a condição meteorológica de um dia específico."
+ ],diagram:{title:"O que comparar em um estudo climático",labels:["Temperatura","Precipitação","Sazonalidade","Séries históricas"],caption:"Esquema conceitual, sem valores meteorológicos medidos."}},
+ {title:"Latitude, altitude, relevo e oceanos",paragraphs:[
+  "A latitude influencia a distribuição da energia solar recebida pela superfície terrestre, afetando diferenças térmicas entre regiões. A altitude costuma estar associada a temperaturas menores em muitas situações, mas a relação observada depende das condições atmosféricas e da circulação de ar. O relevo pode influenciar o movimento de massas de ar e criar condições de chuva em determinadas encostas, enquanto áreas abrigadas podem apresentar comportamento distinto. A distância do oceano interfere na amplitude térmica e na disponibilidade de umidade.",
+  "Próximo ao litoral, a presença do mar pode moderar variações de temperatura e contribuir para a umidade do ar. No interior, dependendo das condições locais, diferenças entre temperaturas diurnas e noturnas podem ser maiores. Correntes oceânicas, cobertura vegetal, urbanização e circulação atmosférica também participam desse sistema. Nenhum fator, isoladamente, define por completo o clima: é a combinação de condições e processos que explica o padrão de determinada localidade.",
+  "Compare duas cidades na mesma latitude, uma em altitude elevada e outra próxima ao nível do mar. Antes de atribuir toda diferença térmica à latitude, observe altitude, relevo e localização. Depois compare uma cidade litorânea e outra interiorana, considerando umidade e amplitude térmica, sem assumir que todo litoral é sempre mais chuvoso. Em questões, relacione cada fenômeno à escala espacial do problema e evite tratar explicações locais como regras universais."
+ ],diagram:{title:"Fatores geográficos do clima",labels:["Latitude","Altitude","Relevo","Influência marítima"],caption:"Fatores interagem; as setas não indicam uma ordem causal fixa."}},
+ {title:"Circulação do ar, massas de ar e chuvas",paragraphs:[
+  "Diferenças de aquecimento e pressão atmosférica contribuem para os movimentos do ar em diferentes escalas. Massas de ar possuem características de temperatura e umidade relacionadas às regiões de formação e podem modificar o tempo quando se deslocam. Uma frente ocorre na zona de contato entre massas de ar com propriedades diferentes. A passagem de sistemas frontais pode estar associada a mudanças de temperatura, vento, nebulosidade e precipitação, mas os efeitos dependem das condições de cada situação.",
+  "As chuvas podem estar associadas à convecção, à elevação de ar úmido sobre o relevo ou ao encontro de sistemas atmosféricos, entre outros mecanismos. Na chuva convectiva, o aquecimento favorece a subida de ar, que pode se resfriar, condensar e formar nuvens. Em situações orográficas, o ar úmido ascende ao encontrar uma barreira topográfica; ao resfriar, pode ocorrer condensação. Esses mecanismos não são mutuamente exclusivos e podem atuar conjuntamente.",
+  "Para interpretar uma notícia meteorológica, diferencie a previsão de um episódio de chuva da caracterização climática de uma região. Uma frente fria indica um processo atmosférico de curta duração, enquanto a frequência histórica de frentes e os efeitos médios da precipitação ajudam a compor o estudo do clima. Em exercícios, explique o mecanismo físico de formação da chuva antes de associá-lo a uma paisagem específica. Evite afirmar que toda chuva intensa decorre do mesmo mecanismo."
+ ],diagram:{title:"Formação simplificada de chuva",labels:["Ar úmido","Ascensão","Resfriamento","Condensação"],caption:"Esquema didático; diferentes sistemas atmosféricos podem produzir chuva."}},
+ {title:"Climas brasileiros e diversidade regional",paragraphs:[
+  "O Brasil apresenta grande diversidade climática em razão de sua extensão territorial, diferenças de latitude, altitude, relevo, circulação atmosférica e influência oceânica. Classificações escolares frequentemente distinguem condições equatoriais, tropicais, semiáridas e subtropicais, além de variações de altitude e de influência marítima. As categorias são instrumentos para reconhecer padrões; seus limites e nomes podem variar conforme o método de classificação. Por isso, ao ler um mapa climático, confira a legenda e a instituição responsável.",
+  "Em áreas equatoriais, temperaturas geralmente elevadas e elevada disponibilidade de umidade favorecem regimes úmidos, embora existam diferenças locais. Em muitas áreas tropicais do interior, observa-se sazonalidade de chuvas, com períodos mais secos e mais chuvosos. No semiárido, a irregularidade da precipitação e a frequência de secas têm grande relevância social e ambiental. No Sul, a atuação de sistemas atmosféricos e a latitude contribuem para características térmicas distintas de áreas mais próximas ao Equador.",
+  "Um erro frequente é tentar definir o clima exclusivamente pela vegetação ou por um evento extremo registrado em um ano. A comparação de localidades precisa considerar dados de longa duração e distribuição sazonal. Para estudar, selecione duas cidades, consulte as normais do INMET e descreva semelhanças e diferenças no regime de chuvas e nas temperaturas médias. Ao concluir, relacione os padrões observados a fatores geográficos sem afirmar que uma variável explica tudo."
+ ],diagram:{title:"Análise de regiões climáticas",labels:["Mapa e legenda","Temperaturas","Chuvas mensais","Fatores locais"],caption:"Roteiro para interpretação, não classificação cartográfica oficial."}},
+ {title:"Climogramas, paisagem e variabilidade",paragraphs:[
+  "Um climograma reúne informações mensais sobre temperatura e precipitação de uma localidade, geralmente por meio de uma linha e barras. Sua interpretação exige verificar os eixos, as unidades e o período usado na elaboração. Observe a amplitude térmica, os meses com maiores e menores precipitações e se existe uma estação seca bem marcada. Não deduza a posição geográfica apenas pela aparência geral do gráfico; combine o climograma com o nome da estação, a altitude e outros dados relevantes.",
+  "A relação entre clima e vegetação envolve disponibilidade de água, temperaturas, solos e história ambiental. Uma sequência prolongada de meses com pouca chuva pode limitar o crescimento de determinadas plantas, mas não determina sozinha o tipo de cobertura vegetal. A atividade humana altera paisagens e pode modificar condições locais, como temperaturas urbanas e infiltração da água. O estudo de extremos também precisa distinguir episódios meteorológicos, variabilidade natural e tendências observadas em períodos mais longos.",
+  "Para praticar, monte uma tabela com os doze meses e registre temperatura média e chuva mensal de uma estação do INMET, com fonte e período identificados. Depois marque os meses mais secos, compare as temperaturas e formule uma hipótese sobre como essa sazonalidade pode influenciar atividades humanas e vegetação. Por fim, explique o que o gráfico não permite concluir, como a previsão de chuvas em uma data futura. Esse procedimento desenvolve leitura crítica de dados, em vez de memorização de nomes."
+ ],diagram:{title:"Etapas da leitura de um climograma",labels:["Eixos","Meses","Padrão sazonal","Interpretação"],caption:"Não representa uma série real de observações meteorológicas."}}
+];
+
 function validatedChapters(document:PdfDocumentRequest,titles:string[]):{missing:string[];reviewed:number}{
  const sections=document.sections;
  const starts=sections.map((section,index)=>({section,index})).filter(({section})=>section.kind==="chapter"&&
@@ -88,6 +117,23 @@ export function createOfflineBooklet(args:{
    title:"Apostila editorial — "+args.topic,subtitle:"Geografia · "+selected.length+" capítulos desenvolvidos · Sem IA",
    fileName:"eduverso-biomas-editorial-sem-ia.pdf",coverPage:true,sections,
    note:"Material editorial para estudo. Os diagramas são esquemáticos e não substituem imagens científicas. Revisar antes de uso em sala."
+  },reviewed:selected.length,requested:selected.length,missing:[],reason:"Acervo editorial específico disponível."};
+ }
+ if(subject.includes("geografia")&&/clima|climat/.test(topic)){
+  const selected=geographyClimates.slice(0,limit);
+  const sections:PdfSection[]=selected.map((chapter,i)=>({
+   heading:String(i+1).padStart(2,"0")+"  "+chapter.title,kind:"chapter",
+   pageBreakBefore:i>0,paragraphs:chapter.paragraphs,diagram:chapter.diagram
+  }));
+  sections.push({heading:"Fontes para estudo e verificação",kind:"standard",paragraphs:[
+   "INMET — Normais Climatológicas: https://portal.inmet.gov.br/servicos/normais-climatológicas",
+   "IBGE Educa — Tipos de clima no Brasil: https://educa.ibge.gov.br/professores/educa-atividades/17613-os-tipos-de-clima-no-brasil.html",
+   "Diagramas autorais ilustrativos, sem medições ou escalas."
+  ]});
+  return {document:{
+   title:"Apostila editorial — "+args.topic,subtitle:"Geografia · "+selected.length+" capítulos desenvolvidos · Sem IA",
+   fileName:"eduverso-climas-editorial-sem-ia.pdf",coverPage:true,sections,
+   note:"Material editorial para estudo e revisão. Confira os dados e as referências oficiais antes de uso em sala."
   },reviewed:selected.length,requested:selected.length,missing:[],reason:"Acervo editorial específico disponível."};
  }
  const lessons=args.lessons.slice(0,limit);
