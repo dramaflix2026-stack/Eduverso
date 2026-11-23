@@ -13,7 +13,7 @@ type Props={
 /** Cada vista recebe coordenadas próprias de seus AtlasSpot. */
 const bound=(n:number)=>Math.max(1,Math.min(2.5,Math.round(n*10)/10));
 
-export default function AnatomySkullInteractive({mode,spots,selectedId,targetId,answerId,disabled,onSelect,src,alt,heading,subject="Crânio",ratio="1 / 1"}:Props){
+export default function AnatomySkullInteractive({mode,spots,selectedId,targetId,answerId,disabled,onSelect,src,alt,heading,subject="Crânio",ratio="1 / 1",imageCrop}:Props){
  const [zoom,setZoom]=useState(1);
  const [failed,setFailed]=useState(false);
  const [challengeLevel,setChallengeLevel]=useState<"normal"|"dificil">("normal");
@@ -48,8 +48,12 @@ export default function AnatomySkullInteractive({mode,spots,selectedId,targetId,
   {failed?<div role="alert" className={styles.fallback}>Não foi possível carregar a imagem anatômica. Tente atualizar a página.</div>:
    <div className={styles.viewport+(zoom>1?" "+styles.zoomed:"")}
      onTouchStart={startPinch} onTouchMove={movePinch} onTouchEnd={e=>{if(e.touches.length<2)pinch.current=null;}}>
-    <div className={styles.canvas} style={{width:(zoom*100)+"%",aspectRatio:ratio.replace(/\s/g,"")}}>
-     <img src={src} alt={alt} onError={()=>setFailed(true)} width={900} height={900} draggable={false}/>
+    <div className={styles.canvas} style={{width:imageCrop?`min(${zoom*100}%, ${Math.round(zoom*360)}px)`:(zoom*100)+"%",aspectRatio:imageCrop?`${imageCrop.width}/${imageCrop.height}`:ratio.replace(/\s/g,""),marginInline:imageCrop?"auto":undefined}}>
+     <img src={src} alt={alt} onError={()=>setFailed(true)} width={900} height={900} draggable={false}
+       style={imageCrop?{position:"absolute",maxWidth:"none",objectFit:"fill",
+         width:(10000/imageCrop.width)+"%",height:(10000/imageCrop.height)+"%",
+         left:-(100*imageCrop.left/imageCrop.width)+"%",
+         top:-(100*imageCrop.top/imageCrop.height)+"%"}:undefined}/>
      {spots.map((spot,index)=>{
       const p={x:spot.x,y:spot.y};
       const isFlash=mode==="flashcards";
