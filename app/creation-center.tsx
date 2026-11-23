@@ -28,6 +28,8 @@ const NAV: {id:Exclude<CreationTool,"inicio">;title:string;icon:string;subtitle:
 ];
 const availableSubjects=["Matemática","Português","Física","Química","Biologia","História","Geografia","Inglês","Anatomia"];
 const starterMaterials=[
+ {subject:"Geografia",topic:"Clima"},
+ {subject:"Geografia",topic:"Biomas e Vegetação"},
  {subject:"Matemática",topic:"Porcentagem"},
  {subject:"Matemática",topic:"Equações e inequações"},
  {subject:"Matemática",topic:"Geometria"},
@@ -102,7 +104,7 @@ export default function CreationCenter({tool,onNavigate,subjects,initialProfessi
  const [topic,setTopic]=useState("Porcentagem");
  const [quantity,setQuantity]=useState(10);
  const [seed,setSeed]=useState(0);
- const [lessonLimit,setLessonLimit]=useState(10);
+ const [lessonLimit,setLessonLimit]=useState(5);
  const [customSubject,setCustomSubject]=useState("");
  const [customTopic,setCustomTopic]=useState("");
  const [saved,setSaved]=useState<SavedMaterial[]>([]);
