@@ -1,0 +1,9 @@
+# Imagens dos atlas de anatomia
+
+Envie a imagem do primeiro teste para esta pasta, com o nome exato:
+
+`esqueleto-vista-anterior.png`
+
+Caminho completo: `public/images/anatomia/atlas/esqueleto-vista-anterior.png`
+
+Este arquivo será usado na experiência **Medicina → Atlas de Anatomia → Sistema Esquelético → Vista anterior**. A implementação da sobreposição interativa será realizada após o upload; a simples inclusão da imagem na pasta não altera o atlas em produção.
