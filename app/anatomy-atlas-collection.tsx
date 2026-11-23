@@ -136,7 +136,8 @@ function AtlasStudy({view}:{view:AtlasView}){
     {skullMode?<AnatomySkullInteractive mode={mode} spots={items} selectedId={picked}
       targetId={mode==="flashcards"?flash?.id??null:mode==="desafio"?target?.id??null:null}
       answerId={mode==="desafio"?answer:null}
-      disabled={mode==="desafio"&&(completed||answer!==null)} onSelect={clickPoint}/>:
+      disabled={mode==="desafio"&&(completed||answer!==null)} onSelect={clickPoint}
+      src={view.image} alt={view.alt}/>:
       imageFailed?<div className={styles.failure} role="alert">
        Não foi possível carregar a ilustração anatômica. <a href={view.source} target="_blank" rel="noreferrer noopener">Abrir a imagem original</a>.
       </div>
@@ -227,7 +228,7 @@ function AtlasStudy({view}:{view:AtlasView}){
     </article>}
    </div>
   </div>
-  <p className={styles.credit}>{view.credit}. <a href={view.source} target="_blank" rel="noopener noreferrer">Consultar a fonte da imagem</a>{view.credit.includes("CC BY 4.0")&&<> · <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">Licença CC BY 4.0</a></>}. Os nomes anatômicos, as legendas interativas e as explicações do Eduverso estão em português. Algumas imagens de referência preservadas podem conter legendas impressas em inglês. Material didático introdutório; não substitui formação ou prática supervisionada. Progresso salvo neste navegador.</p>
+  <p className={styles.credit}>{view.credit}. <a href={view.source} target="_blank" rel="noopener noreferrer">Consultar a fonte da imagem</a>{view.credit.includes("CC BY 4.0")&&<> · <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">Licença CC BY 4.0</a></>}{skullMode&&<> · <a href="https://creativecommons.org/licenses/by-sa/2.1/jp/deed.en" target="_blank" rel="noopener noreferrer">Licença CC BY-SA 2.1 JP</a></>}. Os nomes anatômicos, as legendas interativas e as explicações do Eduverso estão em português. Algumas imagens de referência preservadas podem conter legendas impressas em inglês. Material didático introdutório; não substitui formação ou prática supervisionada. Progresso salvo neste navegador.</p>
  </div>;
 }
 type AtlasSelection="anterior"|AtlasView["id"]|null;
