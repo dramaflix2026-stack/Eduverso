@@ -7,7 +7,7 @@ type Mode="explorar"|"desafio"|"flashcards";
 type Props={
  mode:Mode;spots:AtlasSpot[];selectedId:string|null;targetId:string|null;
  answerId:string|null;disabled:boolean;onSelect:(spot:AtlasSpot)=>void;
- src:string;alt:string;heading:string;subject?:string;ratio?:string;
+ src:string;alt:string;heading:string;subject?:string;ratio?:string;imageCrop?:{left:number;top:number;width:number;height:number};
 };
 
 /** Cada vista recebe coordenadas próprias de seus AtlasSpot. */
