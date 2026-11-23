@@ -116,10 +116,16 @@ export async function ensureProfile(session:Session){
  );
  return profile.ok&&Array.isArray(profile.data)&&profile.data[0]?.full_name?profile.data[0].full_name:name;
 }
-export async function hasPaidAccess(session:Session){
- const access=await supabaseRequest<Array<{status:string}>>(
-  "/rest/v1/eduverso_entitlements?select=status&user_id=eq."+encodeURIComponent(session.user.id)+"&limit=1",
+export type EduversoPlan="estudante"|"professor";
+export async function getPaidPlan(session:Session):Promise<EduversoPlan|null>{
+ const access=await supabaseRequest<Array<{status:string;plan_type:string|null}>>(
+  "/rest/v1/eduverso_entitlements?select=status,plan_type&user_id=eq."+encodeURIComponent(session.user.id)+"&limit=1",
   {accessToken:session.accessToken}
  );
- return access.ok&&Array.isArray(access.data)&&access.data[0]?.status==="active";
+ const entry=access.ok&&Array.isArray(access.data)?access.data[0]:null;
+ return entry?.status==="active"&&(entry.plan_type==="estudante"||entry.plan_type==="professor")
+  ?entry.plan_type:null;
+}
+export async function hasPaidAccess(session:Session){
+ return (await getPaidPlan(session))!==null;
 }
