@@ -35,6 +35,11 @@ function restore(id:string):Progress{
  }catch{return {};}
 }
 function nextReview(days:number){return new Date(Date.now()+days*86400000).toISOString();}
+function shuffleQuestions(count:number){
+ const order=Array.from({length:count},(_,i)=>i);
+ for(let i=order.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[order[i],order[j]]=[order[j],order[i]];}
+ return order;
+}
 function AtlasStudy({view}:{view:AtlasView}){
  const [mode,setMode]=useState<Mode>("explorar");
  const [picked,setPicked]=useState<string|null>(null);
@@ -43,6 +48,7 @@ function AtlasStudy({view}:{view:AtlasView}){
  const [imageFallback,setImageFallback]=useState(false);
  const [imageFailed,setImageFailed]=useState(false);
  const [q,setQ]=useState(0);
+ const [questionOrder,setQuestionOrder]=useState<number[]>([]);
  const [answer,setAnswer]=useState<string|null>(null);
  const [hits,setHits]=useState(0);
  const [completed,setCompleted]=useState(false);
@@ -65,12 +71,12 @@ function AtlasStudy({view}:{view:AtlasView}){
   const v=Object.values(scores),right=v.reduce((n,s)=>n+s.right,0),wrong=v.reduce((n,s)=>n+s.wrong,0);
   return {right,attempts:right+wrong,due:items.filter(b=>!scores[b.id]?.due||Date.parse(scores[b.id].due||"")<=Date.now()).length};
  },[scores,items]);
- const selected=items.find(b=>b.id===picked),target=items[q],flash=items[f];
+ const selected=items.find(b=>b.id===picked),target=items[questionOrder[q]??q],flash=items[f];
  const quizChoices=target?(()=>{const others=items.filter(v=>v.id!==target.id),pool=[target,...[0,2,4].map((step)=>others[(q*3+step)%others.length])];const offset=q%pool.length;return [...pool.slice(offset),...pool.slice(0,offset)];})():[];
  const fallbackUrl=view.fallbackImage||view.source.replace("/wiki/File:","/wiki/Special:FilePath/");
  function selectMode(next:Mode){
   setMode(next);setPicked(null);setAnswer(null);setTyped("");setSubmitted(false);setFlashRated(false);
-  if(next==="desafio"){setQ(0);setHits(0);setCompleted(false);}
+  if(next==="desafio"){setQuestionOrder(shuffleQuestions(items.length));setQ(0);setHits(0);setCompleted(false);}
   if(next==="flashcards")setF(0);
  }
  function saveResult(b:AtlasSpot,correct:boolean){
