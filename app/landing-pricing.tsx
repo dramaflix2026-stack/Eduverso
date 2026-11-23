@@ -1,9 +1,12 @@
 "use client";
+import { trackEduversoCheckout } from "./meta-pixel";
 
 type Plan = {
  id:"estudante"|"professores";
  name:string;
  price:string;
+ amount:number;
+ productId:string;
  subtitle:string;
  caption:string;
  points:string[];
@@ -16,6 +19,8 @@ const plans:Plan[]=[
   id:"estudante",
   name:"Eduverso Estudante",
   price:"49,90",
+  amount:49.90,
+  productId:"2ff451d0-e6c6-11f1-8587-35b29347523e",
   subtitle:"Tudo para sua jornada de estudos",
   caption:"Para quem quer estudar, praticar e acompanhar sua evolução.",
   points:["Trilhas de Ensino Fundamental, Médio e preparação para provas","Aulas explicadas, exercícios e correções comentadas","Simulados, revisão e atlas anatômico disponíveis"],
@@ -26,6 +31,8 @@ const plans:Plan[]=[
   id:"professores",
   name:"Eduverso Professor",
   price:"79,90",
+  amount:79.90,
+  productId:"4be5a3d0-e6c6-11f1-9972-d949ca894c7b",
   subtitle:"Mais ferramentas para quem ensina",
   caption:"Para educadores que querem preparar aulas e materiais com mais agilidade.",
   points:["Acesso aos recursos de estudo existentes","Gerador de questões e avaliações em massa — em desenvolvimento","Gabaritos comentados e exportação em PDF — previstos"],
@@ -53,7 +60,7 @@ export default function LandingPricing(){
      <div className="lp-price-line"/>
      <ul>{plan.points.map(item=><li key={item}><span aria-hidden="true">✓</span>{item}</li>)}</ul>
      {plan.planned&&<p className="lp-price-development">A geração em massa ainda está em desenvolvimento e não integra os recursos atualmente disponíveis. Confira as condições da oferta antes de comprar.</p>}
-     <a className={plan.featured?"lp-button":"lp-outline"} href={plan.checkoutUrl} aria-label={"Comprar "+plan.name+" na Kiwify"}>{plan.planned?"Comprar Professor":"Comprar Estudante"} <span aria-hidden="true">↗</span></a>
+     <a className={plan.featured?"lp-button":"lp-outline"} href={plan.checkoutUrl} onClick={(event)=>trackEduversoCheckout(event,{productId:plan.productId,productName:plan.name,value:plan.amount,checkoutUrl:plan.checkoutUrl})} aria-label={"Comprar "+plan.name+" na Kiwify"}>{plan.planned?"Comprar Professor":"Comprar Estudante"} <span aria-hidden="true">↗</span></a>
     </article>)}
    </div>
    <div className="lp-pricing-trust"><span aria-hidden="true">ⓘ</span><p>Cada botão de compra leva diretamente ao checkout do respectivo produto na Kiwify. Para associar seu acesso no Eduverso, utilize no cadastro o mesmo e-mail informado na compra e confirme o e-mail. A geração de conteúdo em massa para professores ainda está em desenvolvimento; confira os recursos disponíveis e as condições no checkout.</p></div>
