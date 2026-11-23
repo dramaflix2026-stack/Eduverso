@@ -9,6 +9,12 @@ const nextConfig: NextConfig = {
         destination: "https://eduversoai.com.br/:path*",
         permanent: true,
       },
+      {
+        source: "/entrar",
+        has: [{ type: "host", value: "eduverso-web-production.up.railway.app" }],
+        destination: "https://eduversoai.com.br/entrar",
+        permanent: false,
+      },
     ];
   },
 };
