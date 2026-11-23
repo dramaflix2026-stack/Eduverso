@@ -134,12 +134,13 @@ export default function CreationCenter({tool,onNavigate,subjects,initialProfessi
   subject:customSubject.trim()||activeSubject,
   topic:customTopic.trim()||activeTopic,
   limit:lessonLimit,lessons,format:bookletFormat,
-  professional:professionalMode?professional:undefined
+  professional:professionalMode?professional:undefined,
+  sourceSubject:activeSubject,sourceTopic:activeTopic
  }),[customSubject,customTopic,activeSubject,activeTopic,lessonLimit,lessons,bookletFormat,professionalMode,professional]);
 
- function switchSubject(next:string){setSubject(next);setTopic(choices.find(s=>s.name===next)?.topics[0]?.name||"");setSeed(0);setNotice("");}
- function switchArea(next:"escolar"|"profissional"|MedicalTrack){setSourceArea(next);setMedChoice(next==="vestibular"?"biologia":next==="atlas"?"esqueleto":"geral");setMedTopic("");setSeed(0);setNotice("");}
- function switchMedicineChoice(next:string){setMedChoice(next);setMedTopic("");setSeed(0);setNotice("");}
+ function switchSubject(next:string){setSubject(next);setTopic(choices.find(s=>s.name===next)?.topics[0]?.name||"");setCustomSubject("");setCustomTopic("");setSeed(0);setNotice("");}
+ function switchArea(next:"escolar"|"profissional"|MedicalTrack){setSourceArea(next);setCustomSubject("");setCustomTopic("");setMedChoice(next==="vestibular"?"biologia":next==="atlas"?"esqueleto":"geral");setMedTopic("");setSeed(0);setNotice("");}
+ function switchMedicineChoice(next:string){setMedChoice(next);setCustomSubject("");setCustomTopic("");setMedTopic("");setSeed(0);setNotice("");}
  function summaryLabel(pdf:PdfDocumentRequest|null):PdfDocumentRequest|null{
   if(!pdf)return null;
   return {...pdf,title:"Resumo do acervo - "+pdf.title.replace("Apostila de estudos - ",""),
@@ -169,7 +170,7 @@ export default function CreationCenter({tool,onNavigate,subjects,initialProfessi
    lessons:override.chapters,professional:override.professional,format:bookletFormat
   }):offlineMaterial;
   if(!result.document){
-   setNotice(result.reason+" "+(result.missing.length?"Ainda sem aprofundamento: "+result.missing.slice(0,5).join("; ")+(result.missing.length>5?" e outros.":"."):""));
+   setNotice(result.reason+" "+(result.missing.length?" Pendências: "+result.missing.slice(0,5).join("; ")+(result.missing.length>5?" e outros.":"."):""));
    return;
   }
   await create(result.document,"Apostila editorial sem IA");
@@ -266,7 +267,7 @@ export default function CreationCenter({tool,onNavigate,subjects,initialProfessi
        {medTopics.map(t=><option key={t.id} value={t.id}>{t.name}</option>)}
      </select></label>}
     {tool==="provas"?<label>Quantidade de questões<select value={quantity} onChange={e=>{setQuantity(Number(e.target.value));setNotice("");}}>{[5,10,15,20,25,30,40,50,60,70,80,90,100].map(n=><option key={n} value={n}>{n} questões</option>)}</select></label>:
-      <><label>Tópicos de referência<select value={lessonLimit} onChange={e=>setLessonLimit(Number(e.target.value))}>{[5,10,15,20].map(n=><option key={n} value={n}>Até {n} tópicos</option>)}</select></label>
+      <><label>Quantidade de capítulos solicitados<select value={lessonLimit} onChange={e=>{setLessonLimit(Number(e.target.value));setNotice("");}}>{[5,10,15,20].map(n=><option key={n} value={n}>{n} capítulos completos</option>)}</select></label>
       <div className={styles.hint}>A quantidade de páginas acompanha o conteúdo editorial revisado, sem preenchimento artificial.</div></>}
    </div>
    {tool==="apostilas"&&<div className={styles.formGrid}>
@@ -282,12 +283,12 @@ export default function CreationCenter({tool,onNavigate,subjects,initialProfessi
       <button type="button" className={styles.bookletChoice} aria-pressed={bookletFormat==="com-atividades"} onClick={()=>setBookletFormat("com-atividades")}>
        <span>📝</span><strong>Teoria + atividades</strong><small>O mesmo conteúdo teórico, com exercícios ao final e gabarito comentado em seção separada.</small></button>
      </div>
-     <div className={styles.bookletPreview}><span>PRÉVIA DO SUMÁRIO</span><strong>{customTopic.trim()||activeTopic}</strong>
-       <div>{lessons.slice(0,lessonLimit).map((l,i)=><small key={i}>{String(i+1).padStart(2,"0")} · {l.title}</small>)}</div>
+     <div className={styles.bookletPreview}><span>PRÉVIA DOS CAPÍTULOS CADASTRADOS</span><strong>{customTopic.trim()||activeTopic}</strong>
+       <div>{(offlineMaterial.document?.sections.filter(s=>s.kind==="chapter"&&/^\d{2}  /.test(s.heading)).map(s=>s.heading.replace(/^\d{2}  /,""))||lessons.slice(0,lessonLimit).map(l=>l.title)).map((name,i)=><small key={i}>{String(i+1).padStart(2,"0")} · {name}</small>)}</div>
      </div>
     </div>}
-   <p className={styles.hint}>{tool==="provas"?"Questões distintas disponíveis nesta rodada: "+exam.length+" de "+quantity+". Os PDFs de provas utilizam o banco editorial existente.":"Gerador editorial sem IA e sem custo por chamada. Capítulos disponíveis: "+offlineMaterial.reviewed+" de "+offlineMaterial.requested+". Sem quantidade fixa de páginas: o PDF cresce de acordo com o conteúdo validado."}</p>
-   {tool==="apostilas"&&!offlineMaterial.document&&<p className={styles.notice} role="status">{offlineMaterial.reason}{offlineMaterial.missing.length?" Tópicos que exigem revisão: "+offlineMaterial.missing.slice(0,6).join("; "):""}</p>}
+   <p className={styles.hint}>{tool==="provas"?"Questões distintas disponíveis nesta rodada: "+exam.length+" de "+quantity+". Os PDFs de provas utilizam o banco editorial existente.":"Gerador sem IA. Capítulos que atendem aos critérios mínimos: "+offlineMaterial.reviewed+" de "+offlineMaterial.requested+" solicitados. Se faltar algum, o PDF aprofundado será bloqueado, sem repetir ou inventar conteúdo."}</p>
+   {tool==="apostilas"&&!offlineMaterial.document&&<p className={styles.notice} role="status">{offlineMaterial.reason}{offlineMaterial.missing.length?" Pendências: "+offlineMaterial.missing.slice(0,6).join("; "):""}</p>}
    {tool==="provas"&&exam.length<quantity&&<p className={styles.notice} role="status">Este recorte possui {exam.length} questões distintas disponíveis. O PDF terá somente essas {exam.length} questões — sem repetir perguntas para atingir {quantity}. Para ampliar o banco, selecione todos os assuntos ou outra disciplina.</p>}
    {tool==="provas"&&<button type="button" className={styles.secondary} onClick={()=>{setSeed(v=>v+37);setNotice("");}}>↻ Sortear outra versão</button>}
    <div className={styles.actions}>
