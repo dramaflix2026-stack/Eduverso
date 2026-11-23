@@ -6,41 +6,57 @@ All have RLS enabled. Existing Toledo and Método EIXO tables are untouched.
 
 ## Required environment variables (Railway / Production)
 
-- `SUPABASE_URL` — Supabase HTTPS project URL.
-- `SUPABASE_PUBLISHABLE_KEY` — publishable API key; never a service-role key.
-- `EDUVERSO_REQUIRE_PURCHASE=false` — keep demo accessible while Kiwify is not ready.
-- `EDUVERSO_KIWIFY_WEBHOOK_TOKEN` — a strong random secret (at least 24 characters), kept **only** in Railway.
-- `EDUVERSO_KIWIFY_PRODUCT_ID` — actual Eduverso product ID in Kiwify.
-- `SUPABASE_SERVICE_ROLE_KEY` — Supabase *server-only* secret, required for the Kiwify webhook to insert payments. Do not put it in the Git repository or any `NEXT_PUBLIC_` variable.
+- `SUPABASE_URL` — HTTPS URL of the shared Eduverso Supabase project.
+- `SUPABASE_PUBLISHABLE_KEY` — publishable key (never a secret role key).
+- `EDUVERSO_PUBLIC_URL=https://eduversoai.com.br` — canonical web origin.
+- `EDUVERSO_REQUIRE_PURCHASE=false` — keep purchase enforcement disabled until QA is complete.
+- `EDUVERSO_KIWIFY_PRODUCT_ID_ESTUDANTE` — Kiwify `Product.product_id` (not the checkout's short URL code).
+- `EDUVERSO_KIWIFY_PRODUCT_ID_PROFESSOR` — the separate Kiwify `Product.product_id` for the Professor product.
+- `EDUVERSO_KIWIFY_WEBHOOK_TOKEN_ESTUDANTE` — independent high-entropy secret, at least 24 characters.
+- `EDUVERSO_KIWIFY_WEBHOOK_TOKEN_PROFESSOR` — a different independent high-entropy secret, at least 24 characters.
+- `SUPABASE_SERVICE_ROLE_KEY` — secret backend-only key for the shared Supabase project. Never place it in Git or any `NEXT_PUBLIC_` variable.
 
-**Never** turn `EDUVERSO_REQUIRE_PURCHASE=true` on before testing payment approval, refunds, email confirmation, and login end-to-end.
+**Never** set `EDUVERSO_REQUIRE_PURCHASE=true` until approval/refund events, email confirmation, and both-plan access have been tested end-to-end.
 
-## Webhook configuration
+## Two-product Kiwify integration
 
-In Kiwify > Apps > Webhooks, select the exact Eduverso product, order approved and refund/chargeback events, and enter an HTTPS endpoint:
+Before deploying the new webhook handler, apply the database migration in
+`docs/sql/eduverso-kiwify-two-products.sql` to the existing Supabase database.
 
-`https://eduverso-web-production.up.railway.app/api/webhooks/kiwify?token=<your-strong-secret>`
+In Kiwify > Apps > Webhooks, use TWO independently configured webhooks, both with the three events Compra aprovada, Reembolso and Chargeback.
 
-The receiver strictly matches the configured product ID and only processes mapped order events. It rejects unsigned/unconfigured calls and writes only minimum sale status fields. A database trigger grants/revokes access to accounts with confirmed emails matching approved sales.
+**1. Eduverso Estudante / Universitário**, select ONLY that product:
+`https://eduverso-web-production.up.railway.app/api/webhooks/kiwify?token=<EDUVERSO_KIWIFY_WEBHOOK_TOKEN_ESTUDANTE>`
+
+**2. Eduverso Professor**, select ONLY that product:
+`https://eduverso-web-production.up.railway.app/api/webhooks/kiwify?token=<EDUVERSO_KIWIFY_WEBHOOK_TOKEN_PROFESSOR>`
+
+Replace each placeholder in the URL with its corresponding 24+ character secret from Railway. The token appended to the URL is your own random secret, NOT the shorter Token field shown by Kiwify. Do not disclose secrets in screenshots, chat or Git.
+
+The webhook checks both the plan-specific secret and exact product ID. The purchase table stores `plan_type` so the entitlement reconciliation selects Professor when both plans are active, and falls back to Estudante if a Professor purchase is refunded or charged back.
+
+Initial paid-campaign scope is **Estudante**. Professor's bulk-generation feature is still in development; do not advertise the unavailable functionality as already delivered.
 
 ## Redirect URL allow list in shared Supabase Auth
 
-In Supabase > Authentication > URL Configuration, **add** the following Redirect URL to the existing allow list, without changing the project Site URL or removing Toledo/EIXO URLs:
+In Supabase > Authentication > URL Configuration, **add** this URL to the allow list:
 
-`https://eduverso-web-production.up.railway.app/entrar**`
+`https://eduversoai.com.br/entrar?confirmado=1`
 
-On sign-up, the app sends `redirect_to` to the Eduverso login page. Confirmation emails may navigate to the existing shared Auth Site URL until this additional redirect is allowed. Do not alter global settings for other products.
+Keep the previous Railway redirect as a fallback. Do NOT overwrite the shared project's Site URL or remove existing Toledo/EIXO URLs.
 
 ## QA checklist
 
-1. Sign up with a new email, validate the email, sign in.
-2. Check `/api/conta` displays profile and no paid access initially.
-3. Test the webhooks in Kiwify for the configured product, then verify `eduverso_purchases` and `eduverso_entitlements` via service tool.
-4. Check user-specific saved progress in `eduverso_progress`.
-5. Test refunds and idempotent order retries.
-6. Only then activate `EDUVERSO_REQUIRE_PURCHASE=true` and check redirect to `/acesso-pendente` without entitlement.
+1. Create a fresh Estudante account, confirm email, sign in on the canonical domain.
+2. Confirm `/api/conta` shows no paid entitlement before an approved order.
+3. Run both Kiwify webhook tests and validate that each has the correct product and plan.
+4. Verify `eduverso_purchases.plan_type` and `eduverso_entitlements.plan_type` in Supabase.
+5. Confirm Professor takes precedence if both products are owned; verify an Estudante fallback after a Professor refund.
+6. Confirm retries cannot reactivate refunded/chargeback purchases.
+7. Check saved user progress remains isolated under `eduverso_progress`.
+8. Only then set `EDUVERSO_REQUIRE_PURCHASE=true` and validate redirect to `/acesso-pendente` for buyers without approved entitlement.
 
-**Limit of initial paywall:** the Next.js app contains some hardcoded course content in client bundles. The route-level protection helps navigation but full content confidentiality will require moving protected lesson payloads behind authenticated APIs.
+**Limit of the initial paywall:** some course content currently exists in client bundles; route protection alone is not complete content confidentiality. Protect sensitive lessons behind authenticated APIs before treating paywall enforcement as fully hardened.
 
 ## Shared Auth isolation
 
