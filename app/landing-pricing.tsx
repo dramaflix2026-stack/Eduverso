@@ -1,5 +1,4 @@
 "use client";
-import Link from "next/link";
 
 type Plan = {
  id:"estudante"|"professores";
@@ -8,6 +7,7 @@ type Plan = {
  subtitle:string;
  caption:string;
  points:string[];
+ checkoutUrl:string;
  featured?:boolean;
  planned?:boolean;
 };
@@ -19,6 +19,7 @@ const plans:Plan[]=[
   subtitle:"Tudo para sua jornada de estudos",
   caption:"Para quem quer estudar, praticar e acompanhar sua evolução.",
   points:["Trilhas de Ensino Fundamental, Médio e preparação para provas","Aulas explicadas, exercícios e correções comentadas","Simulados, revisão e atlas anatômico disponíveis"],
+  checkoutUrl:"https://pay.kiwify.com.br/pE7Jcf1",
   featured:true
  },
  {
@@ -28,6 +29,7 @@ const plans:Plan[]=[
   subtitle:"Mais ferramentas para quem ensina",
   caption:"Para educadores que querem preparar aulas e materiais com mais agilidade.",
   points:["Acesso aos recursos de estudo existentes","Gerador de questões e avaliações em massa — em desenvolvimento","Gabaritos comentados e exportação em PDF — previstos"],
+  checkoutUrl:"https://pay.kiwify.com.br/htmdQJL",
   planned:true
  }
 ];
@@ -50,11 +52,11 @@ export default function LandingPricing(){
      <p className="lp-price-period">Pagamento único · sem mensalidade</p>
      <div className="lp-price-line"/>
      <ul>{plan.points.map(item=><li key={item}><span aria-hidden="true">✓</span>{item}</li>)}</ul>
-     {plan.planned&&<p className="lp-price-development">A geração em massa ainda não está disponível. Limites e créditos de IA serão apresentados antes da contratação.</p>}
-     <Link className={plan.featured?"lp-button":"lp-outline"} href={"/cadastro?plano="+plan.id}>{plan.planned?"Tenho interesse":"Escolher Estudante"} <span aria-hidden="true">↗</span></Link>
+     {plan.planned&&<p className="lp-price-development">A geração em massa ainda está em desenvolvimento e não integra os recursos atualmente disponíveis. Confira as condições da oferta antes de comprar.</p>}
+     <a className={plan.featured?"lp-button":"lp-outline"} href={plan.checkoutUrl} aria-label={"Comprar "+plan.name+" na Kiwify"}>{plan.planned?"Comprar Professor":"Comprar Estudante"} <span aria-hidden="true">↗</span></a>
     </article>)}
    </div>
-   <div className="lp-pricing-trust"><span aria-hidden="true">ⓘ</span><p>Valores propostos para pagamento único. O cadastro não realiza cobrança nem libera planos pagos automaticamente. Antes das vendas, serão informados o escopo e as condições de acesso. A geração de conteúdo em massa para professores está em desenvolvimento, não disponível para contratação imediata. Não há prazo promocional ou limite de vagas anunciado.</p></div>
+   <div className="lp-pricing-trust"><span aria-hidden="true">ⓘ</span><p>Cada botão de compra leva diretamente ao checkout do respectivo produto na Kiwify. Para associar seu acesso no Eduverso, utilize no cadastro o mesmo e-mail informado na compra e confirme o e-mail. A geração de conteúdo em massa para professores ainda está em desenvolvimento; confira os recursos disponíveis e as condições no checkout.</p></div>
   </div>
  </section>;
 }
