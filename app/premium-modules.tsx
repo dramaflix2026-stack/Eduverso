@@ -14,7 +14,7 @@ const modules={
  atlas:{
   kicker:"ANATOMIA · EXPERIÊNCIA AVANÇADA",
   title:"Atlas Clínico Premium",
-  description:"Um novo nível de exploração anatômica: imagens originais produzidas para o Eduverso, estruturas selecionáveis e conexões com a prática clínica.",
+  description:"Um novo atlas clínico planejado do zero: imagens originais a produzir, estruturas interativas e conexões com a prática clínica.",
   price:"R$ 29,90",
   features:[
    {icon:"◈",title:"Atlas original e interativo",desc:"Ilustrações anatômicas autorais, com regiões, estruturas e camadas para explorar por toque."},
@@ -22,7 +22,7 @@ const modules={
    {icon:"◎",title:"Desafios clínicos",desc:"Identificação de estruturas, questões progressivas e aplicações com explicações detalhadas."},
    {icon:"▤",title:"Materiais de aprofundamento",desc:"Resumos ilustrados e materiais complementares, preparados com revisão anatômica."}
   ],
-  note:"O atlas já incluído no Eduverso permanece acessível conforme o plano original. Este módulo será uma expansão premium, com conteúdo próprio."
+  note:"O atlas atual do Eduverso permanece intocado. Este será um produto novo, feito do zero, sem reaproveitar imagens, componentes ou conteúdos existentes. Ainda não há conteúdo premium disponível."
  },
  redacao:{
   kicker:"ENEM · ESCRITA E EVOLUÇÃO",
