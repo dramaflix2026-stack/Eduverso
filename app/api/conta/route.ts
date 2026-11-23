@@ -8,7 +8,7 @@ export async function GET(request:NextRequest){
   const name=await ensureProfile(session);
   const paid=await hasPaidAccess(session);
   return authResponse(request,{
-   user:{name,email:session.user.email||""},
+   user:{id:session.user.id,name,email:session.user.email||""},
    authenticated:true,access:paid?"active":"pending",
   },200,session);
  }catch{
