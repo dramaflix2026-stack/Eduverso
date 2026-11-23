@@ -3,6 +3,7 @@ import {useEffect,useMemo,useRef,useState} from "react";
 import AnatomyAtlas from "./anatomy-atlas";
 import AnatomySkullInteractive from "./anatomy-skull-interactive";
 import {skullViews,skullViewIsValid} from "./anatomy-skull-views";
+import {spineViews,spineViewIsValid} from "./anatomy-spine-views";
 import {bones,imageUrl} from "./anatomy-atlas-data";
 import {atlasViews,type AtlasSpot,type AtlasView} from "./anatomy-atlas-collection-data";
 import {expandedAtlasViews} from "./anatomy-atlas-extension";
@@ -13,7 +14,7 @@ import styles from "./anatomy-atlas-collection.module.css";
 type Mode="explorar"|"desafio"|"flashcards";
 type RecordScore={right:number;wrong:number;due:string|null};
 type Progress=Record<string,RecordScore>;
-const keyFor=(id:string)=>"eduverso:atlas:vistas:"+(id==="cranio-frontal"?"cranio":id)+":v1";
+const keyFor=(id:string)=>"eduverso:atlas:vistas:"+(id==="cranio-frontal"?"cranio":id==="coluna-completa"?"coluna":id)+":v1";
 const normalize=(s:string)=>s.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLocaleLowerCase("pt-BR")
  .replace(/[^a-z0-9 ]/g," ").replace(/\s+/g," ").trim().replace(/^(o|a|os|as)\s+/,"");
 function matches(spot:AtlasSpot,value:string){
@@ -53,7 +54,7 @@ function AtlasStudy({view}:{view:AtlasView}){
  const detail=useRef<HTMLDivElement>(null);
  const items=view.spots;
  const listMode=view.spotMode==="list";
- const skullMode=skullViewIsValid(view.id);
+ const skullMode=skullViewIsValid(view.id)||spineViewIsValid(view.id);
  const localizedMode=listMode;
  useEffect(()=>{setScores(restore(view.id));setReady(true);},[view.id]);
  useEffect(()=>{if(ready)try{localStorage.setItem(keyFor(view.id),JSON.stringify(scores));}catch{}},[ready,scores,view.id]);
@@ -124,13 +125,13 @@ function AtlasStudy({view}:{view:AtlasView}){
   </div>
   {mode==="desafio"&&!completed&&target&&<div className={styles.question} role="status">
    <small>QUESTÃO {q+1} DE {items.length}</small><strong>{localizedMode?"Qual estrutura corresponde à descrição?":"Encontre: "+target.name}</strong>
-   <p>{localizedMode?target.description:skullMode?"Toque diretamente na região óssea pedida, sem usar marcadores.":"Toque no ponto numerado que corresponde à estrutura solicitada."}</p>
+   <p>{localizedMode?target.description:skullMode?"Toque no marcador correspondente à estrutura solicitada.":"Toque no ponto numerado que corresponde à estrutura solicitada."}</p>
    <div className={styles.progress} role="progressbar" aria-label="Progresso do desafio" aria-valuemin={0} aria-valuemax={items.length} aria-valuenow={q}><span style={{width:(q/items.length*100)+"%"}}/></div>
   </div>}
   {mode==="flashcards"&&flash&&<div className={styles.question}>
    <small>CARTÃO {f+1} DE {items.length}</small>
    <strong>{localizedMode?"Identifique a estrutura descrita:":"Que estrutura está marcada em amarelo?"}</strong>
-   <p>{localizedMode?flash.description:skullMode?"Observe o osso colorido em amarelo e escreva seu nome antes de revelar a resposta.":"Observe a imagem e escreva o nome sem consultar a resposta."}</p>
+   <p>{localizedMode?flash.description:skullMode?"Observe o marcador amarelo e digite o nome da estrutura antes de revelar a resposta.":"Observe a imagem e escreva o nome sem consultar a resposta."}</p>
   </div>}
   <div className={styles.studyColumns}>
    <figure className={styles.figure}>
@@ -138,7 +139,7 @@ function AtlasStudy({view}:{view:AtlasView}){
       targetId={mode==="flashcards"?flash?.id??null:mode==="desafio"?target?.id??null:null}
       answerId={mode==="desafio"?answer:null}
       disabled={mode==="desafio"&&(completed||answer!==null)} onSelect={clickPoint}
-      src={view.image} alt={view.alt} heading={view.short}/>:
+      src={view.image} alt={view.alt} heading={view.short} subject={spineViewIsValid(view.id)?"Coluna":"Crânio"} ratio={view.ratio}/>:
       imageFailed?<div className={styles.failure} role="alert">
        Não foi possível carregar a ilustração anatômica. <a href={view.source} target="_blank" rel="noreferrer noopener">Abrir a imagem original</a>.
       </div>
@@ -161,7 +162,7 @@ function AtlasStudy({view}:{view:AtlasView}){
          onClick={()=>clickPoint(b)}>{i+1}</button>;
       })}
      </div>}
-    <figcaption>{skullMode?"Crânio vetorial original do Eduverso · toque diretamente nas regiões coloridas.":listMode?
+    <figcaption>{skullMode?"Ilustração anatômica com marcadores interativos · selecione os pontos para estudar.":listMode?
       "Ilustração anatômica detalhada · consulte as estruturas abaixo com nomenclatura em português.":
       "Ilustração anatômica detalhada · toque nos marcadores para consultar os nomes em português."}
     </figcaption>
@@ -184,11 +185,11 @@ function AtlasStudy({view}:{view:AtlasView}){
      {selected?<><small>{selected.group} · GUIA ANATÔMICO</small><h4>{selected.name}</h4>
        {studySections(selected,view).map(block=><div className={styles.studySection} key={block.title}><strong>{block.title}</strong><p>{block.text}</p></div>)}
        <div className={styles.reviewPrompt}><strong>Pergunta de revisão</strong><p>{reviewPrompt(selected)}</p></div>
-      </>:<><h4>{localizedMode?"Escolha uma estrutura":skullMode?"Toque em um osso":"Selecione um ponto"}</h4><p>{localizedMode?"Toque em uma das estruturas em português para estudar o que é, a função, a aplicação clínica e revisar o assunto.":skullMode?"Toque diretamente em uma região colorida do crânio. O nome, a função, a relação clínica e uma pergunta de revisão aparecerão aqui.":"Toque nos marcadores numerados para explorar cada estrutura, entender sua função e conhecer uma correlação clínica."}</p></>}
+      </>:<><h4>{localizedMode?"Escolha uma estrutura":skullMode?"Selecione um ponto":"Selecione um ponto"}</h4><p>{localizedMode?"Toque em uma das estruturas em português para estudar o que é, a função, a aplicação clínica e revisar o assunto.":skullMode?"Toque nos pontos numerados da imagem para abrir o nome, a função e a explicação clínica da estrutura.":"Toque nos marcadores numerados para explorar cada estrutura, entender sua função e conhecer uma correlação clínica."}</p></>}
      <button type="button" className={styles.primary} onClick={()=>selectMode("desafio")}>Praticar identificação →</button>
     </article>}
     {mode==="desafio"&&<article className={styles.detailCard}>
-     {!completed?<>{answer===null?<p>{localizedMode?"Escolha uma das alternativas para conferir a resposta.":skullMode?"Toque no osso solicitado diretamente na figura para conferir sua resposta.":"Escolha um marcador na ilustração para conferir a resposta."}</p>:
+     {!completed?<>{answer===null?<p>{localizedMode?"Escolha uma das alternativas para conferir a resposta.":skullMode?"Selecione o ponto correspondente à estrutura solicitada para conferir sua resposta.":"Escolha um marcador na ilustração para conferir a resposta."}</p>:
        <div className={styles.feedback} role="status">
         <strong>{answer===target.id?"✓ Resposta correta!":"↻ Resposta diferente da esperada"}</strong>
         <p><b>{target.name}</b> — {target.description}</p>
@@ -205,7 +206,7 @@ function AtlasStudy({view}:{view:AtlasView}){
      {!submitted?<div className={styles.flashFront}>
        <span className={styles.flashQuestionIcon} aria-hidden="true">?</span>
        <h4>Você consegue identificar a estrutura?</h4>
-       <p>{localizedMode?flash.description:skullMode?"Observe a região amarela do crânio e tente lembrar o nome do osso.":"Observe o marcador amarelo e recorde a estrutura destacada."}</p>
+       <p>{localizedMode?flash.description:skullMode?"Observe o ponto amarelo e tente lembrar o nome da estrutura.":"Observe o marcador amarelo e recorde a estrutura destacada."}</p>
        <form className={styles.answerForm} onSubmit={e=>{e.preventDefault();submitFlash();}}>
         <label htmlFor={"atlas-answer-"+view.id}>Sua resposta (opcional)</label>
         <input id={"atlas-answer-"+view.id} value={typed} onChange={e=>setTyped(e.target.value)}
@@ -229,7 +230,7 @@ function AtlasStudy({view}:{view:AtlasView}){
     </article>}
    </div>
   </div>
-  <p className={styles.credit}>{view.credit}. <a href={view.source} target="_blank" rel="noopener noreferrer">Consultar a fonte da imagem</a>{view.credit.includes("CC BY 4.0")&&<> · <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">Licença CC BY 4.0</a></>}{skullMode&&<> · <a href="https://creativecommons.org/licenses/by-sa/2.1/jp/deed.en" target="_blank" rel="noopener noreferrer">Licença CC BY-SA 2.1 JP</a></>}. Os nomes anatômicos, as legendas interativas e as explicações do Eduverso estão em português. Algumas imagens de referência preservadas podem conter legendas impressas em inglês. Material didático introdutório; não substitui formação ou prática supervisionada. Progresso salvo neste navegador.</p>
+  <p className={styles.credit}>{view.credit}. <a href={view.source} target="_blank" rel="noopener noreferrer">Consultar a fonte da imagem</a>{view.credit.includes("CC BY 4.0")&&<> · <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">Licença CC BY 4.0</a></>}{view.credit.includes("CC BY-SA 2.1 JP")&&<> · <a href="https://creativecommons.org/licenses/by-sa/2.1/jp/deed.en" target="_blank" rel="noopener noreferrer">Licença CC BY-SA 2.1 JP</a></>}. Os nomes anatômicos, as legendas interativas e as explicações do Eduverso estão em português. Algumas imagens de referência preservadas podem conter legendas impressas em inglês. Material didático introdutório; não substitui formação ou prática supervisionada. Progresso salvo neste navegador.</p>
  </div>;
 }
 type AtlasSelection="anterior"|AtlasView["id"]|null;
@@ -273,11 +274,11 @@ const groupCatalog:{id:Category;title:string;description:string;icon:string;cove
   cover:expandedAtlasViews.find(v=>v.id==="olho")?.image||"",
   ids:["endocrino","olho","ouvido","pele","linfatico"]}
 ];
-const allViews:AtlasView[]=[...atlasViews,...expandedAtlasViews,...skullViews];
-const fullCount=bones.length+allViews.filter(v=>v.id!=="cranio").reduce((n,v)=>n+v.spots.length,0);
-const interactiveAtlasCount=allViews.length; // substitui o atlas antigo do Crânio por cinco vistas
+const allViews:AtlasView[]=[...atlasViews,...expandedAtlasViews,...skullViews,...spineViews];
+const fullCount=bones.length+allViews.filter(v=>v.id!=="cranio"&&v.id!=="coluna").reduce((n,v)=>n+v.spots.length,0);
+const interactiveAtlasCount=1+allViews.filter(v=>v.id!=="cranio"&&v.id!=="coluna").length; // vista anterior + atlas regionais, sem contar cards que apenas abrem subcards
 function categoryOf(id:AtlasSelection):Category|null{
- if(skullViewIsValid(id))return "ossos";
+ if(skullViewIsValid(id)||spineViewIsValid(id))return "ossos";
  return groupCatalog.find(g=>id!==null&&g.ids.includes(id))?.id??null;
 }
 function fromLocation():{view:AtlasSelection;category:Category|null}{
@@ -312,16 +313,16 @@ export default function AnatomyAtlasCollection(){
  const searchResults=term.trim()?allViews.filter(v=>(v.short+" "+v.title+" "+v.subtitle+" "+v.spots.map(p=>p.name).join(" ")).normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().includes(term.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().trim())):[];
  const shown=term.trim()?searchResults:allViews.filter(v=>visibleIds.includes(v.id));
  const active=allViews.find(v=>v.id===selected);
- const skullIndex=selected==="cranio";
- const skullInside=skullViewIsValid(selected);
+ const subGroup=selected==="cranio"?{title:"Crânio",views:skullViews}:selected==="coluna"?{title:"Coluna",views:spineViews}:null;
+ const subParent=skullViewIsValid(selected)?"cranio":spineViewIsValid(selected)?"coluna":null;
  return <section className={styles.collection} aria-label="Biblioteca de atlas de anatomia">
   <header className={styles.collectionHero}>
    <span>✦ EDUVERSO · ATLAS DE ANATOMIA</span>
    <h2>{selected?active?.short||"Vista anterior":group?group.title:"Atlas humano por segmentos"}<span>.</span></h2>
-   <p>{skullIndex?"Escolha uma das cinco vistas anatômicas do crânio. Cada imagem tem estruturas, desafios e flashcards próprios.":selected?"Explore estruturas, funções e correlações clínicas por meio de imagens e atividades.":group?group.description:"Biblioteca de anatomia dividida em sistemas. Escolha uma categoria, explore seus atlas e estude com desafios ou flashcards."}</p>
+   <p>{subGroup?"Escolha uma das cinco imagens interativas de "+subGroup.title+". Cada vista tem estruturas, desafios e flashcards próprios.":selected?"Explore estruturas, funções e correlações clínicas por meio de imagens e atividades.":group?group.description:"Biblioteca de anatomia dividida em sistemas. Escolha uma categoria, explore seus atlas e estude com desafios ou flashcards."}</p>
    <div className={styles.heroStats}><span>{String(interactiveAtlasCount).padStart(2,"0")} atlas interativos</span><span>{fullCount} estruturas</span><span>{groupCatalog.length} segmentos</span><span>3 modos de estudo</span></div>
   </header>
-  {selected?<button type="button" className={styles.return} onClick={()=>skullInside?navigate("cranio","ossos"):openCategory(categoryOf(selected))}>{skullInside?"← Voltar às 5 vistas do Crânio":"← Voltar aos atlas de "+(groupCatalog.find(g=>g.id===categoryOf(selected))?.title||"anatomia")}</button>:category?<button type="button" className={styles.return} onClick={()=>openCategory(null)}>← Todos os sistemas anatômicos</button>:null}
+  {selected?<button type="button" className={styles.return} onClick={()=>subParent?navigate(subParent,"ossos"):openCategory(categoryOf(selected))}>{subParent?"← Voltar às 5 vistas de "+(subParent==="cranio"?"Crânio":"Coluna"):"← Voltar aos atlas de "+(groupCatalog.find(g=>g.id===categoryOf(selected))?.title||"anatomia")}</button>:category?<button type="button" className={styles.return} onClick={()=>openCategory(null)}>← Todos os sistemas anatômicos</button>:null}
   {!selected&&<label className={styles.searchBox}><span aria-hidden="true">⌕</span><input type="search" value={term} onChange={e=>setTerm(e.target.value)} placeholder="Buscar atlas, região ou estrutura..." aria-label="Buscar no atlas de anatomia"/></label>}
   {!selected&&!category&&!term.trim()&&<div className={styles.segmentGrid}>
     {groupCatalog.map(g=><button key={g.id} type="button" className={styles.segmentCard} onClick={()=>openCategory(g.id)}>
@@ -344,25 +345,25 @@ export default function AnatomyAtlasCollection(){
             else{el.style.opacity="0";el.alt="Ilustração indisponível — "+v.short;}
           }}/>
       </span>
-      <span className={styles.cardInfo}><small>{v.id==="cranio"?"5 VISTAS INTERATIVAS":v.spotMode==="list"?"ATLAS DE SISTEMAS":"ATLAS REGIONAL"}</small><strong>{v.short}</strong><span>{v.id==="cranio"?"5 imagens internas · Explorar, Desafio e Flashcards":v.spots.length+" estruturas · desafios e flashcards"}</span><em>{v.id==="cranio"?"Ver as 5 vistas →":"Explorar atlas →"}</em></span>
+      <span className={styles.cardInfo}><small>{v.id==="cranio"||v.id==="coluna"?"5 VISTAS INTERATIVAS":v.spotMode==="list"?"ATLAS DE SISTEMAS":"ATLAS REGIONAL"}</small><strong>{v.short}</strong><span>{v.id==="cranio"||v.id==="coluna"?"5 imagens internas · Explorar, Desafio e Flashcards":v.spots.length+" estruturas · desafios e flashcards"}</span><em>{v.id==="cranio"||v.id==="coluna"?"Ver as 5 vistas →":"Explorar atlas →"}</em></span>
      </button>)}
    </div>
    {!shown.length&&!visibleIds.includes("anterior")&&<p className={styles.noResults}>Nenhum atlas encontrado. Tente outra palavra ou volte aos sistemas anatômicos.</p>}
   </>}
-  {skullIndex&&<>
-   <div className={styles.sectionLabel}><strong>Escolha a vista do crânio</strong><span>5 imagens interativas</span></div>
+  {subGroup&&<>
+   <div className={styles.sectionLabel}><strong>Escolha a vista de {subGroup.title}</strong><span>5 imagens interativas</span></div>
    <div className={styles.skullSubGrid}>
-    {skullViews.map((view,index)=><button type="button" key={view.id} className={styles.skullSubCard}
-      onClick={()=>navigate(view.id,"ossos")} aria-label={"Abrir "+view.short+" do Crânio"}>
+    {subGroup.views.map((view,index)=><button type="button" key={view.id} className={styles.skullSubCard}
+      onClick={()=>navigate(view.id,"ossos")} aria-label={"Abrir "+view.short+" de "+subGroup.title}>
       <span className={styles.skullSubImage}><img src={view.image} alt={view.alt} loading="lazy"
        onError={event=>{event.currentTarget.style.opacity="0";}}/></span>
       <span className={styles.skullSubInfo}><small>{String(index+1).padStart(2,"0")} · ATLAS INTERATIVO</small>
        <strong>{view.short}</strong><span>{view.spots.length} estruturas · Explorar, Desafio e Flashcards</span><em>Estudar esta vista →</em></span>
      </button>)}
    </div>
-   <p className={styles.skullIndexNote}>As cinco imagens representam orientações diferentes do crânio. Cada uma possui marcadores e perguntas próprios; as posições dos pontos estão em validação didática.</p>
+   <p className={styles.skullIndexNote}>Cinco imagens anatômicas com marcadores e perguntas próprios. Os pontos estão em fase de validação didática.</p>
   </>}
   {selected==="anterior"&&<AnatomyAtlas/>}
-  {selected!=="anterior"&&!skullIndex&&active&&<AtlasStudy key={active.id} view={active}/>}
+  {selected!=="anterior"&&!subGroup&&active&&<AtlasStudy key={active.id} view={active}/>}
  </section>;
 }

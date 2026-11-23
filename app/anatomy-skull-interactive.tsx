@@ -7,13 +7,13 @@ type Mode="explorar"|"desafio"|"flashcards";
 type Props={
  mode:Mode;spots:AtlasSpot[];selectedId:string|null;targetId:string|null;
  answerId:string|null;disabled:boolean;onSelect:(spot:AtlasSpot)=>void;
- src:string;alt:string;heading:string;
+ src:string;alt:string;heading:string;subject?:string;ratio?:string;
 };
 
 /** Cada vista recebe coordenadas próprias de seus AtlasSpot. */
 const bound=(n:number)=>Math.max(1,Math.min(2.5,Math.round(n*10)/10));
 
-export default function AnatomySkullInteractive({mode,spots,selectedId,targetId,answerId,disabled,onSelect,src,alt,heading}:Props){
+export default function AnatomySkullInteractive({mode,spots,selectedId,targetId,answerId,disabled,onSelect,src,alt,heading,subject="Crânio",ratio="1 / 1"}:Props){
  const [zoom,setZoom]=useState(1);
  const [failed,setFailed]=useState(false);
  const pinch=useRef<{distance:number;zoom:number}|null>(null);
@@ -28,9 +28,9 @@ export default function AnatomySkullInteractive({mode,spots,selectedId,targetId,
   setZoom(bound(pinch.current.zoom*Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY)/pinch.current.distance));
  }
  const showCorrect=mode==="desafio"&&answerId!==null;
- return <section className={styles.root} aria-label={"Atlas interativo do crânio: "+heading}>
+ return <section className={styles.root} aria-label={"Atlas interativo de "+subject+": "+heading}>
   <div className={styles.heading}>
-   <div className={styles.headingText}><small>✦ ANATOMIA INTERATIVA</small><strong>Crânio · {heading}</strong></div>
+   <div className={styles.headingText}><small>✦ ANATOMIA INTERATIVA</small><strong>{subject} · {heading}</strong></div>
    <div className={styles.controls} role="group" aria-label="Ampliação da imagem">
     <button type="button" aria-label="Diminuir zoom" disabled={zoom===1} onClick={()=>setZoom(n=>bound(n-.5))}>−</button>
     <output aria-live="polite">{Math.round(zoom*100)}%</output>
@@ -41,7 +41,7 @@ export default function AnatomySkullInteractive({mode,spots,selectedId,targetId,
   {failed?<div role="alert" className={styles.fallback}>Não foi possível carregar a imagem anatômica. Tente atualizar a página.</div>:
    <div className={styles.viewport+(zoom>1?" "+styles.zoomed:"")}
      onTouchStart={startPinch} onTouchMove={movePinch} onTouchEnd={e=>{if(e.touches.length<2)pinch.current=null;}}>
-    <div className={styles.canvas} style={{width:(zoom*100)+"%"}}>
+    <div className={styles.canvas} style={{width:(zoom*100)+"%",aspectRatio:ratio.replace(/\s/g,"")}}>
      <img src={src} alt={alt} onError={()=>setFailed(true)} width={900} height={900} draggable={false}/>
      {spots.map((spot,index)=>{
       const p={x:spot.x,y:spot.y};
