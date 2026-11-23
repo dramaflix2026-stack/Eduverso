@@ -6,7 +6,17 @@ export async function GET(request:NextRequest){
  try{
   const session=await authenticate(request);
   if(!session)return authResponse(request,{error:"Entre para sincronizar seu progresso."},401);
-  const result=await supabaseRequest<Progress[]>("/rest/v1/eduverso_progress?select=area,subject,topic,last_visited_at,correct_answers,answered_questions&order=last_visited_at.desc&limit=500",{accessToken:session.accessToken});
+  // Keep the original cross-subject dashboard unchanged; optionally filter
+  // professional learning to avoid truncation when a user has many subjects.
+  const area=request.nextUrl.searchParams.get("area");
+  const subject=request.nextUrl.searchParams.get("subject");
+  const filtered=area!==null||subject!==null;
+  if(filtered&&(area!=="profissionais"||!subject||!/^(web|python|ti|security|ux|graphic|dados|projects|marketing)$/.test(subject)))
+   return authResponse(request,{error:"Filtro de formação inválido."},400,session);
+  const endpoint="/rest/v1/eduverso_progress?select=area,subject,topic,last_visited_at,correct_answers,answered_questions"+
+    (filtered?"&area=eq.profissionais&subject=eq."+encodeURIComponent(subject!):"")+
+    "&order=last_visited_at.desc&limit="+(filtered?"100":"500");
+  const result=await supabaseRequest<Progress[]>(endpoint,{accessToken:session.accessToken});
   if(!result.ok)return authResponse(request,{error:"Erro ao consultar progresso."},502,session);
   return authResponse(request,{items:result.data},200,session);
  }catch{return authResponse(request,{error:"Não foi possível consultar o progresso."},503);}
