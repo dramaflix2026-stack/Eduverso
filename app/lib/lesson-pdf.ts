@@ -5,7 +5,7 @@ export type PdfSection={
 };
 export type PdfDocumentRequest={
  title:string;subtitle:string;fileName:string;
- sections:PdfSection[];note?:string;responseFields?:boolean;coverPage?:boolean;
+ sections:PdfSection[];note?:string;responseFields?:boolean;coverPage?:boolean;expectedContentPages?:number;
 };
 function clean(value:string):string{
  return (value||"").replace(/[\r\t]+/g," ")
@@ -180,6 +180,11 @@ export async function downloadStudyPdf(request:PdfDocumentRequest):Promise<void>
   textBlock(request.note,9.5,{color:muted,leading:14.5,after:5});
  }
  const pages=doc.getPages();
+ // Never quietly export a thin or padded document when the user asked for
+ // a precise number of substantive theory pages. The cover is excluded.
+ if(request.expectedContentPages!==undefined&&pages.length-coverPages!==request.expectedContentPages){
+  throw new Error("A diagramação não conseguiu manter "+request.expectedContentPages+" páginas de teoria com a densidade solicitada. O PDF não foi baixado; ajuste a geração antes de tentar novamente.");
+ }
  pages.forEach((p,index)=>{
   if(index<coverPages)return;
   p.drawLine({start:{x:LEFT,y:62},end:{x:RIGHT,y:62},color:line,thickness:.8});
