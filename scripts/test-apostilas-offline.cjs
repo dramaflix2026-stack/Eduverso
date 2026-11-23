@@ -67,6 +67,66 @@ async function validatePdf(){
  await reader.destroy();
  console.log("PDF CLIMAS OK",JSON.stringify({pages:pdf.getPageCount(),bytes:bytes.length,charsPerPage:perPage.map(x=>x.length)}));
 }
+
+async function validateMechanicsPdf(){
+ const {mechanicsChapters}=require("../app/booklet-mechanics.ts");
+ assert.equal(mechanicsChapters.length,10,"Acervo de Mecânica precisa ter dez capítulos");
+ mechanicsChapters.forEach((chapter,index)=>{
+  const text=[...chapter.theory,...chapter.worked,chapter.warning,chapter.check].join(" ");
+  assert.ok(text.split(/\s+/).length>=190,"Mecânica, capítulo "+(index+1)+" continua superficial");
+  assert.ok(chapter.worked.length>=2,"O capítulo precisa ter resolução guiada");
+  assert.ok(chapter.theory.length>=3,"O capítulo precisa ter teoria explicada");
+ });
+ const five=result("Física","Mecânica",5);
+ const ten=result("Física","Mecânica",10);
+ assert.equal(five.document.sections.filter(x=>x.kind==="chapter").length,5);
+ assert.equal(ten.document.sections.filter(x=>x.kind==="chapter").length,10);
+ assert.equal(ten.reviewed,10);
+ for(const qty of [15,20]){
+  const blocked=result("Física","Mecânica",qty);
+  assert.equal(blocked.document,null,"Não pode inventar capítulos "+qty);
+  assert.equal(blocked.reviewed,10);
+ }
+ const activities=result("Física","Mecânica",5,"com-atividades");
+ assert.equal(activities.document.sections.filter(x=>x.kind==="question").length,5);
+ assert.ok(!ten.document.title.startsWith("Resumo"),"Apostila não pode ser nomeada resumo");
+
+ let generated=null;
+ global.URL.createObjectURL=blob=>{generated=blob;return "blob:eduverso-mecanica-test";};
+ global.URL.revokeObjectURL=()=>{};
+ global.document={body:{appendChild(){}},createElement(){return {click(){},remove(){}}}};
+ global.window={setTimeout(){}};
+ await downloadStudyPdf(ten.document);
+ assert.ok(generated,"PDF de Mecânica não foi gerado");
+ const bytes=new Uint8Array(await generated.arrayBuffer());
+ delete global.window;delete global.document;
+ assert.ok(bytes.length>19000,"PDF de Mecânica suspeitamente curto");
+ fs.mkdirSync(path.join(__dirname,"../test-artifacts"),{recursive:true});
+ fs.writeFileSync(path.join(__dirname,"../test-artifacts/mecanica-sem-ia-10-capitulos.pdf"),bytes);
+ const {PDFDocument}=require("pdf-lib");
+ const pdf=await PDFDocument.load(bytes);
+ assert.ok(pdf.getPageCount()>=10,"Dez capítulos profundos geraram poucas páginas: "+pdf.getPageCount());
+ const pdfjs=await import("pdfjs-dist/legacy/build/pdf.mjs");
+ const reader=await pdfjs.getDocument({data:new Uint8Array(bytes),useSystemFonts:true,disableFontFace:true}).promise;
+ const all=[];const perPage=[];
+ for(let i=1;i<=reader.numPages;i++){
+  const pg=await reader.getPage(i);
+  const txt=(await pg.getTextContent()).items.map(t=>t.str||"").join(" ");
+  perPage.push(txt.length);
+  assert.ok(txt.trim().length>75,"Página "+i+" vazia ou excessivamente curta no PDF Mecânica");
+  all.push(txt);
+ }
+ const body=all.join(" ");
+ assert.ok(body.length>13000,"Texto total insuficiente para dez capítulos");
+ for(const chapter of mechanicsChapters){
+  assert.ok(body.includes(chapter.title),"Capítulo faltando no PDF: "+chapter.title);
+ }
+ assert.ok(body.includes("Exemplo resolvido e comentado"),"Resolução comentada não encontrada");
+ assert.ok(body.includes("Leituras para aprofundar"),"Leituras não encontradas");
+ await reader.destroy();
+ console.log("PDF MECÂNICA OK",JSON.stringify({pages:pdf.getPageCount(),bytes:bytes.length,charsPerPage:perPage}));
+}
+
 async function main(){
  for(const topic of ["Biomas e Vegetação","Climas"]){
   const good=result("Geografia",topic,5);
@@ -103,6 +163,7 @@ async function main(){
   }))});
  assert.equal(shallow.document,null,"Apostila superficial foi aceita como aprofundada");
  await validatePdf();
+ await validateMechanicsPdf();
  console.log("TODOS OS TESTES DE APOSTILAS OFFLINE PASSARAM");
 }
 main().catch(e=>{console.error(e);process.exitCode=1});

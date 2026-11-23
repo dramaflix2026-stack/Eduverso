@@ -145,9 +145,30 @@ export default function CreationCenter({tool,onNavigate,subjects,initialProfessi
  function switchMedicineChoice(next:string){setMedChoice(next);setCustomSubject("");setCustomTopic("");setMedTopic("");setSeed(0);setNotice("");}
  function summaryLabel(pdf:PdfDocumentRequest|null):PdfDocumentRequest|null{
   if(!pdf)return null;
-  return {...pdf,title:"Resumo do acervo - "+pdf.title.replace("Apostila de estudos - ",""),
-   subtitle:pdf.subtitle+" · RESUMO DO CATÁLOGO, NÃO É APOSTILA APROFUNDADA",
-   fileName:pdf.fileName.replace("apostila","resumo"),expectedContentPages:undefined};
+  // Um resumo NÃO deve reaproveitar capítulos mínimos, capa e paginação de uma apostila.
+  const topic=pdf.title.replace(/^Apostila de estudos\s*[-—]\s*/,"").replace(/^Eduverso\s*[-—]\s*/,"");
+  const chapters=pdf.sections.filter(s=>s.kind==="chapter"&&
+   (/^\d{2}\s{2}/.test(s.heading)||/^Capítulo \d+\s*[-–]/.test(s.heading)));
+  const brief=chapters.map((section,index)=>{
+   const first=(section.paragraphs.find(p=>p.trim().length>15)||"Conteúdo introdutório disponível no catálogo.").trim();
+   const words=first.split(/\s+/).slice(0,65).join(" ");
+   return {heading:String(index+1).padStart(2,"0")+" · "+section.heading.replace(/^\d{2}\s{2}/,"").replace(/^Capítulo \d+\s*[-–]\s*/,""),
+    kind:"standard" as const,paragraphs:[words+(words.length<first.length?"…":"")]};
+  });
+  return {
+   title:"Resumo rápido — "+topic,
+   subtitle:"Prévia do acervo · Síntese breve · NÃO substitui uma apostila aprofundada",
+   fileName:"eduverso-resumo-rapido-"+fileSafe(topic)+".pdf",
+   coverPage:false,expectedContentPages:undefined,
+   sections:[
+    {heading:"Como usar este resumo",kind:"standard",paragraphs:[
+     "Este é um roteiro de revisão rápida com conceitos resumidos do catálogo. Para explicações, exemplos completos e exercícios comentados, use as apostilas aprofundadas já disponíveis.",
+     "Uma síntese de poucas linhas não substitui o estudo do capítulo completo."
+    ]},
+    ...brief
+   ],
+   note:"RESUMO RÁPIDO: material de consulta inicial. Não apresentar como apostila aprofundada, conteúdo integral ou preparação completa para exames."
+  };
  }
  function store(pdf:PdfDocumentRequest,kind:string){
   const entry:SavedMaterial={id:String(Date.now())+"-"+Math.round(Math.random()*100000),title:pdf.title,kind,date:new Date().toLocaleDateString("pt-BR"),pdf};
@@ -299,7 +320,7 @@ export default function CreationCenter({tool,onNavigate,subjects,initialProfessi
       <button disabled={busy||!exam.length} className={styles.secondary} onClick={()=>create(makeExam(activeSubject,activeTopic,exam,true),"Gabarito")}>↓ Baixar somente o gabarito (PDF)</button>
      </>:<>
       <button disabled={busy||!offlineMaterial.document} className={styles.primary} onClick={()=>{void createEditorialBooklet();}}>↓ Gerar apostila editorial sem IA (PDF)</button>
-      <button disabled={busy||!lessons.length} className={styles.secondary} onClick={()=>create(summaryLabel(professionalMode?makeProfessionalBooklet(professional,lessonLimit,bookletFormat):makeBooklet(activeSubject,activeTopic,lessonLimit,lessons,bookletFormat)),"Resumo do acervo")}>↓ Baixar resumo do catálogo (sem IA)</button>
+      <button disabled={busy||!lessons.length} className={styles.secondary} onClick={()=>create(summaryLabel(professionalMode?makeProfessionalBooklet(professional,lessonLimit,bookletFormat):makeBooklet(activeSubject,activeTopic,lessonLimit,lessons,bookletFormat)) ,"Resumo rápido")}>↓ Baixar resumo do catálogo (sem IA)</button>
      </>}
    </div></>)}
   {tool==="arquivos"&&section("Importar material de estudo",
@@ -313,13 +334,13 @@ export default function CreationCenter({tool,onNavigate,subjects,initialProfessi
      <h2>Apostilas editoriais sem IA</h2>
      <p className={styles.hint}>O sistema só libera materiais aprovados no controle de cobertura. Conteúdos ainda curtos permanecem disponíveis como resumos claramente identificados, sem serem chamados de apostilas aprofundadas.</p>
     </div>
-    {section("Materiais do catálogo — gerar versão aprofundada",<div className={styles.readyGrid}>{starterMaterials.map(entry=><div className={styles.readyCard} key={entry.subject+"-"+entry.topic}><span>▤ {entry.subject}</span><strong>{entry.topic}</strong><button type="button" disabled={busy} onClick={()=>{void createEditorialBooklet({subject:entry.subject,topic:entry.topic,chapters:allLessons(entry.subject,entry.topic)});}}>↓ Apostila editorial sem IA</button><button type="button" disabled={busy} onClick={()=>create(summaryLabel(makeBooklet(entry.subject,entry.topic,10,allLessons(entry.subject,entry.topic),"teoria")),"Resumo do acervo")}>↓ Resumo do catálogo</button></div>)}</div>)}
-    {section("Medicina — apostilas das 18 disciplinas",<div className={styles.readyGrid}>{medicineDisciplines.map(d=><div className={styles.readyCard} key={d.slug}><span>🫀 Faculdade de Medicina</span><strong>{d.title}</strong><button type="button" disabled={busy} onClick={()=>{const content=getMedicalContent("faculdade",d.slug,"");void createEditorialBooklet({subject:"Faculdade de Medicina",topic:d.title,chapters:content.lessons});}}>↓ Apostila editorial sem IA</button><button type="button" disabled={busy} onClick={()=>{const content=getMedicalContent("faculdade",d.slug,"");void create(summaryLabel(makeBooklet("Faculdade de Medicina",d.title,10,content.lessons,"teoria")),"Resumo do acervo");}}>↓ Resumo do catálogo</button></div>)}</div>)}
+    {section("Materiais do catálogo — gerar versão aprofundada",<div className={styles.readyGrid}>{starterMaterials.map(entry=><div className={styles.readyCard} key={entry.subject+"-"+entry.topic}><span>▤ {entry.subject}</span><strong>{entry.topic}</strong><button type="button" disabled={busy} onClick={()=>{void createEditorialBooklet({subject:entry.subject,topic:entry.topic,chapters:allLessons(entry.subject,entry.topic)});}}>↓ Apostila editorial sem IA</button><button type="button" disabled={busy} onClick={()=>create(summaryLabel(makeBooklet(entry.subject,entry.topic,10,allLessons(entry.subject,entry.topic),"teoria")) ,"Resumo rápido")}>↓ Resumo rápido (prévia)</button></div>)}</div>)}
+    {section("Medicina — apostilas das 18 disciplinas",<div className={styles.readyGrid}>{medicineDisciplines.map(d=><div className={styles.readyCard} key={d.slug}><span>🫀 Faculdade de Medicina</span><strong>{d.title}</strong><button type="button" disabled={busy} onClick={()=>{const content=getMedicalContent("faculdade",d.slug,"");void createEditorialBooklet({subject:"Faculdade de Medicina",topic:d.title,chapters:content.lessons});}}>↓ Apostila editorial sem IA</button><button type="button" disabled={busy} onClick={()=>{const content=getMedicalContent("faculdade",d.slug,"");void create(summaryLabel(makeBooklet("Faculdade de Medicina",d.title,10,content.lessons,"teoria")) ,"Resumo rápido");}}>↓ Resumo rápido (prévia)</button></div>)}</div>)}
     {section("Formações profissionais — apostilas introdutórias",<div className={styles.readyGrid}>
      {professionalTracks.map(t=><div className={styles.readyCard} key={t.id}><span>{t.icon} {t.category}</span><strong>{t.name}</strong>
       <p className={styles.hint}>{t.description}</p>
       <button type="button" disabled={busy} onClick={()=>{void createEditorialBooklet({subject:t.category,topic:t.name,chapters:t.lessons,professional:t});}}>↓ Apostila editorial sem IA</button>
-      <button type="button" disabled={busy} onClick={()=>create(summaryLabel(makeProfessionalBooklet(t,20,"teoria")),"Resumo do acervo")}>↓ Resumo do catálogo</button>
+      <button type="button" disabled={busy} onClick={()=>create(summaryLabel(makeProfessionalBooklet(t,20,"teoria")) ,"Resumo rápido")}>↓ Resumo rápido (prévia)</button>
      </div>)}
     </div>)}
     {section("Meus materiais salvos",<><p className={styles.hint}>Cópias dos materiais gerados nesta Central. Armazenadas somente neste navegador, não sincronizadas entre dispositivos.</p>

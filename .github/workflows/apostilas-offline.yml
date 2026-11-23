@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - "app/booklet-offline.ts"
+      - "app/booklet-mechanics.ts"
       - "app/creation-center.tsx"
       - "app/lib/lesson-pdf.ts"
       - "scripts/test-apostilas-offline.cjs"
@@ -36,5 +37,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: eduverso-climas-pdf-sem-ia
-          path: test-artifacts/climas-sem-ia-5-capitulos.pdf
+          path: |
+            test-artifacts/climas-sem-ia-5-capitulos.pdf
+            test-artifacts/mecanica-sem-ia-10-capitulos.pdf
           if-no-files-found: ignore
