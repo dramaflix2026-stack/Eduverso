@@ -1,7 +1,7 @@
 export type AtlasArea={id:string;name:string;icon:string;description:string;topics:string[];available:boolean};
 export const atlasAreas:AtlasArea[]=[
  {id:"esqueletico",name:"Sistema Esquelético",icon:"🦴",description:"Ossos, articulações e anatomia do esqueleto.",topics:["Crânio e face","Coluna vertebral","Caixa torácica","Membros superiores","Membros inferiores","Articulações","Tecido ósseo","Anatomia aplicada"],available:true},
- {id:"muscular",name:"Sistema Muscular",icon:"💪",description:"Músculos, tendões e biomecânica.",topics:["Cabeça e pescoço","Tórax e abdômen","Costas","Membros superiores","Membros inferiores","Tendões e fáscias","Contração","Biomecânica"],available:false},
+ {id:"muscular",name:"Sistema Muscular",icon:"💪",description:"Músculos, tendões e biomecânica.",topics:["Cabeça e pescoço","Tórax e abdômen","Costas","Membros superiores","Membros inferiores","Tendões e fáscias","Contração","Biomecânica"],available:true},
  {id:"nervoso",name:"Sistema Nervoso",icon:"🧠",description:"Encéfalo, medula e nervos.",topics:["Cérebro","Cerebelo","Tronco encefálico","Medula","Nervos cranianos","Nervos periféricos","Sinapses","Reflexos"],available:false},
  {id:"cardiovascular",name:"Sistema Cardiovascular",icon:"❤️",description:"Coração, vasos e circulação.",topics:["Anatomia cardíaca","Câmaras","Válvulas","Artérias","Veias","Circulação pulmonar","Circulação sistêmica","Condução cardíaca"],available:false},
  {id:"respiratorio",name:"Sistema Respiratório",icon:"🫁",description:"Vias aéreas, pulmões e ventilação.",topics:["Nariz","Faringe","Laringe","Traqueia","Brônquios","Pulmões","Alvéolos","Diafragma"],available:false},
