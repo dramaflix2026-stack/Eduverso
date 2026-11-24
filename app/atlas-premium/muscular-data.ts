@@ -11,25 +11,25 @@ export const muscularLabs:Record<string,Lab>={
         "file": "frontal.webp",
         "label": "Vista frontal",
         "description": "Estudo anatômico: vista frontal.",
-        "ready": false,
+        "ready": true,
         "points": [
           {
             "name": "Orbicular do olho",
             "description": "Fecha as pálpebras; recebe inervação do nervo facial (VII).",
-            "x": null,
-            "y": null
+            "x": 32,
+            "y": 24
           },
           {
             "name": "Orbicular da boca",
             "description": "Fecha e protrai os lábios, atuando na fala e na vedação oral.",
-            "x": null,
-            "y": null
+            "x": 49,
+            "y": 44
           },
           {
             "name": "Frontal",
             "description": "Eleva as sobrancelhas e produz rugas horizontais na testa.",
-            "x": null,
-            "y": null
+            "x": 36,
+            "y": 13
           }
         ]
       },
@@ -37,51 +37,51 @@ export const muscularLabs:Record<string,Lab>={
         "file": "lateral.webp",
         "label": "Vista lateral",
         "description": "Estudo anatômico: vista lateral.",
-        "ready": false,
+        "ready": true,
         "points": [
           {
             "name": "Masseter",
             "description": "Eleva a mandíbula; é inervado pelo ramo mandibular do trigêmeo (V3).",
-            "x": null,
-            "y": null
+            "x": 58,
+            "y": 39
           },
           {
             "name": "Temporal",
             "description": "Eleva a mandíbula; suas fibras posteriores contribuem para a retração mandibular.",
-            "x": null,
-            "y": null
+            "x": 43,
+            "y": 19
           },
           {
             "name": "Zigomático maior",
             "description": "Eleva e desloca lateralmente o ângulo da boca durante o sorriso.",
-            "x": null,
-            "y": null
+            "x": 75,
+            "y": 32
           }
         ]
       },
       {
         "file": "posterior.webp",
         "label": "Vista posterior",
-        "description": "Estudo anatômico: vista posterior.",
-        "ready": false,
+        "description": "Vista superficial da nuca e do couro cabeludo. Os músculos cervicais profundos não estão diretamente expostos.",
+        "ready": true,
         "points": [
           {
             "name": "Trapézio superior",
             "description": "Eleva e auxilia a rotação superior da escápula; pode contribuir para extensão cervical com a cintura fixa.",
-            "x": null,
-            "y": null
+            "x": 33,
+            "y": 71
           },
           {
-            "name": "Esplênio da cabeça",
-            "description": "Em ação unilateral, roda a cabeça para o mesmo lado; bilateralmente, estende a cabeça.",
-            "x": null,
-            "y": null
+            "name": "Ventre occipital",
+            "description": "Porção posterior do músculo occipitofrontal, que traciona o couro cabeludo posteriormente e se continua com a aponeurose epicraniana.",
+            "x": 33,
+            "y": 30
           },
           {
-            "name": "Semiespinal da cabeça",
-            "description": "Contribui para extensão da cabeça e rotação contralateral.",
-            "x": null,
-            "y": null
+            "name": "Aponeurose epicraniana",
+            "description": "Lâmina tendínea que conecta os ventres frontal e occipital do músculo occipitofrontal, permitindo a transmissão de tensão no couro cabeludo.",
+            "x": 50,
+            "y": 13
           }
         ]
       },
@@ -89,25 +89,25 @@ export const muscularLabs:Record<string,Lab>={
         "file": "profunda.webp",
         "label": "Região cervical profunda",
         "description": "Estudo anatômico: região cervical profunda.",
-        "ready": false,
+        "ready": true,
         "points": [
           {
             "name": "Longo do pescoço",
             "description": "Flexor cervical profundo, auxilia a estabilização segmentar anterior da coluna cervical.",
-            "x": null,
-            "y": null
+            "x": 43,
+            "y": 60
           },
           {
             "name": "Escaleno anterior",
             "description": "Flexiona lateralmente o pescoço e pode elevar a primeira costela na inspiração forçada.",
-            "x": null,
-            "y": null
+            "x": 65,
+            "y": 62
           },
           {
             "name": "Esternocleidomastoideo",
             "description": "Unilateralmente, inclina a cabeça para o mesmo lado e roda para o lado oposto.",
-            "x": null,
-            "y": null
+            "x": 76,
+            "y": 52
           }
         ]
       }
@@ -139,8 +139,8 @@ export const muscularLabs:Record<string,Lab>={
         "q": "Qual músculo eleva a mandíbula durante a mastigação e é inervado por V3?",
         "answers": [
           "Masseter",
-          "Esplênio da cabeça",
-          "Semiespinal da cabeça",
+          "Ventre occipital",
+          "Aponeurose epicraniana",
           "Longo do pescoço"
         ],
         "correct": 0,
