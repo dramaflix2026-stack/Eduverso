@@ -11,6 +11,7 @@ type FacebookPixel = ((...args: unknown[]) => void) & {
   callMethod?: (...args: unknown[]) => void;
   queue?: unknown[][];
   loaded?: boolean;
+  push?: FacebookPixel;
   version?: string;
 };
 
@@ -28,6 +29,7 @@ function installPixel() {
     else fbq.queue?.push(args);
   }) as FacebookPixel;
 
+  fbq.push = fbq;
   fbq.queue = [];
   fbq.loaded = true;
   fbq.version = "2.0";
@@ -40,12 +42,10 @@ function installPixel() {
   fbq("init", PIXEL_ID);
 }
 
+// In-memory choice also works when an in-app browser blocks localStorage.
+let marketingAllowed = false;
 function hasMarketingConsent() {
-  try {
-    return window.localStorage.getItem(CONSENT_KEY) === "accepted";
-  } catch {
-    return false;
-  }
+  return marketingAllowed;
 }
 
 /**
@@ -76,18 +76,40 @@ export function trackEduversoCheckout(
   window.setTimeout(() => window.location.assign(details.checkoutUrl), 180);
 }
 
-/** Marketing-only tracking: mounted on the public home page, not the study area or auth. */
+/** Public landing only: independent operational load count and consent-gated Meta events. */
 export default function MetaPixelTracking() {
   const [consent, setConsent] = useState<Consent>("loading");
   const pageViewSent = useRef(false);
+  const loadCountSent = useRef(false);
 
   useEffect(() => {
     try {
       const saved = window.localStorage.getItem(CONSENT_KEY);
+      marketingAllowed = saved === "accepted";
       setConsent(saved === "accepted" ? "accepted" : saved === "declined" ? "declined" : "unset");
     } catch {
+      marketingAllowed = false;
       setConsent("unset");
     }
+  }, []);
+
+  // A visible, hydrated landing page is counted once per mount.
+  // No identifiers, URL parameters, referrer, cookies or campaign data are sent.
+  useEffect(() => {
+    function countVisibleLoad() {
+      if (loadCountSent.current || document.visibilityState !== "visible") return;
+      loadCountSent.current = true;
+      void fetch("/api/landing-view", {
+        method: "POST",
+        credentials: "omit",
+        referrerPolicy: "no-referrer",
+        cache: "no-store",
+        keepalive: true,
+      }).catch(() => { /* Never interfere with navigation. */ });
+    }
+    countVisibleLoad();
+    document.addEventListener("visibilitychange", countVisibleLoad);
+    return () => document.removeEventListener("visibilitychange", countVisibleLoad);
   }, []);
 
   useEffect(() => {
@@ -104,6 +126,8 @@ export default function MetaPixelTracking() {
   }, [consent]);
 
   function decide(next: "accepted" | "declined") {
+    marketingAllowed = next === "accepted";
+    if (!marketingAllowed) window.fbq?.("consent", "revoke");
     try {
       window.localStorage.setItem(CONSENT_KEY, next);
     } catch {
@@ -131,7 +155,7 @@ export default function MetaPixelTracking() {
     <section className="eduverso-cookies-banner" aria-label="Preferências de cookies de anúncios">
       <div className="eduverso-cookies-text">
         <strong>Cookies de anúncios</strong>
-        <p>Podemos usar o Pixel da Meta para medir visitas e cliques nas ofertas. Você escolhe se permite esse rastreamento; a navegação funciona normalmente se recusar.</p>
+        <p>Medimos carregamentos da página de forma agregada, sem cookies de publicidade. O Pixel da Meta só é usado se você aceitar. A navegação funciona normalmente se recusar.</p>
       </div>
       <div className="eduverso-cookies-actions">
         <button type="button" onClick={() => decide("declined")} className="eduverso-cookies-decline">Recusar</button>
