@@ -189,51 +189,51 @@ export const muscularLabs:Record<string,Lab>={
         "file": "frontal.webp",
         "label": "Vista anterior",
         "description": "Estudo anatômico: vista anterior.",
-        "ready": false,
+        "ready": true,
         "points": [
           {
             "name": "Peitoral maior",
             "description": "Aduz e roda medialmente o úmero; a porção clavicular auxilia a flexão.",
-            "x": null,
-            "y": null
+            "x": 32,
+            "y": 24
           },
           {
             "name": "Reto do abdômen",
             "description": "Flexiona o tronco e contribui para a pressão intra-abdominal.",
-            "x": null,
-            "y": null
+            "x": 43,
+            "y": 49
           },
           {
             "name": "Oblíquo externo",
             "description": "Com o oblíquo interno oposto, participa da rotação contralateral do tronco.",
-            "x": null,
-            "y": null
+            "x": 28,
+            "y": 67
           }
         ]
       },
       {
         "file": "lateral.webp",
         "label": "Vista lateral",
-        "description": "Estudo anatômico: vista lateral.",
-        "ready": false,
+        "description": "Vista lateral com serrátil anterior, região intercostal e parede abdominal; o oblíquo interno não está claramente individualizado.",
+        "ready": true,
         "points": [
           {
             "name": "Serrátil anterior",
             "description": "Protrai a escápula e auxilia sua rotação superior; inervado pelo nervo torácico longo.",
-            "x": null,
-            "y": null
+            "x": 34,
+            "y": 37
           },
           {
             "name": "Intercostal externo",
             "description": "Auxilia a elevação das costelas na inspiração.",
-            "x": null,
-            "y": null
+            "x": 46,
+            "y": 39
           },
           {
-            "name": "Oblíquo interno",
-            "description": "Auxilia a rotação ipsilateral do tronco e a compressão abdominal.",
-            "x": null,
-            "y": null
+            "name": "Reto do abdômen",
+            "description": "Músculo longitudinal da parede abdominal anterior. Flexiona o tronco e contribui para a pressão intra-abdominal; visível na margem anterior desta ilustração lateral.",
+            "x": 70,
+            "y": 61
           }
         ]
       },
@@ -241,25 +241,25 @@ export const muscularLabs:Record<string,Lab>={
         "file": "profunda.webp",
         "label": "Parede abdominal profunda",
         "description": "Estudo anatômico: parede abdominal profunda.",
-        "ready": false,
+        "ready": true,
         "points": [
           {
             "name": "Transverso do abdômen",
             "description": "Comprime o conteúdo abdominal e contribui para a estabilidade do tronco.",
-            "x": null,
-            "y": null
+            "x": 24,
+            "y": 56
           },
           {
             "name": "Bainha do reto",
             "description": "Formada por aponeuroses dos músculos laterais, envolve o reto abdominal com organização variável acima e abaixo da linha arqueada.",
-            "x": null,
-            "y": null
+            "x": 36,
+            "y": 62
           },
           {
             "name": "Linha alba",
             "description": "Rafe fibrosa mediana que recebe aponeuroses da parede abdominal.",
-            "x": null,
-            "y": null
+            "x": 50,
+            "y": 54
           }
         ]
       },
@@ -267,25 +267,25 @@ export const muscularLabs:Record<string,Lab>={
         "file": "diafragma.webp",
         "label": "Diafragma",
         "description": "Estudo anatômico: diafragma.",
-        "ready": false,
+        "ready": true,
         "points": [
           {
             "name": "Diafragma",
             "description": "Principal músculo inspiratório; sua contração aumenta o volume torácico, com inervação frênica C3–C5.",
-            "x": null,
-            "y": null
+            "x": 25,
+            "y": 40
           },
           {
             "name": "Centro tendíneo",
             "description": "Região aponeurótica central sobre a qual convergem fibras musculares.",
-            "x": null,
-            "y": null
+            "x": 49,
+            "y": 33
           },
           {
             "name": "Pilares diafragmáticos",
             "description": "Fixações musculotendíneas lombares que participam da organização dos hiatos.",
-            "x": null,
-            "y": null
+            "x": 43,
+            "y": 65
           }
         ]
       }
@@ -367,25 +367,25 @@ export const muscularLabs:Record<string,Lab>={
         "file": "superficial.webp",
         "label": "Camada superficial",
         "description": "Estudo anatômico: camada superficial.",
-        "ready": false,
+        "ready": true,
         "points": [
           {
             "name": "Trapézio",
             "description": "Mobiliza e estabiliza a escápula; suas fibras atuam de formas distintas conforme a região.",
-            "x": null,
-            "y": null
+            "x": 43,
+            "y": 30
           },
           {
             "name": "Latíssimo do dorso",
             "description": "Estende, aduz e roda medialmente o úmero.",
-            "x": null,
-            "y": null
+            "x": 34,
+            "y": 47
           },
           {
             "name": "Deltoide posterior",
             "description": "Auxilia a extensão e abdução horizontal do ombro.",
-            "x": null,
-            "y": null
+            "x": 22,
+            "y": 31
           }
         ]
       },
