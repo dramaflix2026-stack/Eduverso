@@ -906,20 +906,20 @@ export const muscularLabs:Record<string,Lab>={
           {
             "name": "Tendão calcâneo",
             "description": "Transmite força do tríceps sural ao calcâneo.",
-            "x": 50,
-            "y": 67
+            "x": 35,
+            "y": 69
           },
           {
-            "name": "Sóleo",
-            "description": "Integra o tríceps sural, contribuindo para a flexão plantar sem cruzar o joelho.",
-            "x": 39,
-            "y": 45
+            "name": "Gastrocnêmio",
+            "description": "Músculo superficial da panturrilha, integrante do tríceps sural, que auxilia a flexão plantar e a flexão do joelho. O sóleo situa-se mais profundamente.",
+            "x": 45,
+            "y": 30
           },
           {
             "name": "Calcâneo",
             "description": "Osso do retropé que recebe a inserção do tendão calcâneo.",
-            "x": 50,
-            "y": 91
+            "x": 35,
+            "y": 93
           }
         ]
       },
@@ -933,19 +933,19 @@ export const muscularLabs:Record<string,Lab>={
             "name": "Tendão do quadríceps",
             "description": "Conecta o quadríceps à patela, transmitindo sua força.",
             "x": 49,
-            "y": 33
+            "y": 29
           },
           {
             "name": "Ligamento patelar",
             "description": "Une patela à tuberosidade da tíbia e transmite força do mecanismo extensor.",
-            "x": 49,
-            "y": 73
+            "x": 50,
+            "y": 64
           },
           {
             "name": "Retináculos patelares",
             "description": "Expansões fibrosas que contribuem para estabilidade e acompanhamento patelar.",
-            "x": 31,
-            "y": 48
+            "x": 32,
+            "y": 43
           }
         ]
       },
@@ -958,20 +958,20 @@ export const muscularLabs:Record<string,Lab>={
           {
             "name": "Trato iliotibial",
             "description": "Espessamento lateral da fáscia lata, recebe fibras do tensor da fáscia lata e glúteo máximo.",
-            "x": 49,
-            "y": 53
+            "x": 53,
+            "y": 50
           },
           {
             "name": "Fáscia lata",
             "description": "Envolve a musculatura da coxa e contribui para a delimitação dos compartimentos.",
-            "x": 35,
-            "y": 27
+            "x": 37,
+            "y": 39
           },
           {
             "name": "Glúteo máximo",
             "description": "Músculo extensor do quadril cujas fibras superficiais contribuem para tensionar o trato iliotibial. Os septos intermusculares não estão individualizados nesta ilustração.",
-            "x": 26,
-            "y": 22
+            "x": 29,
+            "y": 19
           }
         ]
       },
@@ -985,19 +985,19 @@ export const muscularLabs:Record<string,Lab>={
             "name": "Aponeurose plantar",
             "description": "Banda fibrosa que auxilia manutenção do arco longitudinal; tensiona-se na extensão dos dedos.",
             "x": 48,
-            "y": 62
+            "y": 61
           },
           {
             "name": "Tuberosidade do calcâneo",
             "description": "Região proximal de fixação da aponeurose plantar.",
             "x": 49,
-            "y": 91
+            "y": 92
           },
           {
             "name": "Bandas digitais",
             "description": "Prolongamentos distais da aponeurose que se relacionam com os dedos.",
-            "x": 48,
-            "y": 25
+            "x": 51,
+            "y": 27
           }
         ]
       }
@@ -1084,60 +1084,60 @@ export const muscularLabs:Record<string,Lab>={
           {
             "name": "Miofibrila",
             "description": "Estrutura intracelular constituída por sarcômeros em série.",
-            "x": 50,
-            "y": 44
+            "x": 49,
+            "y": 40
           },
           {
             "name": "Sarcolema",
             "description": "Membrana plasmática da fibra muscular, conduz a despolarização.",
-            "x": 32,
-            "y": 57
+            "x": 27,
+            "y": 55
           },
           {
             "name": "Retículo sarcoplasmático",
             "description": "Armazena cálcio e o libera em resposta à ativação elétrica.",
-            "x": 57,
-            "y": 61
+            "x": 51,
+            "y": 55
           }
         ]
       },
       {
         "file": "sarcomero.webp",
         "label": "Sarcômero em repouso",
-        "description": "Representação molecular esquemática do sarcômero em repouso: filamentos finos dourados, grossos vermelhos e discos Z violetas. Não está em escala.",
+        "description": "Representação molecular esquemática do sarcômero em repouso: filamentos finos vermelhos, filamentos grossos violetas e discos Z violetas. Não está em escala.",
         "ready": true,
         "points": [
           {
             "name": "Linha Z",
             "description": "Delimita o sarcômero e ancora filamentos finos.",
-            "x": 6,
-            "y": 49
+            "x": 5,
+            "y": 48
           },
           {
             "name": "Filamento fino",
             "description": "Composto principalmente por actina, tropomiosina e troponina.",
-            "x": 24,
-            "y": 38
+            "x": 23,
+            "y": 35
           },
           {
             "name": "Filamento grosso",
             "description": "Composto principalmente por miosina II, que forma pontes cruzadas.",
-            "x": 48,
-            "y": 46
+            "x": 50,
+            "y": 49
           }
         ]
       },
       {
         "file": "encurtamento.webp",
         "label": "Sarcômero contraído",
-        "description": "Representação esquemática do sarcômero encurtado: filamentos finos vermelhos e grossos violetas. As cores são ilustrativas e diferem da cena de repouso; não compare comprimentos pela escala das imagens.",
+        "description": "Representação esquemática da interação dos filamentos durante a contração: filamentos finos dourados, grossos avermelhados e discos Z violetas. As cores e escalas diferem da cena em repouso; as imagens não permitem comparar diretamente os comprimentos ou medir o encurtamento.",
         "ready": true,
         "points": [
           {
             "name": "Disco Z",
             "description": "Limite do sarcômero. Durante o encurtamento, os discos Z se aproximam devido ao deslizamento dos filamentos.",
-            "x": 10,
-            "y": 50
+            "x": 8,
+            "y": 49
           },
           {
             "name": "Filamentos finos",
@@ -1149,7 +1149,7 @@ export const muscularLabs:Record<string,Lab>={
             "name": "Filamentos grossos",
             "description": "Filamentos de miosina formam pontes cruzadas com a actina; a banda A corresponde ao comprimento dos filamentos grossos e permanece aproximadamente constante.",
             "x": 50,
-            "y": 49
+            "y": 50
           }
         ]
       },
@@ -1163,19 +1163,19 @@ export const muscularLabs:Record<string,Lab>={
             "name": "Placa motora",
             "description": "Região pós-sináptica especializada com receptores nicotínicos de acetilcolina.",
             "x": 49,
-            "y": 69
+            "y": 59
           },
           {
             "name": "Terminal axonal",
             "description": "Libera acetilcolina na fenda sináptica após entrada de cálcio.",
-            "x": 43,
-            "y": 49
+            "x": 51,
+            "y": 44
           },
           {
             "name": "Fenda sináptica",
             "description": "Espaço entre neurônio e fibra muscular, onde a acetilcolinesterase degrada acetilcolina.",
-            "x": 49,
-            "y": 62
+            "x": 48,
+            "y": 52
           }
         ]
       }
