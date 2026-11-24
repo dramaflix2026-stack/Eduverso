@@ -8,41 +8,30 @@ type Gate={authenticated:boolean;hasAccess:boolean;status:"guest"|"locked"|"acti
 type View=typeof atlasViews[number]["id"];
 function SkullDiagram({view,select,active,unlocked}:{view:View;select:(id:string)=>void;active:string|null;unlocked:boolean}){
  const current=skullLandmarks.filter(item=>item.view===view);
- const skull=(view==="lateral")?<>
-  <path d="M 74 220 C 65 133 142 64 248 64 C 361 64 429 133 420 219 C 417 257 395 282 371 296 L 356 355 279 390 213 382 178 339 134 326 116 277 Z" />
-  <path d="M 149 219 Q 182 170 222 199 Q 244 229 215 253 Q 184 267 155 245 Z" className={styles.hole}/>
-  <path d="M 292 253 Q 326 215 362 248 Q 384 280 355 306 L 311 299 Z" className={styles.hole}/>
-  <path d="M 300 298 L 284 373 L 212 371 L 194 333" className={styles.seam}/>
-  <path d="M 215 91 Q 245 180 235 212" className={styles.seam}/>
- </>:view==="inferior"?<>
-  <path d="M 237 47 C 355 47 433 123 431 234 C 430 339 355 424 240 425 C 119 424 43 336 44 232 C 45 128 120 49 237 47 Z"/>
-  <ellipse cx="238" cy="280" rx="56" ry="72" className={styles.hole}/>
-  <path d="M 119 151 Q 240 97 355 150 M 116 190 Q 240 140 357 190" className={styles.seam}/>
-  <path d="M 92 257 L 151 299 M 384 257 L 326 298" className={styles.seam}/>
- </>:<>
-  <path d="M 239 40 C 353 40 429 133 424 245 C 421 291 409 339 370 366 L 336 398 288 420 188 420 140 398 107 365 C 66 339 55 285 54 241 C 51 132 128 41 239 40 Z"/>
-  <path d="M 117 242 C 138 206 187 201 215 232 C 232 253 217 297 190 306 C 159 317 117 290 117 242 Z M 262 232 C 290 200 340 206 361 242 C 361 290 319 317 287 306 C 261 295 245 254 262 232 Z" className={styles.hole}/>
-  <path d="M 239 264 L 218 331 259 331 Z" className={styles.hole}/>
-  <path d="M 161 340 Q 240 365 318 340 L 317 379 Q 240 420 164 379 Z" className={styles.jaw}/>
-  <path d="M 238 80 L 238 200 M 96 180 Q 238 220 382 180" className={styles.seam}/>
-  <path d="M 170 385 Q 238 405 305 385" className={styles.seam}/>
-  {view==="posterior"&&<><path d="M 120 211 Q 240 260 360 211" className={styles.seam}/><path d="M 170 340 Q 240 300 310 340" className={styles.seam}/></>}
- </>;
+ const imageByView:Record<Exclude<View,"3d">,string>={
+  frontal:"/atlas-premium/cranio/file_00000000c6a0820ea00f04273a6a00c2.webp",
+  lateral:"/atlas-premium/cranio/file_000000002da8820e98301ea893946a63.webp",
+  posterior:"/atlas-premium/cranio/file_0000000026c4820e9b7ff7ba08152f15.webp",
+  inferior:"/atlas-premium/cranio/file_00000000363c820eabaf4385cff0ed5d.webp"
+ };
+ const [zoom,setZoom]=useState(1);
+ useEffect(()=>setZoom(1),[view]);
  return <div className={styles.diagramShell}>
-  {view==="3d"?<div className={styles.placeholder3d}><span aria-hidden="true">◇</span><strong>Modelo tridimensional</strong><p>Em preparação. Esta primeira entrega não usa rotação simulada nem reaproveita o Atlas gratuito.</p></div>:<>
-   <svg className={styles.anatomy} viewBox="0 0 480 480" role="img" aria-label={"Esquema ilustrativo de crânio humano — "+view}>
-    <defs><radialGradient id="bone"><stop stopColor="#ebe9dc"/><stop offset=".63" stopColor="#c2bda9"/><stop offset="1" stopColor="#898374"/></radialGradient></defs>
-    <g className={styles.bone}>{skull}</g>
-    <text x="240" y="465" textAnchor="middle" fill="#aaa6cb" fontSize="11">ESQUEMA DIDÁTICO • NÃO SUBSTITUI PEÇA ANATÔMICA</text>
-   </svg>
-   <div className={styles.pins}>{current.map((item,i)=>{const disabled=!unlocked&&i>1;return <button key={item.id} type="button" style={{left:item.x+"%",top:item.y+"%"}} className={styles.pin+(active===item.id?" "+styles.pinActive:"")} onClick={()=>select(item.id)} disabled={disabled} aria-label={(disabled?"Bloqueado: ":"Selecionar ")+item.name} title={disabled?"Desbloqueie o Atlas Premium":item.name}>{disabled?"🔒":i+1}</button>})}</div>
+  {view==="3d"?<div className={styles.placeholder3d}><span aria-hidden="true">◇</span><strong>Modelo tridimensional</strong><p>Em preparação. A rotação 3D real será disponibilizada após a produção e revisão de um modelo anatômico GLB.</p></div>:<>
+   <div className={styles.visualFrame}>
+    <div className={styles.zoomLayer} style={{transform:"scale("+zoom+")"}}>
+     <img className={styles.skullPhoto} src={imageByView[view]} alt={"Ilustração anatômica em alta definição do crânio humano — "+atlasViews.find(item=>item.id===view)?.label} width={1101} height={1376} decoding="async"/>
+     <div className={styles.pins}>{current.map((item,i)=>{const disabled=!unlocked&&i>1;return <button key={item.id} type="button" style={{left:item.x+"%",top:item.y+"%"}} className={styles.pin+(active===item.id?" "+styles.pinActive:"")} onClick={()=>select(item.id)} disabled={disabled} aria-label={(disabled?"Bloqueado: ":"Selecionar ")+item.name} title={disabled?"Desbloqueie o Atlas Premium":item.name}>{disabled?"🔒":i+1}</button>})}</div>
+    </div>
+   </div>
+   <div className={styles.zoomControls} role="group" aria-label="Zoom da imagem anatômica"><button type="button" onClick={()=>setZoom(v=>Math.max(1,Math.round((v-.25)*100)/100))} disabled={zoom===1} aria-label="Diminuir zoom">−</button><span>{Math.round(zoom*100)}%</span><button type="button" onClick={()=>setZoom(v=>Math.min(2.5,Math.round((v+.25)*100)/100))} disabled={zoom>=2.5} aria-label="Aumentar zoom">+</button><button type="button" onClick={()=>setZoom(1)} disabled={zoom===1}>Redefinir</button></div>
   </>}
  </div>;
 }
 function lessonDescription(point:Landmark|null,unlocked:boolean){
- if(!point)return <p>Selecione um marcador sobre a ilustração para estudar a localização e a função de uma estrutura.</p>;
+ if(!point)return <p>Selecione um marcador sobre a imagem para conhecer a localização e a função de uma estrutura.</p>;
  const current=skullLandmarks.filter(p=>p.view===point.view);if(!unlocked&&current.findIndex(p=>p.id===point.id)>1)return <p>Esta estrutura exige a liberação do complemento.</p>;
- return <><h3>{point.name}</h3><p>{point.description}</p><small>Conteúdo introdutório ilustrativo. A revisão anatômica final e as imagens HD estão na etapa de produção editorial.</small></>;
+ return <><h3>{point.name}</h3><p>{point.description}</p><small>Texto introdutório. A imagem e a posição dos marcadores são ilustrativas e dependem de revisão anatômica antes do lançamento comercial.</small></>;
 }
 export default function PremiumAtlasClient(){
  const [gate,setGate]=useState<Gate>({authenticated:false,hasAccess:false,status:"unavailable"});
@@ -71,9 +60,9 @@ export default function PremiumAtlasClient(){
     {filtered.length===0&&<p className={styles.empty}>Nenhuma área encontrada. Tente outra palavra.</p>}
     <div className={styles.topics}><strong>Subitens · {atlasAreas.find(a=>a.id===area)?.name}</strong><div>{atlasAreas.find(a=>a.id===area)?.topics.map((t,i)=><span key={t} className={i===0&&area==="esqueletico"?styles.topicAvailable:""}>{t}{i===0&&area==="esqueletico"?" · demonstração":""}</span>)}</div></div>
    </section>
-   <section id="laboratorio" className={styles.lab}><div className={styles.sectionHead}><div><span className={styles.eyebrow}>PRIMEIRO LABORATÓRIO</span><h2>Crânio humano · exploração inicial</h2><p>Um protótipo interativo com esquemas autorais. As imagens HD revisadas e o modelo 3D real serão adicionados nas próximas etapas.</p></div><span className={styles.chip}>Versão de demonstração</span></div>
+   <section id="laboratorio" className={styles.lab}><div className={styles.sectionHead}><div><span className={styles.eyebrow}>PRIMEIRO LABORATÓRIO</span><h2>Crânio humano · exploração inicial</h2><p>Quatro vistas em alta definição com pontos interativos e zoom. Imagens ilustrativas geradas por IA, ainda pendentes de revisão anatômica; modelo 3D real em preparação.</p></div><span className={styles.chip}>Versão de demonstração</span></div>
     <div className={styles.labGrid}><div className={styles.viewer}><div className={styles.tabs} role="group" aria-label="Selecionar vista">{atlasViews.map(item=><button key={item.id} type="button" className={view===item.id?styles.tabActive:""} onClick={()=>changeView(item.id)}>{item.label}</button>)}</div><SkullDiagram view={view} select={setActive} active={active} unlocked={gate.hasAccess}/><div className={styles.diagramNote}>Selecione os marcadores para identificar estruturas. Pontos adicionais permanecem bloqueados até a compra.</div></div>
-    <aside className={styles.details}><span className={styles.eyebrow}>ESTRUTURA SELECIONADA</span>{lessonDescription(selectedPoint,gate.hasAccess)}<div className={styles.divider}/><strong>Desafio rápido</strong><p>Qual osso participa da formação da testa?</p><div className={styles.quiz}>{["Frontal","Temporal","Occipital"].map(answer=><button type="button" key={answer} onClick={()=>setQuiz(answer)}>{answer}</button>)}</div>{quiz&&<div className={styles.answer} role="status">{quiz==="Frontal"?"✓ Correto! O frontal forma a região da testa.":"Ainda não. O osso frontal constitui a testa; tente novamente."}</div>}<div className={styles.divider}/><span className={styles.muted}>Material educativo, não diagnóstico. Os esquemas são ilustrativos e não representam cortes ou medidas anatômicas.</span></aside></div>
+    <aside className={styles.details}><span className={styles.eyebrow}>ESTRUTURA SELECIONADA</span>{lessonDescription(selectedPoint,gate.hasAccess)}<div className={styles.divider}/><strong>Desafio rápido</strong><p>Qual osso participa da formação da testa?</p><div className={styles.quiz}>{["Frontal","Temporal","Occipital"].map(answer=><button type="button" key={answer} onClick={()=>setQuiz(answer)}>{answer}</button>)}</div>{quiz&&<div className={styles.answer} role="status">{quiz==="Frontal"?"✓ Correto! O frontal forma a região da testa.":"Ainda não. O osso frontal constitui a testa; tente novamente."}</div>}<div className={styles.divider}/><span className={styles.muted}>Material educativo, não diagnóstico. As imagens foram geradas por IA e não são fotografias de peças anatômicas; detalhes e marcadores exigem revisão técnica.</span></aside></div>
    </section>
    <footer className={styles.footer}>Atlas Premium Eduverso · Desenvolvimento independente do Atlas gratuito · <Link href="/plataforma">Voltar aos estudos</Link></footer>
   </div>

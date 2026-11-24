@@ -15,15 +15,15 @@ export const atlasAreas:AtlasArea[]=[
 ];
 export type Landmark={id:string;name:string;view:"frontal"|"lateral"|"posterior"|"inferior";x:number;y:number;description:string};
 export const skullLandmarks:Landmark[]=[
- {id:"frontal",name:"Osso frontal",view:"frontal",x:50,y:22,description:"Forma a testa e contribui para o teto das órbitas. Articula-se com os ossos parietais pela sutura coronal."},
+ {id:"frontal",name:"Osso frontal",view:"frontal",x:50,y:32,description:"Forma a testa e contribui para o teto das órbitas. Articula-se com os ossos parietais pela sutura coronal."},
  {id:"nasal",name:"Ossos nasais",view:"frontal",x:50,y:49,description:"Pequenos ossos pares que formam parte da ponte óssea do nariz."},
- {id:"zigomatico",name:"Osso zigomático",view:"frontal",x:26,y:58,description:"Participa da proeminência da bochecha e da parede lateral da órbita."},
- {id:"maxila",name:"Maxila",view:"frontal",x:60,y:68,description:"Osso par que participa do palato duro, da região infraorbital e da sustentação dos dentes superiores."},
- {id:"mandibula",name:"Mandíbula",view:"frontal",x:50,y:84,description:"Osso móvel da face; participa da articulação temporomandibular e sustenta os dentes inferiores."},
- {id:"parietal",name:"Osso parietal",view:"lateral",x:54,y:22,description:"Osso par da calvária, conectado aos ossos frontal, temporal e occipital por suturas."},
- {id:"temporal",name:"Osso temporal",view:"lateral",x:70,y:57,description:"Integra a base e a parede lateral do crânio; abriga estruturas do ouvido interno."},
- {id:"occipital",name:"Osso occipital",view:"posterior",x:50,y:65,description:"Forma grande parte da região posterior e inferior do neurocrânio; contém o forame magno."},
+ {id:"zigomatico",name:"Osso zigomático",view:"frontal",x:29,y:55,description:"Participa da proeminência da bochecha e da parede lateral da órbita."},
+ {id:"maxila",name:"Maxila",view:"frontal",x:59,y:64,description:"Osso par que participa do palato duro, da região infraorbital e da sustentação dos dentes superiores."},
+ {id:"mandibula",name:"Mandíbula",view:"frontal",x:50,y:74,description:"Osso móvel da face; participa da articulação temporomandibular e sustenta os dentes inferiores."},
+ {id:"parietal",name:"Osso parietal",view:"lateral",x:39,y:33,description:"Osso par da calvária, conectado aos ossos frontal, temporal e occipital por suturas."},
+ {id:"temporal",name:"Osso temporal",view:"lateral",x:40,y:53,description:"Integra a base e a parede lateral do crânio; abriga estruturas do ouvido interno."},
+ {id:"occipital",name:"Osso occipital",view:"posterior",x:50,y:57,description:"Forma grande parte da região posterior e inferior do neurocrânio; contém o forame magno."},
  {id:"sutura-lambdoide",name:"Sutura lambdoide",view:"posterior",x:51,y:39,description:"Articulação fibrosa entre os ossos parietais e o occipital."},
- {id:"forame",name:"Forame magno",view:"inferior",x:52,y:59,description:"Grande abertura do occipital pela qual o bulbo se continua com a medula espinhal."}
+ {id:"forame",name:"Forame magno",view:"inferior",x:50,y:61,description:"Grande abertura do occipital pela qual o bulbo se continua com a medula espinhal."}
 ];
 export const atlasViews=[{id:"frontal",label:"Vista frontal"},{id:"lateral",label:"Vista lateral"},{id:"posterior",label:"Vista posterior"},{id:"inferior",label:"Vista inferior"},{id:"3d",label:"Modelo 3D"}] as const;
