@@ -1256,104 +1256,104 @@ export const muscularLabs:Record<string,Lab>={
       {
         "file": "cotovelo.webp",
         "label": "Flexão do cotovelo",
-        "description": "Estudo anatômico: flexão do cotovelo.",
+        "description": "Vista lateral ilustrativa do cotovelo flexionado. O modelo não mostra a mão nem uma resistência externa; a análise de alavancas é conceitual.",
         "ready": true,
         "points": [
           {
-            "name": "Bíceps braquial",
-            "description": "Produz torque de flexão; em uma configuração típica de flexão com carga na mão, a força muscular atua entre eixo e resistência.",
-            "x": 31,
-            "y": 44
+            "name": "Região dos flexores do cotovelo",
+            "description": "O bíceps braquial e o braquial contribuem para o torque de flexão. Em uma alavanca de terceira classe típica, a força muscular atua entre o eixo e a resistência distal. Os limites musculares não estão individualizados com segurança.",
+            "x": 46,
+            "y": 20
           },
           {
             "name": "Eixo do cotovelo",
-            "description": "Referência aproximada em torno da qual ocorre flexão e extensão.",
-            "x": 26,
-            "y": 73
+            "description": "Referência aproximada no centro articular para estudar flexão e extensão.",
+            "x": 34,
+            "y": 58
           },
           {
-            "name": "Mão — região distal",
-            "description": "Ponto de aplicação hipotético de uma resistência externa. O torque externo depende da força e da distância perpendicular entre sua linha de ação e o eixo do cotovelo. Não há carga externa representada nesta imagem.",
-            "x": 86,
-            "y": 36
+            "name": "Antebraço — segmento de alavanca",
+            "description": "O antebraço transmite forças em relação ao eixo do cotovelo. A resistência aplicada na mão, que não aparece na imagem, produziria um torque dependente da sua linha de ação.",
+            "x": 81,
+            "y": 63
           }
         ]
       },
       {
         "file": "quadril.webp",
         "label": "Estabilidade pélvica",
-        "description": "Estudo anatômico: estabilidade pélvica.",
+        "description": "Vista anatômica ilustrativa do quadril, com a cabeça femoral e o acetábulo expostos. A estabilidade pélvica no apoio unipodal é estudada conceitualmente.",
         "ready": true,
         "points": [
           {
             "name": "Abdutores do quadril",
             "description": "Geram torque que se opõe à queda da pelve contralateral no apoio unipodal.",
-            "x": 29,
-            "y": 15
+            "x": 25,
+            "y": 30
           },
           {
             "name": "Centro articular do quadril",
             "description": "Referência de rotação para análise do torque no plano frontal.",
-            "x": 35,
-            "y": 23
+            "x": 57,
+            "y": 39
           },
           {
             "name": "Pelve",
             "description": "Segmento cuja orientação é controlada pela ação muscular e pelas forças externas.",
-            "x": 65,
-            "y": 13
+            "x": 48,
+            "y": 16
           }
         ]
       },
       {
         "file": "joelho.webp",
         "label": "Controle do joelho",
-        "description": "Vista anatômica do mecanismo extensor do joelho. A ilustração estática não permite identificar se a ação muscular é concêntrica ou excêntrica.",
+        "description": "Vista lateral ilustrativa do joelho, incluindo a patela e seu mecanismo extensor. Uma imagem estática não determina o tipo de contração muscular.",
         "ready": true,
         "points": [
           {
             "name": "Quadríceps",
             "description": "Pode atuar concentricamente na subida ou excentricamente no controle da descida, dependendo da tarefa.",
-            "x": 48,
-            "y": 18
+            "x": 68,
+            "y": 12
           },
           {
             "name": "Ligamento patelar",
             "description": "Transmite a força do mecanismo extensor da patela à tuberosidade tibial. Os isquiotibiais não estão individualizados nesta vista.",
-            "x": 58,
-            "y": 68
+            "x": 76,
+            "y": 54
           },
           {
             "name": "Patela",
             "description": "Aumenta o braço de momento do mecanismo extensor do joelho.",
-            "x": 60,
-            "y": 50
+            "x": 83,
+            "y": 38
           }
         ]
       },
       {
         "file": "tornozelo.webp",
         "label": "Propulsão plantar",
-        "description": "Estudo anatômico: propulsão plantar.",
+        "description": "Vista lateral ilustrativa do tornozelo e pé. A propulsão é explicada conceitualmente, pois o apoio do antepé e a musculatura proximal da panturrilha não aparecem integralmente.",
         "ready": true,
         "points": [
           {
-            "name": "Tríceps sural",
-            "description": "Gera torque de flexão plantar e contribui para a propulsão na marcha.",
-            "x": 45,
-            "y": 23
+            "name": "Articulação talocrural",
+            "description": "Articulação entre tíbia, fíbula e tálus, que permite principalmente dorsiflexão e flexão plantar.",
+            "x": 40,
+            "y": 47
           },
           {
-            "name": "Cabeças metatarsais",
-            "description": "Região de apoio no antepé durante elevação do calcanhar.",
-            "x": 61,
-            "y": 86
+            "name": "Calcâneo",
+            "description": "Osso do retropé que recebe a inserção do tendão calcâneo. Sua posição em relação ao eixo articular contribui para o braço de momento do tendão.",
+            "x": 18,
+            "y": 70
           },
           {
             "name": "Tendão calcâneo",
-            "description": "Transmite força muscular e pode armazenar e devolver energia elástica durante o movimento.",
-            "x": 34,
-            "y": 51
+            "description": "Transmite a força do tríceps sural ao calcâneo e pode armazenar e devolver energia elástica durante o movimento.",
+            "x": 8,
+            "y": 54
           }
         ]
       }
