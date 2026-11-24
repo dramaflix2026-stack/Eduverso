@@ -1,8 +1,8 @@
 # Tendões e fáscias
 
-4 imagens integradas, 12 marcadores aproximados e 6 questões comentadas. Revisão anatômica especializada e validação visual pendentes.
+Quatro novas imagens integradas, 12 marcadores aproximados recalibrados, seis questões preservadas. Versões anteriores em versao-anterior/. Revisão anatômica especializada e validação visual pendentes.
 
-- calcaneo.webp
-- joelho.webp
-- fascia-lata.webp
-- plantar.webp
+- calcaneo.webp — Tendão calcâneo
+- joelho.webp — Mecanismo extensor
+- fascia-lata.webp — Fáscia lata
+- plantar.webp — Fáscia plantar
