@@ -6,7 +6,7 @@ import "./meta-pixel.css";
 const PIXEL_ID = "1714519746738518";
 const CONSENT_KEY = "eduverso-marketing-consent-v1";
 
-type Consent = "loading" | "unset" | "accepted" | "declined";
+type Preference = "loading" | "enabled" | "disabled";
 type FacebookPixel = ((...args: unknown[]) => void) & {
   callMethod?: (...args: unknown[]) => void;
   queue?: unknown[][];
@@ -44,7 +44,7 @@ function installPixel() {
 
 // In-memory choice also works when an in-app browser blocks localStorage.
 let marketingAllowed = false;
-function hasMarketingConsent() {
+function isMarketingEnabled() {
   return marketingAllowed;
 }
 
@@ -57,7 +57,7 @@ export function trackEduversoCheckout(
   event: MouseEvent<HTMLAnchorElement>,
   details: { productId: string; productName: string; value: number; checkoutUrl: string },
 ) {
-  if (!hasMarketingConsent() || !window.fbq) return;
+  if (!isMarketingEnabled() || !window.fbq) return;
   window.fbq("track", "InitiateCheckout", {
     content_name: details.productName,
     content_ids: [details.productId],
@@ -76,20 +76,20 @@ export function trackEduversoCheckout(
   window.setTimeout(() => window.location.assign(details.checkoutUrl), 180);
 }
 
-/** Public landing only: independent operational load count and consent-gated Meta events. */
+/** Public landing only: operational load count and Meta events. Preserve explicit opt-outs. */
 export default function MetaPixelTracking() {
-  const [consent, setConsent] = useState<Consent>("loading");
+  const [preference, setPreference] = useState<Preference>("loading");
   const pageViewSent = useRef(false);
   const loadCountSent = useRef(false);
 
   useEffect(() => {
     try {
       const saved = window.localStorage.getItem(CONSENT_KEY);
-      marketingAllowed = saved === "accepted";
-      setConsent(saved === "accepted" ? "accepted" : saved === "declined" ? "declined" : "unset");
+      marketingAllowed = saved !== "declined";
+      setPreference(marketingAllowed ? "enabled" : "disabled");
     } catch {
-      marketingAllowed = false;
-      setConsent("unset");
+      marketingAllowed = true;
+      setPreference("enabled");
     }
   }, []);
 
@@ -113,17 +113,17 @@ export default function MetaPixelTracking() {
   }, []);
 
   useEffect(() => {
-    if (consent === "accepted") {
+    if (preference === "enabled") {
       installPixel();
       window.fbq?.("consent", "grant");
       if (!pageViewSent.current) {
         window.fbq?.("track", "PageView");
         pageViewSent.current = true;
       }
-    } else if (consent === "declined") {
+    } else if (preference === "disabled") {
       window.fbq?.("consent", "revoke");
     }
-  }, [consent]);
+  }, [preference]);
 
   function decide(next: "accepted" | "declined") {
     marketingAllowed = next === "accepted";
@@ -133,34 +133,19 @@ export default function MetaPixelTracking() {
     } catch {
       // If storage is disabled, keep the user's choice for this page view.
     }
-    setConsent(next);
+    setPreference(marketingAllowed ? "enabled" : "disabled");
   }
 
-  if (consent === "loading") return null;
-
-  if (consent !== "unset") {
-    return (
-      <button
-        type="button"
-        className="eduverso-cookies-settings"
-        onClick={() => setConsent("unset")}
-        aria-label="Alterar preferências de cookies de anúncios"
-      >
-        Cookies
-      </button>
-    );
-  }
+  if (preference === "loading") return null;
 
   return (
-    <section className="eduverso-cookies-banner" aria-label="Preferências de cookies de anúncios">
-      <div className="eduverso-cookies-text">
-        <strong>Cookies de anúncios</strong>
-        <p>Medimos carregamentos da página de forma agregada, sem cookies de publicidade. O Pixel da Meta só é usado se você aceitar. A navegação funciona normalmente se recusar.</p>
-      </div>
-      <div className="eduverso-cookies-actions">
-        <button type="button" onClick={() => decide("declined")} className="eduverso-cookies-decline">Recusar</button>
-        <button type="button" onClick={() => decide("accepted")} className="eduverso-cookies-accept">Aceitar</button>
-      </div>
-    </section>
+    <button
+      type="button"
+      className="eduverso-cookies-settings"
+      onClick={() => decide(preference === "enabled" ? "declined" : "accepted")}
+      aria-label={preference === "enabled" ? "Desativar medição de anúncios da Meta" : "Ativar medição de anúncios da Meta"}
+    >
+      {preference === "enabled" ? "Desativar medição de anúncios" : "Ativar medição de anúncios"}
+    </button>
   );
 }
