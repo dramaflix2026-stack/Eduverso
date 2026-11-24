@@ -1,8 +1,9 @@
 # Contração muscular
 
-Imagens individuais, sem texto nem marcadores, fundo roxo e peça anatômica isolada. Ainda não disponíveis. Coordenadas serão calibradas após upload e inspeção.
+4 imagens integradas, 12 marcadores aproximados e 6 questões comentadas. Revisão anatômica especializada e validação visual pendentes.
+As cenas moleculares são esquemáticas, não estão em escala e usam cores diferentes entre repouso e contração.
 
-- `fibra.webp` — Fibra muscular
-- `sarcomero.webp` — Sarcômero em repouso
-- `encurtamento.webp` — Sarcômero contraído
-- `juncao.webp` — Junção neuromuscular
+- fibra.webp
+- sarcomero.webp
+- encurtamento.webp
+- juncao.webp

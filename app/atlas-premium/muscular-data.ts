@@ -953,25 +953,25 @@ export const muscularLabs:Record<string,Lab>={
         "file": "fascia-lata.webp",
         "label": "Fáscia lata",
         "description": "Estudo anatômico: fáscia lata.",
-        "ready": false,
+        "ready": true,
         "points": [
           {
             "name": "Trato iliotibial",
             "description": "Espessamento lateral da fáscia lata, recebe fibras do tensor da fáscia lata e glúteo máximo.",
-            "x": null,
-            "y": null
+            "x": 49,
+            "y": 53
           },
           {
             "name": "Fáscia lata",
             "description": "Envolve a musculatura da coxa e contribui para a delimitação dos compartimentos.",
-            "x": null,
-            "y": null
+            "x": 35,
+            "y": 27
           },
           {
-            "name": "Septos intermusculares",
-            "description": "Extensões fasciais que separam grupos musculares em compartimentos.",
-            "x": null,
-            "y": null
+            "name": "Glúteo máximo",
+            "description": "Músculo extensor do quadril cujas fibras superficiais contribuem para tensionar o trato iliotibial. Os septos intermusculares não estão individualizados nesta ilustração.",
+            "x": 26,
+            "y": 22
           }
         ]
       },
@@ -1079,77 +1079,77 @@ export const muscularLabs:Record<string,Lab>={
         "file": "fibra.webp",
         "label": "Fibra muscular",
         "description": "Estudo anatômico: fibra muscular.",
-        "ready": false,
+        "ready": true,
         "points": [
           {
             "name": "Miofibrila",
             "description": "Estrutura intracelular constituída por sarcômeros em série.",
-            "x": null,
-            "y": null
+            "x": 50,
+            "y": 44
           },
           {
             "name": "Sarcolema",
             "description": "Membrana plasmática da fibra muscular, conduz a despolarização.",
-            "x": null,
-            "y": null
+            "x": 32,
+            "y": 57
           },
           {
             "name": "Retículo sarcoplasmático",
             "description": "Armazena cálcio e o libera em resposta à ativação elétrica.",
-            "x": null,
-            "y": null
+            "x": 57,
+            "y": 61
           }
         ]
       },
       {
         "file": "sarcomero.webp",
         "label": "Sarcômero em repouso",
-        "description": "Estudo anatômico: sarcômero em repouso.",
-        "ready": false,
+        "description": "Representação molecular esquemática do sarcômero em repouso: filamentos finos dourados, grossos vermelhos e discos Z violetas. Não está em escala.",
+        "ready": true,
         "points": [
           {
             "name": "Linha Z",
             "description": "Delimita o sarcômero e ancora filamentos finos.",
-            "x": null,
-            "y": null
+            "x": 6,
+            "y": 49
           },
           {
             "name": "Filamento fino",
             "description": "Composto principalmente por actina, tropomiosina e troponina.",
-            "x": null,
-            "y": null
+            "x": 24,
+            "y": 38
           },
           {
             "name": "Filamento grosso",
             "description": "Composto principalmente por miosina II, que forma pontes cruzadas.",
-            "x": null,
-            "y": null
+            "x": 48,
+            "y": 46
           }
         ]
       },
       {
         "file": "encurtamento.webp",
         "label": "Sarcômero contraído",
-        "description": "Estudo anatômico: sarcômero contraído.",
-        "ready": false,
+        "description": "Representação esquemática do sarcômero encurtado: filamentos finos vermelhos e grossos violetas. As cores são ilustrativas e diferem da cena de repouso; não compare comprimentos pela escala das imagens.",
+        "ready": true,
         "points": [
           {
-            "name": "Banda A",
-            "description": "Corresponde ao comprimento dos filamentos grossos e permanece aproximadamente constante durante o encurtamento.",
-            "x": null,
-            "y": null
+            "name": "Disco Z",
+            "description": "Limite do sarcômero. Durante o encurtamento, os discos Z se aproximam devido ao deslizamento dos filamentos.",
+            "x": 10,
+            "y": 50
           },
           {
-            "name": "Banda I",
-            "description": "Região com filamentos finos sem sobreposição com grossos; diminui durante o encurtamento.",
-            "x": null,
-            "y": null
+            "name": "Filamentos finos",
+            "description": "Filamentos de actina deslizam em relação à miosina, aumentando a sobreposição durante a contração, sem encurtarem individualmente.",
+            "x": 31,
+            "y": 38
           },
           {
-            "name": "Zona H",
-            "description": "Região central com filamentos grossos sem sobreposição de finos; reduz-se durante contração.",
-            "x": null,
-            "y": null
+            "name": "Filamentos grossos",
+            "description": "Filamentos de miosina formam pontes cruzadas com a actina; a banda A corresponde ao comprimento dos filamentos grossos e permanece aproximadamente constante.",
+            "x": 50,
+            "y": 49
           }
         ]
       },
@@ -1157,25 +1157,25 @@ export const muscularLabs:Record<string,Lab>={
         "file": "juncao.webp",
         "label": "Junção neuromuscular",
         "description": "Estudo anatômico: junção neuromuscular.",
-        "ready": false,
+        "ready": true,
         "points": [
           {
             "name": "Placa motora",
             "description": "Região pós-sináptica especializada com receptores nicotínicos de acetilcolina.",
-            "x": null,
-            "y": null
+            "x": 49,
+            "y": 69
           },
           {
             "name": "Terminal axonal",
             "description": "Libera acetilcolina na fenda sináptica após entrada de cálcio.",
-            "x": null,
-            "y": null
+            "x": 43,
+            "y": 49
           },
           {
             "name": "Fenda sináptica",
             "description": "Espaço entre neurônio e fibra muscular, onde a acetilcolinesterase degrada acetilcolina.",
-            "x": null,
-            "y": null
+            "x": 49,
+            "y": 62
           }
         ]
       }
@@ -1257,25 +1257,25 @@ export const muscularLabs:Record<string,Lab>={
         "file": "cotovelo.webp",
         "label": "Flexão do cotovelo",
         "description": "Estudo anatômico: flexão do cotovelo.",
-        "ready": false,
+        "ready": true,
         "points": [
           {
             "name": "Bíceps braquial",
             "description": "Produz torque de flexão; em uma configuração típica de flexão com carga na mão, a força muscular atua entre eixo e resistência.",
-            "x": null,
-            "y": null
+            "x": 31,
+            "y": 44
           },
           {
             "name": "Eixo do cotovelo",
             "description": "Referência aproximada em torno da qual ocorre flexão e extensão.",
-            "x": null,
-            "y": null
+            "x": 26,
+            "y": 73
           },
           {
-            "name": "Carga distal",
-            "description": "A resistência externa produz torque dependente da força e do braço de momento.",
-            "x": null,
-            "y": null
+            "name": "Mão — região distal",
+            "description": "Ponto de aplicação hipotético de uma resistência externa. O torque externo depende da força e da distância perpendicular entre sua linha de ação e o eixo do cotovelo. Não há carga externa representada nesta imagem.",
+            "x": 86,
+            "y": 36
           }
         ]
       },
@@ -1283,51 +1283,51 @@ export const muscularLabs:Record<string,Lab>={
         "file": "quadril.webp",
         "label": "Estabilidade pélvica",
         "description": "Estudo anatômico: estabilidade pélvica.",
-        "ready": false,
+        "ready": true,
         "points": [
           {
             "name": "Abdutores do quadril",
             "description": "Geram torque que se opõe à queda da pelve contralateral no apoio unipodal.",
-            "x": null,
-            "y": null
+            "x": 29,
+            "y": 15
           },
           {
             "name": "Centro articular do quadril",
             "description": "Referência de rotação para análise do torque no plano frontal.",
-            "x": null,
-            "y": null
+            "x": 35,
+            "y": 23
           },
           {
             "name": "Pelve",
             "description": "Segmento cuja orientação é controlada pela ação muscular e pelas forças externas.",
-            "x": null,
-            "y": null
+            "x": 65,
+            "y": 13
           }
         ]
       },
       {
         "file": "joelho.webp",
         "label": "Controle do joelho",
-        "description": "Estudo anatômico: controle do joelho.",
-        "ready": false,
+        "description": "Vista anatômica do mecanismo extensor do joelho. A ilustração estática não permite identificar se a ação muscular é concêntrica ou excêntrica.",
+        "ready": true,
         "points": [
           {
             "name": "Quadríceps",
             "description": "Pode atuar concentricamente na subida ou excentricamente no controle da descida, dependendo da tarefa.",
-            "x": null,
-            "y": null
+            "x": 48,
+            "y": 18
           },
           {
-            "name": "Isquiotibiais",
-            "description": "Participam da flexão do joelho e podem coativar para estabilização articular.",
-            "x": null,
-            "y": null
+            "name": "Ligamento patelar",
+            "description": "Transmite a força do mecanismo extensor da patela à tuberosidade tibial. Os isquiotibiais não estão individualizados nesta vista.",
+            "x": 58,
+            "y": 68
           },
           {
             "name": "Patela",
             "description": "Aumenta o braço de momento do mecanismo extensor do joelho.",
-            "x": null,
-            "y": null
+            "x": 60,
+            "y": 50
           }
         ]
       },
@@ -1335,25 +1335,25 @@ export const muscularLabs:Record<string,Lab>={
         "file": "tornozelo.webp",
         "label": "Propulsão plantar",
         "description": "Estudo anatômico: propulsão plantar.",
-        "ready": false,
+        "ready": true,
         "points": [
           {
             "name": "Tríceps sural",
             "description": "Gera torque de flexão plantar e contribui para a propulsão na marcha.",
-            "x": null,
-            "y": null
+            "x": 45,
+            "y": 23
           },
           {
             "name": "Cabeças metatarsais",
             "description": "Região de apoio no antepé durante elevação do calcanhar.",
-            "x": null,
-            "y": null
+            "x": 61,
+            "y": 86
           },
           {
             "name": "Tendão calcâneo",
             "description": "Transmite força muscular e pode armazenar e devolver energia elástica durante o movimento.",
-            "x": null,
-            "y": null
+            "x": 34,
+            "y": 51
           }
         ]
       }
@@ -1371,7 +1371,7 @@ export const muscularLabs:Record<string,Lab>={
         "explain": "Produz torque de flexão; em uma configuração típica de flexão com carga na mão, a força muscular atua entre eixo e resistência."
       },
       {
-        "q": "Qual elemento representa a referência de rotação em uma análise de alavanca?",
+        "q": "Em uma análise da flexão do cotovelo, qual referência representa o eixo de rotação dessa articulação?",
         "answers": [
           "Centro articular do quadril",
           "Pelve",

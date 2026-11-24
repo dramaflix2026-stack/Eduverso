@@ -1,8 +1,8 @@
 # Biomecânica
 
-Imagens individuais, sem texto nem marcadores, fundo roxo e peça anatômica isolada. Ainda não disponíveis. Coordenadas serão calibradas após upload e inspeção.
+4 imagens integradas, 12 marcadores aproximados e 6 questões comentadas. Revisão anatômica especializada e validação visual pendentes.
 
-- `cotovelo.webp` — Flexão do cotovelo
-- `quadril.webp` — Estabilidade pélvica
-- `joelho.webp` — Controle do joelho
-- `tornozelo.webp` — Propulsão plantar
+- cotovelo.webp
+- quadril.webp
+- joelho.webp
+- tornozelo.webp

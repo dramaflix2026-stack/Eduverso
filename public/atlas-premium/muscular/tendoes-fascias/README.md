@@ -1,8 +1,8 @@
 # Tendões e fáscias
 
-3/4 imagens integradas, 9 marcadores aproximados e 6 questões comentadas. Revisão anatômica pendente.
+4 imagens integradas, 12 marcadores aproximados e 6 questões comentadas. Revisão anatômica especializada e validação visual pendentes.
 
 - calcaneo.webp
 - joelho.webp
-- fascia-lata.webp — pendente: imagem individual lateral da coxa, sem textos.
+- fascia-lata.webp
 - plantar.webp
