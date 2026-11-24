@@ -69,9 +69,9 @@ export default function PremiumAtlasClient({mode="home",systemId="esqueletico"}:
     <nav className={styles.crumb} aria-label="Caminho de navegação"><Link href="/atlas-premium">Atlas Premium</Link><span>›</span><span>{selectedSystem.name}</span></nav>
     <div className={styles.systemIntro}><span className={styles.eyebrow}>SISTEMA ANATÔMICO</span><span className={styles.systemGlyph} aria-hidden="true">{selectedSystem.icon}</span><h1>{selectedSystem.name}</h1><p>{selectedSystem.description} Selecione uma área de estudo abaixo.</p><span className={styles.systemCount}>{selectedSystem.topics.length} subitens organizados</span></div>
     <div className={styles.topicGrid}>{selectedSystem.topics.map((topic,i)=>{
-     const ready=selectedSystem.id==="esqueletico"&&i<3;
-     const paths=["/atlas-premium/cranio/estudo","/atlas-premium/coluna-vertebral/estudo","/atlas-premium/caixa-toracica/estudo"];
-     const summaries=["4 vistas HD, zoom, pontos clicáveis e desafio inicial","4 vistas ilustradas, estudo das 5 regiões e desafio explicado","4 cenas ilustradas, 6 marcadores anatômicos e questões comentadas"];
+     const ready=selectedSystem.id==="esqueletico"&&i<4;
+     const paths=["/atlas-premium/cranio/estudo","/atlas-premium/coluna-vertebral/estudo","/atlas-premium/caixa-toracica/estudo","/atlas-premium/membros-superiores/estudo"];
+     const summaries=["4 vistas HD, zoom, pontos clicáveis e desafio inicial","4 vistas ilustradas, estudo das 5 regiões e desafio explicado","4 cenas ilustradas, 6 marcadores anatômicos e questões comentadas","4 ilustrações frontais, 6 estruturas interativas e desafio explicado"];
      return ready?<Link href={paths[i]} key={topic} className={styles.topicCard}><span className={styles.topicNumber}>{String(i+1).padStart(2,"0")}</span><strong>{topic}</strong><small>{summaries[i]}</small><span className={styles.topicReady}>Abrir laboratório ↗</span></Link>
        :<div key={topic} className={styles.topicCard+" "+styles.topicPending}><span className={styles.topicNumber}>{String(i+1).padStart(2,"0")}</span><strong>{topic}</strong><small>Conteúdo anatômico em preparação</small><span className={styles.topicUnavailable}>Em desenvolvimento</span></div>;
     })}</div>
