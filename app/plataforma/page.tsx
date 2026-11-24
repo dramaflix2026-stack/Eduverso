@@ -182,6 +182,7 @@ return <div className="app-shell">
 <div className="side-caption">NAVEGAÇÃO</div>
 <nav className="side-nav" aria-label="Navegação do Eduverso">
   <button type="button" className={active==="Início"?"active":""} onClick={()=>navigate("Início")}><span>⌂</span>Início</button>
+  <Link href="/atlas-premium" className="nav-premium-entry" style={{display:"flex",alignItems:"center",gap:10,padding:"13px 15px",margin:"8px 0 13px",border:"1px solid #9260db66",borderRadius:12,background:"linear-gradient(110deg,#281d46,#171829)",color:"#e4d5ff",textDecoration:"none",fontWeight:750}}><span aria-hidden="true">✦</span><span>Atlas Premium <small style={{marginLeft:5,color:"#c6adff",fontSize:10}}>NOVO</small></span></Link>
   <div className="nav-section-group">
     <button type="button" className={"nav-group-toggle "+(active==="Ensino Fundamental"||active==="Ensino Médio"||schoolSubjectNames.some(s=>s===active)?"nav-group-current":"")} onClick={()=>setSchoolOpen(v=>!v)} aria-expanded={schoolOpen} aria-controls="nav-school-panel">
       <span className="nav-group-icon" aria-hidden="true">▤</span><span className="nav-group-title">Estudos escolares</span><span className={"nav-chevron "+(schoolOpen?"nav-chevron-open":"")} aria-hidden="true">⌄</span>
