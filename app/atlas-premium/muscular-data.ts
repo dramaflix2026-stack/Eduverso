@@ -16,20 +16,20 @@ export const muscularLabs:Record<string,Lab>={
           {
             "name": "Orbicular do olho",
             "description": "Fecha as pálpebras; recebe inervação do nervo facial (VII).",
-            "x": 32,
-            "y": 24
+            "x": 35,
+            "y": 28
           },
           {
             "name": "Orbicular da boca",
             "description": "Fecha e protrai os lábios, atuando na fala e na vedação oral.",
-            "x": 49,
-            "y": 44
+            "x": 50,
+            "y": 48
           },
           {
             "name": "Frontal",
             "description": "Eleva as sobrancelhas e produz rugas horizontais na testa.",
-            "x": 36,
-            "y": 13
+            "x": 35,
+            "y": 14
           }
         ]
       },
@@ -42,20 +42,20 @@ export const muscularLabs:Record<string,Lab>={
           {
             "name": "Masseter",
             "description": "Eleva a mandíbula; é inervado pelo ramo mandibular do trigêmeo (V3).",
-            "x": 58,
-            "y": 39
+            "x": 43,
+            "y": 42
           },
           {
             "name": "Temporal",
             "description": "Eleva a mandíbula; suas fibras posteriores contribuem para a retração mandibular.",
-            "x": 43,
-            "y": 19
+            "x": 57,
+            "y": 18
           },
           {
             "name": "Zigomático maior",
             "description": "Eleva e desloca lateralmente o ângulo da boca durante o sorriso.",
-            "x": 75,
-            "y": 32
+            "x": 27,
+            "y": 37
           }
         ]
       },
@@ -68,46 +68,46 @@ export const muscularLabs:Record<string,Lab>={
           {
             "name": "Trapézio superior",
             "description": "Eleva e auxilia a rotação superior da escápula; pode contribuir para extensão cervical com a cintura fixa.",
-            "x": 33,
-            "y": 71
+            "x": 36,
+            "y": 70
           },
           {
             "name": "Ventre occipital",
             "description": "Porção posterior do músculo occipitofrontal, que traciona o couro cabeludo posteriormente e se continua com a aponeurose epicraniana.",
-            "x": 33,
-            "y": 30
+            "x": 34,
+            "y": 27
           },
           {
             "name": "Aponeurose epicraniana",
             "description": "Lâmina tendínea que conecta os ventres frontal e occipital do músculo occipitofrontal, permitindo a transmissão de tensão no couro cabeludo.",
             "x": 50,
-            "y": 13
+            "y": 12
           }
         ]
       },
       {
         "file": "profunda.webp",
-        "label": "Região cervical profunda",
-        "description": "Estudo anatômico: região cervical profunda.",
+        "label": "Dissecação cervical",
+        "description": "Vista anterolateral da região cervical com exposição ilustrativa de estruturas infra-hióideas. O longo do pescoço e o escaleno anterior não estão individualizados com segurança.",
         "ready": true,
         "points": [
           {
-            "name": "Longo do pescoço",
-            "description": "Flexor cervical profundo, auxilia a estabilização segmentar anterior da coluna cervical.",
-            "x": 43,
-            "y": 60
+            "name": "Musculatura infra-hióidea",
+            "description": "Grupo muscular anterior que participa da estabilização e dos movimentos do hioide e da laringe, especialmente durante a deglutição.",
+            "x": 48,
+            "y": 65
           },
           {
-            "name": "Escaleno anterior",
-            "description": "Flexiona lateralmente o pescoço e pode elevar a primeira costela na inspiração forçada.",
-            "x": 65,
-            "y": 62
+            "name": "Osso hioide",
+            "description": "Estrutura óssea suspensa na região anterior do pescoço, que serve de fixação para músculos supra-hióideos e infra-hióideos.",
+            "x": 40,
+            "y": 51
           },
           {
             "name": "Esternocleidomastoideo",
             "description": "Unilateralmente, inclina a cabeça para o mesmo lado e roda para o lado oposto.",
-            "x": 76,
-            "y": 52
+            "x": 73,
+            "y": 56
           }
         ]
       }
@@ -194,20 +194,20 @@ export const muscularLabs:Record<string,Lab>={
           {
             "name": "Peitoral maior",
             "description": "Aduz e roda medialmente o úmero; a porção clavicular auxilia a flexão.",
-            "x": 32,
-            "y": 24
+            "x": 31,
+            "y": 26
           },
           {
             "name": "Reto do abdômen",
             "description": "Flexiona o tronco e contribui para a pressão intra-abdominal.",
             "x": 43,
-            "y": 49
+            "y": 50
           },
           {
             "name": "Oblíquo externo",
             "description": "Com o oblíquo interno oposto, participa da rotação contralateral do tronco.",
-            "x": 28,
-            "y": 67
+            "x": 24,
+            "y": 66
           }
         ]
       },
@@ -220,20 +220,20 @@ export const muscularLabs:Record<string,Lab>={
           {
             "name": "Serrátil anterior",
             "description": "Protrai a escápula e auxilia sua rotação superior; inervado pelo nervo torácico longo.",
-            "x": 34,
-            "y": 37
+            "x": 43,
+            "y": 39
           },
           {
             "name": "Intercostal externo",
             "description": "Auxilia a elevação das costelas na inspiração.",
-            "x": 46,
-            "y": 39
+            "x": 54,
+            "y": 44
           },
           {
             "name": "Reto do abdômen",
             "description": "Músculo longitudinal da parede abdominal anterior. Flexiona o tronco e contribui para a pressão intra-abdominal; visível na margem anterior desta ilustração lateral.",
-            "x": 70,
-            "y": 61
+            "x": 22,
+            "y": 50
           }
         ]
       },
@@ -246,14 +246,14 @@ export const muscularLabs:Record<string,Lab>={
           {
             "name": "Transverso do abdômen",
             "description": "Comprime o conteúdo abdominal e contribui para a estabilidade do tronco.",
-            "x": 24,
-            "y": 56
+            "x": 22,
+            "y": 40
           },
           {
             "name": "Bainha do reto",
             "description": "Formada por aponeuroses dos músculos laterais, envolve o reto abdominal com organização variável acima e abaixo da linha arqueada.",
-            "x": 36,
-            "y": 62
+            "x": 34,
+            "y": 50
           },
           {
             "name": "Linha alba",
@@ -273,19 +273,19 @@ export const muscularLabs:Record<string,Lab>={
             "name": "Diafragma",
             "description": "Principal músculo inspiratório; sua contração aumenta o volume torácico, com inervação frênica C3–C5.",
             "x": 25,
-            "y": 40
+            "y": 48
           },
           {
             "name": "Centro tendíneo",
             "description": "Região aponeurótica central sobre a qual convergem fibras musculares.",
-            "x": 49,
-            "y": 33
+            "x": 50,
+            "y": 40
           },
           {
             "name": "Pilares diafragmáticos",
             "description": "Fixações musculotendíneas lombares que participam da organização dos hiatos.",
-            "x": 43,
-            "y": 65
+            "x": 42,
+            "y": 68
           }
         ]
       }

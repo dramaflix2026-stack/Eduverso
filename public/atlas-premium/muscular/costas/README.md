@@ -1,6 +1,6 @@
 # Costas
 
-4 imagens integradas, 12 marcadores aproximados e 6 questões comentadas. As imagens não individualizam todos os músculos profundos; os marcadores foram limitados a estruturas visíveis. Revisão anatômica pendente. Os três arquivos originais não correspondentes permanecem preservados, sem uso no visualizador.
+Quatro imagens originais de maior resolução mantidas ou recuperadas do histórico, preservando os marcadores existentes. As quatro novas imagens recortadas foram armazenadas em alternativas-recortadas/ e não são exibidas no laboratório. Revisão anatômica pendente.
 
 - superficial.webp
 - intermediaria.webp

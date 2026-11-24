@@ -1,8 +1,8 @@
 # Cabeça e pescoço
 
-Quatro imagens integradas, com 12 marcadores aproximados e 6 questões comentadas. A vista posterior tem 537 × 724 px; as demais 1024 × 1536 px. Revisão anatômica especializada pendente.
+Quatro novas ilustrações verticais integradas, 12 marcadores aproximados recalibrados e seis questões comentadas. Imagens anteriores preservadas em versao-anterior/. Revisão anatômica e validação visual pendentes.
 
-- frontal.webp
-- lateral.webp
-- posterior.webp
-- profunda.webp
+- frontal.webp — Vista frontal
+- lateral.webp — Vista lateral
+- posterior.webp — Vista posterior
+- profunda.webp — Dissecação cervical
