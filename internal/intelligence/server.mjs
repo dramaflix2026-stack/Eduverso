@@ -1,50 +1,223 @@
 import http from 'node:http';
 import fs from 'node:fs';
+import {DatabaseSync} from 'node:sqlite';
 import {timingSafeEqual,createHash,randomBytes} from 'node:crypto';
-const dir=process.env.DATA_DIR||'/data', file=dir+'/state.json';
+const dir=process.env.DATA_DIR||'/data';
 fs.mkdirSync(dir,{recursive:true});
-const seed=JSON.parse(process.env.INITIAL_CATALOG||'{}');
-let state=fs.existsSync(file)?JSON.parse(fs.readFileSync(file,'utf8')):{catalog:seed,snapshots:[],lastSuccess:null,lastError:null};
-function save(){fs.writeFileSync(file+'.tmp',JSON.stringify(state));fs.renameSync(file+'.tmp',file)}
-save();
-const ready=()=>/^act_\d+$/.test(process.env.META_AD_ACCOUNT_ID||'')&&/^v\d+\.\d+$/.test(process.env.META_GRAPH_VERSION||'')&&!!process.env.META_ACCESS_TOKEN&&!!process.env.META_CAMPAIGN_ID;
-let syncing=false;
-async function sync(){
- if(!ready()||syncing)return;
- syncing=true;
- try{
-  const u=new URL('https://graph.facebook.com/'+process.env.META_GRAPH_VERSION+'/'+process.env.META_AD_ACCOUNT_ID+'/insights');
-  const date=new Intl.DateTimeFormat('sv-SE',{timeZone:'America/Sao_Paulo'}).format(new Date());
-  u.search=new URLSearchParams({level:'ad',fields:'campaign_id,campaign_name,adset_id,adset_name,ad_id,ad_name,spend,impressions,reach,frequency,inline_link_clicks,actions,action_values,date_start,date_stop',time_increment:'1',time_range:JSON.stringify({since:state.catalog.startDate||date,until:date}),filtering:JSON.stringify([{field:'campaign.id',operator:'IN',value:[process.env.META_CAMPAIGN_ID]}]),limit:'100'}).toString();
-  const rows=[]; let next=u.toString();
-  for(let i=0;next&&i<100;i++){
-   if(new URL(next).origin!=='https://graph.facebook.com')throw Error('Origem inesperada');
-   const r=await fetch(next,{headers:{Authorization:'Bearer '+process.env.META_ACCESS_TOKEN},signal:AbortSignal.timeout(20000)});
-   if(!r.ok)throw Error('Meta HTTP '+r.status);
-   const j=await r.json();if(!Array.isArray(j.data))throw Error('Resposta inválida');
-   rows.push(...j.data);next=j.paging?.next;
+const db=new DatabaseSync(dir+'/intelligence.sqlite');
+db.exec("PRAGMA journal_mode=WAL; PRAGMA synchronous=NORMAL; PRAGMA busy_timeout=5000;");
+db.exec(`
+CREATE TABLE IF NOT EXISTS campaigns(id TEXT PRIMARY KEY,name TEXT NOT NULL,status TEXT,budget_mode TEXT,daily_budget REAL,lifetime_budget REAL,objective TEXT,scope TEXT NOT NULL DEFAULT 'tracked',seen_at TEXT);
+CREATE TABLE IF NOT EXISTS adsets(id TEXT PRIMARY KEY,campaign_id TEXT NOT NULL,name TEXT,status TEXT,daily_budget REAL,lifetime_budget REAL,seen_at TEXT);
+CREATE TABLE IF NOT EXISTS ads(id TEXT PRIMARY KEY,campaign_id TEXT NOT NULL,adset_id TEXT,name TEXT,status TEXT,creative_id TEXT,seen_at TEXT);
+CREATE TABLE IF NOT EXISTS profiles(ad_id TEXT PRIMARY KEY,format TEXT,angle TEXT,hook TEXT,voice TEXT,visual TEXT,audience TEXT,duration TEXT,transcript TEXT);
+CREATE TABLE IF NOT EXISTS runs(id TEXT PRIMARY KEY,at TEXT NOT NULL,source TEXT NOT NULL,kind TEXT NOT NULL,status TEXT NOT NULL,count INTEGER NOT NULL DEFAULT 0,error TEXT);
+CREATE TABLE IF NOT EXISTS daily(date TEXT NOT NULL,ad_id TEXT NOT NULL,campaign_id TEXT NOT NULL,adset_id TEXT,source TEXT NOT NULL,at TEXT NOT NULL,currency TEXT,spend REAL,impressions REAL,clicks REAL,visits REAL,checkouts REAL,purchases REAL,revenue REAL,PRIMARY KEY(date,ad_id));
+CREATE INDEX IF NOT EXISTS daily_campaign_date ON daily(campaign_id,date);
+CREATE TABLE IF NOT EXISTS observations(run_id TEXT NOT NULL,date TEXT NOT NULL,ad_id TEXT NOT NULL,campaign_id TEXT NOT NULL,adset_id TEXT,currency TEXT,spend REAL,impressions REAL,clicks REAL,visits REAL,checkouts REAL,purchases REAL,revenue REAL,PRIMARY KEY(run_id,date,ad_id));
+CREATE INDEX IF NOT EXISTS observations_date_campaign ON observations(date,campaign_id);
+CREATE TABLE IF NOT EXISTS decisions(id INTEGER PRIMARY KEY AUTOINCREMENT,at TEXT NOT NULL,campaign_id TEXT NOT NULL,hypothesis TEXT NOT NULL,action TEXT NOT NULL,status TEXT NOT NULL DEFAULT 'planned',outcome TEXT,updated_at TEXT);
+CREATE TABLE IF NOT EXISTS settings(key TEXT PRIMARY KEY,value TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS finance(date TEXT PRIMARY KEY,gross REAL,fees REAL,refunds REAL,taxes REAL,infra REAL,other REAL,updated_at TEXT);
+`);
+const now=()=>new Date().toISOString();
+const today=()=>new Intl.DateTimeFormat('sv-SE',{timeZone:'America/Sao_Paulo'}).format(new Date());
+const dayShift=(d,n)=>{const x=new Date(d+'T12:00:00Z');x.setUTCDate(x.getUTCDate()+n);return x.toISOString().slice(0,10)};
+const dateOK=d=>typeof d==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(d)&&Number.isFinite(Date.parse(d+'T12:00:00Z'))&&new Date(d+'T12:00:00Z').toISOString().slice(0,10)===d;
+const validID=x=>typeof x==='string'&&/^\d{1,30}$/.test(x);
+const clean=(x,n=300)=>typeof x==='string'?x.slice(0,n):'';
+const num=x=>x===null||x===undefined||x===''?null:(Number.isFinite(Number(x))&&Number(x)>=0?Number(x):null);
+const metricKeys=['spend','impressions','clicks','visits','checkouts','purchases','revenue'];
+const excluded=new Set((process.env.INTEL_EXCLUDED_CAMPAIGNS||'').split(',').map(x=>x.trim()).filter(Boolean));
+const original=process.env.META_CAMPAIGN_ID||'';
+const setting=k=>db.prepare('SELECT value FROM settings WHERE key=?').get(k)?.value;
+const setSetting=(k,v)=>db.prepare('INSERT INTO settings VALUES(?,?) ON CONFLICT(key) DO UPDATE SET value=excluded.value').run(k,String(v));
+const tx=fn=>{db.exec('BEGIN IMMEDIATE');try{const v=fn();db.exec('COMMIT');return v}catch(e){db.exec('ROLLBACK');throw e}};
+const runStmt=db.prepare('INSERT OR IGNORE INTO runs(id,at,source,kind,status,count,error) VALUES(?,?,?,?,?,?,?)');
+const campStmt=db.prepare("INSERT INTO campaigns(id,name,scope,seen_at) VALUES(?,?,?,?) ON CONFLICT(id) DO UPDATE SET name=CASE WHEN excluded.name<>'' THEN excluded.name ELSE campaigns.name END,seen_at=MAX(COALESCE(campaigns.seen_at,''),excluded.seen_at)");
+const setStmt=db.prepare("INSERT INTO adsets(id,campaign_id,name,seen_at) VALUES(?,?,?,?) ON CONFLICT(id) DO UPDATE SET campaign_id=excluded.campaign_id,name=CASE WHEN excluded.name<>'' THEN excluded.name ELSE adsets.name END,seen_at=MAX(COALESCE(adsets.seen_at,''),excluded.seen_at)");
+const adStmt=db.prepare("INSERT INTO ads(id,campaign_id,adset_id,name,seen_at) VALUES(?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET campaign_id=excluded.campaign_id,adset_id=COALESCE(excluded.adset_id,ads.adset_id),name=CASE WHEN excluded.name<>'' THEN excluded.name ELSE ads.name END,seen_at=MAX(COALESCE(ads.seen_at,''),excluded.seen_at)");
+const dailyStmt=db.prepare('INSERT INTO daily VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?) ON CONFLICT(date,ad_id) DO UPDATE SET campaign_id=excluded.campaign_id,adset_id=excluded.adset_id,source=excluded.source,at=excluded.at,currency=excluded.currency,spend=excluded.spend,impressions=excluded.impressions,clicks=excluded.clicks,visits=excluded.visits,checkouts=excluded.checkouts,purchases=excluded.purchases,revenue=excluded.revenue WHERE excluded.at>=daily.at');
+const observationStmt=db.prepare('INSERT OR REPLACE INTO observations VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)');
+function ingest(payload){
+ const source=payload.source;
+ if(!['meta','supermetrics','manual','legacy'].includes(source)||!Array.isArray(payload.rows)||payload.rows.length>20000)throw Error('Formato de coleta inválido');
+ const stamp=typeof payload.at==='string'&&Number.isFinite(Date.parse(payload.at))?new Date(payload.at).toISOString():null;
+ if(!stamp||Date.parse(stamp)>Date.now()+5*60000)throw Error('Horário da coleta inválido');
+ const id=clean(payload.id,120)||createHash('sha256').update(JSON.stringify(payload)).digest('hex');
+ const prepared=payload.rows.map(r=>{
+  if(!dateOK(r.date)||r.date>today()||!validID(r.campaign_id)||!validID(r.ad_id)||(r.adset_id&&!validID(r.adset_id)))throw Error('Identificador ou data inválida');
+  const currency=typeof r.currency==='string'&&/^[A-Z]{3}$/.test(r.currency)?r.currency:null;
+  return {...r,adset_id:r.adset_id||null,currency,metrics:metricKeys.map(k=>num(r[k]))}
+ });
+ if(new Set(prepared.map(r=>r.date+'|'+r.ad_id)).size!==prepared.length)throw Error('Linhas duplicadas na mesma coleta');
+ return tx(()=>{
+  if(db.prepare('SELECT 1 FROM runs WHERE id=?').get(id))return {duplicate:true,count:0};
+  runStmt.run(id,stamp,source,'insights','success',prepared.length,null);
+  for(const r of prepared){
+   campStmt.run(r.campaign_id,clean(r.campaign_name),excluded.has(r.campaign_id)?'excluded':'tracked',stamp);
+   if(r.adset_id)setStmt.run(r.adset_id,r.campaign_id,clean(r.adset_name),stamp);
+   adStmt.run(r.ad_id,r.campaign_id,r.adset_id,clean(r.ad_name),stamp);
+   dailyStmt.run(r.date,r.ad_id,r.campaign_id,r.adset_id,source,stamp,r.currency,...r.metrics);
+   observationStmt.run(id,r.date,r.ad_id,r.campaign_id,r.adset_id,r.currency,...r.metrics);
   }
-  if(next)throw Error('Paginação incompleta');
-  state.lastSuccess=new Date().toISOString();
-  state.snapshots.push({at:state.lastSuccess,rows});state.lastError=null;save();
- }catch(e){state.lastError=e.message.slice(0,120);save()}finally{syncing=false}
+  return {duplicate:false,count:prepared.length};
+ });
+}
+const actionValue=(r,k,field='actions')=>{const a=(r[field]||[]).find(x=>x.action_type===k);return a?num(a.value):null};
+function metaRow(r){return {date:r.date_start,campaign_id:r.campaign_id,campaign_name:r.campaign_name,adset_id:r.adset_id,adset_name:r.adset_name,ad_id:r.ad_id,ad_name:r.ad_name,currency:r.account_currency,spend:r.spend,impressions:r.impressions,clicks:r.inline_link_clicks,visits:actionValue(r,'landing_page_view'),checkouts:actionValue(r,'offsite_conversion.fb_pixel_initiate_checkout'),purchases:actionValue(r,'offsite_conversion.fb_pixel_purchase'),revenue:actionValue(r,'offsite_conversion.fb_pixel_purchase','action_values')}}
+try{
+ const legacyFile=dir+'/state.json';
+ if(!setting('legacy_migrated')&&fs.existsSync(legacyFile)){
+  const legacy=JSON.parse(fs.readFileSync(legacyFile,'utf8'));
+  for(const snap of legacy.snapshots||[])ingest({id:'legacy-'+snap.at,at:snap.at,source:'legacy',rows:(snap.rows||[]).map(metaRow)});
+  setSetting('legacy_migrated','yes');
+ }
+ const bootstrap=JSON.parse(process.env.INTEL_BOOTSTRAP_JSON||'[]');for(const p of bootstrap)ingest(p);
+ const known=[['120253370674280064','[CR-01]'],['120253370708770064','[CR-02]'],['120253370708780064','[CR-03]']];
+ if(original==='120253370674300064'){
+  for(const [id,name] of known){adStmt.run(id,original,'120253370674350064',name,now());db.prepare('INSERT OR IGNORE INTO profiles(ad_id,format,voice,visual) VALUES(?,?,?,?)').run(id,'Vídeo','Feminina, sem rosto','Mesmo vídeo demonstrativo da plataforma')}
+  db.prepare("UPDATE campaigns SET budget_mode=COALESCE(budget_mode,'ABO'),daily_budget=COALESCE(daily_budget,35.22) WHERE id=?").run(original);
+ }
+}catch(e){console.error('Falha na importação inicial:',e.message);runStmt.run('bootstrap-error-'+now(),now(),'manual','bootstrap','failed',0,clean(e.message,200))}
+const ready=()=>/^act_\d+$/.test(process.env.META_AD_ACCOUNT_ID||'')&&/^v\d+\.\d+$/.test(process.env.META_GRAPH_VERSION||'')&&!!process.env.META_ACCESS_TOKEN;
+let busy=false,lastAttempt=0;
+async function graph(path,params){
+ const root='https://graph.facebook.com', u=new URL(root+'/'+process.env.META_GRAPH_VERSION+'/'+process.env.META_AD_ACCOUNT_ID+'/'+path);
+ u.search=new URLSearchParams({...params,limit:'100'}).toString();
+ let next=u.toString(),rows=[];
+ for(let i=0;next&&i<200;i++){
+  const url=new URL(next);if(url.origin!==root)throw Error('Origem Meta inesperada');url.searchParams.delete('access_token');
+  const res=await fetch(url,{headers:{Authorization:'Bearer '+process.env.META_ACCESS_TOKEN},signal:AbortSignal.timeout(30000)});
+  if(!res.ok)throw Error('Meta HTTP '+res.status);
+  const data=await res.json();if(!Array.isArray(data.data))throw Error('Resposta Meta inválida');
+  rows.push(...data.data);next=data.paging?.next;
+ }
+ if(next)throw Error('Paginação Meta incompleta');return rows;
+}
+async function discover(){
+ const [campaigns,sets,ads]=await Promise.all([graph('campaigns',{fields:'id,name,effective_status,objective,daily_budget,lifetime_budget'}),graph('adsets',{fields:'id,campaign_id,name,effective_status,daily_budget,lifetime_budget'}),graph('ads',{fields:'id,campaign_id,adset_id,name,effective_status,creative{id}'})]);
+ const stamp=now();
+ tx(()=>{
+  for(const c of campaigns){if(!validID(c.id))continue;campStmt.run(c.id,clean(c.name),excluded.has(c.id)?'excluded':'tracked',stamp);const cb=(num(c.daily_budget)||0)>0||(num(c.lifetime_budget)||0)>0;const ab=sets.some(s=>s.campaign_id===c.id&&((num(s.daily_budget)||0)>0||(num(s.lifetime_budget)||0)>0));db.prepare('UPDATE campaigns SET status=?,objective=?,budget_mode=?,daily_budget=?,lifetime_budget=? WHERE id=?').run(c.effective_status||null,c.objective||null,cb?'CBO':ab?'ABO':null,num(c.daily_budget)===null?null:Number(c.daily_budget)/100,num(c.lifetime_budget)===null?null:Number(c.lifetime_budget)/100,c.id)}
+  for(const s of sets){if(!validID(s.id)||!validID(s.campaign_id))continue;setStmt.run(s.id,s.campaign_id,clean(s.name),stamp);db.prepare('UPDATE adsets SET status=?,daily_budget=?,lifetime_budget=? WHERE id=?').run(s.effective_status||null,num(s.daily_budget)===null?null:Number(s.daily_budget)/100,num(s.lifetime_budget)===null?null:Number(s.lifetime_budget)/100,s.id)}
+  for(const a of ads){if(!validID(a.id)||!validID(a.campaign_id))continue;adStmt.run(a.id,a.campaign_id,validID(a.adset_id)?a.adset_id:null,clean(a.name),stamp);db.prepare('UPDATE ads SET status=?,creative_id=? WHERE id=?').run(a.effective_status||null,a.creative?.id||null,a.id)}
+  runStmt.run('discover-'+stamp,stamp,'meta','discovery','success',campaigns.length+sets.length+ads.length,null);setSetting('discovery_at',stamp);
+ });
+}
+async function insights(since,until,kind){
+ const rows=await graph('insights',{level:'ad',fields:'campaign_id,campaign_name,adset_id,adset_name,ad_id,ad_name,account_currency,spend,impressions,inline_link_clicks,actions,action_values,date_start,date_stop',time_increment:'1',time_range:JSON.stringify({since,until})});
+ const stamp=now();ingest({id:'meta-'+kind+'-'+since+'-'+stamp,at:stamp,source:'meta',rows:rows.map(metaRow)});
+}
+const elapsed=(k,minutes)=>!setting(k)||Date.now()-Date.parse(setting(k))>=minutes*60000;
+async function sync(force=false){
+ if(!ready()||busy||(!force&&Date.now()-lastAttempt<5*60000))return;
+ busy=true;lastAttempt=Date.now();
+ try{
+  if(force||elapsed('discovery_at',30))try{await discover()}catch(e){runStmt.run('discovery-error-'+now(),now(),'meta','discovery','failed',0,clean(e.message,200))}
+  if(force||elapsed('hourly_at',60)){const d=today();await insights(d,d,'hourly');setSetting('hourly_at',now())}
+  if(elapsed('reconcile_at',1440)){
+   const d=today();const configured=process.env.INTEL_START_DATE;const first=!setting('reconcile_at')&&dateOK(configured)?configured:dayShift(d,-28);
+   for(let from=first;from<d;from=dayShift(from,14)){const to=dayShift(from,13)<d?dayShift(from,13):dayShift(d,-1);await insights(from,to,'reconcile')}
+   setSetting('reconcile_at',now());
+  }
+ }catch(e){runStmt.run('sync-error-'+now(),now(),'meta','insights','failed',0,clean(e.message,200))}finally{busy=false}
 }
 const esc=s=>String(s??'—').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const money=n=>Number(n).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
-const sum=(rows,k)=>rows.reduce((a,r)=>a+Number(r[k]||0),0);
-const action=(rows,k)=>rows.reduce((a,r)=>a+Number((r.actions||[]).find(x=>x.action_type===k)?.value||0),0);
-const ratio=(n,d)=>d?n/d:null;
-const pct=n=>n===null?'—':(100*n).toFixed(2)+'%';
-const br=n=>n===null?'—':money(n);
-const today=()=>new Intl.DateTimeFormat('sv-SE',{timeZone:'America/Sao_Paulo'}).format(new Date());
-function page(csrf){
- const csrfField='<input type="hidden" name="csrf" value="'+esc(csrf)+'">';
- const c=state.catalog, snap=state.snapshots.at(-1), rows=(snap?.rows||[]).filter(r=>r.date_start===today());
- const spend=sum(rows,'spend'),imp=sum(rows,'impressions'),clicks=sum(rows,'inline_link_clicks'),lpv=action(rows,'landing_page_view'),checkout=action(rows,'initiate_checkout'),purchases=action(rows,'purchase');
- const val=(v)=>snap?esc(v):'—';
- const cards=[['Investimento',money(spend)],['Impressões',imp],['CTR link',pct(ratio(clicks,imp))],['CPC link',br(ratio(spend,clicks))],['Visitas',lpv],['Checkouts Meta',checkout],['Compras Meta',purchases],['CPA Meta',br(ratio(spend,purchases))]];
- return '<!doctype html><html lang="pt-BR"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Eduverso | Intelligence</title><style>*{box-sizing:border-box}body{margin:0;background:#0b1020;color:#e8edf8;font:15px system-ui}main{max-width:1150px;margin:auto;padding:26px}h1{font-size:32px;margin:8px 0}small,p{color:#9aa9c3;line-height:1.6}.tag{color:#79d7e8;font-size:12px;letter-spacing:2px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}.card,section{background:#141d30;border:1px solid #26334d;border-radius:16px;padding:18px;margin:12px 0}.card b{display:block;font-size:25px;margin-top:8px}table{width:100%;border-collapse:collapse}td,th{text-align:left;padding:12px 8px;border-bottom:1px solid #26334d}th{color:#a6b3ca;font-size:13px}.scroll{overflow:auto}a{color:#79d7e8}button{border:0;border-radius:8px;padding:10px 15px;background:#79d7e8;color:#0b1020;font-weight:bold}</style><main><div class="tag">EDUVERSO • INTELIGÊNCIA COMERCIAL</div><form method="post" action="/logout" style="float:right">'+csrfField+'<button style="background:#26334d;color:#e8edf8">Sair</button></form><h1>Visão geral</h1><p>Somente leitura da Meta · horário de Brasília · '+esc(today())+'</p><section><b>'+esc(c.campaign||'Campanha a configurar')+'</b><p>ABO · 1 campanha / 1 conjunto / 3 anúncios · orçamento '+esc(c.dailyBudget?money(c.dailyBudget):'—')+'/dia</p><p>Conexão Meta: '+(ready()?'configurada':'aguardando credenciais e ID da campanha')+' · Última coleta: '+esc(state.lastSuccess||'nenhuma')+' · '+state.snapshots.length+' coletas armazenadas</p><p>'+esc(state.lastError||'')+'</p><form method="post" action="/sync">'+csrfField+'<button>Atualizar dados</button></form></section><h2>Hoje — Meta Ads</h2><div class="grid">'+cards.map(([k,v])=>'<div class="card"><small>'+k+'</small><b>'+val(v)+'</b></div>').join('')+'</div><section><h2>Catálogo de criativos</h2><p>Mesmo vídeo da plataforma, locução feminina sem rosto. A variável testada é a mensagem/narração; transcrições pendentes de conferência.</p><div class="scroll"><table><tr><th>Criativo</th><th>Argumento</th><th>Gancho registrado</th></tr>'+(c.creatives||[]).map(x=>'<tr><td>'+esc(x.id)+'</td><td>'+esc(x.angle)+'</td><td>'+esc(x.hook)+'</td></tr>').join('')+'</table></div></section><section><h2>Desempenho por anúncio · hoje</h2><div class="scroll"><table><tr><th>Anúncio</th><th>Gasto</th><th>Impressões</th><th>Cliques link</th><th>CTR link</th><th>Compras Meta</th></tr>'+rows.map(r=>'<tr><td>'+esc(r.ad_name)+'</td><td>'+money(r.spend)+'</td><td>'+esc(r.impressions)+'</td><td>'+esc(r.inline_link_clicks)+'</td><td>'+pct(ratio(Number(r.inline_link_clicks||0),Number(r.impressions)))+'</td><td>'+action([r],'purchase')+'</td></tr>').join('')+'</table></div><p>Conversões atribuídas pela Meta, não vendas confirmadas pela Kiwify. Sem dados recebidos, não exibimos resultados simulados.</p><a href="/api/history">Histórico bruto autenticado (JSON)</a></section></main></html>';
+const money=n=>n===null||n===undefined?'—':Number(n).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+const integer=n=>n===null||n===undefined?'—':Number(n).toLocaleString('pt-BR',{maximumFractionDigits:1});
+const pct=n=>n===null?'—':(100*n).toLocaleString('pt-BR',{maximumFractionDigits:2,minimumFractionDigits:2})+'%';
+const ratio=(n,d)=>n===null||d===null||d===0?null:n/d;
+const total=(rows,k)=>{const v=rows.map(r=>r[k]).filter(x=>x!==null&&x!==undefined);return {value:v.length?v.reduce((a,b)=>a+Number(b),0):null,complete:!!rows.length&&v.length===rows.length}};
+function metrics(rows){const t=Object.fromEntries(metricKeys.map(k=>[k,total(rows,k)]));const full=(a,b)=>t[a].complete&&t[b].complete?ratio(t[a].value,t[b].value):null;const currencyOK=rows.length>0&&rows.every(r=>r.currency==='BRL');return {...t,currencyOK,ctr:full('clicks','impressions'),cpc:currencyOK?full('spend','clicks'):null,cpm:currencyOK&&full('spend','impressions')!==null?1000*full('spend','impressions'):null,cpa:currencyOK?full('spend','purchases'):null,roas:currencyOK?full('revenue','spend'):null}}
+const display=(t,format=integer)=>t.value===null?'—':format(t.value)+(t.complete?'':' · parcial');
+const displayMoney=(m,k)=>m.currencyOK?display(m[k],money):'—';
+const campaigns=()=>db.prepare('SELECT * FROM campaigns ORDER BY scope DESC,seen_at DESC,name').all();
+const allAds=()=>db.prepare('SELECT a.*,p.format,p.angle,p.hook,p.voice,p.visual,p.audience,p.duration,p.transcript,c.name campaign_name,c.scope FROM ads a LEFT JOIN profiles p ON p.ad_id=a.id LEFT JOIN campaigns c ON c.id=a.campaign_id ORDER BY c.name,a.name,a.id').all();
+const names=Object.freeze({overview:'Visão geral',campaigns:'Campanhas',creatives:'Criativos',funnel:'Funil de conversão',tests:'Laboratório de testes',insights:'Inteligência comercial',decisions:'Histórico de decisões',learning:'Aprendizado',finance:'Financeiro',settings:'Integrações'});
+function table(head,rows){return '<div class="scroll"><table><thead><tr>'+head.map(x=>'<th>'+esc(x)+'</th>').join('')+'</tr></thead><tbody>'+(rows.length?rows.map(row=>'<tr>'+row.map(v=>'<td>'+v+'</td>').join('')+'</tr>').join(''):'<tr><td colspan="'+head.length+'" class="muted">Sem dados para este filtro.</td></tr>')+'</tbody></table></div>'}
+const cells=xs=>xs.map(esc);
+const input=(name,label,value='',type='text',extra='')=>'<label>'+esc(label)+'<input name="'+name+'" type="'+type+'" value="'+esc(value??'')+'" '+extra+'></label>';
+const area=(name,label,value='')=>'<label>'+esc(label)+'<textarea name="'+name+'" rows="3" maxlength="2000">'+esc(value??'')+'</textarea></label>';
+const select=(name,label,options,value)=>'<label>'+esc(label)+'<select name="'+name+'">'+options.map(([id,n])=>'<option value="'+esc(id)+'"'+(id===value?' selected':'')+'>'+esc(n)+'</option>').join('')+'</select></label>';
+const card=(k,v)=>'<div class="metric"><small>'+esc(k)+'</small><b>'+esc(v)+'</b></div>';
+const block=(title,body)=>'<section><h2>'+esc(title)+'</h2>'+body+'</section>';
+const note=s=>'<p class="muted">'+esc(s)+'</p>';
+const timeFmt=s=>s?new Date(s).toLocaleString('pt-BR',{timeZone:'America/Sao_Paulo'}):'—';
+const latest=()=>db.prepare("SELECT * FROM runs WHERE kind='insights' AND status='success' ORDER BY at DESC LIMIT 1").get();
+function page(csrf,url){
+ const p=url.searchParams,view=Object.hasOwn(names,p.get('view'))?p.get('view'):'overview',list=campaigns(),ids=new Set(list.map(c=>c.id));
+ const chosen=p.get('campaign'),campaign=chosen==='all'||chosen==='excluded'||ids.has(chosen)?chosen:(ids.has(original)?original:'all');
+ let from=dateOK(p.get('from'))?p.get('from'):today(),to=dateOK(p.get('to'))?p.get('to'):today();if(to>today())to=today();if(from>to)from=to;
+ const all=db.prepare('SELECT d.*,c.scope,c.name campaign_name,a.name ad_name FROM daily d JOIN campaigns c ON c.id=d.campaign_id LEFT JOIN ads a ON a.id=d.ad_id WHERE d.date BETWEEN ? AND ? ORDER BY d.date,d.ad_id').all(from,to);
+ const filter=r=>campaign==='all'?r.scope!=='excluded':campaign==='excluded'?r.scope==='excluded':r.campaign_id===campaign;
+ const rows=all.filter(filter),m=metrics(rows),adList=allAds(),adBy=new Map(adList.map(a=>[a.id,a]));
+ const byAd=new Map();for(const row of rows){if(!byAd.has(row.ad_id))byAd.set(row.ad_id,[]);byAd.get(row.ad_id).push(row)}
+ const byCampaign=new Map();for(const row of all){if(!byCampaign.has(row.campaign_id))byCampaign.set(row.campaign_id,[]);byCampaign.get(row.campaign_id).push(row)}
+ const urlFor=(v,extra={})=>'?'+new URLSearchParams({view:v,campaign,from,to,...extra});
+ const hidden='<input type="hidden" name="csrf" value="'+esc(csrf)+'">';
+ const form=(action,body,back=view)=>'<form class="editor" method="post" action="/manage">'+hidden+'<input type="hidden" name="action" value="'+action+'"><input type="hidden" name="back" value="'+esc(back)+'">'+body+'<button type="submit">Salvar</button></form>';
+ const options=list.map(c=>[c.id,c.name||c.id]);
+ const last=latest(),error=db.prepare("SELECT * FROM runs WHERE status='failed' ORDER BY at DESC LIMIT 1").get();
+ const kpis=[['Investimento',displayMoney(m,'spend')],['Impressões',display(m.impressions)],['CPM',money(m.cpm)],['Cliques no link',display(m.clicks)],['CTR de link',pct(m.ctr)],['CPC de link',money(m.cpc)],['Visitas à página',display(m.visits)],['Checkouts Meta',display(m.checkouts)],['Compras Meta',display(m.purchases)],['CPA Meta',money(m.cpa)],['Receita Meta',displayMoney(m,'revenue')],['ROAS Meta',m.roas===null?'—':m.roas.toFixed(2)+'x']];
+ const adTable=()=>table(['Criativo','Campanha','Investimento','Impressões','Cliques','CTR','CPC','Visitas','Compras','CPA'],[...byAd].map(([id,rs])=>{const q=metrics(rs);return cells([adBy.get(id)?.name||id,rs[0].campaign_name,displayMoney(q,'spend'),display(q.impressions),display(q.clicks),pct(q.ctr),money(q.cpc),display(q.visits),display(q.purchases),money(q.cpa)])}));
+ const dailyTable=()=>{const d=new Map();for(const r of rows){if(!d.has(r.date))d.set(r.date,[]);d.get(r.date).push(r)}return table(['Dia','Gasto','Impressões','Cliques','Compras','CPA'],[...d].reverse().map(([date,rs])=>{const q=metrics(rs);return cells([date,displayMoney(q,'spend'),display(q.impressions),display(q.clicks),display(q.purchases),money(q.cpa)])}))};
+ const completeness=note('— significa não retornado ou não calculável; parcial = soma somente dos valores conhecidos. Taxas só são calculadas com cobertura completa. Valores Meta atribuídos não são vendas confirmadas.');
+ let content='';
+ if(view==='overview'){
+  content='<div class="grid">'+kpis.map(([k,v])=>card(k,v)).join('')+'</div>'+block('Desempenho por anúncio',adTable()+completeness)+block('Evolução diária',dailyTable())+block('Coletas recentes',collectionTable(campaign,from,to,filter));
+ }else if(view==='campaigns'){
+  content=block('Campanhas descobertas',note('Cada campanha é identificada pelo ID da Meta. Excluir da análise não apaga histórico nem altera os anúncios.')+table(['Campanha','Estrutura','Status Meta','Conjuntos','Anúncios','Gasto no período','Escopo'],list.map(c=>{const q=metrics(byCampaign.get(c.id)||[]);return ['<a href="'+esc(urlFor('overview',{campaign:c.id}))+'">'+esc(c.name||c.id)+'</a><small>'+esc(c.id)+'</small>',...cells([c.budget_mode,c.status,db.prepare('SELECT COUNT(*) n FROM adsets WHERE campaign_id=?').get(c.id).n,db.prepare('SELECT COUNT(*) n FROM ads WHERE campaign_id=?').get(c.id).n,displayMoney(q,'spend')]),form('scope','<input type="hidden" name="id" value="'+esc(c.id)+'">'+select('scope','Análise',[['tracked','Monitorada'],['excluded','Excluída']],c.scope))]})))+block('Conjuntos de anúncios',table(['Campanha','Conjunto','Status','Orçamento diário (centavos Meta normalizados)'],db.prepare('SELECT s.*,c.name campaign_name FROM adsets s LEFT JOIN campaigns c ON c.id=s.campaign_id').all().filter(s=>campaign==='all'||campaign==='excluded'||s.campaign_id===campaign).map(s=>cells([s.campaign_name,s.name,s.status,money(s.daily_budget)]))));
+ }else if(view==='creatives'){
+  const creatives=adList.filter(a=>filter(a));
+  content=block('Biblioteca de criativos',note('Os IDs são a referência permanente. Classifique o conteúdo e a hipótese do anúncio para comparar formatos sem confundir correlação e causa.')+creatives.map(a=>'<details><summary>'+esc(a.name||a.id)+' · '+esc(a.campaign_name||'')+'<small>'+esc(a.id)+'</small></summary>'+form('profile','<input type="hidden" name="id" value="'+esc(a.id)+'"><div class="fields">'+input('format','Formato',a.format)+input('angle','Argumento',a.angle)+input('hook','Gancho',a.hook)+input('voice','Narração',a.voice)+input('visual','Visual',a.visual)+input('audience','Público / segmento',a.audience)+input('duration','Duração',a.duration)+'</div>'+area('transcript','Transcrição ou descrição',a.transcript))+'</details>').join('')+(creatives.length?'':note('Nenhum anúncio encontrado para este filtro.')))+block('Desempenho',adTable());
+ }else if(view==='funnel'){
+  const stages=[['Impressões',m.impressions],['Cliques',m.clicks],['Visitas',m.visits],['Checkouts',m.checkouts],['Compras atribuídas',m.purchases]];
+  content=block('Funil observado na Meta',stages.map(([k,v],i)=>'<div class="stage"><b>'+esc(k)+'</b><strong>'+esc(display(v))+'</strong><small>'+esc(i&&v.complete&&stages[i-1][1].complete?pct(ratio(v.value,stages[i-1][1].value)):'—')+' da etapa anterior</small></div>').join('')+completeness+note('Rastreamento próprio da landing page e confirmação Kiwify ainda não conectados. Nenhum funil de vendas próprio é simulado.'));
+ }else if(view==='tests'||view==='decisions'){
+  const decisions=db.prepare('SELECT d.*,c.name campaign_name FROM decisions d LEFT JOIN campaigns c ON c.id=d.campaign_id ORDER BY d.id DESC').all().filter(filterDecision);
+  function filterDecision(d){return campaign==='all'?list.find(c=>c.id===d.campaign_id)?.scope!=='excluded':campaign==='excluded'?list.find(c=>c.id===d.campaign_id)?.scope==='excluded':d.campaign_id===campaign}
+  content=block(view==='tests'?'Registrar hipótese de teste':'Registrar decisão',form('decision',select('campaign_id','Campanha',options,ids.has(campaign)?campaign:options[0]?.[0])+area('hypothesis','Hipótese / motivo')+area('decision_action','Decisão / alteração planejada'))+note('Nenhuma ação é enviada à Meta. O registro serve para lembrar a hipótese e verificar o resultado.'))+block('Decisões e resultados',decisions.map(d=>'<details><summary>'+esc(d.action)+' · '+esc(d.status)+'<small>'+esc(d.campaign_name)+' · '+esc(timeFmt(d.at))+'</small></summary>'+note(d.hypothesis)+form('outcome','<input type="hidden" name="id" value="'+d.id+'">'+select('status','Status',[['planned','Planejado'],['applied','Aplicado manualmente'],['validated','Validado'],['rejected','Reprovado'],['inconclusive','Inconclusivo']],d.status)+area('outcome','Resultado observado',d.outcome))+'</details>').join('')+(decisions.length?'':note('Nenhuma decisão registrada.')));
+ }else if(view==='insights'){
+  const suggestions=[];
+  if(!rows.length)suggestions.push(['Sem dados','Aguarde uma coleta ou importe dados reais.']);
+  else{
+   if(!m.purchases.complete)suggestions.push(['Dados de compras incompletos','Não trate a ausência de registros como zero. Verifique atribuição e rastreamento.']);
+   if((m.clicks.value||0)<100)suggestions.push(['Amostra inicial','Menos de 100 cliques conhecidos neste filtro. Não classifique vencedores nem escale com base apenas em CTR.']);
+   if(m.clicks.complete&&m.visits.complete&&m.clicks.value>=30&&ratio(m.visits.value,m.clicks.value)<.6)suggestions.push(['Verificar passagem para a página','Menos de 60% dos cliques aparecem como visitas. Investigue carregamento, consentimento e atribuição; não conclua causalidade.']);
+   if(m.purchases.complete&&m.purchases.value>=10)suggestions.push(['Conversões observadas','Compare CPA com a margem real e estabilidade em diferentes dias antes de considerar escala.']);
+   suggestions.push(['Modo de decisão assistida','Recomendações são regras iniciais auditáveis, não um modelo treinado. Nenhuma mudança automática é executada.']);
+  }
+  content=block('Diagnóstico por regras',suggestions.map(([a,b])=>'<article class="signal"><b>'+esc(a)+'</b>'+note(b)+'</article>').join(''))+block('Indicadores do período','<div class="grid">'+kpis.map(([k,v])=>card(k,v)).join('')+'</div>');
+ }else if(view==='learning'){
+  const historical=db.prepare("SELECT d.*,c.scope FROM daily d JOIN campaigns c ON c.id=d.campaign_id WHERE c.scope='tracked' ORDER BY date").all();
+  const summary=[];for(const key of ['format','angle','voice','visual','audience','duration']){const groups=new Map();for(const row of historical){const label=adBy.get(row.ad_id)?.[key];if(!label)continue;if(!groups.has(label))groups.set(label,[]);groups.get(label).push(row)}for(const [label,rs] of groups){const q=metrics(rs),n=new Set(rs.map(r=>r.campaign_id)).size;summary.push(cells([key,label,n,new Set(rs.map(r=>r.ad_id)).size,displayMoney(q,'spend'),display(q.purchases),money(q.cpa),n>=2&&q.purchases.complete&&q.purchases.value>=10?'Comparação exploratória':'Amostra insuficiente']))}}
+  content=block('Memória comparativa entre campanhas',note('O histórico considera campanhas monitoradas e os atributos preenchidos na biblioteca. Um grupo precisa de pelo menos duas campanhas e dez compras registradas com cobertura completa para iniciar uma comparação exploratória. Isso não demonstra causalidade.')+table(['Atributo','Valor','Campanhas','Criativos','Gasto','Compras','CPA','Evidência'],summary))+block('Maturidade do aprendizado',note('Estágio atual: coleta, classificação e estatística descritiva. Treinamento de modelos, validação fora da amostra e recomendações probabilísticas ficam condicionados ao volume e qualidade dos dados.'));
+ }else if(view==='finance'){
+  const financial=db.prepare('SELECT * FROM finance WHERE date BETWEEN ? AND ? ORDER BY date DESC').all(from,to), excludedM=metrics(all.filter(r=>r.scope==='excluded'));
+  content=block('Investimento e atribuição Meta','<div class="grid">'+[['Gasto selecionado',displayMoney(m,'spend')],['Gasto excluído da análise (conta)',displayMoney(excludedM,'spend')],['Receita atribuída Meta',displayMoney(m,'revenue')],['ROAS Meta',m.roas===null?'—':m.roas.toFixed(2)+'x']].map(([k,v])=>card(k,v)).join('')+'</div>'+note('A receita atribuída não comprova pagamento. Os registros financeiros manuais abaixo são totais da operação por dia, não atribuídos à campanha.'))+block('Conciliação financeira manual',form('finance',input('date','Dia',today(),'date','required')+'<div class="fields">'+[['gross','Receita confirmada'],['fees','Taxas'],['refunds','Reembolsos'],['taxes','Impostos'],['infra','Infraestrutura'],['other','Outros custos']].map(([k,v])=>input(k,v,'','number','min="0" step="0.01"')).join('')+'</div>')+table(['Dia','Receita','Taxas','Reembolsos','Impostos','Infra','Outros'],financial.map(f=>cells([f.date,money(f.gross),money(f.fees),money(f.refunds),money(f.taxes),money(f.infra),money(f.other)])))+note('Valores em branco permanecem desconhecidos. Kiwify automática e margem líquida conciliada ainda pendentes.'));
+ }else{
+  content=block('Fontes e coleta',note('Meta API: '+(ready()?'credenciais configuradas':'aguardando credencial e versão da API')+'. A coleta direta usa descoberta de entidades a cada 30 min, insights atuais a cada hora e reconciliação de 28 dias diariamente.')+note('Supermetrics: dados importados são identificados pela origem e pelo horário. A conexão do ChatGPT não fornece automaticamente uma credencial à Railway.')+'<form method="post" action="/sync">'+hidden+'<button '+(ready()?'':'disabled')+'>Sincronizar Meta agora</button></form>'+note('Última coleta de dados: '+timeFmt(last?.at)+' · '+(last?.source||'sem origem')+(error?' · Última falha: '+error.error:'')))+block('Importar coleta externa',note('Importação de JSON autenticada, sem modificar anúncios. Use id, at, source e rows com data, IDs e métricas. Importações repetidas com o mesmo ID são ignoradas.')+form('import',area('payload','JSON da coleta')))+block('Histórico técnico',table(['Horário Brasília','Fonte','Tipo','Resultado','Linhas','Erro'],db.prepare('SELECT * FROM runs ORDER BY at DESC LIMIT 100').all().map(r=>cells([timeFmt(r.at),r.source,r.kind,r.status,r.count,r.error])))+'<p><a href="/api/history">Exportar dados históricos (JSON)</a></p>');
+ }
+ const styles='*{box-sizing:border-box}html{color-scheme:dark}body{margin:0;background:#0d0b17;color:#f5f1ff;font:14px system-ui,-apple-system,sans-serif}header{background:#171124;border-bottom:1px solid #33264b;padding:15px 22px;display:flex;align-items:center;justify-content:space-between;gap:12px}header b{font-size:19px;letter-spacing:-.5px}header b span{color:#b490ff}header form{margin:0}nav{display:flex;gap:7px;flex-wrap:wrap;padding:12px 20px;border-bottom:1px solid #2b213d;background:#120e20}nav a{padding:9px 11px;border-radius:8px;color:#bdb3d1;text-decoration:none;font-size:13px}nav a.active{background:#39255b;color:#e2d3ff}main{max-width:1400px;margin:auto;padding:24px}h1{font-size:29px;margin:0 0 8px}h2{font-size:18px;margin:0 0 14px}section,.metric{background:#191427;border:1px solid #35294a;border-radius:15px;padding:16px;margin:0 0 15px;min-width:0}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:12px}.grid .metric{margin:0 0 12px}.metric b{font-size:24px;display:block;margin-top:8px;overflow-wrap:anywhere}.muted,small{color:#b0a5c5;line-height:1.6}small{display:block;font-size:12px}p{margin:8px 0 12px}a{color:#c3a4ff}button{border:0;background:#8853df;color:white;font:inherit;font-weight:650;border-radius:9px;padding:11px 14px;cursor:pointer}button:disabled{opacity:.45;cursor:not-allowed}.filters,.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;align-items:end}.filters{margin:15px 0}.editor{display:grid;gap:10px;margin:10px 0}.editor button{justify-self:start}label{display:grid;gap:6px;color:#d6cce7;font-size:12px}input,select,textarea{width:100%;border:1px solid #433353;background:#100c1d;border-radius:9px;color:#f4f0fc;padding:10px;font:inherit;font-size:14px}textarea{resize:vertical}table{border-collapse:collapse;width:100%;min-width:620px}th,td{padding:12px 9px;text-align:left;border-bottom:1px solid #382d49;vertical-align:top}th{font-size:12px;color:#b6aacb}td small{overflow-wrap:anywhere}.scroll{overflow:auto}details,.signal,.stage{background:#130f21;padding:14px;border-radius:10px;margin:9px 0;border:1px solid #30243f}summary{cursor:pointer;font-weight:650}.stage{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;align-items:center}.stage strong{color:#c5a6ff}.tag{font-size:11px;color:#b897ff;letter-spacing:1.5px;text-transform:uppercase}.notice{padding:10px 13px;border-radius:9px;background:#251b38;color:#d7c9f0;margin:10px 0;line-height:1.6}@media(max-width:650px){header{padding:12px 14px}header b{font-size:16px}nav{padding:8px 12px;flex-wrap:nowrap;overflow:auto;white-space:nowrap}main{padding:14px}h1{font-size:25px}.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.metric{padding:12px}.metric b{font-size:19px}.filters{grid-template-columns:repeat(2,minmax(0,1fr))}.filters label:nth-child(2){grid-column:1/-1}.stage{grid-template-columns:1fr 1fr}.stage small{grid-column:1/-1}input,select,textarea{font-size:16px}}';
+ return '<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0d0b17"><title>Eduverso Intelligence</title><style>'+styles+'</style></head><body><header><b>Eduverso <span>Intelligence</span></b><form method="post" action="/logout">'+hidden+'<button>Sair</button></form></header><nav>'+Object.entries(names).map(([v,n])=>'<a class="'+(view===v?'active':'')+'" href="'+esc(urlFor(v))+'">'+esc(n)+'</a>').join('')+'</nav><main><div class="tag">Central de inteligência comercial · Somente leitura Meta</div><h1>'+esc(names[view])+'</h1><div class="notice">Última coleta: '+esc(timeFmt(last?.at))+' · '+esc(last?.source||'sem dados')+' · '+(ready()?'Meta configurada':'Meta direta pendente')+' · '+list.length+' campanhas cadastradas</div><form class="filters" method="get" action="/"><input type="hidden" name="view" value="'+esc(view)+'">'+select('campaign','Campanha',[['all','Todas monitoradas'],['excluded','Excluídas (histórico)'],...options],campaign)+input('from','De',from,'date','required')+input('to','Até',to,'date','required')+'<button>Filtrar</button></form>'+content+'</main></body></html>';
 }
+function collectionTable(campaign,from,to,filter){
+ const runs=db.prepare("SELECT * FROM runs WHERE kind='insights' AND status='success' ORDER BY at DESC LIMIT 100").all();
+ const result=[];for(const run of runs){const rs=db.prepare('SELECT o.*,c.scope FROM observations o LEFT JOIN campaigns c ON c.id=o.campaign_id WHERE run_id=? AND date BETWEEN ? AND ?').all(run.id,from,to).filter(filter);if(!rs.length)continue;const q=metrics(rs);result.push(cells([timeFmt(run.at),run.source,displayMoney(q,'spend'),display(q.impressions),display(q.clicks),display(q.purchases)]))}
+ return table(['Horário Brasília','Fonte','Gasto acumulado','Impressões','Cliques','Compras'],result)+note('Cada coleta é uma fotografia acumulada, não um gasto incremental. Nunca somar fotografias.');
+}
+function manage(f){
+ const a=f.get('action'),id=f.get('id'),txt=(k,n=2000)=>clean(f.get(k),n).trim();
+ if(a==='scope'){if(!validID(id)||!['tracked','excluded'].includes(f.get('scope')))throw Error('Escopo inválido');db.prepare('UPDATE campaigns SET scope=? WHERE id=?').run(f.get('scope'),id)}
+ else if(a==='profile'){if(!validID(id)||!db.prepare('SELECT 1 FROM ads WHERE id=?').get(id))throw Error('Criativo inexistente');const keys=['format','angle','hook','voice','visual','audience','duration','transcript'];db.prepare('INSERT INTO profiles VALUES(?,?,?,?,?,?,?,?,?) ON CONFLICT(ad_id) DO UPDATE SET format=excluded.format,angle=excluded.angle,hook=excluded.hook,voice=excluded.voice,visual=excluded.visual,audience=excluded.audience,duration=excluded.duration,transcript=excluded.transcript').run(id,...keys.map(k=>txt(k)))}
+ else if(a==='decision'){const c=f.get('campaign_id'),h=txt('hypothesis'),d=txt('decision_action');if(!validID(c)||!h||!d||!db.prepare('SELECT 1 FROM campaigns WHERE id=?').get(c))throw Error('Preencha campanha, hipótese e decisão');db.prepare('INSERT INTO decisions(at,campaign_id,hypothesis,action,updated_at) VALUES(?,?,?,?,?)').run(now(),c,h,d,now())}
+ else if(a==='outcome'){const status=f.get('status');if(!/^\d+$/.test(id||'')||!['planned','applied','validated','rejected','inconclusive'].includes(status))throw Error('Status inválido');db.prepare('UPDATE decisions SET status=?,outcome=?,updated_at=? WHERE id=?').run(status,txt('outcome'),now(),Number(id))}
+ else if(a==='finance'){const d=f.get('date');if(!dateOK(d)||d>today())throw Error('Data inválida');const keys=['gross','fees','refunds','taxes','infra','other'];const vals=keys.map(k=>{const v=f.get(k);if(v!==null&&v!==''&&num(v)===null)throw Error('Valor financeiro inválido');return num(v)});db.prepare('INSERT INTO finance VALUES(?,?,?,?,?,?,?,?) ON CONFLICT(date) DO UPDATE SET gross=excluded.gross,fees=excluded.fees,refunds=excluded.refunds,taxes=excluded.taxes,infra=excluded.infra,other=excluded.other,updated_at=excluded.updated_at').run(d,...vals,now())}
+ else if(a==='import'){const p=JSON.parse(f.get('payload')||'');for(const v of Array.isArray(p)?p:[p])ingest(v)}
+ else throw Error('Operação inválida');
+}
+function history(){return {campaigns:campaigns(),ads:allAds(),daily:db.prepare('SELECT * FROM daily ORDER BY date,ad_id').all(),runs:db.prepare('SELECT * FROM runs ORDER BY at').all(),observations:db.prepare('SELECT * FROM observations ORDER BY run_id,date,ad_id').all(),decisions:db.prepare('SELECT * FROM decisions').all(),finance:db.prepare('SELECT * FROM finance').all()}}
 const sessions=new Map(), TTL=8*60*60*1000;
 const hash=x=>createHash('sha256').update(x).digest();
 const eq=(a,b)=>timingSafeEqual(hash(String(a)),hash(String(b)));
@@ -61,7 +234,7 @@ const loginNonce=req=>(req.headers.cookie||'').match(/(?:^|;\s*)eduverso_login=(
 const sessionCsrf=req=>createHash('sha256').update('dashboard-csrf:'+sid(req)).digest('hex');
 function showLogin(res,status=200,error=''){const nonce=randomBytes(32).toString('hex');res.setHeader('Set-Cookie','eduverso_login='+nonce+'; Path=/login; HttpOnly; Secure; SameSite=Lax; Max-Age=900');html(res,status,loginPage(error,nonce))}
 function redirect(res,path){res.writeHead(303,{Location:path});res.end()}
-async function formBody(req){let size=0;const chunks=[];for await(const chunk of req){size+=chunk.length;if(size>4096)throw Error('Payload too large');chunks.push(chunk)}return new URLSearchParams(Buffer.concat(chunks).toString())}
+async function formBody(req){let size=0;const chunks=[];for await(const chunk of req){size+=chunk.length;if(size>1024*1024)throw Error('Payload too large');chunks.push(chunk)}return new URLSearchParams(Buffer.concat(chunks).toString())}
 http.createServer(async(req,res)=>{
  res.setHeader('Cache-Control','no-store');res.setHeader('X-Content-Type-Options','nosniff');res.setHeader('X-Frame-Options','DENY');res.setHeader('Referrer-Policy','no-referrer');res.setHeader('Content-Security-Policy',"default-src 'none'; style-src 'unsafe-inline'; form-action 'self'; frame-ancestors 'none'; base-uri 'none'");
  if(req.url==='/health'){res.end('ok');return}
@@ -79,11 +252,13 @@ http.createServer(async(req,res)=>{
   }catch{if(!res.destroyed)showLogin(res,400,'Não foi possível processar o login.');return}
  }
  if(!allowed(req)){if(req.url.startsWith('/api/')){res.writeHead(401,{'Content-Type':'application/json'});res.end('{"error":"Acesso restrito"}');return}redirect(res,'/login');return}
- if(req.method==='POST'){try{const f=await formBody(req);if(!eq(f.get('csrf')||'',sessionCsrf(req))){html(res,403,'Sessão de formulário inválida. <a href="/">Voltar ao painel</a>');return}}catch{html(res,400,'Formulário inválido.');return}}
+ let f;
+ if(req.method==='POST'){try{f=await formBody(req);if(!eq(f.get('csrf')||'',sessionCsrf(req))){html(res,403,'Sessão de formulário inválida. <a href="/">Voltar ao painel</a>');return}}catch{html(res,400,'Formulário inválido.');return}}
  if(req.method==='POST'&&req.url==='/logout'){sessions.delete(sid(req));res.setHeader('Set-Cookie',cookie('',0));redirect(res,'/login');return}
- if(req.method==='POST'&&req.url==='/sync'){await sync();redirect(res,'/');return}
- if(req.method==='GET'&&req.url==='/api/history'){res.setHeader('Content-Type','application/json');res.end(JSON.stringify(state));return}
- if(req.method==='GET'&&req.url==='/'){html(res,200,page(sessionCsrf(req)));return}
+ if(req.method==='POST'&&req.url==='/sync'){await sync(true);redirect(res,'/?view=settings');return}
+ if(req.method==='POST'&&req.url==='/manage'){try{manage(f);const back=Object.hasOwn(names,f.get('back'))?f.get('back'):'overview';redirect(res,'/?view='+back)}catch(e){html(res,400,'<p>'+esc(e.message)+'</p><a href="/">Voltar ao painel</a>')}return}
+ if(req.method==='GET'&&req.url==='/api/history'){res.setHeader('Content-Type','application/json');res.end(JSON.stringify(history()));return}
+ if(req.method==='GET'&&new URL(req.url,'http://localhost').pathname==='/'){try{html(res,200,page(sessionCsrf(req),new URL(req.url,'http://localhost')))}catch(e){console.error('Dashboard:',e.message);html(res,500,'<p>Falha ao carregar o painel.</p><a href="/">Tentar novamente</a>')}return}
  res.writeHead(404);res.end('Not found');
 }).listen(Number(process.env.PORT||3000),'0.0.0.0');
-if(ready()){sync();setInterval(sync,30*60*1000).unref()}
+if(ready()){sync();setInterval(sync,60*1000).unref()}
