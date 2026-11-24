@@ -1,8 +1,8 @@
 # Membros inferiores
 
-Imagens individuais, sem texto nem marcadores, fundo roxo e peça anatômica isolada. Ainda não disponíveis. Coordenadas serão calibradas após upload e inspeção.
+4 imagens integradas, 12 marcadores aproximados e 6 questões comentadas. A vista profunda é anterior; marcadores ajustados a estruturas visíveis. Revisão anatômica especializada pendente. As duas vistas alternativas permanecem preservadas em alternativas/, sem uso no visualizador.
 
-- `anterior.webp` — Vista anterior
-- `posterior.webp` — Vista posterior
-- `lateral.webp` — Vista lateral
-- `profunda.webp` — Camada profunda
+- anterior.webp
+- posterior.webp
+- lateral.webp
+- profunda.webp
