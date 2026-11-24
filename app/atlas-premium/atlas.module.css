@@ -17,3 +17,30 @@
 .placeholder3d{min-height:320px}
 @media(max-width:640px){.diagramShell{min-height:0}.skullPhoto{aspect-ratio:4 / 5}.pins .pin{width:30px;height:30px;font-size:12px}}
 @media(prefers-reduced-motion:reduce){.zoomLayer{transition:none}}
+
+
+/* Premium Atlas page navigation: systems -> subitems -> laboratory. */
+.cards a.card{text-decoration:none;cursor:pointer}
+.cards a.card:focus-visible,.topicCard:focus-visible{outline:2px solid #cbafff;outline-offset:3px}
+.systemPage,.labPage{padding-top:30px;min-height:65vh}
+.crumb{display:flex;align-items:center;flex-wrap:wrap;gap:10px;color:#c0b6dc;font-size:12px;line-height:1.7;margin:0 0 30px}
+.crumb a,.returnLink a{color:#cba8ff;text-decoration:none}
+.crumb a:hover,.returnLink a:hover{text-decoration:underline}
+.systemIntro{position:relative;background:radial-gradient(circle at 90% 20%,#7143ad44,transparent 48%),linear-gradient(130deg,#211935,#131224);padding:clamp(22px,5vw,48px);border:1px solid #aa88ef48;border-radius:24px;margin-bottom:26px;overflow:hidden}
+.systemIntro h1,.labPage h1{font-size:clamp(30px,4.4vw,48px);line-height:1.13;letter-spacing:-.035em;margin:13px 0 12px}
+.systemIntro p{color:#c6bfd9;line-height:1.6;font-size:15px;max-width:600px}
+.systemGlyph{display:block;font-size:48px;margin:14px 0 0}
+.systemCount{font-size:12px;display:inline-block;border-radius:100px;border:1px solid #a486e559;color:#d1bafe;padding:9px 14px;margin-top:8px}
+.topicGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}
+.topicCard{border:1px solid #8163af55;border-radius:18px;min-height:170px;display:flex;align-items:flex-start;flex-direction:column;padding:22px;background:linear-gradient(150deg,#2a2142,#131323);color:#efe9ff;text-decoration:none;gap:12px;transition:transform .15s,border-color .15s}
+a.topicCard:hover{transform:translateY(-3px);border-color:#b18aff}
+.topicCard strong{font-size:17px}.topicCard small{font-size:12px;color:#b8b1cd;line-height:1.6}
+.topicNumber{color:#bc9aff;font-size:12px;letter-spacing:.12em;font-weight:800}
+.topicReady{color:#d5bfff;font-size:12px;font-weight:750;margin-top:auto;padding-top:6px}
+.topicPending{opacity:.76}.topicUnavailable{color:#9e93bd;font-size:12px;margin-top:auto}
+.labPage .sectionHead{align-items:center}
+.labPage .sectionHead h1{margin-top:10px}
+.labPage .labGrid{margin-top:26px}
+.returnLink{margin-top:30px;border-top:1px solid #ffffff1d;padding-top:24px;font-size:13px}
+@media(max-width:900px){.topicGrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.systemPage,.labPage{padding-top:20px}.crumb{margin-bottom:20px}.systemIntro{padding:23px 19px}.topicGrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}.topicCard{padding:16px;min-height:175px}.topicCard strong{font-size:14px}.topicCard small{font-size:11px}.labPage .sectionHead{align-items:flex-start}}
