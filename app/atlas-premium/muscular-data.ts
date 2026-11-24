@@ -550,20 +550,20 @@ export const muscularLabs:Record<string,Lab>={
           {
             "name": "Bíceps braquial",
             "description": "Flexiona o cotovelo e supina o antebraço; recebe inervação musculocutânea.",
-            "x": 19,
-            "y": 31
+            "x": 26,
+            "y": 36
           },
           {
             "name": "Braquiorradial",
             "description": "Músculo superficial lateral do antebraço que auxilia a flexão do cotovelo, sobretudo na posição intermediária entre pronação e supinação. O braquial não está claramente individualizado nesta vista.",
-            "x": 10,
-            "y": 52
+            "x": 17,
+            "y": 54
           },
           {
             "name": "Deltoide",
             "description": "A porção média abduz o braço, enquanto as porções anterior e posterior têm ações distintas.",
-            "x": 17,
-            "y": 16
+            "x": 27,
+            "y": 18
           }
         ]
       },
@@ -576,20 +576,20 @@ export const muscularLabs:Record<string,Lab>={
           {
             "name": "Tríceps braquial",
             "description": "Estende o cotovelo; a cabeça longa também cruza o ombro.",
-            "x": 20,
-            "y": 43
+            "x": 26,
+            "y": 34
           },
           {
             "name": "Infraespinal",
             "description": "Integra o manguito rotador e promove rotação lateral do úmero.",
-            "x": 32,
-            "y": 34
+            "x": 35,
+            "y": 23
           },
           {
-            "name": "Redondo menor",
-            "description": "Auxilia a rotação lateral do ombro e a estabilidade glenoumeral.",
+            "name": "Deltoide posterior",
+            "description": "Porção posterior do deltoide, que auxilia a extensão e a abdução horizontal do ombro. O redondo menor não está individualizado com segurança nesta ilustração.",
             "x": 26,
-            "y": 38
+            "y": 19
           }
         ]
       },
@@ -602,20 +602,20 @@ export const muscularLabs:Record<string,Lab>={
           {
             "name": "Pronador redondo",
             "description": "Prona o antebraço e auxilia a flexão do cotovelo.",
-            "x": 50,
-            "y": 17
+            "x": 51,
+            "y": 24
           },
           {
-            "name": "Flexor superficial dos dedos",
-            "description": "Flexiona as articulações interfalângicas proximais dos dedos II a V.",
-            "x": 51,
-            "y": 31
+            "name": "Grupo flexor do antebraço",
+            "description": "Músculos anteriores do antebraço que participam da flexão do punho e dos dedos; os limites individuais nem sempre são distinguíveis nesta ilustração.",
+            "x": 56,
+            "y": 35
           },
           {
             "name": "Retináculo dos flexores",
             "description": "Espessamento fibroso na região palmar do punho que forma o teto do túnel do carpo e contribui para manter os tendões flexores próximos aos ossos.",
-            "x": 45,
-            "y": 56
+            "x": 47,
+            "y": 59
           }
         ]
       },
@@ -628,20 +628,20 @@ export const muscularLabs:Record<string,Lab>={
           {
             "name": "Tendões flexores dos dedos",
             "description": "Transmitem a força dos músculos flexores extrínsecos do antebraço aos dedos, permitindo a flexão das articulações digitais.",
-            "x": 40,
-            "y": 36
+            "x": 48,
+            "y": 51
           },
           {
             "name": "Musculatura tenar",
             "description": "Grupo muscular na base do polegar que participa da oposição, abdução e flexão do polegar. Seus componentes não estão completamente individualizados nesta ilustração.",
-            "x": 69,
-            "y": 62
+            "x": 60,
+            "y": 63
           },
           {
             "name": "Musculatura hipotenar",
             "description": "Grupo muscular na base do dedo mínimo que contribui para seus movimentos e para a adaptação da palma à preensão.",
-            "x": 22,
-            "y": 62
+            "x": 32,
+            "y": 60
           }
         ]
       }
@@ -734,14 +734,14 @@ export const muscularLabs:Record<string,Lab>={
           {
             "name": "Vasto medial",
             "description": "Estende o joelho e contribui para o controle patelar.",
-            "x": 40,
+            "x": 41,
             "y": 36
           },
           {
             "name": "Tibial anterior",
             "description": "Realiza dorsiflexão e auxilia inversão do pé.",
-            "x": 30,
-            "y": 63
+            "x": 31,
+            "y": 62
           }
         ]
       },
@@ -754,20 +754,20 @@ export const muscularLabs:Record<string,Lab>={
           {
             "name": "Glúteo máximo",
             "description": "Principal extensor potente do quadril, especialmente ao levantar-se ou subir escadas.",
-            "x": 37,
+            "x": 38,
             "y": 15
           },
           {
             "name": "Bíceps femoral",
             "description": "Flexiona o joelho; a cabeça longa também estende o quadril.",
-            "x": 29,
+            "x": 30,
             "y": 34
           },
           {
             "name": "Gastrocnêmio",
             "description": "Realiza flexão plantar e auxilia flexão do joelho.",
-            "x": 34,
-            "y": 61
+            "x": 32,
+            "y": 60
           }
         ]
       },
@@ -778,22 +778,22 @@ export const muscularLabs:Record<string,Lab>={
         "ready": true,
         "points": [
           {
-            "name": "Glúteo médio",
-            "description": "Abduz o quadril e estabiliza a pelve durante apoio unipodal.",
-            "x": 47,
-            "y": 4
+            "name": "Glúteo máximo",
+            "description": "Realiza extensão potente do quadril e contribui para sua estabilidade. O glúteo médio está parcialmente encoberto nesta vista.",
+            "x": 38,
+            "y": 16
           },
           {
             "name": "Trato iliotibial",
             "description": "Espessamento lateral da fáscia lata, que recebe forças do tensor da fáscia lata e do glúteo máximo.",
-            "x": 48,
-            "y": 31
+            "x": 47,
+            "y": 38
           },
           {
             "name": "Gastrocnêmio",
             "description": "Músculo superficial da panturrilha que auxilia a flexão plantar e a flexão do joelho.",
-            "x": 39,
-            "y": 61
+            "x": 38,
+            "y": 62
           }
         ]
       },
@@ -806,20 +806,20 @@ export const muscularLabs:Record<string,Lab>={
           {
             "name": "Patela",
             "description": "Osso sesamoide do mecanismo extensor do joelho, que aumenta o braço de momento do quadríceps.",
-            "x": 33,
-            "y": 43
+            "x": 36,
+            "y": 44
           },
           {
             "name": "Tendão do quadríceps",
             "description": "Transmite a força do quadríceps à patela durante a extensão do joelho.",
-            "x": 34,
-            "y": 37
+            "x": 37,
+            "y": 36
           },
           {
-            "name": "Tíbia",
-            "description": "Osso medial da perna, que transmite carga entre o joelho e o tornozelo.",
-            "x": 30,
-            "y": 64
+            "name": "Sartório",
+            "description": "Músculo superficial de trajeto oblíquo na coxa, que auxilia flexão, abdução e rotação lateral do quadril e flexão do joelho.",
+            "x": 40,
+            "y": 26
           }
         ]
       }
