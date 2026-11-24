@@ -1,8 +1,8 @@
 # Membros superiores
 
-Imagens individuais, sem texto nem marcadores, fundo roxo e peça anatômica isolada. Ainda não disponíveis. Coordenadas serão calibradas após upload e inspeção.
+4 imagens integradas, 12 marcadores aproximados e 6 questões comentadas. A mão é representada em vista palmar. Marcadores limitados às estruturas visíveis; revisão anatômica especializada pendente.
 
-- `anterior.webp` — Vista anterior
-- `posterior.webp` — Vista posterior
-- `antebraco.webp` — Antebraço
-- `mao.webp` — Mão
+- anterior.webp
+- posterior.webp
+- antebraco.webp
+- mao.webp

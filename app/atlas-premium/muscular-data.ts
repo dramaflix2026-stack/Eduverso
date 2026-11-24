@@ -393,25 +393,25 @@ export const muscularLabs:Record<string,Lab>={
         "file": "intermediaria.webp",
         "label": "Camada escapular",
         "description": "Estudo anatômico: camada escapular.",
-        "ready": false,
+        "ready": true,
         "points": [
           {
             "name": "Romboide maior",
             "description": "Retrai e auxilia a rotação inferior da escápula.",
-            "x": null,
-            "y": null
+            "x": 39,
+            "y": 50
           },
           {
             "name": "Elevador da escápula",
             "description": "Eleva a escápula e auxilia sua rotação inferior.",
-            "x": null,
-            "y": null
+            "x": 34,
+            "y": 31
           },
           {
             "name": "Romboide menor",
             "description": "Auxilia retração e estabilização escapular.",
-            "x": null,
-            "y": null
+            "x": 41,
+            "y": 36
           }
         ]
       },
@@ -419,25 +419,25 @@ export const muscularLabs:Record<string,Lab>={
         "file": "profunda.webp",
         "label": "Camada profunda",
         "description": "Estudo anatômico: camada profunda.",
-        "ready": false,
+        "ready": true,
         "points": [
           {
             "name": "Eretor da espinha",
             "description": "Grupo formado por iliocostal, longuíssimo e espinal; bilateralmente estende a coluna.",
-            "x": null,
-            "y": null
+            "x": 37,
+            "y": 45
           },
           {
             "name": "Multífido",
             "description": "Estabiliza segmentos vertebrais e auxilia extensão e rotação contralateral.",
-            "x": null,
-            "y": null
+            "x": 46.5,
+            "y": 64
           },
           {
-            "name": "Rotadores",
-            "description": "Pequenos músculos transversoespinais que contribuem para controle segmentar.",
-            "x": null,
-            "y": null
+            "name": "Processos espinhosos",
+            "description": "Projeções ósseas posteriores das vértebras, que servem de referência e inserção para ligamentos e músculos profundos do dorso. Os rotadores não estão individualizados nesta ilustração.",
+            "x": 50,
+            "y": 36
           }
         ]
       },
@@ -445,25 +445,25 @@ export const muscularLabs:Record<string,Lab>={
         "file": "lombar.webp",
         "label": "Região lombar",
         "description": "Estudo anatômico: região lombar.",
-        "ready": false,
+        "ready": true,
         "points": [
           {
-            "name": "Quadrado lombar",
-            "description": "Inclina lateralmente o tronco e estabiliza a 12ª costela.",
-            "x": null,
-            "y": null
+            "name": "Crista ilíaca",
+            "description": "Margem superior do ílio, que serve de fixação a músculos e estruturas fasciais. O quadrado lombar situa-se profundamente e não está individualizado nesta imagem.",
+            "x": 18,
+            "y": 67
           },
           {
             "name": "Fáscia toracolombar",
             "description": "Estrutura conjuntiva que integra músculos do dorso e parede abdominal e transmite forças.",
-            "x": null,
-            "y": null
+            "x": 47,
+            "y": 57
           },
           {
-            "name": "Iliocostal lombar",
-            "description": "Componente lateral do eretor da espinha, atua na extensão e inclinação lateral.",
-            "x": null,
-            "y": null
+            "name": "Glúteo máximo",
+            "description": "Músculo superficial da região glútea que realiza extensão potente do quadril e contribui para sua estabilidade.",
+            "x": 24,
+            "y": 83
           }
         ]
       }
@@ -545,25 +545,25 @@ export const muscularLabs:Record<string,Lab>={
         "file": "anterior.webp",
         "label": "Vista anterior",
         "description": "Estudo anatômico: vista anterior.",
-        "ready": false,
+        "ready": true,
         "points": [
           {
             "name": "Bíceps braquial",
             "description": "Flexiona o cotovelo e supina o antebraço; recebe inervação musculocutânea.",
-            "x": null,
-            "y": null
+            "x": 19,
+            "y": 31
           },
           {
-            "name": "Braquial",
-            "description": "Flexiona o cotovelo independentemente da posição de pronação ou supinação.",
-            "x": null,
-            "y": null
+            "name": "Braquiorradial",
+            "description": "Músculo superficial lateral do antebraço que auxilia a flexão do cotovelo, sobretudo na posição intermediária entre pronação e supinação. O braquial não está claramente individualizado nesta vista.",
+            "x": 10,
+            "y": 52
           },
           {
             "name": "Deltoide",
             "description": "A porção média abduz o braço, enquanto as porções anterior e posterior têm ações distintas.",
-            "x": null,
-            "y": null
+            "x": 17,
+            "y": 16
           }
         ]
       },
@@ -571,25 +571,25 @@ export const muscularLabs:Record<string,Lab>={
         "file": "posterior.webp",
         "label": "Vista posterior",
         "description": "Estudo anatômico: vista posterior.",
-        "ready": false,
+        "ready": true,
         "points": [
           {
             "name": "Tríceps braquial",
             "description": "Estende o cotovelo; a cabeça longa também cruza o ombro.",
-            "x": null,
-            "y": null
+            "x": 20,
+            "y": 43
           },
           {
             "name": "Infraespinal",
             "description": "Integra o manguito rotador e promove rotação lateral do úmero.",
-            "x": null,
-            "y": null
+            "x": 32,
+            "y": 34
           },
           {
             "name": "Redondo menor",
             "description": "Auxilia a rotação lateral do ombro e a estabilidade glenoumeral.",
-            "x": null,
-            "y": null
+            "x": 26,
+            "y": 38
           }
         ]
       },
@@ -597,51 +597,51 @@ export const muscularLabs:Record<string,Lab>={
         "file": "antebraco.webp",
         "label": "Antebraço",
         "description": "Estudo anatômico: antebraço.",
-        "ready": false,
+        "ready": true,
         "points": [
           {
             "name": "Pronador redondo",
             "description": "Prona o antebraço e auxilia a flexão do cotovelo.",
-            "x": null,
-            "y": null
+            "x": 50,
+            "y": 17
           },
           {
             "name": "Flexor superficial dos dedos",
             "description": "Flexiona as articulações interfalângicas proximais dos dedos II a V.",
-            "x": null,
-            "y": null
+            "x": 51,
+            "y": 31
           },
           {
-            "name": "Extensor dos dedos",
-            "description": "Estende os dedos II a V, especialmente nas metacarpofalângicas.",
-            "x": null,
-            "y": null
+            "name": "Retináculo dos flexores",
+            "description": "Espessamento fibroso na região palmar do punho que forma o teto do túnel do carpo e contribui para manter os tendões flexores próximos aos ossos.",
+            "x": 45,
+            "y": 56
           }
         ]
       },
       {
         "file": "mao.webp",
         "label": "Mão",
-        "description": "Estudo anatômico: mão.",
-        "ready": false,
+        "description": "Vista palmar ilustrativa da mão, com tendões flexores e musculatura intrínseca superficial. Os interósseos dorsais não são individualizados nesta vista.",
+        "ready": true,
         "points": [
           {
-            "name": "Interósseos dorsais",
-            "description": "Abduzem os dedos em relação ao eixo do terceiro dedo e auxiliam a ação extensora interfalângica.",
-            "x": null,
-            "y": null
+            "name": "Tendões flexores dos dedos",
+            "description": "Transmitem a força dos músculos flexores extrínsecos do antebraço aos dedos, permitindo a flexão das articulações digitais.",
+            "x": 40,
+            "y": 36
           },
           {
-            "name": "Oponente do polegar",
-            "description": "Contribui para oposição do polegar na articulação carpometacarpal.",
-            "x": null,
-            "y": null
+            "name": "Musculatura tenar",
+            "description": "Grupo muscular na base do polegar que participa da oposição, abdução e flexão do polegar. Seus componentes não estão completamente individualizados nesta ilustração.",
+            "x": 69,
+            "y": 62
           },
           {
-            "name": "Lumbricais",
-            "description": "Flexionam metacarpofalângicas e auxiliam extensão das interfalângicas.",
-            "x": null,
-            "y": null
+            "name": "Musculatura hipotenar",
+            "description": "Grupo muscular na base do dedo mínimo que contribui para seus movimentos e para a adaptação da palma à preensão.",
+            "x": 22,
+            "y": 62
           }
         ]
       }
