@@ -1,8 +1,8 @@
 # Tórax e abdômen
 
-Imagens individuais, sem texto nem marcadores, fundo roxo e peça anatômica isolada. Ainda não disponíveis. Coordenadas serão calibradas após upload e inspeção.
+4 imagens integradas; 12 marcadores aproximados; 6 questões comentadas. Revisão anatômica pendente.
 
-- `frontal.webp` — Vista anterior
-- `lateral.webp` — Vista lateral
-- `profunda.webp` — Parede abdominal profunda
-- `diafragma.webp` — Diafragma
+- frontal.webp
+- lateral.webp
+- profunda.webp
+- diafragma.webp
