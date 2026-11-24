@@ -44,3 +44,21 @@ a.topicCard:hover{transform:translateY(-3px);border-color:#b18aff}
 .returnLink{margin-top:30px;border-top:1px solid #ffffff1d;padding-top:24px;font-size:13px}
 @media(max-width:900px){.topicGrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:600px){.systemPage,.labPage{padding-top:20px}.crumb{margin-bottom:20px}.systemIntro{padding:23px 19px}.topicGrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}.topicCard{padding:16px;min-height:175px}.topicCard strong{font-size:14px}.topicCard small{font-size:11px}.labPage .sectionHead{align-items:flex-start}}
+
+
+/* Spine anatomy lab styles scoped to the independent Atlas Premium. */
+.spineRegions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:18px 0}
+.spineRegions button,.spineAnswers button{border:1px solid #ffffff26;border-radius:10px;background:#27233c;color:#dfd5f6;padding:12px 11px;text-align:left;font-weight:650;cursor:pointer;font-size:12px;line-height:1.4}
+.spineRegions button:hover,.spineAnswers button:hover{border-color:#ab8dfb}
+.spineRegions button.regionSelected,.spineAnswers button.regionSelected{border-color:#bd9afe;background:#64439d;color:#fff}
+.regionDetail{background:#ffffff09;border-radius:15px;border:1px solid #ac85ec46;padding:18px;margin-bottom:20px}
+.regionDetail strong{display:block;font-size:16px;color:#f5eaff}
+.regionDetail strong span{display:block;color:#beabde;font-size:11px;margin-top:5px}
+.regionDetail p{margin-bottom:0}
+.spineQuiz{margin-top:32px;padding:clamp(20px,4vw,36px);border:1px solid #9979d350;background:linear-gradient(140deg,#241b3d,#141426);border-radius:22px}
+.spineQuiz h2{font-size:clamp(24px,3.5vw,34px);margin:8px 0}
+.spineQuiz h3{font-size:17px;margin:25px 0 15px}
+.spineQuiz p{color:#c8bdd9;line-height:1.6}
+.spineAnswers{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:18px}
+.spineQuiz .primary{border:0;cursor:pointer;margin-top:10px}
+@media(max-width:600px){.spineRegions{grid-template-columns:1fr 1fr}.spineRegions button{font-size:11px;padding:10px 8px}.spineAnswers{grid-template-columns:1fr}}
