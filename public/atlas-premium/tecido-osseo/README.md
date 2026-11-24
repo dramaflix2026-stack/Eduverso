@@ -1,9 +1,8 @@
-# tecido osseo — Atlas Premium
+# Tecido ósseo — Atlas Premium
 
-**Situação:** 0 rascunhos disponíveis. **Ainda não é o conjunto final de quatro vistas revisadas.**
+Quatro imagens ilustrativas de IA integradas ao laboratório. Revisão anatômica especializada pendente.
 
-Ainda não há imagens específicas desta categoria. Planejar osso compacto, esponjoso, corte longitudinal e transversal.
-
-- Arquivos em `rascunhos/` preservam os nomes do upload e não estão conectados automaticamente ao site.
-- Para publicar, selecionar imagens realmente distintas, validar precisão anatômica e criar arquivos finais de nomes padronizados.
-- As quatro imagens originais do crânio e o Atlas gratuito não devem ser alterados.
+- `compacto.webp` — Osso compacto
+- `esponjoso.webp` — Osso esponjoso
+- `longitudinal.webp` — Corte longitudinal
+- `transversal.webp` — Corte transversal
