@@ -16,6 +16,14 @@ const regions=[
  {name:"Sacro",label:"S1 a S5",summary:"Cinco vértebras geralmente fusionadas conectam a coluna à pelve.",detail:"O sacro transmite forças para os ossos do quadril por meio das articulações sacroilíacas. Os forames sacrais permitem a passagem de ramos dos nervos espinais."},
  {name:"Cóccix",label:"Segmentos coccígeos",summary:"Pequena estrutura terminal formada por vértebras geralmente fusionadas.",detail:"O cóccix serve de ponto de fixação para ligamentos e músculos do assoalho pélvico. O número de segmentos pode variar."}
 ];
+// Posições aproximadas das regiões sobre cada imagem ilustrativa (porcentagens).
+// Os marcadores são guias visuais, não delimitações anatômicas exatas.
+const hotspots:Record<Angle,{x:number;y:number}[]>={
+ anterior:[{x:50,y:19},{x:50,y:43},{x:50,y:69},{x:50,y:86},{x:50,y:96}],
+ lateral:[{x:44,y:19},{x:45,y:43},{x:44,y:68},{x:47,y:85},{x:50,y:95}],
+ posterior:[{x:50,y:19},{x:50,y:43},{x:50,y:68},{x:50,y:85},{x:50,y:95}],
+ obliqua:[{x:44,y:19},{x:48,y:43},{x:46,y:67},{x:53,y:85},{x:51,y:95}]
+};
 const questions=[
  {q:"Quantas vértebras compõem normalmente a região cervical?",answers:["5","7","12","24"],correct:1,why:"A região cervical possui sete vértebras, identificadas de C1 a C7."},
  {q:"Qual região da coluna se articula diretamente com as costelas?",answers:["Lombar","Coccígea","Torácica","Cervical"],correct:2,why:"As doze vértebras torácicas participam das articulações com as costelas."},
@@ -39,9 +47,10 @@ export default function SpineStudyClient(){
    <div className={styles.labGrid}>
     <section className={styles.viewer} aria-label="Explorador da coluna vertebral">
      <div className={styles.tabs} role="group" aria-label="Selecionar vista anatômica">{photos.map(p=><button key={p.id} type="button" aria-pressed={view===p.id} className={view===p.id?styles.tabActive:""} onClick={()=>changeView(p.id)}>{p.title}</button>)}</div>
-     <div className={styles.visualFrame}><div className={styles.zoomLayer} style={{transform:"scale("+zoom+")"}}><img className={styles.skullPhoto} src={photo.src} width={1024} height={1280} alt={"Ilustração da coluna vertebral, "+photo.title.toLowerCase()} decoding="async"/></div></div>
+     <div className={styles.visualFrame}><div className={styles.zoomLayer} style={{transform:"scale("+zoom+")"}}><div className={styles.spineImageContainer}><img className={styles.spineImage} src={photo.src} width={1024} height={1536} alt={"Ilustração da coluna vertebral, "+photo.title.toLowerCase()} decoding="async"/><div className={styles.pins} role="group" aria-label="Cinco regiões da coluna; selecione um marcador">{regions.map((r,i)=><button type="button" key={r.name} aria-label={"Selecionar "+r.name+" ("+r.label+")"} aria-pressed={region===i} title={r.name+" • "+r.label} className={styles.pin+" "+styles.spinePin+(region===i?" "+styles.pinActive:"")} style={{left:hotspots[view][i].x+"%",top:hotspots[view][i].y+"%"}} onClick={()=>setRegion(i)}>{i+1}</button>)}</div></div></div></div>
+     <div className={styles.spineSelectedCallout} role="status"><span className={styles.spineSelectedNumber}>{region+1}</span><div><strong>{regions[region].name} · {regions[region].label}</strong><p>{regions[region].summary}</p></div></div>
      <div className={styles.zoomControls} role="group" aria-label="Ampliar ou reduzir a vista"><button type="button" onClick={()=>setZoom(v=>Math.max(1,Math.round((v-.25)*100)/100))} disabled={zoom<=1} aria-label="Reduzir zoom">−</button><span>{Math.round(zoom*100)}%</span><button type="button" onClick={()=>setZoom(v=>Math.min(2.5,Math.round((v+.25)*100)/100))} disabled={zoom>=2.5} aria-label="Ampliar zoom">+</button><button type="button" onClick={()=>setZoom(1)} disabled={zoom===1}>Redefinir</button></div>
-     <p className={styles.diagramNote}>{photo.description} As imagens não substituem modelos anatômicos revisados.</p>
+     <p className={styles.diagramNote}>{photo.description} Toque em um dos cinco círculos para identificar a região correspondente. Os pontos são aproximações sobre ilustrações geradas por IA e precisam de revisão técnica.</p>
     </section>
     <aside className={styles.details}><span className={styles.eyebrow}>APRENDA POR REGIÃO</span><h3>As cinco regiões da coluna</h3><p>A coluna oferece suporte ao tronco, permite movimentos e participa da proteção da medula espinhal. A localização das estruturas deve ser conferida em atlas de referência.</p>
      <div className={styles.spineRegions} role="group" aria-label="Selecionar região">{regions.map((r,i)=><button type="button" key={r.name} className={region===i?styles.regionSelected:""} aria-pressed={region===i} onClick={()=>setRegion(i)}>{r.name}</button>)}</div>
