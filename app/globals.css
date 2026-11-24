@@ -194,3 +194,15 @@
 .fraction-new-downloads .fraction-download-note{font-size:12px}
 .fraction-download-status{background:#3d2c59;border-radius:10px;padding:12px}
 @media(max-width:670px){.fraction-download-pair{grid-template-columns:1fr}}
+
+
+/* Paid complements: same dimensions as the other top-level menu entries. */
+.side-nav a.nav-paid-link{box-sizing:border-box;min-height:48px;margin-top:6px;text-decoration:none;cursor:pointer}
+.side-nav a.nav-paid-link:hover{background:#34224d;border-color:#9566df}
+.side-nav a.nav-paid-link:focus-visible{outline:2px solid #c0a5ff;outline-offset:2px}
+.side-nav a.nav-paid-link .nav-group-title{flex:1;min-width:0;font-size:13px;line-height:1.2;overflow-wrap:normal}
+.side-nav a.nav-paid-link .nav-paid-price{flex:none;white-space:nowrap;color:#e1ccff;background:#60428d60;border:1px solid #9d78cd77;border-radius:99px;padding:5px 7px;font-size:10px;font-weight:800;letter-spacing:0}
+@media(max-width:760px){
+ .side-nav a.nav-paid-link{min-height:48px;padding:10px 12px}
+ .side-nav a.nav-paid-link .nav-paid-price{font-size:9.5px;padding:5px 6px}
+}
