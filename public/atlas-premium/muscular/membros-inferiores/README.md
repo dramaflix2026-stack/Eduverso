@@ -1,8 +1,8 @@
 # Membros inferiores
 
-4 imagens integradas, 12 marcadores aproximados e 6 questões comentadas. A vista profunda é anterior; marcadores ajustados a estruturas visíveis. Revisão anatômica especializada pendente. As duas vistas alternativas permanecem preservadas em alternativas/, sem uso no visualizador.
+Quatro imagens novas integradas; 12 marcadores aproximados recalibrados; seis questões comentadas preservadas. As versões anteriores estão em versao-anterior/. Revisão anatômica especializada e validação visual pendentes.
 
-- anterior.webp
-- posterior.webp
-- lateral.webp
-- profunda.webp
+- anterior.webp — Vista anterior
+- posterior.webp — Vista posterior
+- lateral.webp — Vista lateral
+- profunda.webp — Camada profunda

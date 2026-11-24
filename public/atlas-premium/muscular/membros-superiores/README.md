@@ -1,8 +1,8 @@
 # Membros superiores
 
-4 imagens integradas, 12 marcadores aproximados e 6 questões comentadas. A mão é representada em vista palmar. Marcadores limitados às estruturas visíveis; revisão anatômica especializada pendente.
+Quatro imagens novas integradas; 12 marcadores aproximados recalibrados; seis questões comentadas preservadas. As versões anteriores estão em versao-anterior/. Revisão anatômica especializada e validação visual pendentes.
 
-- anterior.webp
-- posterior.webp
-- antebraco.webp
-- mao.webp
+- anterior.webp — Vista anterior
+- posterior.webp — Vista posterior
+- antebraco.webp — Antebraço
+- mao.webp — Mão
