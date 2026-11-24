@@ -69,8 +69,8 @@ export default function PremiumAtlasClient({mode="home",systemId="esqueletico"}:
     <nav className={styles.crumb} aria-label="Caminho de navegação"><Link href="/atlas-premium">Atlas Premium</Link><span>›</span><span>{selectedSystem.name}</span></nav>
     <div className={styles.systemIntro}><span className={styles.eyebrow}>SISTEMA ANATÔMICO</span><span className={styles.systemGlyph} aria-hidden="true">{selectedSystem.icon}</span><h1>{selectedSystem.name}</h1><p>{selectedSystem.description} Selecione uma área de estudo abaixo.</p><span className={styles.systemCount}>{selectedSystem.topics.length} subitens organizados</span></div>
     <div className={styles.topicGrid}>{selectedSystem.topics.map((topic,i)=>{
-     const ready=selectedSystem.id==="esqueletico"&&i===0;
-     return ready?<Link href="/atlas-premium/cranio/estudo" key={topic} className={styles.topicCard}><span className={styles.topicNumber}>{String(i+1).padStart(2,"0")}</span><strong>{topic}</strong><small>4 vistas HD, zoom, pontos clicáveis e desafio inicial</small><span className={styles.topicReady}>Abrir laboratório ↗</span></Link>
+     const ready=selectedSystem.id==="esqueletico"&&i<2;
+     return ready?<Link href={i===0?"/atlas-premium/cranio/estudo":"/atlas-premium/coluna-vertebral/estudo"} key={topic} className={styles.topicCard}><span className={styles.topicNumber}>{String(i+1).padStart(2,"0")}</span><strong>{topic}</strong><small>{i===0?"4 vistas HD, zoom, pontos clicáveis e desafio inicial":"4 vistas ilustradas, zoom, estudo das 5 regiões e desafio explicado"}</small><span className={styles.topicReady}>Abrir laboratório ↗</span></Link>
        :<div key={topic} className={styles.topicCard+" "+styles.topicPending}><span className={styles.topicNumber}>{String(i+1).padStart(2,"0")}</span><strong>{topic}</strong><small>Conteúdo anatômico em preparação</small><span className={styles.topicUnavailable}>Em desenvolvimento</span></div>;
     })}</div>
     <div className={styles.returnLink}><Link href="/atlas-premium">← Escolher outro sistema anatômico</Link></div>
