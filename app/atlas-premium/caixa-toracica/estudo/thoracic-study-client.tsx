@@ -3,7 +3,7 @@ import Link from "next/link";
 import {useState} from "react";
 import styles from "../../atlas.module.css";
 
-type Scene="anterior"|"lateral"|"esterno"|"cartilagens";
+type Scene="anterior"|"lateral"|"esterno"|"arco-costal";
 type Point={x:number;y:number;id:number};
 type SceneData={id:Scene;label:string;src:string;description:string;points:Point[]};
 const scenes:SceneData[]=[
