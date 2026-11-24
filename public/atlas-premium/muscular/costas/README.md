@@ -1,8 +1,8 @@
 # Costas
 
-- superficial.webp — integrada, 3 marcadores aproximados.
-- intermediaria.webp — pendente (camada escapular).
-- profunda.webp — pendente (musculatura paravertebral).
-- lombar.webp — pendente (região lombar).
+4 imagens integradas, 12 marcadores aproximados e 6 questões comentadas. As imagens não individualizam todos os músculos profundos; os marcadores foram limitados a estruturas visíveis. Revisão anatômica pendente. Os três arquivos originais não correspondentes permanecem preservados, sem uso no visualizador.
 
-Os três arquivos originais adicionais não correspondem às cenas planejadas e permanecem preservados, sem uso no visualizador. Revisão anatômica pendente.
+- superficial.webp
+- intermediaria.webp
+- profunda.webp
+- lombar.webp
