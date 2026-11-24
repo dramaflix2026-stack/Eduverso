@@ -18,8 +18,8 @@ const labs:Record<string,Lab>={
         "points": [
           {
             "name": "Ósteon",
-            "x": 45,
-            "y": 47,
+            "x": 33,
+            "y": 44,
             "description": "Unidade estrutural típica do osso compacto lamelar, formada por lamelas concêntricas em torno de um canal central."
           },
           {
