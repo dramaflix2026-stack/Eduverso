@@ -1,8 +1,8 @@
 # Tórax e abdômen
 
-4 imagens integradas; 12 marcadores aproximados; 6 questões comentadas. Revisão anatômica pendente.
+Quatro novas ilustrações verticais integradas, 12 marcadores aproximados recalibrados e seis questões comentadas. Imagens anteriores preservadas em versao-anterior/. Revisão anatômica e validação visual pendentes.
 
-- frontal.webp
-- lateral.webp
-- profunda.webp
-- diafragma.webp
+- frontal.webp — Vista anterior
+- lateral.webp — Vista lateral
+- profunda.webp — Parede abdominal profunda
+- diafragma.webp — Diafragma
