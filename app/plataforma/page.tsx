@@ -254,8 +254,8 @@ return <div className="app-shell">
     </div>}
   </div>
   <div className="side-caption" style={{marginTop:18,marginBottom:9}}>COMPLEMENTOS PREMIUM</div>
-  <Link href="/atlas-premium" onClick={()=>setMenu(false)} className="nav-premium-entry" style={{display:"flex",alignItems:"center",gap:12,padding:"13px 15px",margin:"7px 0",border:"1px solid #9260db66",borderRadius:12,background:"linear-gradient(110deg,#281d46,#171829)",color:"#e4d5ff",textDecoration:"none",fontWeight:750}}><span aria-hidden="true">🦴</span><span>Atlas Premium <small style={{marginLeft:5,color:"#c6adff",fontSize:10}}>NOVO</small></span></Link>
-  <Link href="/redacao-premium" onClick={()=>setMenu(false)} className="nav-premium-entry" style={{display:"flex",alignItems:"center",gap:12,padding:"13px 15px",margin:"7px 0",border:"1px solid #9260db66",borderRadius:12,background:"linear-gradient(110deg,#281d46,#171829)",color:"#e4d5ff",textDecoration:"none",fontWeight:750}}><span aria-hidden="true">✍️</span><span>Laboratório de Redação <small style={{marginLeft:5,color:"#c6adff",fontSize:10}}>EM BREVE</small></span></Link>
+  <Link href="/atlas-premium" onClick={()=>setMenu(false)} className="nav-group-toggle nav-paid-link" aria-label="Atlas Premium, conteúdo pago, R$ 29,90"><span className="nav-group-icon" aria-hidden="true">🦴</span><span className="nav-group-title">Atlas Premium</span><span className="nav-paid-price" aria-hidden="true">🔒 R$ 29,90</span></Link>
+  <Link href="/redacao-premium" onClick={()=>setMenu(false)} className="nav-group-toggle nav-paid-link" aria-label="Laboratório de Redação ENEM, conteúdo pago, R$ 19,90, em desenvolvimento"><span className="nav-group-icon" aria-hidden="true">✍️</span><span className="nav-group-title">Lab. de Redação ENEM</span><span className="nav-paid-price" aria-hidden="true">🔒 R$ 19,90</span></Link>
 </nav>
 <div className="side-caption bottom-caption">MINHA ÁREA</div>
 <nav className="side-nav" aria-label="Minha área">
