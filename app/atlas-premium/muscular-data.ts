@@ -723,25 +723,25 @@ export const muscularLabs:Record<string,Lab>={
         "file": "anterior.webp",
         "label": "Vista anterior",
         "description": "Estudo anatômico: vista anterior.",
-        "ready": false,
+        "ready": true,
         "points": [
           {
             "name": "Reto femoral",
             "description": "Estende o joelho e flexiona o quadril por cruzar ambas as articulações.",
-            "x": null,
-            "y": null
+            "x": 35,
+            "y": 23
           },
           {
             "name": "Vasto medial",
             "description": "Estende o joelho e contribui para o controle patelar.",
-            "x": null,
-            "y": null
+            "x": 40,
+            "y": 36
           },
           {
             "name": "Tibial anterior",
             "description": "Realiza dorsiflexão e auxilia inversão do pé.",
-            "x": null,
-            "y": null
+            "x": 30,
+            "y": 63
           }
         ]
       },
@@ -749,25 +749,25 @@ export const muscularLabs:Record<string,Lab>={
         "file": "posterior.webp",
         "label": "Vista posterior",
         "description": "Estudo anatômico: vista posterior.",
-        "ready": false,
+        "ready": true,
         "points": [
           {
             "name": "Glúteo máximo",
             "description": "Principal extensor potente do quadril, especialmente ao levantar-se ou subir escadas.",
-            "x": null,
-            "y": null
+            "x": 37,
+            "y": 15
           },
           {
             "name": "Bíceps femoral",
             "description": "Flexiona o joelho; a cabeça longa também estende o quadril.",
-            "x": null,
-            "y": null
+            "x": 29,
+            "y": 34
           },
           {
             "name": "Gastrocnêmio",
             "description": "Realiza flexão plantar e auxilia flexão do joelho.",
-            "x": null,
-            "y": null
+            "x": 34,
+            "y": 61
           }
         ]
       },
@@ -775,51 +775,51 @@ export const muscularLabs:Record<string,Lab>={
         "file": "lateral.webp",
         "label": "Vista lateral",
         "description": "Estudo anatômico: vista lateral.",
-        "ready": false,
+        "ready": true,
         "points": [
           {
             "name": "Glúteo médio",
             "description": "Abduz o quadril e estabiliza a pelve durante apoio unipodal.",
-            "x": null,
-            "y": null
+            "x": 47,
+            "y": 4
           },
           {
-            "name": "Tensor da fáscia lata",
-            "description": "Auxilia flexão, abdução e rotação medial do quadril e tensiona o trato iliotibial.",
-            "x": null,
-            "y": null
+            "name": "Trato iliotibial",
+            "description": "Espessamento lateral da fáscia lata, que recebe forças do tensor da fáscia lata e do glúteo máximo.",
+            "x": 48,
+            "y": 31
           },
           {
-            "name": "Fibular longo",
-            "description": "Auxilia eversão do pé e flexão plantar.",
-            "x": null,
-            "y": null
+            "name": "Gastrocnêmio",
+            "description": "Músculo superficial da panturrilha que auxilia a flexão plantar e a flexão do joelho.",
+            "x": 39,
+            "y": 61
           }
         ]
       },
       {
         "file": "profunda.webp",
         "label": "Camada profunda",
-        "description": "Estudo anatômico: camada profunda.",
-        "ready": false,
+        "description": "Dissecação anterior ilustrativa com estruturas musculares e ósseas da coxa, pelve e perna. O compartimento posterior profundo da perna não está diretamente individualizado.",
+        "ready": true,
         "points": [
           {
-            "name": "Sóleo",
-            "description": "Flexor plantar monoarticular do tornozelo, importante na postura.",
-            "x": null,
-            "y": null
+            "name": "Patela",
+            "description": "Osso sesamoide do mecanismo extensor do joelho, que aumenta o braço de momento do quadríceps.",
+            "x": 33,
+            "y": 43
           },
           {
-            "name": "Tibial posterior",
-            "description": "Auxilia inversão, flexão plantar e sustentação do arco longitudinal medial.",
-            "x": null,
-            "y": null
+            "name": "Tendão do quadríceps",
+            "description": "Transmite a força do quadríceps à patela durante a extensão do joelho.",
+            "x": 34,
+            "y": 37
           },
           {
-            "name": "Flexor longo dos dedos",
-            "description": "Flexiona dedos II a V e contribui para a flexão plantar.",
-            "x": null,
-            "y": null
+            "name": "Tíbia",
+            "description": "Osso medial da perna, que transmite carga entre o joelho e o tornozelo.",
+            "x": 30,
+            "y": 64
           }
         ]
       }
@@ -901,25 +901,25 @@ export const muscularLabs:Record<string,Lab>={
         "file": "calcaneo.webp",
         "label": "Tendão calcâneo",
         "description": "Estudo anatômico: tendão calcâneo.",
-        "ready": false,
+        "ready": true,
         "points": [
           {
             "name": "Tendão calcâneo",
             "description": "Transmite força do tríceps sural ao calcâneo.",
-            "x": null,
-            "y": null
+            "x": 50,
+            "y": 67
           },
           {
             "name": "Sóleo",
             "description": "Integra o tríceps sural, contribuindo para a flexão plantar sem cruzar o joelho.",
-            "x": null,
-            "y": null
+            "x": 39,
+            "y": 45
           },
           {
             "name": "Calcâneo",
             "description": "Osso do retropé que recebe a inserção do tendão calcâneo.",
-            "x": null,
-            "y": null
+            "x": 50,
+            "y": 91
           }
         ]
       },
@@ -927,25 +927,25 @@ export const muscularLabs:Record<string,Lab>={
         "file": "joelho.webp",
         "label": "Mecanismo extensor",
         "description": "Estudo anatômico: mecanismo extensor.",
-        "ready": false,
+        "ready": true,
         "points": [
           {
             "name": "Tendão do quadríceps",
             "description": "Conecta o quadríceps à patela, transmitindo sua força.",
-            "x": null,
-            "y": null
+            "x": 49,
+            "y": 33
           },
           {
             "name": "Ligamento patelar",
             "description": "Une patela à tuberosidade da tíbia e transmite força do mecanismo extensor.",
-            "x": null,
-            "y": null
+            "x": 49,
+            "y": 73
           },
           {
             "name": "Retináculos patelares",
             "description": "Expansões fibrosas que contribuem para estabilidade e acompanhamento patelar.",
-            "x": null,
-            "y": null
+            "x": 31,
+            "y": 48
           }
         ]
       },
@@ -979,25 +979,25 @@ export const muscularLabs:Record<string,Lab>={
         "file": "plantar.webp",
         "label": "Fáscia plantar",
         "description": "Estudo anatômico: fáscia plantar.",
-        "ready": false,
+        "ready": true,
         "points": [
           {
             "name": "Aponeurose plantar",
             "description": "Banda fibrosa que auxilia manutenção do arco longitudinal; tensiona-se na extensão dos dedos.",
-            "x": null,
-            "y": null
+            "x": 48,
+            "y": 62
           },
           {
             "name": "Tuberosidade do calcâneo",
             "description": "Região proximal de fixação da aponeurose plantar.",
-            "x": null,
-            "y": null
+            "x": 49,
+            "y": 91
           },
           {
             "name": "Bandas digitais",
             "description": "Prolongamentos distais da aponeurose que se relacionam com os dedos.",
-            "x": null,
-            "y": null
+            "x": 48,
+            "y": 25
           }
         ]
       }
