@@ -62,3 +62,15 @@ a.topicCard:hover{transform:translateY(-3px);border-color:#b18aff}
 .spineAnswers{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:18px}
 .spineQuiz .primary{border:0;cursor:pointer;margin-top:10px}
 @media(max-width:600px){.spineRegions{grid-template-columns:1fr 1fr}.spineRegions button{font-size:11px;padding:10px 8px}.spineAnswers{grid-template-columns:1fr}}
+
+
+/* Clickable image-anchored regional markers for the spine laboratory. */
+.spineImageContainer{position:relative;width:100%;max-width:540px;margin:0 auto}
+.spineImage{display:block;width:100%;height:auto;object-fit:contain;background:#190c3b}
+.spinePin{pointer-events:auto;z-index:2;touch-action:manipulation}
+.spinePin[aria-pressed="true"]{background:#f3d9aa;color:#362452;border-color:white;box-shadow:0 0 0 5px #a171ed66,0 0 20px #bb91ff}
+.spineSelectedCallout{display:flex;gap:13px;align-items:flex-start;padding:14px 17px;background:#261d3e;border-top:1px solid #9573c565}
+.spineSelectedCallout strong{display:block;font-size:13px;line-height:1.5;color:#f8efff}
+.spineSelectedCallout p{font-size:12px;color:#c6bad8;line-height:1.6;margin:5px 0 0}
+.spineSelectedNumber{display:flex;align-items:center;justify-content:center;background:#8f60ec;color:#fff;border:2px solid #eee5ff;border-radius:50%;width:32px;height:32px;flex-shrink:0;font-size:13px;font-weight:800}
+@media(max-width:640px){.spinePin{width:31px;height:31px;font-size:12px}.spineSelectedCallout{padding:12px}}
