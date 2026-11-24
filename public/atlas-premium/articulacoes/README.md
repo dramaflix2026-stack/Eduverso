@@ -1,9 +1,16 @@
-# articulacoes — Atlas Premium
+# Articulações — Atlas Premium
 
-**Situação:** 0 rascunhos disponíveis. **Ainda não é o conjunto final de quatro vistas revisadas.**
+O laboratório interativo está em `/atlas-premium/articulacoes/estudo`.
 
-Ainda não há imagens específicas desta categoria. Planejar articulação representativa, cortes e detalhes em quatro cenas.
+## Quatro imagens para enviar
 
-- Arquivos em `rascunhos/` preservam os nomes do upload e não estão conectados automaticamente ao site.
-- Para publicar, selecionar imagens realmente distintas, validar precisão anatômica e criar arquivos finais de nomes padronizados.
-- As quatro imagens originais do crânio e o Atlas gratuito não devem ser alterados.
+Coloque nesta pasta quatro arquivos **WebP** com os nomes exatos:
+
+- `frontal.webp` — esqueleto visto pela frente;
+- `lateral.webp` — esqueleto de perfil;
+- `posterior.webp` — esqueleto por trás;
+- `obliqua.webp` — perspectiva oblíqua.
+
+Ao enviar os quatro arquivos para `public/atlas-premium/articulacoes/`, o laboratório passa a exibi-los automaticamente após o deploy. Enquanto os arquivos não existirem, a página exibe um esquema provisório e mantém o conteúdo textual e os desafios funcionando.
+
+As imagens são ilustrativas, geradas por IA; antes da comercialização precisam de revisão anatômica dos detalhes, marcadores e posições.

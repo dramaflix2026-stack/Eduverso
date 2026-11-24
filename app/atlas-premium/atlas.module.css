@@ -82,3 +82,11 @@ a.topicCard:hover{transform:translateY(-3px);border-color:#b18aff}
 .lowerDiagramStage .pin{z-index:2;pointer-events:auto;touch-action:manipulation}
 .lowerDiagramStage .pin[aria-pressed="true"]{background:#eeddbd;color:#25143b;box-shadow:0 0 0 4px #9b65e777,0 0 19px #9b65e7;border:2px solid #fff}
 @media(max-width:640px){.lowerDiagramStage .pin{width:31px;height:31px;font-size:12px}}
+
+
+/* Articulações: image and hotspot positions remain aligned in every viewport. */
+.jointsStage{position:relative;width:100%;max-width:540px;margin:0 auto;background:#180b37}
+.jointsImage,.jointsFallbackSvg{display:block;width:100%;height:auto;aspect-ratio:1122/1402;object-fit:contain}
+.jointsStage .pin{z-index:2;pointer-events:auto;touch-action:manipulation}
+.jointsStage .pin[aria-pressed="true"]{background:#f3d9aa;color:#362452;border-color:#fff;box-shadow:0 0 0 5px #a171ed66,0 0 20px #bb91ff}
+@media(max-width:640px){.jointsStage .pin{width:31px;height:31px;font-size:12px}}
