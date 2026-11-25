@@ -92,3 +92,13 @@
     flex: 1;
   }
 }
+
+/* Privacy preferences stay in the normal footer flow, never over the offer. */
+.eduverso-privacy-footer { padding-top: 12px; padding-bottom: 16px; }
+.eduverso-privacy-settings { color: #c1b7d6; font-size: 13px; max-width: 540px; }
+.eduverso-privacy-settings summary { cursor: pointer; width: fit-content; text-decoration: underline; text-underline-offset: 3px; }
+.eduverso-privacy-settings summary:focus-visible, .eduverso-privacy-choice:focus-visible { outline: 2px solid #c4b5fd; outline-offset: 4px; }
+.eduverso-privacy-panel { margin-top: 12px; padding: 14px; border: 1px solid #443957; border-radius: 12px; background: #17152c; display: flex; flex-wrap: wrap; gap: 10px; }
+.eduverso-privacy-panel p { width: 100%; font-size: 13px; line-height: 1.5; margin: 0; color: #e8e5fc; }
+.eduverso-privacy-choice { position: static; font: inherit; color: #f4f0ff; background: #28213c; border: 1px solid #6e5a90; border-radius: 8px; padding: 10px 12px; cursor: pointer; }
+@media(max-width: 600px) { .eduverso-privacy-choice { width: 100%; min-height: 44px; text-align: left; } }

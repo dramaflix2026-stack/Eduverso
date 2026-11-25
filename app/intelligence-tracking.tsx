@@ -67,5 +67,5 @@ export default function IntelligenceTracking(){
   setEnabled(next);
  }
  if(!loaded)return null;
- return <button type="button" className="eduverso-cookies-settings" style={{bottom:40}} title="Medição opcional de sessões, engajamento e cliques na página pública, sem dados de conta." onClick={choose}>{enabled?"Desativar análise de navegação":"Ativar análise de navegação"}</button>;
+ return <button type="button" className="eduverso-privacy-choice" title="Medição opcional de sessões, engajamento e cliques na página pública, sem dados de conta." onClick={choose}>{enabled?"Desativar análise de navegação":"Ativar análise de navegação"}</button>;
 }

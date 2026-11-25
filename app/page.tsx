@@ -8,7 +8,6 @@ import "./landing.css";
 const go=(name:string)=>"/plataforma?disciplina="+encodeURIComponent(name);
 export default function Landing(){
  return <div className="edu-lp">
-  <MetaPixelTracking/>
   <header className="lp-header" id="topo">
    <div className="lp-container lp-header-inner">
     <Link href="/" className="lp-logo" aria-label="Eduverso — início"><span className="lp-mark" aria-hidden="true">✦</span><strong>Eduverso<span>.</span></strong></Link>
@@ -134,6 +133,7 @@ export default function Landing(){
      </nav>
     </div>
    </div>
+   <div className="lp-container eduverso-privacy-footer"><MetaPixelTracking/></div>
    <div className="lp-container lp-footer-newbottom">
     <small>© {new Date().getFullYear()} Eduverso · Todos os direitos reservados.</small>
     <span>Aprender abre novos caminhos.</span>

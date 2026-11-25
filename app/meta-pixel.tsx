@@ -138,16 +138,20 @@ export default function MetaPixelTracking() {
   }
 
   return (
-    <>
-    <IntelligenceTracking />
+    <details className="eduverso-privacy-settings">
+      <summary>Preferências de privacidade</summary>
+      <div className="eduverso-privacy-panel">
+      <p>Gerencie a medição opcional de navegação e anúncios. Suas escolhas não afetam o acesso ou a compra.</p>
+      <IntelligenceTracking />
     {preference !== "loading" && <button
       type="button"
-      className="eduverso-cookies-settings"
+      className="eduverso-privacy-choice"
       onClick={() => decide(preference === "enabled" ? "declined" : "accepted")}
       aria-label={preference === "enabled" ? "Desativar medição de anúncios da Meta" : "Ativar medição de anúncios da Meta"}
     >
       {preference === "enabled" ? "Desativar medição de anúncios" : "Ativar medição de anúncios"}
     </button>}
-    </>
+      </div>
+    </details>
   );
 }
