@@ -4,6 +4,7 @@ import {useEffect,useMemo,useState} from "react";
 import {atlasAreas,atlasViews,skullLandmarks,type Landmark} from "./catalog";
 import styles from "./atlas.module.css";
 import {muscularLabs} from "./muscular-data";
+import {nervosoLabs} from "./nervoso-data";
 
 type Gate={authenticated:boolean;hasAccess:boolean;status:"guest"|"locked"|"active"|"unavailable"};
 type View=typeof atlasViews[number]["id"];
@@ -71,13 +72,15 @@ export default function PremiumAtlasClient({mode="home",systemId="esqueletico"}:
     <div className={styles.systemIntro}><span className={styles.eyebrow}>SISTEMA ANATÔMICO</span><span className={styles.systemGlyph} aria-hidden="true">{selectedSystem.icon}</span><h1>{selectedSystem.name}</h1><p>{selectedSystem.description} Selecione uma área de estudo abaixo.</p><span className={styles.systemCount}>{selectedSystem.topics.length} subitens organizados</span></div>
     <div className={styles.topicGrid}>{selectedSystem.topics.map((topic,i)=>{
      const muscular=selectedSystem.id==="muscular";
-     const ready=(selectedSystem.id==="esqueletico"&&i<8)||muscular;
+     const nervousPaths=["cerebro","cerebelo","tronco-encefalico","medula","nervos-cranianos","nervos-perifericos","sinapses","reflexos"];
+     const nervous=selectedSystem.id==="nervoso"&&Object.prototype.hasOwnProperty.call(nervosoLabs,nervousPaths[i]);
+     const ready=(selectedSystem.id==="esqueletico"&&i<8)||muscular||nervous;
      const paths=["/atlas-premium/cranio/estudo","/atlas-premium/coluna-vertebral/estudo","/atlas-premium/caixa-toracica/estudo","/atlas-premium/membros-superiores/estudo","/atlas-premium/membros-inferiores/estudo","/atlas-premium/articulacoes/estudo","/atlas-premium/tecido-osseo/estudo","/atlas-premium/anatomia-aplicada/estudo"];
      const summaries=["4 vistas HD, zoom, pontos clicáveis e desafio inicial","4 vistas ilustradas, estudo das 5 regiões e desafio explicado","4 cenas ilustradas, 6 marcadores anatômicos e questões comentadas","4 ilustrações frontais, 6 estruturas interativas e desafio explicado","4 imagens HD, 6 estruturas clicáveis e desafio comentado","4 vistas, 6 articulações explicadas e desafio comentado","4 cenas HD, microarquitetura óssea e 6 questões comentadas","4 cenas clínicas didáticas, marcadores e 6 questões comentadas"];
      const muscularPaths=["cabeca-pescoco","torax-abdomen","costas","membros-superiores","membros-inferiores","tendoes-fascias","contracao","biomecanica"];
      const muscularReadyCount=muscular?muscularLabs[muscularPaths[i]]?.scenes.filter(s=>s.ready).length??0:0;
      const muscularComplete=muscularReadyCount===4;
-     return ready?<Link href={muscular?"/atlas-premium/muscular/"+muscularPaths[i]+"/estudo":paths[i]} key={topic} className={styles.topicCard}><span className={styles.topicNumber}>{String(i+1).padStart(2,"0")}</span><strong>{topic}</strong><small>{muscular?(muscularComplete?"4 vistas anatômicas, marcadores e 6 questões comentadas":muscularReadyCount>0?muscularReadyCount+"/4 imagens integradas · 6 questões comentadas":"4 cenas de estudo e 6 questões · imagens em preparação"):summaries[i]}</small><span className={styles.topicReady}>{muscular&&!muscularComplete?"Abrir prévia de estudo ↗":"Abrir laboratório ↗"}</span></Link>
+     return ready?<Link href={nervous?"/atlas-premium/nervoso/"+nervousPaths[i]+"/estudo":muscular?"/atlas-premium/muscular/"+muscularPaths[i]+"/estudo":paths[i]} key={topic} className={styles.topicCard}><span className={styles.topicNumber}>{String(i+1).padStart(2,"0")}</span><strong>{topic}</strong><small>{muscular?(muscularComplete?"4 vistas anatômicas, marcadores e 6 questões comentadas":muscularReadyCount>0?muscularReadyCount+"/4 imagens integradas · 6 questões comentadas":"4 cenas de estudo e 6 questões · imagens em preparação"):nervous?"4 vistas anatômicas, marcadores e 6 questões comentadas":summaries[i]}</small><span className={styles.topicReady}>{muscular&&!muscularComplete?"Abrir prévia de estudo ↗":"Abrir laboratório ↗"}</span></Link>
        :<div key={topic} className={styles.topicCard+" "+styles.topicPending}><span className={styles.topicNumber}>{String(i+1).padStart(2,"0")}</span><strong>{topic}</strong><small>Conteúdo anatômico em preparação</small><span className={styles.topicUnavailable}>Em desenvolvimento</span></div>;
     })}</div>
     <div className={styles.returnLink}><Link href="/atlas-premium">← Escolher outro sistema anatômico</Link></div>
