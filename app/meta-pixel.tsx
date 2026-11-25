@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, type MouseEvent } from "react";
 import "./meta-pixel.css";
+import IntelligenceTracking from "./intelligence-tracking";
 
 const PIXEL_ID = "1714519746738518";
 const CONSENT_KEY = "eduverso-marketing-consent-v1";
@@ -136,9 +137,11 @@ export default function MetaPixelTracking() {
     setPreference(marketingAllowed ? "enabled" : "disabled");
   }
 
-  if (preference === "loading") return null;
+  if (preference === "loading") return <IntelligenceTracking />;
 
   return (
+    <>
+    <IntelligenceTracking />
     <button
       type="button"
       className="eduverso-cookies-settings"
@@ -147,5 +150,6 @@ export default function MetaPixelTracking() {
     >
       {preference === "enabled" ? "Desativar medição de anúncios" : "Ativar medição de anúncios"}
     </button>
+    </>
   );
 }
