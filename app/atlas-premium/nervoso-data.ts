@@ -946,56 +946,56 @@ export const nervosoLabs:Record<string,{title:string;intro:string;scenes:{file:s
         "ready": true
       },
       {
-        "file": "plexo-lombossacral.webp",
+        "file": "plexo-lombossacral.png",
         "label": "Plexo lombossacral",
-        "description": "Ilustração em preparação.",
+        "description": "Vista anterior esquemática da região lombossacral. Os feixes nervosos individuais não são diferenciados com precisão nesta ilustração.",
         "points": [
           {
-            "name": "Plexo lombar",
-            "x": null,
-            "y": null,
+            "name": "Região do plexo lombar",
+            "x": 34,
+            "y": 27,
             "description": "Formado principalmente por ramos anteriores de L1 a L4; contribui para a inervação abdominal e do membro inferior."
           },
           {
-            "name": "Plexo sacral",
-            "x": null,
-            "y": null,
+            "name": "Região do plexo sacral",
+            "x": 63,
+            "y": 51,
             "description": "Formado principalmente por L4 a S4; distribui fibras à pelve e aos membros inferiores."
           },
           {
-            "name": "Nervo femoral",
-            "x": null,
-            "y": null,
-            "description": "Origina-se de L2 a L4 e inerva, entre outras estruturas, o quadríceps."
+            "name": "Região de saída dos nervos para a coxa",
+            "x": 23,
+            "y": 69,
+            "description": "Nesta região passam nervos destinados ao membro inferior. O nervo femoral, originado de L2 a L4, inerva o quadríceps; seu trajeto individual não pode ser confirmado neste desenho."
           }
         ],
-        "ready": false
+        "ready": true
       },
       {
-        "file": "ciatico.webp",
+        "file": "ciatico.png",
         "label": "Nervo ciático",
-        "description": "Ilustração em preparação.",
+        "description": "Vista posterior oblíqua esquemática do trajeto ciático e de suas divisões. Os trajetos distais são simplificados.",
         "points": [
           {
             "name": "Nervo ciático",
-            "x": null,
-            "y": null,
+            "x": 43,
+            "y": 30,
             "description": "Origina-se de L4 a S3 e percorre habitualmente a região posterior da coxa."
           },
           {
             "name": "Nervo tibial",
-            "x": null,
-            "y": null,
+            "x": 43,
+            "y": 64,
             "description": "Inerva músculos da região posterior da perna e estruturas plantares."
           },
           {
-            "name": "Nervo fibular comum",
-            "x": null,
-            "y": null,
+            "name": "Região do ramo fibular comum",
+            "x": 50,
+            "y": 47,
             "description": "Segue lateralmente próximo à cabeça da fíbula e origina os ramos superficial e profundo."
           }
         ],
-        "ready": false
+        "ready": true
       }
     ],
     "quiz": [
@@ -1276,30 +1276,30 @@ export const nervosoLabs:Record<string,{title:string;intro:string;scenes:{file:s
         "ready": true
       },
       {
-        "file": "patelar.webp",
+        "file": "patelar.png",
         "label": "Reflexo patelar",
-        "description": "Ilustração em preparação. O reflexo é apresentado por meio das explicações abaixo.",
+        "description": "Representação esquemática da resposta de extensão do joelho. A posição ilustrada do martelo e as setas não são referência confiável de técnica ou de direção da condução nervosa.",
         "points": [
           {
             "name": "Região do quadríceps",
-            "x": null,
-            "y": null,
+            "x": 16,
+            "y": 19,
             "description": "A percussão adequada do ligamento patelar estira o quadríceps."
           },
           {
             "name": "Região do joelho",
-            "x": null,
-            "y": null,
+            "x": 31,
+            "y": 52,
             "description": "O estímulo do ligamento patelar desencadeia a resposta reflexa."
           },
           {
             "name": "Região medular",
-            "x": null,
-            "y": null,
+            "x": 78,
+            "y": 20,
             "description": "O reflexo envolve principalmente L2–L4, com predomínio de L4, e o nervo femoral."
           }
         ],
-        "ready": false
+        "ready": true
       },
       {
         "file": "retirada.webp",
