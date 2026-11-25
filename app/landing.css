@@ -775,29 +775,29 @@
 @media(max-width:680px){.edu-lp .lp-carousel-stage{width:100%}.lp-coverflow{--card-width:clamp(150px,55vw,290px)}.lp-coverflow-card{border-radius:12px}.lp-coverflow-caption strong{font-size:14px}.lp-coverflow-caption>span{font-size:11px}.lp-coverflow-controls{gap:8px}.lp-coverflow-dot{width:19px}.lp-coverflow-arrow{width:32px;height:32px}.lp-coverflow-viewport{height:calc(var(--card-width) * 16 / 9 + 26px)}}
 @media(prefers-reduced-motion:reduce){.lp-coverflow-card,.lp-coverflow-dot>span{transition:none}}
 
-/* Compact benefit cards: native horizontal swipe on mobile, three columns on desktop. */
-.edu-lp .lp-benefit-strip{background:transparent;border-top:1px solid #a084d51f;border-bottom:1px solid #a084d51f;padding:26px 0 25px}
-.lp-benefit-heading{display:flex;justify-content:center;align-items:center;gap:12px;margin-bottom:14px;text-align:center}
-.lp-benefit-heading .lp-eyebrow{font-size:10px;letter-spacing:1.2px}
-.lp-benefit-heading .lp-benefit-hint{display:none}
-.lp-benefit-track{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;outline-offset:4px}
-.lp-benefit-track:focus-visible{outline:2px solid #b28bff;border-radius:14px}
-.lp-benefit-card{position:relative;display:flex;align-items:flex-start;gap:13px;min-width:0;min-height:115px;padding:19px 30px 18px 16px;overflow:hidden;border:1px solid #7253a36b;border-radius:16px;background:radial-gradient(ellipse at 0% 0%,#8053d12b,transparent 70%),linear-gradient(135deg,#21182f,#130f22);box-shadow:inset 0 1px 0 #b78dff16}
-.lp-benefit-icon{flex:none;display:grid;place-items:center;width:43px;height:43px;border:1px solid #b18bff55;border-radius:12px;background:linear-gradient(145deg,#6e45b6,#36234f);color:#e0ceff;box-shadow:0 5px 17px #8c5bda26}
-.lp-benefit-icon svg{width:24px;height:24px}
-.lp-benefit-card h3{margin:1px 0 7px;font-size:15px;line-height:1.2;color:#f9f4ff;letter-spacing:-.2px}
-.edu-lp .lp-benefit-card p{display:block;margin:0;font-size:12px;line-height:1.5;color:#bfb2d1}
-.lp-benefit-number{position:absolute;right:11px;top:9px;color:#ad8cdd80;font-size:10px;font-weight:800;letter-spacing:.7px}
+/* Fixed commercial benefits — centered, no second carousel. */
+.edu-lp .lp-benefits-fixed{padding:14px 0 24px;background:transparent}
+.lp-benefits-shell{max-width:760px;text-align:center;border:1px solid #7652ad55;border-radius:22px;padding:30px 24px 26px;background:radial-gradient(ellipse at 50% 0%,#7341ba24,transparent 64%),#100b1c}
+.lp-benefits-shell>.lp-eyebrow{font-size:10px;letter-spacing:1.35px;color:#bc9aff}
+.lp-benefits-shell h2{font-size:clamp(23px,3.1vw,35px);line-height:1.17;letter-spacing:-.85px;max-width:570px;margin:13px auto 23px;text-wrap:balance}
+.lp-benefits-shell h2 em{color:#b28bff}
+.lp-benefits-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;max-width:570px;margin:0 auto}
+.lp-benefits-tile{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:13px;min-width:0;min-height:130px;padding:20px 12px;background:#1d152d;border:1px solid #583c80;border-radius:14px}
+.lp-benefits-symbol{display:grid;place-items:center;color:#bc95ff}
+.lp-benefits-symbol svg{width:34px;height:34px;filter:drop-shadow(0 0 9px #a579ee38)}
+.lp-benefits-tile h3{margin:0;color:#f7f0ff;font-size:15px;font-weight:700;line-height:1.3;text-wrap:balance}
+.lp-benefits-guarantee{display:flex;flex-direction:column;align-items:center;gap:5px;margin:24px auto 0}
+.lp-benefits-guarantee svg{width:32px;height:32px;color:#ba98ff;margin-bottom:2px}
+.lp-benefits-guarantee strong{font-size:16px;line-height:1.25;color:#f8f1ff}
+.lp-benefits-guarantee span{font-size:12px;color:#bfb2d1}
 @media(max-width:680px){
- .edu-lp .lp-benefit-strip{padding:19px 0 15px}
- .lp-benefit-heading{justify-content:space-between;gap:8px;text-align:left;margin-bottom:11px}
- .lp-benefit-heading .lp-eyebrow{font-size:9px;letter-spacing:.65px}
- .lp-benefit-heading .lp-benefit-hint{display:block;font-size:10px;color:#bcb0d0;white-space:nowrap}
- .lp-benefit-hint span{color:#c39cff;font-size:14px}
- .lp-benefit-track{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;overscroll-behavior-x:contain;padding:2px 1px 10px;scrollbar-width:thin;scrollbar-color:#8963c8 #1d152c}
- .lp-benefit-card{flex:0 0 83%;scroll-snap-align:start;min-height:112px;padding:16px 25px 15px 12px;gap:10px}
- .lp-benefit-card h3{font-size:14px;margin-bottom:6px}
- .edu-lp .lp-benefit-card p{font-size:12px}
- .lp-benefit-icon{width:39px;height:39px;border-radius:10px}
- .lp-benefit-icon svg{width:22px;height:22px}
+ .edu-lp .lp-benefits-fixed{padding:10px 0 17px}
+ .lp-benefits-shell{padding:22px 13px 20px;border-radius:18px}
+ .lp-benefits-shell>.lp-eyebrow{font-size:9px;letter-spacing:.85px}
+ .lp-benefits-shell h2{font-size:clamp(21px,5.7vw,28px);margin:11px auto 17px}
+ .lp-benefits-grid{gap:8px}
+ .lp-benefits-tile{min-height:108px;padding:14px 7px;gap:9px;border-radius:12px}
+ .lp-benefits-symbol svg{width:30px;height:30px}
+ .lp-benefits-tile h3{font-size:13px}
+ .lp-benefits-guarantee{margin-top:20px}
 }

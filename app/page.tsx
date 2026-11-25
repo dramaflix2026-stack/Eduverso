@@ -46,14 +46,17 @@ export default function Landing(){
     </div>
    </section>
 
-   <section className="lp-proof lp-benefit-strip" aria-label="Benefícios do Eduverso">
-    <div className="lp-container lp-benefit-shell">
-     <div className="lp-benefit-heading"><span className="lp-eyebrow">ESTUDE DE UM JEITO MAIS INTELIGENTE</span><p className="lp-benefit-hint" aria-hidden="true">Deslize para explorar <span>↔</span></p></div>
-     <div className="lp-benefit-track" tabIndex={0} aria-label="Explore os três benefícios">
-      <article className="lp-benefit-card"><span className="lp-benefit-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M2 9l10-5 10 5-10 5-10-5zM6 11v6c4 3 8 3 12 0v-6M22 9v7"/></svg></span><div><h3>Da escola à sua carreira</h3><p>Ensino Fundamental, Médio, ENEM, Medicina e formações profissionais.</p></div><span className="lp-benefit-number" aria-hidden="true">01</span></article>
-      <article className="lp-benefit-card"><span className="lp-benefit-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V2h6v2M8 10l1.5 1.5L12 9m2 2h2M8 16l1.5 1.5L12 15m2 2h2"/></svg></span><div><h3>Aprenda na prática</h3><p>Questões comentadas, exercícios e revisões para fixar o conteúdo.</p></div><span className="lp-benefit-number" aria-hidden="true">02</span></article>
-      <article className="lp-benefit-card"><span className="lp-benefit-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3l2.5 6.5L21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-2.5L12 3zM19 2v4m-2-2h4"/></svg></span><div><h3>Inteligência artificial a seu favor</h3><p>Ferramentas para criar provas, apostilas e materiais de estudo.</p></div><span className="lp-benefit-number" aria-hidden="true">03</span></article>
+   <section className="lp-benefits-fixed" aria-labelledby="lp-benefits-title">
+    <div className="lp-container lp-benefits-shell">
+     <span className="lp-eyebrow">MAIS POSSIBILIDADES. MENOS COMPLICAÇÃO.</span>
+     <h2 id="lp-benefits-title">Tudo o que você precisa para <em>ir mais longe.</em></h2>
+     <div className="lp-benefits-grid">
+      <article className="lp-benefits-tile"><span className="lp-benefits-symbol"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M2 9l10-5 10 5-10 5-10-5zM6 11v6c4 3 8 3 12 0v-6M22 9v7"/></svg></span><h3>Do Fundamental à Medicina</h3></article>
+      <article className="lp-benefits-tile"><span className="lp-benefits-symbol"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 4a3 3 0 0 0-5-2 3 3 0 0 0-3 4 4 4 0 0 0-1 7 4 4 0 0 0 3 6 3 3 0 0 0 6 0V4Zm0 0a3 3 0 0 1 5-2 3 3 0 0 1 3 4 4 4 0 0 1 1 7 4 4 0 0 1-3 6 3 3 0 0 1-6 0M7 6c0 2 2 3 5 3m5-3c0 2-2 3-5 3M6 15h3m6 0h3"/></svg></span><h3>Inteligência artificial</h3></article>
+      <article className="lp-benefits-tile"><span className="lp-benefits-symbol"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M10 5h4m-3 14h2"/></svg></span><h3>Estude de onde estiver</h3></article>
+      <article className="lp-benefits-tile"><span className="lp-benefits-symbol"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M19 8V5a2 2 0 0 0-2-2H5a3 3 0 0 0 0 6h14a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H5a3 3 0 0 1-3-3V6m19 7h-5a2 2 0 0 0 0 4h5"/><path d="M16 15h.01"/></svg></span><h3>Sem mensalidades</h3></article>
      </div>
+     <div className="lp-benefits-guarantee"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 2 3.5 6v6c0 5 3.5 8 8.5 10 5-2 8.5-5 8.5-10V6L12 2z"/><path d="m8 12 3 3 5-5"/></svg><strong>7 dias de garantia</strong><span>Compre com tranquilidade.</span></div>
     </div>
    </section>
 
