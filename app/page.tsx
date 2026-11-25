@@ -1,6 +1,5 @@
 import ClarityTracking from "./clarity-tracking";
 import LandingPreview from "./landing-preview";
-import LandingDemoCarousel from "./landing-demo-carousel";
 import LandingCarousel from "./landing-carousel";
 import LandingPricing from "./landing-pricing";
 import MetaPixelTracking from "./meta-pixel";
@@ -51,14 +50,7 @@ export default function Landing(){
     </div>
    </section>
 
-   <section id="produto" className="lp-section lp-container lp-product lp-product-gallery">
-    <div className="lp-section-heading lp-centered">
-     <span className="lp-eyebrow">CONHEÇA ANTES DE COMEÇAR</span>
-     <h2>Veja o Eduverso <em>em ação.</em></h2>
-     <p>Explore as ferramentas que podem transformar sua rotina de estudos.</p>
-    </div>
-    <LandingDemoCarousel><LandingPreview/></LandingDemoCarousel>
-   </section>
+   <section id="produto" className="lp-container" style={{paddingBlock:20}}><div id="demonstracao"><LandingPreview/></div></section>
 
    <LandingPricing/>
 
