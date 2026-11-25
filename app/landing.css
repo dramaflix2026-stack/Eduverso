@@ -685,20 +685,14 @@
 
 /* Black Friday 2026 — isolated landing hero and accessible announcement marquee. */
 .lp-bf-banner{position:relative;display:flex;align-items:center;min-height:35px;overflow:hidden;background:linear-gradient(90deg,#7545d5,#a16df4,#7545d5);color:#fff;border-bottom:1px solid #d3b6ff80;font-size:12px;font-weight:800;letter-spacing:.15px}
-.lp-bf-viewport{overflow:hidden;min-width:0;flex:1;margin-right:36px}
+.lp-bf-viewport{overflow:hidden;min-width:0;flex:1}
 .lp-bf-track{display:flex;width:max-content;animation:lp-bf-scroll 34s linear infinite;will-change:transform}
 .lp-bf-group{display:flex;flex:none;align-items:center}
 .lp-bf-group>span{white-space:nowrap;padding:8px 16px;display:inline-flex;align-items:center;gap:12px}
 .lp-bf-group b{color:#efe1ff}
 @keyframes lp-bf-scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-.lp-bf-pause{position:absolute;right:9px;top:50%;width:24px;height:24px;transform:translateY(-50%);opacity:0;z-index:2;cursor:pointer;margin:0}
-.lp-bf-pause-label{position:absolute;right:8px;top:50%;transform:translateY(-50%);width:25px;height:25px;border:1px solid #ffffff70;background:#25134580;border-radius:6px;display:grid;place-items:center;cursor:pointer;font-size:12px;z-index:1}
-.lp-bf-play-icon,.lp-bf-static{display:none}
-.lp-bf-pause:focus-visible+.lp-bf-pause-label{outline:2px solid white;outline-offset:2px}
-.lp-bf-pause:checked+.lp-bf-pause-label .lp-bf-pause-icon{display:none}
-.lp-bf-pause:checked+.lp-bf-pause-label .lp-bf-play-icon{display:inline}
-.lp-bf-pause:checked~.lp-bf-viewport .lp-bf-track,.lp-bf-banner:hover .lp-bf-track{animation-play-state:paused}
-@media(prefers-reduced-motion:reduce){.lp-bf-viewport,.lp-bf-pause,.lp-bf-pause-label{display:none}.lp-bf-static{display:block;text-align:center;width:100%;padding:8px 12px}}
+.lp-bf-static{display:none}
+@media(prefers-reduced-motion:reduce){.lp-bf-viewport{display:none}.lp-bf-static{display:block;text-align:center;width:100%;padding:8px 12px}}
 .edu-lp .lp-hero-redesign{display:grid;grid-template-columns:minmax(0,1fr);justify-items:center;gap:28px;padding-top:44px;padding-bottom:46px;text-align:center}
 .edu-lp .lp-hero-redesign:before{top:-180px;right:auto;left:50%;transform:translateX(-50%);width:min(1000px,150vw);height:700px;background:radial-gradient(ellipse,#7041c83b,transparent 68%)}
 .lp-hero-redesign .lp-hero-copy{width:100%;max-width:920px;display:flex;flex-direction:column;align-items:center;text-align:center}
@@ -708,8 +702,6 @@
 .edu-lp .lp-hero-redesign h1 em{display:block;color:#b28bff}
 .edu-lp .lp-hero-redesign .lp-hero-subtitle{max-width:660px;margin:0 auto 9px;color:#e0d7ef;font-size:clamp(15px,1.6vw,19px);line-height:1.5;text-wrap:pretty}
 .edu-lp .lp-hero-redesign .lp-hero-description{max-width:620px;margin:0 auto 13px;font-size:13px;line-height:1.5;color:#b5acc8}
-.lp-hero-price{display:flex;align-items:baseline;justify-content:center;flex-wrap:wrap;gap:4px 12px;margin:0 auto 15px;color:#c6b7dc;font-size:12px}
-.lp-hero-price strong{color:#fff;font-size:25px;letter-spacing:-.8px;font-weight:900}
 .lp-hero-redesign .lp-hero-actions{display:flex;justify-content:center;gap:10px;width:min(100%,500px)}
 .edu-lp .lp-hero-redesign .lp-hero-actions>a{flex:1;min-width:0;min-height:52px;padding:12px 14px;font-size:14px;white-space:normal;text-align:center}
 .edu-lp .lp-hero-redesign .lp-hero-actions>.lp-button{background:linear-gradient(115deg,#8651e7,#a679fa);box-shadow:0 10px 30px #8b56e65c}
@@ -737,8 +729,6 @@
  .lp-hero-redesign .lp-hero-badge{font-size:9px;letter-spacing:1px}
  .edu-lp .lp-hero-redesign .lp-hero-subtitle{font-size:14px;line-height:1.45;margin-bottom:7px}
  .edu-lp .lp-hero-redesign .lp-hero-description{font-size:12px;line-height:1.45;margin-bottom:10px}
- .lp-hero-price{margin-bottom:12px;gap:2px 8px;font-size:11px}
- .lp-hero-price strong{font-size:23px}
  .lp-hero-redesign .lp-hero-actions{flex-direction:column;gap:8px}
  .edu-lp .lp-hero-redesign .lp-hero-actions>a{flex:auto;min-height:47px;width:100%;font-size:13px;padding:10px 12px}
  .lp-hero-redesign .lp-hero-points{margin-top:11px;gap:5px;font-size:10px}
@@ -751,3 +741,6 @@
  .lp-hero-redesign .lp-app-lesson{padding:9px}
  .lp-hero-preview-footer{font-size:10px}
 }
+
+/* Keep the promotional strip readable without a visible pause control. */
+.lp-bf-banner:hover .lp-bf-track{animation-play-state:paused}

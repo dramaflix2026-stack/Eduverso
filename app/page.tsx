@@ -14,8 +14,6 @@ export default function Landing(){
  const promo = "Oferta Black Friday válida até 27/11";
  return <div className="edu-lp">
   {blackFriday && <div className="lp-bf-banner" aria-label={promo}>
-   <input className="lp-bf-pause" type="checkbox" id="lp-bf-pause" aria-label="Pausar faixa de oferta"/>
-   <label className="lp-bf-pause-label" htmlFor="lp-bf-pause" aria-hidden="true"><span className="lp-bf-pause-icon">Ⅱ</span><span className="lp-bf-play-icon">▶</span></label>
    <div className="lp-bf-viewport" aria-hidden="true"><div className="lp-bf-track">{[0,1].map(group=><div className="lp-bf-group" key={group}>{[0,1,2,3].map(item=><span key={item}>✦ {promo} <b>•</b> Condição por tempo limitado <b>•</b></span>)}</div>)}</div></div>
    <span className="lp-bf-static" aria-hidden="true">{promo}</span>
   </div>}
@@ -35,7 +33,6 @@ export default function Landing(){
      <h1 id="lp-heading">Estude com mais clareza. <em>{blackFriday ? "Aproveite a Black Friday do Eduverso." : "Evolua com inteligência artificial."}</em></h1>
      <p className="lp-hero-subtitle">Da escola à Medicina: aulas, questões comentadas, revisões, trilhas e materiais com IA para você estudar no seu ritmo.</p>
      <p className="lp-hero-description">{blackFriday ? "Oferta especial por tempo limitado para transformar sua rotina de estudos com mais organização e prática." : "Organize sua rotina de estudos, pratique e acompanhe sua evolução em um só lugar."}</p>
-     <div className="lp-hero-price"><span>A partir de <strong>R$ 49,90</strong></span><span>Pagamento único · sem mensalidade</span></div>
      <div className="lp-hero-actions">
       <a href="#planos" className="lp-button lp-button-large">{blackFriday ? "Garantir minha oferta" : "Conhecer os planos"} <span aria-hidden="true">↗</span></a>
       <a href="#produto" className="lp-outline lp-button-large">Testar uma questão grátis <span aria-hidden="true">→</span></a>
