@@ -46,11 +46,14 @@ export default function Landing(){
     </div>
    </section>
 
-   <section className="lp-proof" aria-label="O que você encontra no Eduverso">
-    <div className="lp-container lp-proof-inner">
-     <div><span aria-hidden="true">▤</span><p><strong>Da escola à graduação</strong><small>Trilhas para diferentes etapas</small></p></div>
-     <div><span aria-hidden="true">✎</span><p><strong>Estudo com prática</strong><small>Questões e correção comentada</small></p></div>
-     <div><span aria-hidden="true">◎</span><p><strong>Um lugar para evoluir</strong><small>Conteúdos, revisão e progresso</small></p></div>
+   <section className="lp-proof lp-benefit-strip" aria-label="Benefícios do Eduverso">
+    <div className="lp-container lp-benefit-shell">
+     <div className="lp-benefit-heading"><span className="lp-eyebrow">ESTUDE DE UM JEITO MAIS INTELIGENTE</span><p className="lp-benefit-hint" aria-hidden="true">Deslize para explorar <span>↔</span></p></div>
+     <div className="lp-benefit-track" tabIndex={0} aria-label="Explore os três benefícios">
+      <article className="lp-benefit-card"><span className="lp-benefit-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M2 9l10-5 10 5-10 5-10-5zM6 11v6c4 3 8 3 12 0v-6M22 9v7"/></svg></span><div><h3>Da escola à sua carreira</h3><p>Ensino Fundamental, Médio, ENEM, Medicina e formações profissionais.</p></div><span className="lp-benefit-number" aria-hidden="true">01</span></article>
+      <article className="lp-benefit-card"><span className="lp-benefit-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V2h6v2M8 10l1.5 1.5L12 9m2 2h2M8 16l1.5 1.5L12 15m2 2h2"/></svg></span><div><h3>Aprenda na prática</h3><p>Questões comentadas, exercícios e revisões para fixar o conteúdo.</p></div><span className="lp-benefit-number" aria-hidden="true">02</span></article>
+      <article className="lp-benefit-card"><span className="lp-benefit-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3l2.5 6.5L21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-2.5L12 3zM19 2v4m-2-2h4"/></svg></span><div><h3>Inteligência artificial a seu favor</h3><p>Ferramentas para criar provas, apostilas e materiais de estudo.</p></div><span className="lp-benefit-number" aria-hidden="true">03</span></article>
+     </div>
     </div>
    </section>
 
