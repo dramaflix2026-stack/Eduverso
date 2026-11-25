@@ -137,19 +137,17 @@ export default function MetaPixelTracking() {
     setPreference(marketingAllowed ? "enabled" : "disabled");
   }
 
-  if (preference === "loading") return <IntelligenceTracking />;
-
   return (
     <>
     <IntelligenceTracking />
-    <button
+    {preference !== "loading" && <button
       type="button"
       className="eduverso-cookies-settings"
       onClick={() => decide(preference === "enabled" ? "declined" : "accepted")}
       aria-label={preference === "enabled" ? "Desativar medição de anúncios da Meta" : "Ativar medição de anúncios da Meta"}
     >
       {preference === "enabled" ? "Desativar medição de anúncios" : "Ativar medição de anúncios"}
-    </button>
+    </button>}
     </>
   );
 }
