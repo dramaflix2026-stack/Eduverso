@@ -27,25 +27,15 @@ export default function Landing(){
    </div>
   </header>
   <main>
-   <section className="lp-hero lp-container lp-hero-redesign" aria-labelledby="lp-heading">
-    <div className="lp-hero-copy">
-     <span className="lp-eyebrow lp-hero-badge"><span className="lp-pulse" aria-hidden="true"/> {blackFriday ? "ÚLTIMOS DIAS DE BLACK FRIDAY" : "SEU ESTUDO EM UM SÓ LUGAR"}</span>
-     <h1 id="lp-heading">Estude com mais clareza. <em>{blackFriday ? "Aproveite a Black Friday do Eduverso." : "Evolua com inteligência artificial."}</em></h1>
-     <p className="lp-hero-subtitle">Da escola à Medicina: aulas, questões comentadas, revisões, trilhas e materiais com IA para você estudar no seu ritmo.</p>
-     <p className="lp-hero-description">{blackFriday ? "Oferta especial por tempo limitado para transformar sua rotina de estudos com mais organização e prática." : "Organize sua rotina de estudos, pratique e acompanhe sua evolução em um só lugar."}</p>
-     <div className="lp-hero-actions">
-      <a href="#planos" className="lp-button lp-button-large">{blackFriday ? "Garantir minha oferta" : "Conhecer os planos"} <span aria-hidden="true">↗</span></a>
-      <a href="#demonstracao" className="lp-outline lp-button-large">Testar uma questão grátis <span aria-hidden="true">→</span></a>
-     </div>
-     <div className="lp-hero-points"><span><b aria-hidden="true">✓</b> Aulas e questões</span><span><b aria-hidden="true">✓</b> Revisão por assunto</span><span><b aria-hidden="true">✓</b> Estude no celular</span></div>
-    </div>
-    <div className="lp-hero-stage lp-carousel-stage">
-     <div className="lp-stage-glow" aria-hidden="true"/>
-     <div className="lp-hero-preview-label"><span aria-hidden="true">✦</span> CONHEÇA O EDUVERSO POR DENTRO</div>
-     <LandingCarousel/>
-     <p className="lp-illustration-note">Artes ilustrativas dos recursos. Consulte as condições de cada plano e complemento.</p>
-    </div>
-   </section>
+   <section className="lp-hero lp-container lp-hero-redesign edu-hero-clean" aria-labelledby="lp-heading">
+<style>{`.edu-lp .edu-hero-clean{padding-top:40px;padding-bottom:24px;gap:24px;align-items:center}.edu-lp .edu-hero-clean .lp-hero-copy{max-width:540px}.edu-lp .edu-hero-clean h1{font-size:clamp(38px,5vw,64px);line-height:1.06;letter-spacing:-.045em;margin:12px 0 16px}.edu-lp .edu-hero-clean h1 em{display:block}.edu-lp .edu-hero-clean .lp-hero-subtitle{font-size:clamp(15px,1.5vw,19px);line-height:1.55;margin:0 0 20px}.edu-lp .edu-hero-clean .lp-hero-actions{gap:10px;margin:0}.edu-lp .edu-hero-clean .lp-hero-actions .lp-button{min-height:50px}.edu-hero-demo{display:inline-block;color:#c8aff5;font-size:13px;text-decoration:underline;text-underline-offset:4px;padding:10px 0}.edu-lp .edu-hero-clean .lp-hero-stage{margin:0;padding:0;min-width:0}.edu-lp .edu-hero-clean .lp-coverflow-caption{display:none}.edu-lp .edu-hero-clean .lp-coverflow-controls{margin:8px auto 0}.edu-lp .edu-hero-clean .lp-coverflow-motion{font-size:10px;margin:4px auto}.edu-lp .edu-hero-clean .lp-illustration-note{font-size:10px;margin:5px auto 0;max-width:340px}@media(max-width:680px){.edu-lp .edu-hero-clean{padding-top:25px;padding-bottom:18px;gap:12px}.edu-lp .edu-hero-clean .lp-hero-copy{text-align:center;margin:auto}.edu-lp .edu-hero-clean h1{font-size:clamp(32px,8.5vw,42px);margin:0 0 12px}.edu-lp .edu-hero-clean .lp-hero-subtitle{font-size:14px;margin:0 auto 16px;max-width:340px}.edu-lp .edu-hero-clean .lp-hero-actions{display:flex;flex-direction:column;align-items:center}.edu-lp .edu-hero-clean .lp-hero-actions .lp-button{width:100%;max-width:340px}.edu-lp .edu-hero-clean .lp-hero-stage{width:100%}}`}</style>
+<div className="lp-hero-copy">
+<h1 id="lp-heading">Seu universo de estudos. <em>Potencializado por IA.</em></h1>
+<p className="lp-hero-subtitle">Aulas, exercícios e revisões da escola à Medicina. Tudo em um só lugar.</p>
+<div className="lp-hero-actions"><a href="#planos" className="lp-button lp-button-large">{blackFriday?"Garantir minha oferta":"Conhecer os planos"} <span aria-hidden="true">→</span></a><a href="#demonstracao" className="edu-hero-demo">Testar uma questão grátis</a></div>
+</div>
+<div className="lp-hero-stage lp-carousel-stage"><div className="lp-stage-glow" aria-hidden="true"/><LandingCarousel/><p className="lp-illustration-note">Imagens ilustrativas. Recursos variam por plano e complemento.</p></div>
+</section>
 
    <section className="lp-benefits-fixed" aria-labelledby="lp-benefits-title">
     <div className="lp-container lp-benefits-shell">
