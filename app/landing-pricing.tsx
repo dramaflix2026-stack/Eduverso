@@ -46,11 +46,11 @@ export default function LandingPricing(){
    <div className="lp-pricing-top">
     <div><span className="lp-eyebrow">ESCOLHA SEU EDUVERSO</span><h2 id="lp-pricing-title">Invista no seu futuro. <em>Pague uma única vez.</em></h2><p>Escolha o acesso ideal para a sua jornada. Sem mensalidades.</p></div>
    </div>
-   <div className="lp-pricing-grid">
+   <style>{`@media(max-width:767px){.lp-pricing-redesign .lp-container{width:100%;max-width:none;padding:0}.lp-pricing-redesign .lp-pricing-grid{display:block;gap:0;margin:0}.lp-pricing-redesign .lp-pricing-grid article{margin:0}.lp-pricing-redesign .lp-pricing-top,.lp-pricing-redesign .lp-pricing-trust{padding-inline:16px}}`}</style><div className="lp-pricing-grid">
     {plans.map(plan=><article key={plan.id} style={{minWidth:0,background:"transparent",border:0,padding:0,boxShadow:"none"}}>
      <div style={{position:"relative",width:"100%"}}>
-      <img src={plan.featured?"/images/file_00000000d4c4820eaf366b1f2af41e5a.webp":"/images/file_00000000209c820e879ffc53a53a0d22.webp"} alt={plan.name+" — R$ "+plan.price+", pagamento único, sem mensalidades. Compra pela Kiwify, 7 dias de garantia."} style={{display:"block",width:"100%",height:"auto"}} loading="lazy"/>
-      <a href={plan.checkoutUrl} onClick={(event)=>trackEduversoCheckout(event,{productId:plan.productId,productName:plan.name,value:plan.amount,checkoutUrl:plan.checkoutUrl})} aria-label={"Comprar "+plan.name+" na Kiwify"} style={{position:"absolute",left:"17%",width:"66%",top:"86%",height:"8%",borderRadius:40}}/>
+      <img src={plan.featured?"/images/file_00000000ca08820eb3ac1c098eed269d.webp":"/images/file_000000008d14820e979c6b2522510441.webp"} alt={plan.name+" — R$ "+plan.price+", pagamento único, sem mensalidades. Compra pela Kiwify, 7 dias de garantia."} style={{display:"block",width:"100%",height:"auto"}} loading="lazy"/>
+      <a href={plan.checkoutUrl} onClick={(event)=>trackEduversoCheckout(event,{productId:plan.productId,productName:plan.name,value:plan.amount,checkoutUrl:plan.checkoutUrl})} aria-label={"Comprar "+plan.name+" na Kiwify"} style={{position:"absolute",left:"8%",width:"84%",top:plan.featured?"86.7%":"81.4%",height:"6.4%",borderRadius:40}}/>
      </div>
      {plan.planned&&<p style={{margin:"10px 0 0",fontSize:14,lineHeight:1.5,color:"#c8b9df",textAlign:"center"}}>Em desenvolvimento: avaliações e questões em massa, gabaritos comentados e exportação em PDF para professores. Esses recursos ainda não integram o acesso disponível.</p>}
     </article>)}
