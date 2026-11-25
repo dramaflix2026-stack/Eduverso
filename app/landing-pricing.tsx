@@ -51,11 +51,12 @@ export default function LandingPricing(){
      <div style={{position:"relative",width:"100%"}}>
       <img src={plan.featured?"/images/file_000000005800820e8e9387ef2408d90a.webp":"/images/file_000000004b64820eafc9c10a5c7eb495.webp"} alt={plan.name+" — R$ "+plan.price+", pagamento único, sem mensalidades. Compra pela Kiwify, 7 dias de garantia."} style={{display:"block",width:"100%",height:"auto"}} loading="lazy"/>
       <a href={plan.checkoutUrl} onClick={(event)=>trackEduversoCheckout(event,{productId:plan.productId,productName:plan.name,value:plan.amount,checkoutUrl:plan.checkoutUrl})} aria-label={"Comprar "+plan.name+" na Kiwify"} style={{position:"absolute",left:"10.3%",width:"79.4%",top:plan.featured?"82.7%":"81.3%",height:plan.featured?"6%":"6.9%",borderRadius:40,display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",fontWeight:700,fontSize:"clamp(13px,4vw,23px)",textDecoration:"none",background:"linear-gradient(100deg,#a34ce8,#8614ca)"}}>Quero o Eduverso {plan.featured?"Estudante":"Professor"} →</a>
+     {plan.planned&&<span style={{position:"absolute",left:"8%",width:"84%",top:"89%",fontSize:"clamp(10px,2.8vw,15px)",textAlign:"center",color:"#e5d5fa"}}>Pagamento único · Sem mensalidades</span>}
      </div>
-     {plan.planned&&<p style={{margin:"10px 0 0",padding:"0 16px",fontSize:13,lineHeight:1.5,color:"#c8b9df",textAlign:"center"}}>Pagamento único de R$ 79,90, sem mensalidades. Em desenvolvimento: avaliações e questões em massa, gabaritos comentados e exportação em PDF para professores. Esses recursos ainda não integram o acesso disponível.</p>}
+     
     </article>)}
    </div>
-   <div className="lp-pricing-trust"><span aria-hidden="true">ⓘ</span><p>Use no cadastro o mesmo e-mail da compra e confirme-o para vincular seu acesso. Complementos premium são vendidos separadamente. Consulte as condições no checkout.</p></div>
+   
   </div>
  </section>;
 }
