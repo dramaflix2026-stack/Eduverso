@@ -23,14 +23,14 @@ export default function OfficialLinks() {
   return <main className={styles.page}>
     <div className={styles.content}>
       <header className={styles.header}>
-        <span className={styles.mark} aria-hidden="true">✦</span>
-        <h1>Eduverso<span>.</span></h1>
-        <p>Seu universo de estudos com IA.</p>
+        <span className={styles.mark} aria-hidden="true"><img src="/icon.svg" alt="" width="54" height="54"/></span>
+        <h1>Eduverso<span> AI</span></h1>
+        <p>Seu universo de estudos com inteligência artificial.</p>
       </header>
-      <nav className={styles.links} aria-label="Links oficiais do Eduverso">
-        {links.map(item => <a className={styles.link} href={item.href} key={item.icon}>
+      <nav className={styles.links} aria-label="Links oficiais do Eduverso"><p className={styles.navLabel}>ESCOLHA SUA EXPERIÊNCIA</p>
+        {links.map(item => <a className={styles.link+(item.icon==="atlas"?" "+styles.featured:"")} href={item.href} key={item.icon}>
           <span className={styles.icon}><LinkIcon kind={item.icon}/></span>
-          <span className={styles.copy}><strong>{item.title}</strong><small>{item.description}</small></span>
+          <span className={styles.copy}><strong>{item.title}</strong><small>{item.description}</small>{item.icon==="atlas"&&<span className={styles.tag}>Laboratório interativo</span>}</span>
           <svg className={styles.arrow} aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17 17 7M7 7h10v10"/></svg>
         </a>)}
       </nav>
