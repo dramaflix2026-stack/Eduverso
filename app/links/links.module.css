@@ -1,0 +1,21 @@
+.page{min-height:100vh;min-height:100svh;display:flex;align-items:center;justify-content:center;padding:48px 20px max(36px,env(safe-area-inset-bottom));background:radial-gradient(ellipse at 50% 0%,#35205e 0%,transparent 46%),#090811;color:#faf7ff;font-family:Arial,Helvetica,sans-serif}
+.content{width:100%;max-width:480px}
+.header{text-align:center;margin-bottom:34px}
+.mark{display:grid;place-items:center;margin:0 auto 16px;width:66px;height:66px;border-radius:20px;background:#8257e7;border:1px solid #b594ff;box-shadow:0 0 38px #8c61ed50;color:white;font-size:42px}
+.header h1{font-size:38px;line-height:1.1;letter-spacing:-1.8px;margin:0;font-weight:900}
+.header h1 span{color:#ad8aff}
+.header p{color:#bdb2d6;font-size:15px;margin:12px 0 0;line-height:1.5}
+.links{display:grid;gap:13px}
+.link{display:flex;align-items:center;gap:13px;padding:17px 15px;min-height:88px;border:1px solid #544078;border-radius:17px;background:#191328;color:#fff;text-decoration:none;transition:background .18s,border-color .18s,transform .18s}
+.link:hover{background:#241939;border-color:#a482f9;transform:translateY(-2px)}
+.link:focus-visible{outline:3px solid #c7adff;outline-offset:4px}
+.icon{width:46px;height:46px;display:grid;place-items:center;flex:none;border-radius:13px;background:#30204f;color:#c1a3ff}
+.copy{flex:1;min-width:0;display:grid;gap:6px}
+.copy strong{font-size:16px;font-weight:750;line-height:1.25}
+.copy small{font-size:12px;color:#bdb2d6;line-height:1.4}
+.arrow{flex:none;color:#b99aff}
+.footer{text-align:center;margin-top:35px;color:#a79bbd}
+.footer p{font-size:13px;margin:0 0 9px}
+.footer small{font-size:11px;color:#9285ab}
+@media(max-width:360px){.page{padding-inline:14px}.link{padding-inline:11px;gap:10px}.copy strong{font-size:14px}.icon{width:40px;height:40px}}
+@media(prefers-reduced-motion:reduce){.link{transition:none}.link:hover{transform:none}}
