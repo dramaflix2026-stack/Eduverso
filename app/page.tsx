@@ -5,9 +5,20 @@ import LandingPricing from "./landing-pricing";
 import MetaPixelTracking from "./meta-pixel";
 import "./landing.css";
 
+// Revalidate the public landing page so expired campaign copy is removed automatically.
+export const revalidate = 60;
+const BLACK_FRIDAY_END = Date.parse("2026-11-28T00:00:00-03:00");
 const go=(name:string)=>"/plataforma?disciplina="+encodeURIComponent(name);
 export default function Landing(){
+ const blackFriday = Date.now() < BLACK_FRIDAY_END;
+ const promo = "Oferta Black Friday válida até 27/11";
  return <div className="edu-lp">
+  {blackFriday && <div className="lp-bf-banner" aria-label={promo}>
+   <input className="lp-bf-pause" type="checkbox" id="lp-bf-pause" aria-label="Pausar faixa de oferta"/>
+   <label className="lp-bf-pause-label" htmlFor="lp-bf-pause" aria-hidden="true"><span className="lp-bf-pause-icon">Ⅱ</span><span className="lp-bf-play-icon">▶</span></label>
+   <div className="lp-bf-viewport" aria-hidden="true"><div className="lp-bf-track">{[0,1].map(group=><div className="lp-bf-group" key={group}>{[0,1,2,3].map(item=><span key={item}>✦ {promo} <b>•</b> Condição por tempo limitado <b>•</b></span>)}</div>)}</div></div>
+   <span className="lp-bf-static" aria-hidden="true">{promo}</span>
+  </div>}
   <header className="lp-header" id="topo">
    <div className="lp-container lp-header-inner">
     <Link href="/" className="lp-logo" aria-label="Eduverso — início"><span className="lp-mark" aria-hidden="true">✦</span><strong>Eduverso<span>.</span></strong></Link>
@@ -18,22 +29,25 @@ export default function Landing(){
    </div>
   </header>
   <main>
-   <section className="lp-hero lp-container" aria-labelledby="lp-heading">
+   <section className="lp-hero lp-container lp-hero-redesign" aria-labelledby="lp-heading">
     <div className="lp-hero-copy">
-     <span className="lp-eyebrow"><span className="lp-pulse" aria-hidden="true"/> SEU ESTUDO EM UM SÓ LUGAR</span>
-     <h1 id="lp-heading">Aprenda melhor. <em>Evolua no seu ritmo.</em></h1>
-     <p>Da escola à Medicina: aulas, questões comentadas e trilhas para você aprender com clareza, praticar e continuar evoluindo.</p>
+     <span className="lp-eyebrow lp-hero-badge"><span className="lp-pulse" aria-hidden="true"/> {blackFriday ? "ÚLTIMOS DIAS DE BLACK FRIDAY" : "SEU ESTUDO EM UM SÓ LUGAR"}</span>
+     <h1 id="lp-heading">Estude com mais clareza. <em>{blackFriday ? "Aproveite a Black Friday do Eduverso." : "Evolua com inteligência artificial."}</em></h1>
+     <p className="lp-hero-subtitle">Da escola à Medicina: aulas, questões comentadas, revisões, trilhas e materiais com IA para você estudar no seu ritmo.</p>
+     <p className="lp-hero-description">{blackFriday ? "Oferta especial por tempo limitado para transformar sua rotina de estudos com mais organização e prática." : "Organize sua rotina de estudos, pratique e acompanhe sua evolução em um só lugar."}</p>
+     <div className="lp-hero-price"><span>A partir de <strong>R$ 49,90</strong></span><span>Pagamento único · sem mensalidade</span></div>
      <div className="lp-hero-actions">
-      <a href="#planos" className="lp-button lp-button-large">Conhecer os planos <span aria-hidden="true">↗</span></a>
-      <a href="#produto" className="lp-outline lp-button-large">Testar uma questão <span aria-hidden="true">→</span></a>
+      <a href="#planos" className="lp-button lp-button-large">{blackFriday ? "Garantir minha oferta" : "Conhecer os planos"} <span aria-hidden="true">↗</span></a>
+      <a href="#produto" className="lp-outline lp-button-large">Testar uma questão grátis <span aria-hidden="true">→</span></a>
      </div>
      <div className="lp-hero-points"><span><b aria-hidden="true">✓</b> Aulas e questões</span><span><b aria-hidden="true">✓</b> Revisão por assunto</span><span><b aria-hidden="true">✓</b> Estude no celular</span></div>
     </div>
     <div className="lp-hero-stage" aria-label="Prévia ilustrativa da plataforma Eduverso">
      <div className="lp-stage-glow" aria-hidden="true"/>
+     <div className="lp-hero-preview-label"><span aria-hidden="true">✦</span> CONHEÇA O EDUVERSO POR DENTRO</div>
      <div className="lp-app-window">
       <div className="lp-app-topbar">
-       <span className="lp-app-minimark">✦</span><strong>Eduverso<span>.</span></strong><span className="lp-window-title">VISÃO DA PLATAFORMA</span><span className="lp-app-avatar" aria-hidden="true">E</span>
+       <span className="lp-app-minimark">✦</span><strong>Eduverso<span>.</span></strong><span className="lp-window-title">ÁREA DE ESTUDOS</span><span className="lp-app-avatar" aria-hidden="true">E</span>
       </div>
       <div className="lp-app-body">
        <aside className="lp-app-sidebar" aria-hidden="true"><span className="lp-app-side-active">▦</span><span>◫</span><span>⌁</span><span>⚙</span></aside>
@@ -57,8 +71,7 @@ export default function Landing(){
        </div>
       </div>
      </div>
-     <div className="lp-floating-chip lp-floating-chip-left" aria-hidden="true"><span>✦</span><strong>Conteúdos organizados</strong></div>
-     <a href="#planos" className="lp-floating-chip lp-floating-chip-right lp-offer-chip" aria-label="Conhecer os dois planos, a partir de R$ 49,90"><span className="lp-offer-chip-icon" aria-hidden="true">✦</span><span><strong>A partir de R$ 49,90</strong><small>2 opções de acesso ↗</small></span></a>
+     <div className="lp-hero-preview-footer"><span>✓ Aulas, prática e revisão</span><a href="#planos">{blackFriday ? "Oferta até 27/11" : "Conhecer planos"} <span aria-hidden="true">↗</span></a></div>
      <p className="lp-illustration-note">Prévia ilustrativa da interface · veja as experiências reais abaixo</p>
     </div>
    </section>
