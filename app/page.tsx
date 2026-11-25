@@ -1,5 +1,6 @@
 import Link from "next/link";
 import LandingPreview from "./landing-preview";
+import LandingDemoCarousel from "./landing-demo-carousel";
 import LandingCarousel from "./landing-carousel";
 import LandingPricing from "./landing-pricing";
 import MetaPixelTracking from "./meta-pixel";
@@ -34,7 +35,7 @@ export default function Landing(){
      <p className="lp-hero-description">{blackFriday ? "Oferta especial por tempo limitado para transformar sua rotina de estudos com mais organização e prática." : "Organize sua rotina de estudos, pratique e acompanhe sua evolução em um só lugar."}</p>
      <div className="lp-hero-actions">
       <a href="#planos" className="lp-button lp-button-large">{blackFriday ? "Garantir minha oferta" : "Conhecer os planos"} <span aria-hidden="true">↗</span></a>
-      <a href="#produto" className="lp-outline lp-button-large">Testar uma questão grátis <span aria-hidden="true">→</span></a>
+      <a href="#demonstracao" className="lp-outline lp-button-large">Testar uma questão grátis <span aria-hidden="true">→</span></a>
      </div>
      <div className="lp-hero-points"><span><b aria-hidden="true">✓</b> Aulas e questões</span><span><b aria-hidden="true">✓</b> Revisão por assunto</span><span><b aria-hidden="true">✓</b> Estude no celular</span></div>
     </div>
@@ -60,13 +61,13 @@ export default function Landing(){
     </div>
    </section>
 
-   <section id="produto" className="lp-section lp-container lp-product">
+   <section id="produto" className="lp-section lp-container lp-product lp-product-gallery">
     <div className="lp-section-heading lp-centered">
      <span className="lp-eyebrow">CONHEÇA ANTES DE COMEÇAR</span>
-     <h2>Veja o Eduverso <em>funcionando.</em></h2>
-     <p>Uma plataforma que vai além de uma lista de matérias. Explore experiências disponíveis para os alunos.</p>
+     <h2>Veja o Eduverso <em>em ação.</em></h2>
+     <p>Explore as ferramentas que podem transformar sua rotina de estudos.</p>
     </div>
-    <LandingPreview/>
+    <LandingDemoCarousel><LandingPreview/></LandingDemoCarousel>
    </section>
 
    <LandingPricing/>
