@@ -72,13 +72,7 @@ export default function Landing(){
 
    <LandingPricing/>
 
-   <section className="lp-container lp-final">
-    <span className="lp-eyebrow">SUA PRÓXIMA CONQUISTA COMEÇA AQUI</span>
-    <h2>Seu próximo avanço começa <em>com uma escolha.</em></h2>
-    <p>Conheça os planos, escolha sua jornada e experimente a plataforma antes de contratar.</p>
-    <div className="lp-final-actions"><a href="#planos" className="lp-button">Ver os 2 planos <span aria-hidden="true">↗</span></a><a href="#produto" className="lp-outline">Testar demonstração <span aria-hidden="true">→</span></a></div>
-    <small>Compre diretamente na Kiwify pelo botão do seu plano. Para vincular o acesso à sua conta, use no Eduverso o mesmo e-mail informado na compra.</small>
-   </section>
+   
 
    <section className="lp-container lp-guarantee lp-guarantee-art" aria-labelledby="lp-guarantee-title">
     <picture className="lp-guarantee-picture" aria-hidden="true">
