@@ -21,9 +21,9 @@ const plans:Plan[]=[
   price:"49,90",
   amount:49.90,
   productId:"2ff451d0-e6c6-11f1-8587-35b29347523e",
-  subtitle:"Tudo para sua jornada de estudos",
-  caption:"Para quem quer estudar, praticar e acompanhar sua evolução.",
-  points:["Trilhas de Ensino Fundamental, Médio e preparação para provas","Aulas explicadas, exercícios e correções comentadas","Simulados, revisão e atlas anatômico disponíveis"],
+  subtitle:"Seu universo de estudos",
+  caption:"Aprenda no seu ritmo, pratique e acompanhe sua evolução.",
+  points:["Ensino Fundamental e Médio","Preparação para ENEM, vestibulares e concursos","Trilhas de Medicina e formações profissionais","Aulas explicadas e questões comentadas","Revisões, exercícios e simulados"],
   checkoutUrl:"https://pay.kiwify.com.br/pE7Jcf1",
   featured:true
  },
@@ -33,37 +33,36 @@ const plans:Plan[]=[
   price:"79,90",
   amount:79.90,
   productId:"4be5a3d0-e6c6-11f1-9972-d949ca894c7b",
-  subtitle:"Mais ferramentas para quem ensina",
-  caption:"Para educadores que querem preparar aulas e materiais com mais agilidade.",
-  points:["Acesso aos recursos de estudo existentes","Gerador de questões e avaliações em massa — em desenvolvimento","Gabaritos comentados e exportação em PDF — previstos"],
+  subtitle:"Mais possibilidades para ensinar",
+  caption:"Para educadores que desejam organizar estudos e preparar materiais com mais agilidade.",
+  points:["Acesso aos recursos de estudo existentes","Trilhas e conteúdos para apoio pedagógico","Aulas, exercícios e questões comentadas"],
   checkoutUrl:"https://pay.kiwify.com.br/htmdQJL",
   planned:true
  }
 ];
 export default function LandingPricing(){
- return <section className="lp-section lp-pricing-wrap" id="planos" aria-labelledby="lp-pricing-title">
+ return <section className="lp-section lp-pricing-wrap lp-pricing-redesign" id="planos" aria-labelledby="lp-pricing-title">
   <div className="lp-container">
    <div className="lp-pricing-top">
-    <div><span className="lp-eyebrow">ESCOLHA SEU EDUVERSO</span><h2 id="lp-pricing-title">Um só pagamento. <em>Seu jeito de evoluir.</em></h2><p>Dois caminhos: aprender com autonomia ou preparar conteúdos para ensinar. Escolha a opção que combina com você.</p></div>
-    <div className="lp-pricing-intro-card"><span aria-hidden="true">✦</span><strong>A partir de R$ 49,90</strong><small>Pagamento único, sem mensalidade</small></div>
+    <div><span className="lp-eyebrow">ESCOLHA SEU EDUVERSO</span><h2 id="lp-pricing-title">Invista no seu futuro. <em>Pague uma única vez.</em></h2><p>Escolha o acesso ideal para a sua jornada. Sem mensalidades.</p></div>
    </div>
    <div className="lp-pricing-grid">
     {plans.map(plan=><article key={plan.id} className={"lp-price-card"+(plan.featured?" lp-price-card-featured":"")+(plan.planned?" lp-price-card-planned":"")}>
      <div className="lp-price-head">
+      <span className="lp-price-emblem" aria-hidden="true">{plan.featured?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M2 9l10-5 10 5-10 5-10-5zM6 11v6c4 3 8 3 12 0v-6M22 9v7"/></svg>:<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="13" rx="2"/><path d="M12 16v5m-5 0h10M8 8h8m-8 4h5"/></svg>}</span>
       <span className="lp-price-name">{plan.name}</span>
-      {plan.featured&&<span className="lp-price-highlight">Para estudar</span>}
-      {plan.planned&&<span className="lp-price-soon">Ferramentas em desenvolvimento</span>}
+      <span className="lp-price-audience">{plan.featured?"PARA ESTUDANTES":"PARA PROFESSORES"}</span>
      </div>
      <h3>{plan.subtitle}</h3><p className="lp-price-caption">{plan.caption}</p>
-     <div className="lp-price-amount"><span>R$</span><strong>{plan.price}</strong></div>
-     <p className="lp-price-period">Pagamento único · sem mensalidade</p>
-     <div className="lp-price-line"/>
+     <div className="lp-price-ticket"><span className="lp-price-ticket-label">PAGAMENTO ÚNICO</span><div className="lp-price-amount"><span>R$</span><strong>{plan.price}</strong></div><p className="lp-price-period">Sem mensalidade</p></div>
+     <p className="lp-price-includes">O que você encontra no plano</p>
      <ul>{plan.points.map(item=><li key={item}><span aria-hidden="true">✓</span>{item}</li>)}</ul>
-     {plan.planned&&<p className="lp-price-development">A geração em massa ainda está em desenvolvimento e não integra os recursos atualmente disponíveis. Confira as condições da oferta antes de comprar.</p>}
-     <a className={plan.featured?"lp-button":"lp-outline"} href={plan.checkoutUrl} onClick={(event)=>trackEduversoCheckout(event,{productId:plan.productId,productName:plan.name,value:plan.amount,checkoutUrl:plan.checkoutUrl})} aria-label={"Comprar "+plan.name+" na Kiwify"}>{plan.planned?"Comprar Professor":"Comprar Estudante"} <span aria-hidden="true">↗</span></a>
+     {plan.planned&&<div className="lp-price-future"><strong>Em desenvolvimento</strong><p>Geração de questões e avaliações em massa, gabaritos comentados e exportação em PDF para professores. Esses recursos ainda não integram o acesso disponível.</p></div>}
+     <a className="lp-button lp-price-buy" href={plan.checkoutUrl} onClick={(event)=>trackEduversoCheckout(event,{productId:plan.productId,productName:plan.name,value:plan.amount,checkoutUrl:plan.checkoutUrl})} aria-label={"Comprar "+plan.name+" na Kiwify"}>{plan.planned?"Quero o Eduverso Professor":"Quero o Eduverso Estudante"} <span aria-hidden="true">↗</span></a>
+     <span className="lp-price-safe">✓ Compra pela Kiwify · 7 dias de garantia</span>
     </article>)}
    </div>
-   <div className="lp-pricing-trust"><span aria-hidden="true">ⓘ</span><p>Cada botão de compra leva diretamente ao checkout do respectivo produto na Kiwify. Para associar seu acesso no Eduverso, utilize no cadastro o mesmo e-mail informado na compra e confirme o e-mail. A geração de conteúdo em massa para professores ainda está em desenvolvimento; confira os recursos disponíveis e as condições no checkout.</p></div>
+   <div className="lp-pricing-trust"><span aria-hidden="true">ⓘ</span><p>Use no cadastro o mesmo e-mail da compra e confirme-o para vincular seu acesso. Complementos premium são vendidos separadamente. Consulte as condições no checkout.</p></div>
   </div>
  </section>;
 }

@@ -829,3 +829,52 @@
 @media(max-width:1000px){.lp-demo-gallery-card{flex-basis:calc((100% - 26px)/3)}}
 @media(max-width:680px){.edu-lp .lp-product-gallery{padding-top:38px}.lp-demo-gallery-track{gap:10px}.lp-demo-gallery-card{flex-basis:76%;max-width:300px}.lp-demo-gallery-art{border-radius:12px}.lp-demo-gallery-card h3{font-size:12px}.lp-demo-disclosure-content{padding:8px}.lp-demo-gallery-controls{gap:10px}}
 @media(prefers-reduced-motion:reduce){.lp-demo-gallery-track{scroll-behavior:auto}}
+
+/* Centered premium offer cards: no invented discounts, clear current vs planned resources. */
+.edu-lp .lp-pricing-redesign{padding-top:58px}
+.lp-pricing-redesign .lp-pricing-top{display:block;text-align:center;margin:0 auto 28px;max-width:720px}
+.lp-pricing-redesign .lp-pricing-top h2{text-wrap:balance}
+.lp-pricing-redesign .lp-pricing-top h2 em{display:block}
+.lp-pricing-redesign .lp-pricing-top p{margin:0 auto}
+.edu-lp .lp-pricing-redesign .lp-pricing-grid{max-width:850px;gap:18px}
+.edu-lp .lp-pricing-redesign .lp-price-card{isolation:isolate;overflow:hidden;padding:25px 24px 20px;text-align:center;border-radius:23px;background:radial-gradient(ellipse at 50% 0%,#7846bd35,transparent 57%),#161021;border:1px solid #7655a7}
+.edu-lp .lp-pricing-redesign .lp-price-card-featured{border:2px solid #b68aff;padding:24px 23px 19px;background:radial-gradient(ellipse at 50% 0%,#a06af254,transparent 64%),#1c112d;box-shadow:0 12px 36px #834dce2c}
+.lp-pricing-redesign .lp-price-head{flex-direction:column;justify-content:center;gap:7px}
+.lp-price-emblem{width:56px;height:56px;display:grid;place-items:center;border:1px solid #be97ff80;border-radius:17px;background:linear-gradient(145deg,#9059ec,#42266c);color:#f4e8ff;box-shadow:0 0 26px #a471f04a;margin-bottom:4px}
+.lp-price-emblem svg{width:29px;height:29px}
+.lp-pricing-redesign .lp-price-name{font-size:13px;letter-spacing:1.1px;color:#e4cdff}
+.lp-price-audience{font-size:9px;font-weight:800;color:#c9aff4;letter-spacing:1.1px}
+.lp-pricing-redesign .lp-price-card h3{font-size:23px;margin:16px auto 7px;text-wrap:balance}
+.edu-lp .lp-pricing-redesign .lp-price-caption{max-width:310px;min-height:0;margin:0 auto;font-size:12px;color:#c9bdd8}
+.lp-price-ticket{margin:20px 0 17px;padding:17px 10px 15px;border:1px solid #a47ce85e;border-radius:15px;background:linear-gradient(130deg,#8e60d51d,#130c2170)}
+.lp-price-ticket-label{font-size:10px;font-weight:850;letter-spacing:1.5px;color:#d2b5ff}
+.lp-pricing-redesign .lp-price-amount{justify-content:center;gap:6px;margin:4px auto 0}
+.lp-pricing-redesign .lp-price-amount>span{font-size:23px}
+.lp-pricing-redesign .lp-price-amount strong{font-size:clamp(48px,5.2vw,62px);letter-spacing:-2.5px;line-height:1.08}
+.edu-lp .lp-pricing-redesign .lp-price-period{margin-top:5px;font-size:12px}
+.lp-price-includes{font-size:11px;text-align:left;text-transform:uppercase;letter-spacing:.8px;font-weight:850;color:#d1b7f8;margin:0 0 12px}
+.lp-pricing-redesign .lp-price-card ul{flex:0;gap:10px;text-align:left;margin-bottom:19px}
+.lp-pricing-redesign .lp-price-card li{font-size:13px;line-height:1.45;align-items:center}
+.lp-pricing-redesign .lp-price-card li>span{display:grid;place-items:center;flex:0 0 20px;height:20px;border-radius:50%;background:#9c6dea25;color:#cfadff;font-size:13px}
+.lp-price-future{padding:12px;text-align:left;background:#b38aff0c;border:1px solid #9370bd50;border-radius:11px;margin:0 0 16px}
+.lp-price-future strong{font-size:11px;color:#d2b8f8}
+.lp-price-future p{font-size:11px;line-height:1.5;color:#c4b4d6;margin:5px 0 0}
+.edu-lp .lp-pricing-redesign .lp-price-buy{font-size:13px;min-height:51px;background:linear-gradient(105deg,#8150df,#a271f3);margin-top:auto}
+.lp-price-safe{display:block;margin-top:12px;font-size:10px;color:#bdaed2;line-height:1.5}
+.lp-pricing-redesign .lp-pricing-trust{justify-content:center;align-items:flex-start;max-width:780px;margin:17px auto 0;text-align:center}
+.lp-pricing-redesign .lp-pricing-trust p{font-size:11px;line-height:1.6}
+@media(max-width:680px){
+ .edu-lp .lp-pricing-redesign{padding-top:43px}
+ .lp-pricing-redesign .lp-pricing-top{margin-bottom:22px}
+ .lp-pricing-redesign .lp-pricing-top h2{font-size:clamp(28px,7.5vw,37px)}
+ .edu-lp .lp-pricing-redesign .lp-pricing-grid{gap:15px}
+ .edu-lp .lp-pricing-redesign .lp-price-card{padding:20px 17px 17px}
+ .edu-lp .lp-pricing-redesign .lp-price-card-featured{padding:19px 16px 16px}
+ .lp-price-emblem{width:49px;height:49px;border-radius:14px}
+ .lp-price-emblem svg{width:26px;height:26px}
+ .lp-pricing-redesign .lp-price-card h3{font-size:21px;margin-top:12px}
+ .lp-price-ticket{margin-top:15px;padding:13px 8px}
+ .lp-pricing-redesign .lp-price-amount strong{font-size:52px}
+ .lp-pricing-redesign .lp-price-card li{font-size:12px}
+ .lp-pricing-redesign .lp-price-card ul{gap:9px}
+}
