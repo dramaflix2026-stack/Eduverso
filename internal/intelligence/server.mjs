@@ -489,7 +489,7 @@ function proposalFor(action){
 }
 function strategyDecision(e){
  const make=(action,title,priority,maturity,risk,why,next,gate)=>({action,title,priority,maturity,risk,why,next,gate});
- if(!e.rows||!e.todayRows||!e.fresh)return make('data','Verificar atualização dos dados','Alta','Insuficiente','Indeterminado','Não existe coleta recente do dia para esta campanha.','Confirmar a origem e atualizar a coleta.','Dados atuais com horário verificável.');
+ if(!e.rows||!e.todayRows||!e.fresh)return make('data','Verificar atualização dos dados','Alta','Insuficiente','Indeterminado','Não existe coleta recente e uniforme do dia para esta campanha.','Confirmar a origem e atualizar a coleta.','Dados atuais com horário verificável.');
  if(!e.complete||!e.oneSource)return make('tracking','Validar rastreamento e cobertura','Alta','Insuficiente','Alto','Compras, gastos ou cliques incompletos, moeda inválida ou fontes misturadas.','Conciliar Meta, landing page e pagamentos antes de decidir.','Métricas completas e fonte comparável.');
  if(e.workflow?.active?.length)return make('experiment_active','Acompanhar experimento em andamento','Normal','Em avaliação','Alto para mudanças paralelas','Existe uma avaliação ativa nesta campanha. Evite intervenções conflitantes.','Acompanhar a janela e registrar ocorrências no laboratório.','Concluir ou cancelar justificadamente o experimento antes de propor outra intervenção.');
  if(e.funnelIssue)return make('funnel','Investigar gargalo de conversão','Alta','Exploratória','Moderado',e.funnelIssue,'Testar a etapa indicada e registrar a hipótese.','Confirmar rastreamento e mudança em teste controlado.');
@@ -505,6 +505,7 @@ function strategyEvidence(c){
  const rs=learningRows(c.id,from,d),closed=learningRows(c.id,matureFrom,end),q=metrics(rs),cq=metrics(closed);
  const target=num(setting('target_cpa:'+c.id)),tr=rs.filter(r=>r.date===d),stamp=tr.reduce((a,r)=>r.at&&r.at>a?r.at:a,'');
  const sources=new Set([...rs,...closed].map(r=>r.source));
+ const coherentToday=tr.length>0&&tr.every(x=>x.at===stamp&&x.source===tr[0].source);
  const e=closedEvidence(closed),interval=rateEstimate(e,7,20);
  const grouped=new Map();for(const row of closed){if(!grouped.has(row.date))grouped.set(row.date,[]);grouped.get(row.date).push(row)}
  const dailyStable=grouped.size===7&&target>0&&[...grouped.values()].every(g=>{const x=metrics(g);return x.cpa!==null&&x.cpa<=target*1.25});
@@ -512,7 +513,7 @@ function strategyEvidence(c){
  if(q.clicks.complete&&q.visits.complete&&q.clicks.value>=30&&q.visits.value/q.clicks.value<.6)funnelIssue='Menos de 60% dos cliques aparecem como visitas atribuídas.';
  else if(q.visits.complete&&q.checkouts.complete&&q.visits.value>=50&&q.checkouts.value/q.visits.value<.05)funnelIssue='Menos de 5% das visitas aparecem como checkouts atribuídos.';
  else if(q.checkouts.complete&&q.purchases.complete&&q.checkouts.value>=20&&q.purchases.value/q.checkouts.value<.2)funnelIssue='Menos de 20% dos checkouts aparecem como compras atribuídas.';
- return {from,to:d,matureFrom,matureTo:end,rows:rs.length,todayRows:tr.length,fresh:!!stamp&&Date.now()-Date.parse(stamp)<=4*3600000,stamp:stamp||null,complete:q.currencyOK&&q.spend.complete&&q.purchases.complete&&q.clicks.complete&&q.impressions.complete,oneSource:sources.size===1&&![undefined,null].includes([...sources][0]),source:sources.size===1?[...sources][0]:null,target,spend:q.spend.complete&&q.currencyOK?q.spend.value:null,purchases:q.purchases.complete?q.purchases.value:null,clicks:q.clicks.complete?q.clicks.value:null,cpa:q.cpa,closedDays:e.days,closedPurchases:e.valid?e.purchases:null,intervalHigh:interval?.high??null,dailyStable,funnelIssue,workflow:workflowContext(c.id)};
+ return {from,to:d,matureFrom,matureTo:end,rows:rs.length,todayRows:tr.length,fresh:coherentToday&&!!stamp&&Date.now()-Date.parse(stamp)<=4*3600000,stamp:stamp||null,complete:q.currencyOK&&q.spend.complete&&q.purchases.complete&&q.clicks.complete&&q.impressions.complete,oneSource:sources.size===1&&![undefined,null].includes([...sources][0]),source:sources.size===1?[...sources][0]:null,target,spend:q.spend.complete&&q.currencyOK?q.spend.value:null,purchases:q.purchases.complete?q.purchases.value:null,clicks:q.clicks.complete?q.clicks.value:null,cpa:q.cpa,closedDays:e.days,closedPurchases:e.valid?e.purchases:null,intervalHigh:interval?.high??null,dailyStable,funnelIssue,workflow:workflowContext(c.id)};
 }
 function refreshStrategy(){
  const d=today();
@@ -654,17 +655,51 @@ function managerPeerContext(c){
  const rows=peers.flatMap(x=>{const q=closedEvidence(learningRows(x.id,start,end));if(!q.valid||q.source!==own.source||q.days<7||q.purchases<10)return [];const ex=db.prepare("SELECT id,title,category,metric,target,status FROM experiments WHERE campaign_id=? AND status IN ('target_met','target_missed') AND reviewed_at IS NOT NULL ORDER BY evaluated_at DESC LIMIT 5").all(x.id);return ex.map(z=>({...z,campaign:x.name||x.id}))});
  return {rows,note:rows.length?'Resultados revisados de pares explicitamente comparáveis, usados apenas como contexto; não demonstram causalidade nem liberam escala.':'Ainda não há pares com evidência madura, fonte e objetivo compatíveis e experimentos revisados.'};
 }
+function conversionEvidence(c,e,q){
+ const list=campaigns(),own=funnelSummary(e.from,e.to,c.id,list),all=funnelSummary(e.from,e.to,'all',list);
+ const lastFunnel=setting('funnel_last_at')||null,lastPayment=setting('kiwify_last_at')||null;
+ const sales=db.prepare('SELECT * FROM kiwify_orders WHERE approved_day BETWEEN ? AND ?').all(e.from,e.to);
+ const active=sales.filter(x=>!x.terminal_status);
+ const gross=sales.length&&sales.every(x=>x.gross_cents!=null)?sales.reduce((n,x)=>n+x.gross_cents,0)/100:null;
+ const coverage=Object.fromEntries(metricKeys.map(k=>[k,{known:q[k].value,complete:q[k].complete}]));
+ return {coverage,own:{...own,unattributed:all.unknown,last:lastFunnel},payments:{configured:kiwifyReady(),last:lastPayment,approved:sales.length,active:active.length,gross},currencyOK:q.currencyOK,oneSource:e.oneSource,fresh:e.fresh};
+}
+function managerConversionPanel(e,q,v){
+ const fraction=(n,d)=>q[n].complete&&q[d].complete&&q[d].value>0?ratio(q[n].value,q[d].value):null;
+ const stages=[['Clique → visita','visits','clicks',30,.6,'Verificar carregamento, destino e evento de visualização.'],['Visita → checkout','checkouts','visits',50,.05,'Revisar proposta, CTA e disparo de InitiateCheckout.'],['Checkout → compra','purchases','checkouts',20,.2,'Verificar pagamentos aprovados e atribuição.']];
+ const checks=[];
+ if(!e.fresh)checks.push('Atualizar a coleta antes de interpretar o desempenho.');
+ if(!q.currencyOK||!e.oneSource)checks.push('Validar moeda e uniformidade da fonte.');
+ if(!q.purchases.complete)checks.push('Compras Meta não retornadas integralmente: consultar pagamentos e verificar o evento Purchase; ausência pode ser legítima em uma campanha sem conversões.');
+ if(!q.revenue.complete)checks.push('Receita atribuída incompleta: não interpretar ROAS ausente como zero.');
+ if(!v.own.sessions)checks.push(v.own.unattributed?'Há sessões sem campanha identificada. Verificar parâmetros de campanha e atribuição da landing.':'Nenhuma sessão própria atribuída à campanha na janela. Verificar envio dos eventos e parâmetros de campanha.');
+ if(!v.payments.configured)checks.push('Recebimento Kiwify não configurado.');
+ else if(!v.payments.last)checks.push('Kiwify configurada, mas ainda sem evento real recebido. Conferir vendas e Pix diretamente no checkout; testes autenticados não comprovam recebimento real.');
+ else if(!v.payments.approved)checks.push('Nenhum pagamento aprovado recebido nesta janela; a cobertura do webhook não é comprovadamente completa.');
+ const coverageRows=Object.entries(v.coverage).map(([k,x])=>cells([({spend:'Investimento',impressions:'Impressões',clicks:'Cliques',visits:'Visitas',checkouts:'Checkouts',purchases:'Compras',revenue:'Receita'})[k],x.known===null?'Não retornado':x.complete?'Completo nas linhas recebidas':'Parcial',x.known===null?'—':(['spend','revenue'].includes(k)?(v.currencyOK?money(x.known):'Moeda não validada'):integer(x.known))]));
+ const stageRows=stages.map(([label,n,d,min,threshold,action])=>{
+  const rate=fraction(n,d),enough=rate!==null&&q[d].value>=min;
+  const status=rate===null?'Cobertura insuficiente':!enough?'Amostra inicial':rate<threshold?'Possível gargalo':'Sem alerta neste critério';
+  return cells([label,pct(rate),status,enough&&rate<threshold?action:rate===null?'Validar dados antes de interpretar.':'Acompanhar novas coletas.']);
+ });
+ return block('Diagnóstico de conversão e qualidade dos dados',note('Janela de decisão: '+e.from+' a '+e.to+'. Meta, landing e Kiwify são fontes distintas. Não somar nem atribuir pagamentos a campanhas sem vínculo verificável.')+
+ compactMetrics([['Visitas Meta',display(q.visits)],['Checkouts Meta',display(q.checkouts)],['Compras Meta',display(q.purchases)],['Sessões próprias atribuídas',v.own.sessions?integer(v.own.sessions):'—'],['Saídas próprias para checkout',v.own.sessions?integer(v.own.checkout):'—'],['Pagamentos recebidos (operação)',v.payments.approved?integer(v.payments.approved):'Nenhum registro'],['Receita aprovada recebida (operação)',money(v.payments.gross)],['Último evento Kiwify',timeFmt(v.payments.last)]])+
+ table(['Etapa Meta','Taxa','Diagnóstico','Próxima verificação'],stageRows)+note('Limites de triagem: 60%, 5% e 20%, com denominadores mínimos de 30, 50 e 20. São critérios operacionais, não benchmarks nem causalidade.')+
+ (checks.length?'<h3>Verificações prioritárias</h3>'+checks.map(x=>note('• '+x)).join(''):note('Sem alertas de cobertura nos critérios avaliados.'))+
+ fold('Cobertura de cada indicador',table(['Indicador','Cobertura','Valor conhecido'],coverageRows)+note('Completo significa que o campo foi retornado para todas as linhas observadas; não prova cobertura de todos os anúncios ou pagamentos.')));
+}
 function managerAnalysis(c){
  const e=strategyEvidence(c),r=strategyDecision(e),proposal=managerProposal(e,r);
  const q=metrics(learningRows(c.id,e.from,e.to));
  const missing=[['spend','investimento'],['impressions','impressões'],['clicks','cliques'],['visits','visitas'],['checkouts','checkouts'],['purchases','compras'],['revenue','receita']].filter(([k])=>!q[k].complete).map(([,label])=>label);
  if(r.action==='tracking')r.why='Cobertura incompleta: '+(missing.join(', ')||'nenhum campo identificado')+(!q.currencyOK?' · moeda não validada':'')+(!e.oneSource?' · fontes não uniformes':'')+'. Ausência de dados não comprova ausência de vendas.';
+ const conversion=conversionEvidence(c,e,q);
  const peer=managerPeerContext(c);if(proposal&&peer.rows.length)proposal.peerContext=peer.rows.map(x=>x.campaign+' · '+expRef(x.id)+' · '+experimentStates[x.status]).join(' | ');
  const fingerprint=createHash('sha256').update(JSON.stringify([c.id,e.stamp,e.target,r.action,e.workflow.active.map(x=>x.id),e.workflow.prior.map(x=>[x.id,x.status,x.reviewed_at]),e.complete,e.oneSource,e.fresh,q.spend.value,q.clicks.value,q.visits.value,q.checkouts.value,q.purchases.value,q.revenue.value])).digest('hex');
- return {e,r,proposal,q,fingerprint,peer};
+ return {e,r,proposal,q,fingerprint,peer,conversion};
 }
 function managerEnsure(c){
- const {e,r,proposal,fingerprint}=managerAnalysis(c);
+ const {e,r,proposal,fingerprint,conversion}=managerAnalysis(c);
  return tx(()=>{
   let row=db.prepare('SELECT * FROM manager_decisions WHERE fingerprint=?').get(fingerprint);
   const ongoing=db.prepare("SELECT * FROM manager_decisions WHERE campaign_id=? AND action=? AND status='approved' ORDER BY id DESC LIMIT 1").get(c.id,r.action);
@@ -674,8 +709,11 @@ function managerEnsure(c){
    if(old.id===row?.id)continue;
    if(old.status==='awaiting_execution'&&old.action===r.action&&e.fresh&&e.complete&&e.oneSource&&proposal&&JSON.parse(old.proposal_json||'null')?.target===proposal.target)continue;
    const technical=['data','tracking','target'].includes(old.action);
-   const fixed=old.action==='data'?e.fresh:old.action==='tracking'?e.complete&&e.oneSource:old.action==='target'?!!e.target:false;
+   const newObservation=!!e.stamp&&e.fresh&&Date.parse(e.stamp)>Date.parse(old.approved_at||old.created_at);
+   const fixed=old.action==='data'?newObservation:old.action==='tracking'?newObservation&&e.complete&&e.oneSource:old.action==='target'?!!e.target:false;
+   if(old.status==='approved'&&technical&&!fixed)continue;
    const status=old.status==='approved'&&technical&&fixed?'resolved':'superseded';
+   if(status==='resolved'&&e.stamp)db.prepare('INSERT OR IGNORE INTO manager_checks(decision_id,stamp,checked_at,result,evidence_json) VALUES(?,?,?,?,?)').run(old.id,e.stamp,now(),'Condição técnica atendida',JSON.stringify({...e,conversion}));
    db.prepare('UPDATE manager_decisions SET status=?,updated_at=? WHERE id=?').run(status,now(),old.id);
    managerEvent(old.id,status,status==='resolved'?'Condição técnica confirmada pela nova análise.':'Análise atualizada; proposta anterior preservada no histórico.');
   }
@@ -683,7 +721,7 @@ function managerEnsure(c){
   const tracked=db.prepare("SELECT * FROM manager_decisions WHERE campaign_id=? AND status IN ('approved','awaiting_execution','monitoring')").all(c.id);
   for(const d of tracked){if(!e.stamp||!e.fresh||Date.parse(e.stamp)<Date.parse(d.approved_at||d.created_at))continue;
    const result=d.action==='data'?(e.fresh?'Coleta atualizada':'Aguardando coleta'):d.action==='tracking'?(e.complete&&e.oneSource?'Cobertura mínima confirmada':'Cobertura ainda incompleta'):d.action==='target'?(e.target?'CPA alvo definido':'CPA alvo pendente'):'Acompanhamento em andamento';
-   db.prepare('INSERT OR IGNORE INTO manager_checks(decision_id,stamp,checked_at,result,evidence_json) VALUES(?,?,?,?,?)').run(d.id,e.stamp,now(),result,JSON.stringify(e));
+   db.prepare('INSERT OR IGNORE INTO manager_checks(decision_id,stamp,checked_at,result,evidence_json) VALUES(?,?,?,?,?)').run(d.id,e.stamp,now(),result,JSON.stringify({...e,conversion}));
   }
   return row;
  });
@@ -749,13 +787,13 @@ function managerCreativeRows(c,e,snapshots){
 function managerPanel(campaign,list,form){
  const selected=list.filter(c=>c.scope==='tracked'&&(campaign==='all'||campaign===c.id));
  return block('Decisões estratégicas automáticas',note('Análise por campanha após novas coletas e a cada 15 minutos. A inteligência decide o que recomendar; alterações externas continuam exclusivamente manuais.')+selected.map(c=>{
-  const {e,r,proposal,q,fingerprint,peer}=managerAnalysis(c),snapshots=managerSnapshots(c.id),d=managerEnsure(c),id='<input type="hidden" name="id" value="'+d.id+'">';
+  const {e,r,proposal,q,fingerprint,peer,conversion}=managerAnalysis(c),snapshots=managerSnapshots(c.id),d=managerEnsure(c),id='<input type="hidden" name="id" value="'+d.id+'">';
   const pending=db.prepare("SELECT * FROM manager_decisions WHERE campaign_id=? AND status='awaiting_execution' ORDER BY id DESC").all(c.id);
   const active=db.prepare("SELECT * FROM experiments WHERE campaign_id=? AND status='running' ORDER BY id DESC").all(c.id);
   const controls=d.status==='proposed'?form('manager_approve',id,'insights','Aprovar decisão')+fold('Solicitar revisão',form('manager_review',id+area('comment','Motivo da revisão'),'insights','Registrar revisão')):note(managerStatus[d.status]||d.status);
   const pendingHtml=pending.map(x=>fold('Execução manual pendente · decisão #'+x.id,form('manager_confirm','<input type="hidden" name="id" value="'+x.id+'">'+area('comment','Descreva a única ação realmente executada'),'insights','Confirmar execução e iniciar acompanhamento'))).join('');
   const previous=e.workflow.prior.length?table(['Experimento','Resultado','Revisão'],e.workflow.prior.map(x=>cells([expRef(x.id)+' · '+x.title,experimentStates[x.status],x.review||'—']))):note('Ainda não há experimentos concluídos.');
-  return '<article class="signal manager-card"><small>'+esc(c.name||c.id)+' · decisão #'+d.id+' · '+esc(r.priority)+'</small><h2>'+esc(managerActions[r.action]||r.title)+'</h2>'+note(r.why)+compactMetrics([['Investimento',displayMoney(q,'spend')],['CTR',pct(q.ctr)],['CPC',money(q.cpc)],['Checkouts',display(q.checkouts)],['Compras',display(q.purchases)],['CPA',money(q.cpa)],['ROAS',roasText(q)],['CPA alvo',money(e.target)],['Maturidade',r.maturity],['Risco',r.risk]])+note('Próxima ação: '+r.next)+note('Condição: '+r.gate)+note('Última coleta: '+timeFmt(e.stamp)+' · '+(e.source||'fonte indisponível'))+note('Estado: '+(managerStatus[d.status]||d.status))+(proposal?note('Hipótese automática: '+proposal.hypothesis+' · CPA alvo '+money(proposal.target)+' · '+proposal.days+' dias.'):'')+(proposal?.caution?note(proposal.caution):'')+controls+pendingHtml+managerTrendPanel(snapshots)+block('Decisão por criativo',table(['Criativo','Gasto','CTR','CPC','Checkouts','Compras','CPA','Tendência','Decisão','Motivo'],managerCreativeRows(c,e,snapshots)))+block('Acompanhamento ativo',active.length?active.map(x=>note(expRef(x.id)+' · '+x.title+' · '+expState(x)+' · '+x.eval_from+' a '+x.eval_to+' · '+experimentMetrics[x.metric]+' '+expFmt(x.metric,x.target))).join(''):note('Nenhuma avaliação ativa.'))+fold('Evidências de experimentos anteriores',previous)+fold('Aprendizado de campanhas comparáveis',note(peer.note)+table(['Campanha','Experimento','Meta','Resultado'],peer.rows.map(x=>cells([x.campaign,expRef(x.id)+' · '+x.title,expFmt(x.metric,x.target),experimentStates[x.status]]))))+'</article>';
+  return '<article class="signal manager-card"><small>'+esc(c.name||c.id)+' · decisão #'+d.id+' · '+esc(r.priority)+'</small><h2>'+esc(managerActions[r.action]||r.title)+'</h2>'+note(r.why)+compactMetrics([['Investimento',displayMoney(q,'spend')],['CTR',pct(q.ctr)],['CPC',money(q.cpc)],['Checkouts',display(q.checkouts)],['Compras',display(q.purchases)],['CPA',money(q.cpa)],['ROAS',roasText(q)],['CPA alvo',money(e.target)],['Maturidade',r.maturity],['Risco',r.risk]])+note('Próxima ação: '+r.next)+note('Condição: '+r.gate)+note('Última coleta: '+timeFmt(e.stamp)+' · '+(e.source||'fonte indisponível'))+note('Estado: '+(managerStatus[d.status]||d.status))+(proposal?note('Hipótese automática: '+proposal.hypothesis+' · CPA alvo '+money(proposal.target)+' · '+proposal.days+' dias.'):'')+(proposal?.caution?note(proposal.caution):'')+controls+pendingHtml+managerConversionPanel(e,q,conversion)+managerTrendPanel(snapshots)+block('Decisão por criativo',table(['Criativo','Gasto','CTR','CPC','Checkouts','Compras','CPA','Tendência','Decisão','Motivo'],managerCreativeRows(c,e,snapshots)))+block('Acompanhamento ativo',active.length?active.map(x=>note(expRef(x.id)+' · '+x.title+' · '+expState(x)+' · '+x.eval_from+' a '+x.eval_to+' · '+experimentMetrics[x.metric]+' '+expFmt(x.metric,x.target))).join(''):note('Nenhuma avaliação ativa.'))+fold('Evidências de experimentos anteriores',previous)+fold('Aprendizado de campanhas comparáveis',note(peer.note)+table(['Campanha','Experimento','Meta','Resultado'],peer.rows.map(x=>cells([x.campaign,expRef(x.id)+' · '+x.title,expFmt(x.metric,x.target),experimentStates[x.status]]))))+'</article>';
  }).join('')+(selected.length?'':note('Selecione uma campanha monitorada. Campanhas excluídas não recebem decisões.')));
 }
 function managerMemory(campaign,list){
