@@ -27,6 +27,8 @@ CREATE INDEX IF NOT EXISTS kiwify_terminal_day ON kiwify_orders(terminal_day);
 CREATE TABLE IF NOT EXISTS learning_trials(id INTEGER PRIMARY KEY AUTOINCREMENT,campaign_id TEXT NOT NULL,created_at TEXT NOT NULL,rule TEXT NOT NULL,hypothesis TEXT NOT NULL,baseline_from TEXT NOT NULL,baseline_to TEXT NOT NULL,baseline_json TEXT NOT NULL,eval_from TEXT NOT NULL,eval_to TEXT NOT NULL,target_cpa REAL NOT NULL,status TEXT NOT NULL DEFAULT 'pending',result_json TEXT,evaluated_at TEXT,review TEXT,reviewed_at TEXT,UNIQUE(campaign_id,created_at,rule));
 CREATE INDEX IF NOT EXISTS learning_trials_campaign ON learning_trials(campaign_id,status);
 CREATE TABLE IF NOT EXISTS learning_daily(campaign_id TEXT NOT NULL,date TEXT NOT NULL,recorded_at TEXT NOT NULL,rule_version TEXT NOT NULL,metrics_json TEXT NOT NULL,alerts_json TEXT NOT NULL,PRIMARY KEY(campaign_id,date,rule_version));
+CREATE TABLE IF NOT EXISTS strategy_recommendations(id INTEGER PRIMARY KEY AUTOINCREMENT,campaign_id TEXT NOT NULL,day TEXT NOT NULL,created_at TEXT NOT NULL,version TEXT NOT NULL,action TEXT NOT NULL,evidence_json TEXT NOT NULL,recommendation_json TEXT NOT NULL,review_status TEXT NOT NULL DEFAULT 'unreviewed',review_note TEXT,reviewed_at TEXT,UNIQUE(campaign_id,day,version,action));
+CREATE INDEX IF NOT EXISTS strategy_campaign_day ON strategy_recommendations(campaign_id,day);
 CREATE TABLE IF NOT EXISTS finance(date TEXT PRIMARY KEY,gross REAL,fees REAL,refunds REAL,taxes REAL,infra REAL,other REAL,updated_at TEXT);
 `);
 const now=()=>new Date().toISOString();
@@ -436,6 +438,55 @@ function statisticalPanel(campaign,list,adBy,form){
  const cohortForm=current?form('learning_cohort','<input type="hidden" name="id" value="'+esc(current.id)+'">'+input('cohort','Grupo de campanhas comparáveis',setting('learning_cohort:'+current.id)||'','text','maxlength="80"')+note('Use o mesmo grupo apenas para campanhas com produto, preço, público, posicionamentos e atribuição comparáveis. Objetivo Meta e fonte de métricas também devem coincidir. Deixe vazio para desativar transferência.')):note('Selecione uma campanha monitorada para classificar seu grupo.');
  return block('Motor estatístico · beta',note('Janela de treinamento: '+trainStart+' a '+trainEnd+'; janela de teste temporal: '+holdStart+' a '+end+'. Os dois dias completos mais recentes são excluídos por atraso de atribuição.')+note('Modelo inicial: taxa histórica de compras atribuídas por real investido, ajustada apenas quando há pares explicitamente comparáveis. Não utiliza dados da janela de teste para estimar a taxa. Requer pelo menos 14 dias com observações, 30 compras no treino e sete dias cobertos no teste; não comprova cobertura de todos os anúncios.')+table(['Campanha','Dias treino','Compras treino','Dias teste','Fonte','Maturidade'],readiness)+cohortForm)+block('Validação temporal fora do treino',table(['Campanha','Compras observadas','Estimativa própria','Erro absoluto','Com transferência','Erro com transferência','Pares / peso'],evalRows)+note('Usa o gasto efetivamente observado na janela de teste. É uma avaliação retrospectiva condicional ao gasto, não previsão de vendas futuras. Um único período não demonstra superioridade. A transferência exige dois pares com pelo menos dez compras cada e 30 no total, com peso limitado a 20% do gasto próprio. Não altera anúncios.'))+block('Incerteza por criativo',table(['Criativo','Campanha','Dias','Impressões','CTR','Compras','CPA observado','Intervalo CPA 95% aprox.','Evidência'],ads)+note('Intervalo aproximado no modelo de Poisson com taxa estável, pelo menos 20 compras completas, três dias e uma única fonte. Não incorpora mudanças de público, atribuição ou leilão; não é garantia de confiança nem teste causal entre criativos.'));
 }
+const strategyVersion='strategy-v1';
+function strategyDecision(e){
+ const make=(action,title,priority,maturity,risk,why,next,gate)=>({action,title,priority,maturity,risk,why,next,gate});
+ if(!e.rows||!e.todayRows||!e.fresh)return make('data','Verificar atualização dos dados','Alta','Insuficiente','Indeterminado','Não existe coleta recente do dia para esta campanha.','Confirmar a origem e atualizar a coleta.','Dados atuais com horário verificável.');
+ if(!e.complete||!e.oneSource)return make('tracking','Validar rastreamento e cobertura','Alta','Insuficiente','Alto','Compras, gastos ou cliques incompletos, moeda inválida ou fontes misturadas.','Conciliar Meta, landing page e pagamentos antes de decidir.','Métricas completas e fonte comparável.');
+ if(e.funnelIssue)return make('funnel','Investigar gargalo de conversão','Alta','Exploratória','Moderado',e.funnelIssue,'Testar a etapa indicada e registrar a hipótese.','Confirmar rastreamento e mudança em teste controlado.');
+ if(!e.target)return make('target','Definir CPA alvo rentável','Média','Financeira pendente','Alto','Ainda não há meta financeira registrada para a campanha.','Preencher custos reais no simulador e salvar CPA alvo.','CPA alvo validado pelo responsável.');
+ if(e.purchases===0&&e.spend>=3*e.target)return make('review_zero','Revisar investimento sem conversões','Alta','Sinal operacional','Alto','Gasto observado de pelo menos três CPAs alvo e zero compras explicitamente retornadas.','Confirmar vendas e atribuição; revisar oferta e criativos manualmente.','Conciliação financeira e hipótese registrada.');
+ if(e.closedDays<3||e.clicks<100||e.closedPurchases<10)return make('observe','Manter em observação','Normal','Inicial','Alto para escalar','A janela não atingiu os requisitos mínimos de volume e dias encerrados.','Aguardar novas coletas sem declarar vencedor.','100 cliques, três dias encerrados e dez compras atribuídas, no mínimo.');
+ if(e.cpa!==null&&e.cpa>e.target)return make('review_cpa','Revisar CPA acima da meta','Alta','Exploratória','Alto','CPA atribuído da janela recente supera a meta registrada.','Avaliar funil e criativos; verificar receita efetiva.','CPA compatível com margem e pagamentos conciliados.');
+ if(e.closedDays>=7&&e.closedPurchases>=20&&e.intervalHigh!==null&&e.intervalHigh<=e.target&&e.cpa!==null&&e.cpa<=e.target*.85&&e.dailyStable)return make('study_scale','Estudar cenário de escala','Média','Estatística exploratória','Moderado a alto','CPA com folga de 15%, limite superior aproximado abaixo da meta e estabilidade nos dias observados.','Simular piora do CPA e avaliar manualmente a margem antes de qualquer ajuste.','Conciliar vendas reais; aprovar cenário e teste manual. Não é autorização para aumentar orçamento.');
+ return make('hold','Manter e consolidar evidências','Normal','Exploratória','Moderado','Há observações, mas não há evidência suficiente para estudar escala com segurança.','Acompanhar dias encerrados e revisar dispersão do CPA.','Sete dias maduros, 20 compras, intervalo e estabilidade compatíveis com a meta.');
+}
+function strategyEvidence(c){
+ const d=today(),from=dayShift(d,-6),end=dayShift(d,-3),matureFrom=dayShift(end,-6);
+ const rs=learningRows(c.id,from,d),closed=learningRows(c.id,matureFrom,end),q=metrics(rs),cq=metrics(closed);
+ const target=num(setting('target_cpa:'+c.id)),tr=rs.filter(r=>r.date===d),stamp=tr.reduce((a,r)=>r.at&&r.at>a?r.at:a,'');
+ const sources=new Set([...rs,...closed].map(r=>r.source));
+ const e=closedEvidence(closed),interval=rateEstimate(e,7,20);
+ const grouped=new Map();for(const row of closed){if(!grouped.has(row.date))grouped.set(row.date,[]);grouped.get(row.date).push(row)}
+ const dailyStable=grouped.size===7&&target>0&&[...grouped.values()].every(g=>{const x=metrics(g);return x.cpa!==null&&x.cpa<=target*1.25});
+ let funnelIssue=null;
+ if(q.clicks.complete&&q.visits.complete&&q.clicks.value>=30&&q.visits.value/q.clicks.value<.6)funnelIssue='Menos de 60% dos cliques aparecem como visitas atribuídas.';
+ else if(q.visits.complete&&q.checkouts.complete&&q.visits.value>=50&&q.checkouts.value/q.visits.value<.05)funnelIssue='Menos de 5% das visitas aparecem como checkouts atribuídos.';
+ else if(q.checkouts.complete&&q.purchases.complete&&q.checkouts.value>=20&&q.purchases.value/q.checkouts.value<.2)funnelIssue='Menos de 20% dos checkouts aparecem como compras atribuídas.';
+ return {from,to:d,matureFrom,matureTo:end,rows:rs.length,todayRows:tr.length,fresh:!!stamp&&Date.now()-Date.parse(stamp)<=4*3600000,stamp:stamp||null,complete:q.currencyOK&&q.spend.complete&&q.purchases.complete&&q.clicks.complete&&q.impressions.complete,oneSource:sources.size===1&&![undefined,null].includes([...sources][0]),source:sources.size===1?[...sources][0]:null,target,spend:q.spend.complete&&q.currencyOK?q.spend.value:null,purchases:q.purchases.complete?q.purchases.value:null,clicks:q.clicks.complete?q.clicks.value:null,cpa:q.cpa,closedDays:e.days,closedPurchases:e.valid?e.purchases:null,intervalHigh:interval?.high??null,dailyStable,funnelIssue};
+}
+function refreshStrategy(){
+ const d=today();
+ for(const c of campaigns().filter(x=>x.scope==='tracked')){
+  const e=strategyEvidence(c),r=strategyDecision(e);
+  db.prepare('INSERT OR IGNORE INTO strategy_recommendations(campaign_id,day,created_at,version,action,evidence_json,recommendation_json) VALUES(?,?,?,?,?,?,?)').run(c.id,d,now(),strategyVersion,r.action,JSON.stringify(e),JSON.stringify(r));
+ }
+}
+function strategyPanel(campaign,list,form){
+ const selected=list.filter(c=>c.scope==='tracked'&&(campaign==='all'||campaign===c.id));
+ const ids=new Set(selected.map(c=>c.id)),history=db.prepare('SELECT * FROM strategy_recommendations ORDER BY id DESC LIMIT 500').all().filter(r=>ids.has(r.campaign_id));
+ const reviews=history.filter(r=>['helpful','incorrect','inconclusive'].includes(r.review_status));
+ const labels={unreviewed:'Não revisada',helpful:'Útil / adequada',incorrect:'Inadequada',inconclusive:'Inconclusiva'};
+ const render=selected.map(c=>{
+  const e=strategyEvidence(c),r=strategyDecision(e);
+  return '<article class="signal"><small>'+esc(c.name||c.id)+' · Prioridade '+esc(r.priority)+'</small><h3>'+esc(r.title)+'</h3>'+compactMetrics([['Maturidade',r.maturity],['Risco da decisão',r.risk],['CPA observado',money(e.cpa)],['CPA alvo',money(e.target)],['Gasto recente',money(e.spend)],['Compras atribuídas',integer(e.purchases)],['Dias maduros',e.closedDays+'/7'],['Limite superior CPA',money(e.intervalHigh)]])+note(r.why)+note('Próximo passo: '+r.next)+note('Condição: '+r.gate)+note('Coleta do dia: '+timeFmt(e.stamp)+' · '+(e.source||'fonte não uniforme'))+'</article>';
+ }).join('');
+ const items=history.slice(0,40).map(t=>{
+  const r=JSON.parse(t.recommendation_json),e=JSON.parse(t.evidence_json);
+  return '<details><summary>'+esc(r.title)+' · '+esc(labels[t.review_status]||t.review_status)+'<small>'+esc((list.find(c=>c.id===t.campaign_id)?.name||t.campaign_id)+' · '+timeFmt(t.created_at))+'</small></summary>'+note(r.why)+note(r.next)+compactMetrics([['CPA observado',money(e.cpa)],['CPA alvo registrado',money(e.target)],['Compras',integer(e.purchases)],['Gasto',money(e.spend)]])+form('strategy_review','<input type="hidden" name="id" value="'+t.id+'">'+select('review_status','Avaliação humana',Object.entries(labels),t.review_status)+area('review_note','Justificativa e resultado observado',t.review_note||''))+'</details>';
+ }).join('');
+ return block('Recomendação estratégica atual',note('Calculada independentemente do filtro de datas: últimos sete dias até hoje e sete dias maduros encerrados há pelo menos dois dias completos. Risco e prioridade são classificações qualitativas, não probabilidades. Nenhuma alteração na Meta.')+(render||note('Selecione uma campanha monitorada. Campanhas excluídas não recebem recomendações.')))+block('Memória das recomendações','<div class="grid">'+card('Registros recentes',integer(history.length))+card('Revisões humanas',integer(reviews.length))+card('Consideradas úteis',integer(reviews.filter(x=>x.review_status==='helpful').length))+card('Consideradas inadequadas',integer(reviews.filter(x=>x.review_status==='incorrect').length))+'</div>'+note('Fotografia automática da primeira ocorrência de cada ação por campanha e dia. A recomendação atual é recalculada ao abrir a página. Avaliação humana não equivale a acurácia preditiva. Use Aprendizado para avaliar hipóteses prospectivas.')+(items||note('Aguardando primeiro registro automático.')));
+}
 function page(csrf,url){
  const p=url.searchParams,view=Object.hasOwn(names,p.get('view'))?p.get('view'):'overview',list=campaigns(),ids=new Set(list.map(c=>c.id));
  const chosen=p.get('campaign'),campaign=chosen==='all'||chosen==='excluded'||ids.has(chosen)?chosen:(ids.has(original)?original:'all');
@@ -474,7 +525,7 @@ function page(csrf,url){
   function filterDecision(d){return campaign==='all'?list.find(c=>c.id===d.campaign_id)?.scope!=='excluded':campaign==='excluded'?list.find(c=>c.id===d.campaign_id)?.scope==='excluded':d.campaign_id===campaign}
   content=block(view==='tests'?'Registrar hipótese de teste':'Registrar decisão',form('decision',select('campaign_id','Campanha',options,ids.has(campaign)?campaign:options[0]?.[0])+area('hypothesis','Hipótese / motivo')+area('decision_action','Decisão / alteração planejada'))+note('Nenhuma ação é enviada à Meta. O registro serve para lembrar a hipótese e verificar o resultado.'))+block('Decisões e resultados',decisions.map(d=>'<details><summary>'+esc(d.action)+' · '+esc(d.status)+'<small>'+esc(d.campaign_name)+' · '+esc(timeFmt(d.at))+'</small></summary>'+note(d.hypothesis)+form('outcome','<input type="hidden" name="id" value="'+d.id+'">'+select('status','Status',[['planned','Planejado'],['applied','Aplicado manualmente'],['validated','Validado'],['rejected','Reprovado'],['inconclusive','Inconclusivo']],d.status)+area('outcome','Resultado observado',d.outcome))+'</details>').join('')+(decisions.length?'':note('Nenhuma decisão registrada.')));
  }else if(view==='insights'){
-  content=diagnosticPanel(rows,byAd,adBy,byCampaign,list,campaign,m,form)+block('Indicadores do período','<div class="grid">'+kpis.map(([k,v])=>card(k,v)).join('')+'</div>');
+  content=strategyPanel(campaign,list,form)+diagnosticPanel(rows,byAd,adBy,byCampaign,list,campaign,m,form)+block('Indicadores do período','<div class="grid">'+kpis.map(([k,v])=>card(k,v)).join('')+'</div>');
  }else if(view==='learning'){
   const historical=db.prepare("SELECT d.*,c.scope FROM daily d JOIN campaigns c ON c.id=d.campaign_id WHERE c.scope='tracked' ORDER BY date").all();
   const summary=[];for(const key of ['format','angle','voice','visual','audience','duration']){const groups=new Map();for(const row of historical){const label=adBy.get(row.ad_id)?.[key];if(!label)continue;if(!groups.has(label))groups.set(label,[]);groups.get(label).push(row)}for(const [label,rs] of groups){const q=metrics(rs),n=new Set(rs.map(r=>r.campaign_id)).size;summary.push(cells([key,label,n,new Set(rs.map(r=>r.ad_id)).size,displayMoney(q,'spend'),display(q.purchases),money(q.cpa),n>=2&&q.purchases.complete&&q.purchases.value>=10?'Comparação exploratória':'Amostra insuficiente']))}}
@@ -500,6 +551,12 @@ function manage(f){
  else if(a==='profile'){if(!validID(id)||!db.prepare('SELECT 1 FROM ads WHERE id=?').get(id))throw Error('Criativo inexistente');const keys=['format','angle','hook','voice','visual','audience','duration','transcript'];db.prepare('INSERT INTO profiles VALUES(?,?,?,?,?,?,?,?,?) ON CONFLICT(ad_id) DO UPDATE SET format=excluded.format,angle=excluded.angle,hook=excluded.hook,voice=excluded.voice,visual=excluded.visual,audience=excluded.audience,duration=excluded.duration,transcript=excluded.transcript').run(id,...keys.map(k=>txt(k)))}
  else if(a==='decision'){const c=f.get('campaign_id'),h=txt('hypothesis'),d=txt('decision_action');if(!validID(c)||!h||!d||!db.prepare('SELECT 1 FROM campaigns WHERE id=?').get(c))throw Error('Preencha campanha, hipótese e decisão');db.prepare('INSERT INTO decisions(at,campaign_id,hypothesis,action,updated_at) VALUES(?,?,?,?,?)').run(now(),c,h,d,now())}
  else if(a==='outcome'){const status=f.get('status');if(!/^\d+$/.test(id||'')||!['planned','applied','validated','rejected','inconclusive'].includes(status))throw Error('Status inválido');db.prepare('UPDATE decisions SET status=?,outcome=?,updated_at=? WHERE id=?').run(status,txt('outcome'),now(),Number(id))}
+ else if(a==='strategy_review'){
+ const status=f.get('review_status'),noteText=txt('review_note');
+ if(!/^\d+$/.test(id||'')||!['unreviewed','helpful','incorrect','inconclusive'].includes(status)||!db.prepare('SELECT 1 FROM strategy_recommendations WHERE id=?').get(Number(id)))throw Error('Recomendação ou avaliação inválida');
+ if(status!=='unreviewed'&&!noteText)throw Error('Informe uma justificativa para avaliar a recomendação.');
+ db.prepare('UPDATE strategy_recommendations SET review_status=?,review_note=?,reviewed_at=? WHERE id=?').run(status,noteText,now(),Number(id));
+ }
  else if(a==='learning_cohort'){if(!validID(id)||!db.prepare("SELECT 1 FROM campaigns WHERE id=? AND scope='tracked'").get(id))throw Error('Campanha inválida');const value=txt('cohort',80);if(value)setSetting('learning_cohort:'+id,value);else db.prepare('DELETE FROM settings WHERE key=?').run('learning_cohort:'+id)}
  else if(a==='learning_trial'){
  const c=f.get('campaign_id'),rule=f.get('rule'),h=txt('hypothesis'),target=Number(f.get('trial_target')),days=Number(f.get('trial_days'));
@@ -516,7 +573,7 @@ function manage(f){
  else if(a==='import'){const p=JSON.parse(f.get('payload')||'');for(const v of Array.isArray(p)?p:[p])ingest(v)}
  else throw Error('Operação inválida');
 }
-function history(){return {campaigns:campaigns(),ads:allAds(),daily:db.prepare('SELECT * FROM daily ORDER BY date,ad_id').all(),runs:db.prepare('SELECT * FROM runs ORDER BY at').all(),observations:db.prepare('SELECT * FROM observations ORDER BY run_id,date,ad_id').all(),decisions:db.prepare('SELECT * FROM decisions').all(),finance:db.prepare('SELECT * FROM finance').all(),learning_trials:db.prepare('SELECT * FROM learning_trials').all(),learning_daily:db.prepare('SELECT * FROM learning_daily').all()}}
+function history(){return {campaigns:campaigns(),ads:allAds(),daily:db.prepare('SELECT * FROM daily ORDER BY date,ad_id').all(),runs:db.prepare('SELECT * FROM runs ORDER BY at').all(),observations:db.prepare('SELECT * FROM observations ORDER BY run_id,date,ad_id').all(),decisions:db.prepare('SELECT * FROM decisions').all(),finance:db.prepare('SELECT * FROM finance').all(),learning_trials:db.prepare('SELECT * FROM learning_trials').all(),learning_daily:db.prepare('SELECT * FROM learning_daily').all(),strategy_recommendations:db.prepare('SELECT * FROM strategy_recommendations').all()}}
 db.exec('CREATE TABLE IF NOT EXISTS dashboard_sessions(token_hash TEXT PRIMARY KEY,expires_at INTEGER NOT NULL); CREATE INDEX IF NOT EXISTS dashboard_sessions_expiry ON dashboard_sessions(expires_at)');
 const TTL=30*24*60*60*1000;
 const hash=x=>createHash('sha256').update(x).digest();
@@ -699,3 +756,5 @@ http.createServer(async(req,res)=>{
 if(ready()){sync();setInterval(sync,60*1000).unref()}
 function learningTick(){try{refreshLearning()}catch(e){console.warn('LEARNING_ERROR',clean(e.message,200))}}
 learningTick();setInterval(learningTick,15*60*1000).unref();
+function strategyTick(){try{refreshStrategy()}catch(e){console.warn('STRATEGY_ERROR',clean(e.message,200))}}
+strategyTick();setInterval(strategyTick,15*60*1000).unref();
