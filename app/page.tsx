@@ -76,8 +76,8 @@ export default function Landing(){
 
    <section aria-label="Garantia de 7 dias" style={{padding:0,background:"#0b0915"}}>
     <div style={{position:"relative",width:"100%",maxWidth:720,margin:"0 auto"}}>
-     <img src="/images/file_0000000096f4820ea8c3a741813d194c.webp" alt="Sua escolha tem 7 dias de garantia. Se mudar de ideia, solicite o cancelamento e o reembolso em até 7 dias após a compra pelos canais informados na contratação. Válida para compras realizadas. O cadastro não gera cobrança." style={{display:"block",width:"100%",height:"auto"}} loading="lazy" decoding="async"/>
-     <a href="#planos" aria-label="Conhecer os planos" style={{position:"absolute",left:"8%",top:"77.5%",width:"84%",height:"7.2%",borderRadius:40}}/>
+     <img src="/images/file_00000000c354820e82ab4d6ccc918206.webp" alt="Sua escolha tem 7 dias de garantia. Se mudar de ideia, solicite o cancelamento e o reembolso em até 7 dias após a compra pelos canais informados na contratação. Válida para compras realizadas. O cadastro não gera cobrança." style={{display:"block",width:"100%",height:"auto"}} loading="lazy" decoding="async"/>
+     <a href="#planos" aria-label="Conhecer os planos" style={{position:"absolute",left:"7.3%",top:"76.7%",width:"85.4%",height:"6.8%",borderRadius:40}}/>
     </div>
    </section>
   </main>
