@@ -37,6 +37,7 @@ CREATE INDEX IF NOT EXISTS strategy_campaign_day ON strategy_recommendations(cam
 CREATE TABLE IF NOT EXISTS manager_decisions(id INTEGER PRIMARY KEY AUTOINCREMENT,campaign_id TEXT NOT NULL,fingerprint TEXT NOT NULL UNIQUE,created_at TEXT NOT NULL,action TEXT NOT NULL,evidence_json TEXT NOT NULL,decision_json TEXT NOT NULL,proposal_json TEXT,status TEXT NOT NULL DEFAULT 'proposed',approved_at TEXT,review_note TEXT,experiment_id INTEGER,updated_at TEXT NOT NULL);
 CREATE INDEX IF NOT EXISTS manager_campaign_id ON manager_decisions(campaign_id,id);
 CREATE TABLE IF NOT EXISTS manager_events(id INTEGER PRIMARY KEY AUTOINCREMENT,decision_id INTEGER NOT NULL,at TEXT NOT NULL,kind TEXT NOT NULL,detail TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS manager_checks(decision_id INTEGER NOT NULL,stamp TEXT NOT NULL,checked_at TEXT NOT NULL,result TEXT NOT NULL,evidence_json TEXT NOT NULL,PRIMARY KEY(decision_id,stamp));
 CREATE TABLE IF NOT EXISTS finance(date TEXT PRIMARY KEY,gross REAL,fees REAL,refunds REAL,taxes REAL,infra REAL,other REAL,updated_at TEXT);
 `);
 const now=()=>new Date().toISOString();
@@ -616,19 +617,61 @@ function managerProposal(e,r){
  const previous=e.workflow.prior.find(x=>x.category===p[0]&&x.metric==='cpa'&&x.status==='target_missed');
  return {category:p[0],title:p[1],hypothesis:p[2],action:p[3],metric:'cpa',target:e.target,days:7,observation:['observe','hold'].includes(r.action),caution:previous?'Meta anterior não atingida em '+expRef(previous.id)+'. Revise a hipótese antes de repetir uma intervenção.':null};
 }
+function managerSnapshots(c,date=today()){
+ const rs=db.prepare("SELECT r.id,r.at,r.source FROM runs r WHERE r.kind='insights' AND r.status='success' AND r.source='supermetrics' AND EXISTS(SELECT 1 FROM observations o WHERE o.run_id=r.id AND o.campaign_id=? AND o.date=?) ORDER BY r.at DESC LIMIT 12").all(c,date);
+ const seen=new Set(),out=[];
+ for(const r of rs){if(seen.has(r.at))continue;seen.add(r.at);if(new Intl.DateTimeFormat('sv-SE',{timeZone:'America/Sao_Paulo'}).format(new Date(r.at))!==date)continue;
+  out.push({...r,rows:db.prepare('SELECT * FROM observations WHERE run_id=? AND campaign_id=? AND date=? ORDER BY ad_id').all(r.id,c,date)});if(out.length===3)break;
+ }return out.reverse();
+}
+function managerInterval(a,b,ad=null){
+ if(!a||!b||a.source!==b.source||Date.parse(b.at)<=Date.parse(a.at))return null;
+ const pick=x=>x.rows.filter(r=>!ad||r.ad_id===ad),ar=pick(a),br=pick(b);
+ if(!ar.length||ar.length!==br.length||ar.some((r,i)=>r.ad_id!==br[i].ad_id||r.currency!=='BRL'||br[i].currency!=='BRL'))return null;
+ const delta=br.map((r,i)=>{const v={currency:'BRL'};for(const k of metricKeys){const x=ar[i][k],y=r[k];v[k]=Number.isFinite(x)&&Number.isFinite(y)&&y>=x?y-x:null}return v});
+ const q=metrics(delta);return {from:a.at,to:b.at,minutes:(Date.parse(b.at)-Date.parse(a.at))/60000,q};
+}
+function managerTrend(snapshots,ad=null){
+ const last=managerInterval(snapshots.at(-2),snapshots.at(-1),ad),prev=managerInterval(snapshots.at(-3),snapshots.at(-2),ad);
+ if(!last||!prev)return {last,prev,label:'Aguardando três coletas comparáveis do dia',ctr:null,cpc:null};
+ const a=prev.q,b=last.q;
+ const ctr=a.impressions.complete&&b.impressions.complete&&a.impressions.value>=100&&b.impressions.value>=100&&a.ctr>0&&b.ctr!==null?(b.ctr-a.ctr)/a.ctr:null;
+ const cpc=a.clicks.complete&&b.clicks.complete&&a.clicks.value>=10&&b.clicks.value>=10&&a.cpc>0&&b.cpc!==null?(b.cpc-a.cpc)/a.cpc:null;
+ let label='Sem amostra suficiente para tendência';
+ if(ctr!==null||cpc!==null){const worse=(ctr!==null&&ctr<=-.25)||(cpc!==null&&cpc>=.25),better=(ctr!==null&&ctr>=.25)||(cpc!==null&&cpc<=-.25);label=worse&&better?'Sinais mistos de tráfego':worse?'Piora exploratória de tráfego':better?'Melhora exploratória de tráfego':'Sem variação relevante observada'}
+ return {last,prev,label,ctr,cpc};
+}
+function managerTrendPanel(snapshots){
+ const t=managerTrend(snapshots),format=(x)=>x?timeFmt(x.from)+' → '+timeFmt(x.to):'—';
+ const rows=[['Investimento',x=>displayMoney(x.q,'spend')],['Impressões',x=>display(x.q.impressions)],['Cliques',x=>display(x.q.clicks)],['CTR',x=>pct(x.q.ctr)],['CPC',x=>money(x.q.cpc)],['Checkouts',x=>display(x.q.checkouts)],['Compras',x=>display(x.q.purchases)]];
+ return block('Evolução entre coletas',note(t.label)+table(['Indicador','Intervalo anterior','Último intervalo'],[['Horário',format(t.prev),format(t.last)],...rows.map(([k,f])=>[k,t.prev?f(t.prev):'—',t.last?f(t.last):'—'])].map(cells))+compactMetrics([['Variação relativa CTR',pct(t.ctr)],['Variação relativa CPC',pct(t.cpc)]])+note('Diferenças de acumulados do mesmo dia e fonte, com mesmos anúncios observados. Valores ausentes ou revisões negativas não viram zero. Conversões incrementais podem refletir atraso de atribuição. Tendências de tráfego são exploratórias: não autorizam pausa ou escala.'));
+}
+function managerPeerContext(c){
+ const cohort=clean(setting('learning_cohort:'+c.id),80).trim().toLowerCase();
+ if(!cohort)return {rows:[],note:'Sem grupo de campanhas comparáveis definido. Não transferimos conclusões entre ofertas ou públicos diferentes.'};
+ const peers=campaigns().filter(x=>x.scope==='tracked'&&x.id!==c.id&&clean(setting('learning_cohort:'+x.id),80).trim().toLowerCase()===cohort&&c.objective&&x.objective===c.objective);
+ const end=dayShift(today(),-3),start=dayShift(end,-27),own=closedEvidence(learningRows(c.id,start,end));
+ const rows=peers.flatMap(x=>{const q=closedEvidence(learningRows(x.id,start,end));if(!q.valid||q.source!==own.source||q.days<7||q.purchases<10)return [];const ex=db.prepare("SELECT id,title,category,metric,target,status FROM experiments WHERE campaign_id=? AND status IN ('target_met','target_missed') AND reviewed_at IS NOT NULL ORDER BY evaluated_at DESC LIMIT 5").all(x.id);return ex.map(z=>({...z,campaign:x.name||x.id}))});
+ return {rows,note:rows.length?'Resultados revisados de pares explicitamente comparáveis, usados apenas como contexto; não demonstram causalidade nem liberam escala.':'Ainda não há pares com evidência madura, fonte e objetivo compatíveis e experimentos revisados.'};
+}
 function managerAnalysis(c){
  const e=strategyEvidence(c),r=strategyDecision(e),proposal=managerProposal(e,r);
  const q=metrics(learningRows(c.id,e.from,e.to));
+ const missing=[['spend','investimento'],['impressions','impressões'],['clicks','cliques'],['visits','visitas'],['checkouts','checkouts'],['purchases','compras'],['revenue','receita']].filter(([k])=>!q[k].complete).map(([,label])=>label);
+ if(r.action==='tracking')r.why='Cobertura incompleta: '+(missing.join(', ')||'nenhum campo identificado')+(!q.currencyOK?' · moeda não validada':'')+(!e.oneSource?' · fontes não uniformes':'')+'. Ausência de dados não comprova ausência de vendas.';
+ const peer=managerPeerContext(c);if(proposal&&peer.rows.length)proposal.peerContext=peer.rows.map(x=>x.campaign+' · '+expRef(x.id)+' · '+experimentStates[x.status]).join(' | ');
  const fingerprint=createHash('sha256').update(JSON.stringify([c.id,e.stamp,e.target,r.action,e.workflow.active.map(x=>x.id),e.workflow.prior.map(x=>[x.id,x.status,x.reviewed_at]),e.complete,e.oneSource,e.fresh,q.spend.value,q.clicks.value,q.visits.value,q.checkouts.value,q.purchases.value,q.revenue.value])).digest('hex');
- return {e,r,proposal,q,fingerprint};
+ return {e,r,proposal,q,fingerprint,peer};
 }
 function managerEnsure(c){
  const {e,r,proposal,fingerprint}=managerAnalysis(c);
  return tx(()=>{
   let row=db.prepare('SELECT * FROM manager_decisions WHERE fingerprint=?').get(fingerprint);
+  const ongoing=db.prepare("SELECT * FROM manager_decisions WHERE campaign_id=? AND action=? AND status='approved' ORDER BY id DESC LIMIT 1").get(c.id,r.action);
+  if(ongoing&&['data','tracking','target','experiment_active'].includes(r.action))row=ongoing;
   const older=db.prepare("SELECT * FROM manager_decisions WHERE campaign_id=? AND fingerprint<>? AND status IN ('proposed','approved','awaiting_execution')").all(c.id,fingerprint);
   for(const old of older){
-   if(old.status==='approved'&&old.action===r.action)continue;
+   if(old.id===row?.id)continue;
    if(old.status==='awaiting_execution'&&old.action===r.action&&e.fresh&&e.complete&&e.oneSource&&proposal&&JSON.parse(old.proposal_json||'null')?.target===proposal.target)continue;
    const technical=['data','tracking','target'].includes(old.action);
    const fixed=old.action==='data'?e.fresh:old.action==='tracking'?e.complete&&e.oneSource:old.action==='target'?!!e.target:false;
@@ -637,6 +680,11 @@ function managerEnsure(c){
    managerEvent(old.id,status,status==='resolved'?'Condição técnica confirmada pela nova análise.':'Análise atualizada; proposta anterior preservada no histórico.');
   }
   if(!row){const result=db.prepare('INSERT INTO manager_decisions(campaign_id,fingerprint,created_at,action,evidence_json,decision_json,proposal_json,updated_at) VALUES(?,?,?,?,?,?,?,?)').run(c.id,fingerprint,now(),r.action,JSON.stringify(e),JSON.stringify(r),proposal?JSON.stringify(proposal):null,now());const id=Number(result.lastInsertRowid);managerEvent(id,'generated',r.title);row=db.prepare('SELECT * FROM manager_decisions WHERE id=?').get(id);}
+  const tracked=db.prepare("SELECT * FROM manager_decisions WHERE campaign_id=? AND status IN ('approved','awaiting_execution','monitoring')").all(c.id);
+  for(const d of tracked){if(!e.stamp||!e.fresh||Date.parse(e.stamp)<Date.parse(d.approved_at||d.created_at))continue;
+   const result=d.action==='data'?(e.fresh?'Coleta atualizada':'Aguardando coleta'):d.action==='tracking'?(e.complete&&e.oneSource?'Cobertura mínima confirmada':'Cobertura ainda incompleta'):d.action==='target'?(e.target?'CPA alvo definido':'CPA alvo pendente'):'Acompanhamento em andamento';
+   db.prepare('INSERT OR IGNORE INTO manager_checks(decision_id,stamp,checked_at,result,evidence_json) VALUES(?,?,?,?,?)').run(d.id,e.stamp,now(),result,JSON.stringify(e));
+  }
   return row;
  });
 }
@@ -677,10 +725,10 @@ function managerManage(a,f,id){
  }
  throw Error('Operação inválida.');
 }
-function managerCreativeRows(c,e){
+function managerCreativeRows(c,e,snapshots){
  const current=learningRows(c.id,e.from,e.to),mature=learningRows(c.id,e.matureFrom,e.matureTo),groups=new Map();
  for(const x of current){if(!groups.has(x.ad_id))groups.set(x.ad_id,[]);groups.get(x.ad_id).push(x)}
- const ads=new Map(allAds().map(x=>[x.id,x]));
+ const ads=new Map(allAds().map(x=>[x.id,x])),base=metrics(current);
  return [...groups].map(([id,rs])=>{const q=metrics(rs),old=mature.filter(x=>x.ad_id===id),evidence=closedEvidence(old),est=rateEstimate(evidence,3,20);
  let action='Manter · amostra inicial',reason='Sem evidência comercial suficiente para classificar vencedor.';
  if(!e.fresh){action='Aguardar coleta';reason='Dados desatualizados.'}
@@ -689,26 +737,32 @@ function managerCreativeRows(c,e){
  else if(e.target&&evidence.valid&&evidence.days>=3&&evidence.purchases===0&&evidence.spend>=3*e.target){action='Revisar possível pausa';reason='Zero compras explicitamente informadas e gasto maduro ≥ 3 CPAs alvo. Confirmar pagamentos antes de agir.'}
  else if(e.target&&est&&est.low>e.target){action='Revisar substituição ou pausa';reason='Intervalo aproximado de CPA acima da meta em dados maduros. Exige revisão humana.'}
  else if(e.target&&est&&est.high<=e.target){action='Manter · eficiência favorável';reason='CPA maduro compatível com a meta; não prova superioridade nem autoriza escala.'}
- return cells([ads.get(id)?.name||id,displayMoney(q,'spend'),pct(q.ctr),money(q.cpc),display(q.checkouts),display(q.purchases),money(q.cpa),action,reason]);
+ const traffic=[];
+ if(base.clicks.complete&&base.clicks.value>0&&q.clicks.complete)traffic.push('Participação nos cliques: '+pct(q.clicks.value/base.clicks.value));
+ if(q.impressions.complete&&q.impressions.value>=100&&q.ctr!==null&&base.ctr!==null&&base.ctr>0)traffic.push(q.ctr>=base.ctr*1.25?'CTR acima da média da campanha':q.ctr<=base.ctr*.75?'CTR abaixo da média da campanha':'CTR próximo da média da campanha');
+ if(q.clicks.complete&&q.clicks.value>=5&&q.cpc!==null&&base.cpc!==null&&base.cpc>0)traffic.push(q.cpc>=base.cpc*1.5?'CPC elevado frente à média':q.cpc<=base.cpc*.75?'CPC abaixo da média':'CPC próximo da média');
+ if(q.checkouts.value!==null&&q.checkouts.value>0)traffic.push(integer(q.checkouts.value)+' checkouts'+(q.checkouts.complete?'':' retornados (parcial)'));else if(!q.checkouts.complete)traffic.push('Checkouts sem cobertura completa');
+ const t=managerTrend(snapshots,id);
+ return cells([ads.get(id)?.name||id,displayMoney(q,'spend'),pct(q.ctr),money(q.cpc),display(q.checkouts),display(q.purchases),money(q.cpa),t.label,action,reason+(traffic.length?' '+traffic.join(' · ')+'.':'')]);
  });
 }
 function managerPanel(campaign,list,form){
  const selected=list.filter(c=>c.scope==='tracked'&&(campaign==='all'||campaign===c.id));
  return block('Decisões estratégicas automáticas',note('Análise por campanha após novas coletas e a cada 15 minutos. A inteligência decide o que recomendar; alterações externas continuam exclusivamente manuais.')+selected.map(c=>{
-  const {e,r,proposal,q,fingerprint}=managerAnalysis(c),d=managerEnsure(c),id='<input type="hidden" name="id" value="'+d.id+'">';
+  const {e,r,proposal,q,fingerprint,peer}=managerAnalysis(c),snapshots=managerSnapshots(c.id),d=managerEnsure(c),id='<input type="hidden" name="id" value="'+d.id+'">';
   const pending=db.prepare("SELECT * FROM manager_decisions WHERE campaign_id=? AND status='awaiting_execution' ORDER BY id DESC").all(c.id);
   const active=db.prepare("SELECT * FROM experiments WHERE campaign_id=? AND status='running' ORDER BY id DESC").all(c.id);
   const controls=d.status==='proposed'?form('manager_approve',id,'insights','Aprovar decisão')+fold('Solicitar revisão',form('manager_review',id+area('comment','Motivo da revisão'),'insights','Registrar revisão')):note(managerStatus[d.status]||d.status);
   const pendingHtml=pending.map(x=>fold('Execução manual pendente · decisão #'+x.id,form('manager_confirm','<input type="hidden" name="id" value="'+x.id+'">'+area('comment','Descreva a única ação realmente executada'),'insights','Confirmar execução e iniciar acompanhamento'))).join('');
   const previous=e.workflow.prior.length?table(['Experimento','Resultado','Revisão'],e.workflow.prior.map(x=>cells([expRef(x.id)+' · '+x.title,experimentStates[x.status],x.review||'—']))):note('Ainda não há experimentos concluídos.');
-  return '<article class="signal manager-card"><small>'+esc(c.name||c.id)+' · decisão #'+d.id+' · '+esc(r.priority)+'</small><h2>'+esc(managerActions[r.action]||r.title)+'</h2>'+note(r.why)+compactMetrics([['Investimento',displayMoney(q,'spend')],['CTR',pct(q.ctr)],['CPC',money(q.cpc)],['Checkouts',display(q.checkouts)],['Compras',display(q.purchases)],['CPA',money(q.cpa)],['ROAS',roasText(q)],['CPA alvo',money(e.target)],['Maturidade',r.maturity],['Risco',r.risk]])+note('Próxima ação: '+r.next)+note('Condição: '+r.gate)+note('Última coleta: '+timeFmt(e.stamp)+' · '+(e.source||'fonte indisponível'))+note('Estado: '+(managerStatus[d.status]||d.status))+(proposal?note('Hipótese automática: '+proposal.hypothesis+' · CPA alvo '+money(proposal.target)+' · '+proposal.days+' dias.'):'')+(proposal?.caution?note(proposal.caution):'')+controls+pendingHtml+block('Decisão por criativo',table(['Criativo','Gasto','CTR','CPC','Checkouts','Compras','CPA','Decisão','Motivo'],managerCreativeRows(c,e)))+block('Acompanhamento ativo',active.length?active.map(x=>note(expRef(x.id)+' · '+x.title+' · '+expState(x)+' · '+x.eval_from+' a '+x.eval_to+' · '+experimentMetrics[x.metric]+' '+expFmt(x.metric,x.target))).join(''):note('Nenhuma avaliação ativa.'))+fold('Evidências de experimentos anteriores',previous)+'</article>';
+  return '<article class="signal manager-card"><small>'+esc(c.name||c.id)+' · decisão #'+d.id+' · '+esc(r.priority)+'</small><h2>'+esc(managerActions[r.action]||r.title)+'</h2>'+note(r.why)+compactMetrics([['Investimento',displayMoney(q,'spend')],['CTR',pct(q.ctr)],['CPC',money(q.cpc)],['Checkouts',display(q.checkouts)],['Compras',display(q.purchases)],['CPA',money(q.cpa)],['ROAS',roasText(q)],['CPA alvo',money(e.target)],['Maturidade',r.maturity],['Risco',r.risk]])+note('Próxima ação: '+r.next)+note('Condição: '+r.gate)+note('Última coleta: '+timeFmt(e.stamp)+' · '+(e.source||'fonte indisponível'))+note('Estado: '+(managerStatus[d.status]||d.status))+(proposal?note('Hipótese automática: '+proposal.hypothesis+' · CPA alvo '+money(proposal.target)+' · '+proposal.days+' dias.'):'')+(proposal?.caution?note(proposal.caution):'')+controls+pendingHtml+managerTrendPanel(snapshots)+block('Decisão por criativo',table(['Criativo','Gasto','CTR','CPC','Checkouts','Compras','CPA','Tendência','Decisão','Motivo'],managerCreativeRows(c,e,snapshots)))+block('Acompanhamento ativo',active.length?active.map(x=>note(expRef(x.id)+' · '+x.title+' · '+expState(x)+' · '+x.eval_from+' a '+x.eval_to+' · '+experimentMetrics[x.metric]+' '+expFmt(x.metric,x.target))).join(''):note('Nenhuma avaliação ativa.'))+fold('Evidências de experimentos anteriores',previous)+fold('Aprendizado de campanhas comparáveis',note(peer.note)+table(['Campanha','Experimento','Meta','Resultado'],peer.rows.map(x=>cells([x.campaign,expRef(x.id)+' · '+x.title,expFmt(x.metric,x.target),experimentStates[x.status]]))))+'</article>';
  }).join('')+(selected.length?'':note('Selecione uma campanha monitorada. Campanhas excluídas não recebem decisões.')));
 }
 function managerMemory(campaign,list){
  const ids=new Set(list.filter(c=>c.scope==='tracked'&&(campaign==='all'||campaign===c.id)).map(c=>c.id));
  const rows=db.prepare('SELECT * FROM manager_decisions ORDER BY id DESC LIMIT 500').all().filter(d=>ids.has(d.campaign_id)),events=db.prepare('SELECT * FROM manager_events ORDER BY id DESC LIMIT 1000').all(),allowed=new Set(rows.map(x=>x.id));
- const details=rows.slice(0,40).map(d=>{const r=JSON.parse(d.decision_json),e=JSON.parse(d.evidence_json),p=JSON.parse(d.proposal_json||'null');return fold('#'+d.id+' · '+(managerActions[d.action]||r.title)+' · '+(managerStatus[d.status]||d.status),note(r.why)+note('Coleta: '+timeFmt(e.stamp))+note(p?'Hipótese: '+p.hypothesis:'Sem hipótese experimental necessária.')+(d.review_note?note('Revisão: '+d.review_note):'')+(d.experiment_id?note('Experimento: '+expRef(d.experiment_id)):'')+note('Campanha: '+(list.find(c=>c.id===d.campaign_id)?.name||d.campaign_id))) }).join('');
- return block('Memória de decisões automáticas','<div class="grid">'+card('Decisões registradas',integer(rows.length))+card('Aprovações humanas',integer(rows.filter(x=>x.approved_at).length))+card('Em acompanhamento',integer(rows.filter(x=>x.status==='monitoring').length))+card('Concluídas',integer(rows.filter(x=>x.status==='resolved').length))+'</div>'+details+note('Conclusão de uma decisão técnica não equivale a venda ou hipótese validada.'))+block('Linha do tempo das decisões',table(['Horário','Decisão','Evento','Registro'],events.filter(x=>allowed.has(x.decision_id)).slice(0,100).map(x=>cells([timeFmt(x.at),'#'+x.decision_id,({generated:'Gerada',approved:'Aprovada',declined:'Revisão solicitada',superseded:'Substituída',resolved:'Concluída',monitoring:'Acompanhamento',execution_confirmed:'Execução confirmada'})[x.kind]||x.kind,x.detail]))));
+ const details=rows.slice(0,40).map(d=>{const r=JSON.parse(d.decision_json),e=JSON.parse(d.evidence_json),p=JSON.parse(d.proposal_json||'null');return fold('#'+d.id+' · '+(managerActions[d.action]||r.title)+' · '+(managerStatus[d.status]||d.status),note(r.why)+note('Coleta: '+timeFmt(e.stamp))+note(p?'Hipótese: '+p.hypothesis:'Sem hipótese experimental necessária.')+(d.review_note?note('Revisão: '+d.review_note):'')+(d.experiment_id?note('Experimento: '+expRef(d.experiment_id)):'')+table(['Coleta reavaliada','Resultado'],db.prepare('SELECT stamp,result FROM manager_checks WHERE decision_id=? ORDER BY stamp DESC LIMIT 10').all(d.id).map(x=>cells([timeFmt(x.stamp),x.result])))+note('Campanha: '+(list.find(c=>c.id===d.campaign_id)?.name||d.campaign_id))) }).join('');
+ return block('Memória de decisões automáticas','<div class="grid">'+card('Decisões registradas',integer(rows.length))+card('Aprovações humanas',integer(rows.filter(x=>x.approved_at).length))+card('Decisões técnicas em acompanhamento',integer(rows.filter(x=>x.status==='approved').length))+card('Execução manual pendente',integer(rows.filter(x=>x.status==='awaiting_execution').length))+card('Experimentos vinculados em avaliação',integer(rows.filter(x=>x.status==='monitoring').length))+card('Concluídas',integer(rows.filter(x=>x.status==='resolved').length))+'</div>'+details+note('Conclusão de uma decisão técnica não equivale a venda ou hipótese validada.'))+block('Linha do tempo das decisões',table(['Horário','Decisão','Evento','Registro'],events.filter(x=>allowed.has(x.decision_id)).slice(0,100).map(x=>cells([timeFmt(x.at),'#'+x.decision_id,({generated:'Gerada',approved:'Aprovada',declined:'Revisão solicitada',superseded:'Substituída',resolved:'Concluída',monitoring:'Acompanhamento',execution_confirmed:'Execução confirmada'})[x.kind]||x.kind,x.detail]))));
 }
 function page(csrf,url){
  const p=url.searchParams,view=Object.hasOwn(names,p.get('view'))?p.get('view'):'overview',list=campaigns(),ids=new Set(list.map(c=>c.id));
@@ -823,7 +877,7 @@ function manage(f){
  else if(a==='import'){const p=JSON.parse(f.get('payload')||'');for(const v of Array.isArray(p)?p:[p])ingest(v)}
  else throw Error('Operação inválida');
 }
-function history(){return {campaigns:campaigns(),ads:allAds(),daily:db.prepare('SELECT * FROM daily ORDER BY date,ad_id').all(),runs:db.prepare('SELECT * FROM runs ORDER BY at').all(),observations:db.prepare('SELECT * FROM observations ORDER BY run_id,date,ad_id').all(),decisions:db.prepare('SELECT * FROM decisions').all(),finance:db.prepare('SELECT * FROM finance').all(),experiments:db.prepare('SELECT * FROM experiments').all(),experiment_links:db.prepare('SELECT * FROM experiment_links').all(),experiment_events:db.prepare('SELECT * FROM experiment_events').all(),manager_decisions:db.prepare('SELECT * FROM manager_decisions').all(),manager_events:db.prepare('SELECT * FROM manager_events').all(),learning_trials:db.prepare('SELECT * FROM learning_trials').all(),learning_daily:db.prepare('SELECT * FROM learning_daily').all(),strategy_recommendations:db.prepare('SELECT * FROM strategy_recommendations').all()}}
+function history(){return {campaigns:campaigns(),ads:allAds(),daily:db.prepare('SELECT * FROM daily ORDER BY date,ad_id').all(),runs:db.prepare('SELECT * FROM runs ORDER BY at').all(),observations:db.prepare('SELECT * FROM observations ORDER BY run_id,date,ad_id').all(),decisions:db.prepare('SELECT * FROM decisions').all(),finance:db.prepare('SELECT * FROM finance').all(),experiments:db.prepare('SELECT * FROM experiments').all(),experiment_links:db.prepare('SELECT * FROM experiment_links').all(),experiment_events:db.prepare('SELECT * FROM experiment_events').all(),manager_decisions:db.prepare('SELECT * FROM manager_decisions').all(),manager_events:db.prepare('SELECT * FROM manager_events').all(),manager_checks:db.prepare('SELECT * FROM manager_checks').all(),learning_trials:db.prepare('SELECT * FROM learning_trials').all(),learning_daily:db.prepare('SELECT * FROM learning_daily').all(),strategy_recommendations:db.prepare('SELECT * FROM strategy_recommendations').all()}}
 db.exec('CREATE TABLE IF NOT EXISTS dashboard_sessions(token_hash TEXT PRIMARY KEY,expires_at INTEGER NOT NULL); CREATE INDEX IF NOT EXISTS dashboard_sessions_expiry ON dashboard_sessions(expires_at)');
 const TTL=30*24*60*60*1000;
 const hash=x=>createHash('sha256').update(x).digest();
