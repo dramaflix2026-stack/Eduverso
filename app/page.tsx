@@ -1,5 +1,4 @@
 import ClarityTracking from "./clarity-tracking";
-import LandingPreview from "./landing-preview";
 import LandingCarousel from "./landing-carousel";
 import LandingPricing from "./landing-pricing";
 import MetaPixelTracking from "./meta-pixel";
@@ -31,9 +30,9 @@ export default function Landing(){
 <div className="lp-hero-copy">
 <h1 id="lp-heading">Seu universo de estudos. <em>Potencializado por IA.</em></h1>
 <p className="lp-hero-subtitle">Aulas, exercícios e revisões da escola à Medicina. Tudo em um só lugar.</p>
-<div className="lp-hero-actions"><a href="#planos" className="lp-button lp-button-large">{blackFriday?"Garantir minha oferta":"Conhecer os planos"} <span aria-hidden="true">→</span></a><a href="#demonstracao" className="edu-hero-demo">Testar uma questão grátis</a></div>
+<div className="lp-hero-actions"><a href="#planos" className="lp-button lp-button-large">{blackFriday?"Garantir minha oferta":"Conhecer os planos"} <span aria-hidden="true">→</span></a></div>
 </div>
-<div className="lp-hero-stage lp-carousel-stage"><div className="lp-stage-glow" aria-hidden="true"/><LandingCarousel/><p className="lp-illustration-note">Imagens ilustrativas. Recursos variam por plano e complemento.</p></div>
+<div id="produto" className="lp-hero-stage lp-carousel-stage"><div className="lp-stage-glow" aria-hidden="true"/><LandingCarousel/><p className="lp-illustration-note">Imagens ilustrativas. Recursos variam por plano e complemento.</p></div>
 </section>
 
    <section className="lp-benefits-fixed" aria-labelledby="lp-benefits-title">
@@ -50,7 +49,7 @@ export default function Landing(){
     </div>
    </section>
 
-   <section id="produto" className="lp-container" style={{paddingBlock:20}}><div id="demonstracao"><LandingPreview/></div></section>
+
 
    <LandingPricing/>
 
