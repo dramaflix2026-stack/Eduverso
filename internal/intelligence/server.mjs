@@ -24,6 +24,9 @@ CREATE INDEX IF NOT EXISTS funnel_session ON funnel_events(session_hash,at);
 CREATE TABLE IF NOT EXISTS kiwify_orders(order_id TEXT PRIMARY KEY,product_id TEXT NOT NULL,product_name TEXT,approved_day TEXT,terminal_status TEXT,terminal_day TEXT,gross_cents INTEGER,fee_cents INTEGER,commission_cents INTEGER,received_at TEXT NOT NULL);
 CREATE INDEX IF NOT EXISTS kiwify_approved_day ON kiwify_orders(approved_day);
 CREATE INDEX IF NOT EXISTS kiwify_terminal_day ON kiwify_orders(terminal_day);
+CREATE TABLE IF NOT EXISTS learning_trials(id INTEGER PRIMARY KEY AUTOINCREMENT,campaign_id TEXT NOT NULL,created_at TEXT NOT NULL,rule TEXT NOT NULL,hypothesis TEXT NOT NULL,baseline_from TEXT NOT NULL,baseline_to TEXT NOT NULL,baseline_json TEXT NOT NULL,eval_from TEXT NOT NULL,eval_to TEXT NOT NULL,target_cpa REAL NOT NULL,status TEXT NOT NULL DEFAULT 'pending',result_json TEXT,evaluated_at TEXT,review TEXT,reviewed_at TEXT,UNIQUE(campaign_id,created_at,rule));
+CREATE INDEX IF NOT EXISTS learning_trials_campaign ON learning_trials(campaign_id,status);
+CREATE TABLE IF NOT EXISTS learning_daily(campaign_id TEXT NOT NULL,date TEXT NOT NULL,recorded_at TEXT NOT NULL,rule_version TEXT NOT NULL,metrics_json TEXT NOT NULL,alerts_json TEXT NOT NULL,PRIMARY KEY(campaign_id,date,rule_version));
 CREATE TABLE IF NOT EXISTS finance(date TEXT PRIMARY KEY,gross REAL,fees REAL,refunds REAL,taxes REAL,infra REAL,other REAL,updated_at TEXT);
 `);
 const now=()=>new Date().toISOString();
@@ -314,6 +317,60 @@ function diagnosticPanel(rows,byAd,adBy,byCampaign,list,campaign,m,form){
  const alerts=diagnoseCampaign(m,diagnoseContext(rows,target));
  return block('Diagnóstico assistido · regras v1',note('Regras conservadoras de triagem; limites são hipóteses operacionais, não benchmarks universais. Não inferem causalidade nem são machine learning treinado.')+render(alerts)+targetForm)+(!exact&&campaignsHtml?block('Diagnóstico por campanha',campaignsHtml):'')+block('Evidência por criativo',table(['Criativo','Campanha','Gasto','Cliques','CTR','CPC','Compras','CPA','Maturidade'],ads)+note('Não classificar vencedores entre campanhas com públicos, objetivos ou ofertas diferentes. Compras da Meta são atribuídas, não pagamentos confirmados.'));
 }
+const learningVersion='rules-v1';
+function evidenceSnapshot(rows,from,to){
+ const q=metrics(rows),span=Math.round((Date.parse(to+'T12:00:00Z')-Date.parse(from+'T12:00:00Z'))/86400000)+1;
+ const days=new Set(rows.map(r=>r.date)).size;
+ return {days,expectedDays:span,spend:q.spend.complete&&q.currencyOK?q.spend.value:null,purchases:q.purchases.complete?q.purchases.value:null,clicks:q.clicks.complete?q.clicks.value:null,cpa:q.cpa,complete:days===span&&q.spend.complete&&q.purchases.complete&&q.currencyOK};
+}
+const learningRows=(id,from,to)=>db.prepare('SELECT * FROM daily WHERE campaign_id=? AND date BETWEEN ? AND ? ORDER BY date,ad_id').all(id,from,to);
+function evaluateTrial(snapshot,target){
+ if(!snapshot.complete||snapshot.spend===null||snapshot.purchases===null)return 'inconclusive';
+ if(snapshot.purchases===0&&snapshot.spend>=3*target)return 'target_missed';
+ if(snapshot.purchases<10||snapshot.cpa===null)return 'inconclusive';
+ return snapshot.cpa<=target?'target_met':'target_missed';
+}
+function refreshLearning(){
+ // Only observed campaign data; no extrapolation of missing dates or missing conversions.
+ const d=today(),closed=dayShift(d,-1),from=dayShift(closed,-6);
+ const list=campaigns().filter(c=>c.scope==='tracked');
+ tx(()=>{
+ for(const c of list){
+  const rs=learningRows(c.id,from,closed);if(!rs.length)continue;
+  const q=metrics(rs),target=num(setting('target_cpa:'+c.id));
+  const evidence=evidenceSnapshot(rs,from,closed);
+  const alerts=diagnoseCampaign(q,diagnoseContext(rs,target));
+  db.prepare('INSERT OR IGNORE INTO learning_daily VALUES(?,?,?,?,?,?)').run(c.id,closed,now(),learningVersion,JSON.stringify({...evidence,from,to:closed,target}),JSON.stringify(alerts));
+ }
+ // Wait two complete calendar days after the evaluation window for reporting lag.
+ const cutoff=dayShift(d,-3);
+ const pending=db.prepare("SELECT * FROM learning_trials WHERE status='pending' AND eval_to<=?").all(cutoff);
+ for(const t of pending){
+  const c=list.find(x=>x.id===t.campaign_id);if(!c)continue;
+  const snapshot=evidenceSnapshot(learningRows(t.campaign_id,t.eval_from,t.eval_to),t.eval_from,t.eval_to);
+  // Missing data can arrive later. Keep pending until seven additional days, then mark inconclusive.
+  if(!snapshot.complete&&t.eval_to>dayShift(d,-10))continue;
+  const status=evaluateTrial(snapshot,t.target_cpa);
+  db.prepare('UPDATE learning_trials SET status=?,result_json=?,evaluated_at=? WHERE id=? AND status=?').run(status,JSON.stringify(snapshot),now(),t.id,'pending');
+ }
+ });
+}
+function learningPanel(campaign,list,form,options){
+ const allowedIds=new Set(list.filter(c=>campaign==='all'?c.scope==='tracked':campaign==='excluded'?c.scope==='excluded':c.id===campaign).map(c=>c.id));
+ const trials=db.prepare('SELECT * FROM learning_trials ORDER BY id DESC LIMIT 300').all().filter(t=>allowedIds.has(t.campaign_id));
+ const snapshots=db.prepare('SELECT * FROM learning_daily ORDER BY date DESC,campaign_id LIMIT 500').all().filter(t=>allowedIds.has(t.campaign_id));
+ const tracked=list.filter(c=>c.scope==='tracked'),trackedOptions=tracked.map(c=>[c.id,c.name||c.id]);
+ const states={pending:'Aguardando janela',target_met:'Meta observada atingida',target_missed:'Meta observada não atingida',inconclusive:'Inconclusivo'};
+ const eligible=trials.filter(t=>['target_met','target_missed'].includes(t.status)),met=eligible.filter(t=>t.status==='target_met').length;
+ const current=tracked.find(c=>c.id===campaign)||tracked[0];
+ const create=tracked.length?form('learning_trial',select('campaign_id','Campanha',trackedOptions,current?.id)+select('rule','Tipo de hipótese',[['observe','Manter / observar'],['creative','Teste de criativo'],['offer','Teste de oferta / funil'],['budget','Teste de orçamento']],'observe')+area('hypothesis','Hipótese e mudança planejada')+input('trial_target','CPA alvo observado (R$)',current?setting('target_cpa:'+current.id)||'':'','number','required min="0.01" max="1000000" step="0.01"')+input('trial_days','Dias completos de avaliação',7,'number','required min="3" max="30" step="1"')+note('A linha de base usa os sete dias completos anteriores. Avaliação inicia amanhã, com janela fixa e espera de dois dias completos para atribuição. Não altera anúncios.')):note('Nenhuma campanha monitorada disponível.');
+ const items=trials.map(t=>{
+  const base=JSON.parse(t.baseline_json),result=t.result_json?JSON.parse(t.result_json):null;
+  return '<details><summary>'+esc(states[t.status]||t.status)+' · '+esc(list.find(c=>c.id===t.campaign_id)?.name||t.campaign_id)+'<small>'+esc(t.eval_from+' a '+t.eval_to+' · CPA alvo '+money(t.target_cpa))+'</small></summary>'+note(t.hypothesis)+compactMetrics([['CPA anterior',money(base.cpa)],['Compras anteriores',integer(base.purchases)],['Cobertura anterior',base.days+'/'+base.expectedDays+' dias'],['CPA observado',money(result?.cpa)],['Compras observadas',integer(result?.purchases)],['Cobertura observada',result?result.days+'/'+result.expectedDays+' dias':'—']])+note('O resultado indica cumprimento da meta atribuída, não prova efeito da intervenção.')+(t.status==='pending'?note('A avaliação será automática após o prazo e a disponibilidade de dados.'):form('learning_review','<input type="hidden" name="id" value="'+t.id+'">'+area('review','Revisão humana / contexto / alterações realmente aplicadas',t.review||'')))+'</details>';
+ }).join('');
+ const evidence=snapshots.slice(0,30).map(t=>{const q=JSON.parse(t.metrics_json),alerts=JSON.parse(t.alerts_json);return cells([t.date,list.find(c=>c.id===t.campaign_id)?.name||t.campaign_id,money(q.spend),integer(q.purchases),money(q.cpa),q.days+'/'+q.expectedDays,alerts.map(a=>a.title).join(' · ')])});
+ return block('Memória estratégica · validação prospectiva','<div class="grid">'+card('Hipóteses registradas',integer(trials.length))+card('Aguardando avaliação',integer(trials.filter(t=>t.status==='pending').length))+card('Resultados avaliáveis',integer(eligible.length))+card('Metas observadas atingidas',eligible.length?pct(met/eligible.length):'—')+'</div>'+note('A taxa mede metas atingidas entre avaliações conclusivas, não precisão de uma IA nem efeito causal. Sem pagamentos conciliados, CPA é o atribuído pela Meta.'))+block('Registrar hipótese e previsão',create)+block('Histórico de hipóteses',items||note('Ainda não há hipóteses registradas.'))+block('Memória automática das campanhas',note('Uma fotografia imutável por campanha e dia encerrado, com janela retrospectiva de sete dias. Não soma coletas acumuladas.')+table(['Dia de referência','Campanha','Gasto','Compras','CPA','Dias cobertos','Diagnósticos'],evidence));
+}
 function page(csrf,url){
  const p=url.searchParams,view=Object.hasOwn(names,p.get('view'))?p.get('view'):'overview',list=campaigns(),ids=new Set(list.map(c=>c.id));
  const chosen=p.get('campaign'),campaign=chosen==='all'||chosen==='excluded'||ids.has(chosen)?chosen:(ids.has(original)?original:'all');
@@ -356,7 +413,7 @@ function page(csrf,url){
  }else if(view==='learning'){
   const historical=db.prepare("SELECT d.*,c.scope FROM daily d JOIN campaigns c ON c.id=d.campaign_id WHERE c.scope='tracked' ORDER BY date").all();
   const summary=[];for(const key of ['format','angle','voice','visual','audience','duration']){const groups=new Map();for(const row of historical){const label=adBy.get(row.ad_id)?.[key];if(!label)continue;if(!groups.has(label))groups.set(label,[]);groups.get(label).push(row)}for(const [label,rs] of groups){const q=metrics(rs),n=new Set(rs.map(r=>r.campaign_id)).size;summary.push(cells([key,label,n,new Set(rs.map(r=>r.ad_id)).size,displayMoney(q,'spend'),display(q.purchases),money(q.cpa),n>=2&&q.purchases.complete&&q.purchases.value>=10?'Comparação exploratória':'Amostra insuficiente']))}}
-  content=block('Memória comparativa entre campanhas',note('O histórico considera campanhas monitoradas e os atributos preenchidos na biblioteca. Um grupo precisa de pelo menos duas campanhas e dez compras registradas com cobertura completa para iniciar uma comparação exploratória. Isso não demonstra causalidade.')+table(['Atributo','Valor','Campanhas','Criativos','Gasto','Compras','CPA','Evidência'],summary))+block('Maturidade do aprendizado',note('Estágio atual: coleta, classificação e estatística descritiva. Treinamento de modelos, validação fora da amostra e recomendações probabilísticas ficam condicionados ao volume e qualidade dos dados.'));
+  content=learningPanel(campaign,list,form,options)+block('Memória comparativa entre campanhas',note('O histórico considera campanhas monitoradas e os atributos preenchidos na biblioteca. Um grupo precisa de pelo menos duas campanhas e dez compras registradas com cobertura completa para iniciar uma comparação exploratória. Isso não demonstra causalidade.')+table(['Atributo','Valor','Campanhas','Criativos','Gasto','Compras','CPA','Evidência'],summary))+block('Maturidade do aprendizado',note('Estágio atual: memória automática, hipóteses prospectivas e avaliação de metas observadas. Treinamento estatístico e validação de previsões fora da amostra dependem de histórico suficiente; nenhum modelo treinado está ativo.'));
  }else if(view==='finance'){
   const financial=db.prepare('SELECT * FROM finance WHERE date BETWEEN ? AND ? ORDER BY date DESC').all(from,to), excludedM=metrics(all.filter(r=>r.scope==='excluded'));
   content=block('Investimento e atribuição Meta','<div class="grid">'+[['Gasto selecionado',displayMoney(m,'spend')],['Gasto excluído da análise (conta)',displayMoney(excludedM,'spend')],['Receita atribuída Meta',displayMoney(m,'revenue')],['ROAS Meta',m.roas===null?'—':m.roas.toFixed(2)+'x']].map(([k,v])=>card(k,v)).join('')+'</div>'+note('A receita atribuída não comprova pagamento. Os registros financeiros manuais abaixo são totais da operação por dia, não atribuídos à campanha.'))+kiwifySummary(from,to,campaign)+simulationPanel(p,campaign,from,to,m)+block('Conciliação financeira manual',form('finance',input('date','Dia',today(),'date','required')+'<div class="fields">'+[['gross','Receita confirmada'],['fees','Taxas'],['refunds','Reembolsos'],['taxes','Impostos'],['infra','Infraestrutura'],['other','Outros custos']].map(([k,v])=>input(k,v,'','number','min="0" step="0.01"')).join('')+'</div>')+table(['Dia','Receita','Taxas','Reembolsos','Impostos','Infra','Outros'],financial.map(f=>cells([f.date,money(f.gross),money(f.fees),money(f.refunds),money(f.taxes),money(f.infra),money(f.other)])))+note('Valores em branco permanecem desconhecidos. Margem líquida conciliada ainda pendente. Não duplique registros manuais com os da Kiwify.'));
@@ -378,12 +435,22 @@ function manage(f){
  else if(a==='profile'){if(!validID(id)||!db.prepare('SELECT 1 FROM ads WHERE id=?').get(id))throw Error('Criativo inexistente');const keys=['format','angle','hook','voice','visual','audience','duration','transcript'];db.prepare('INSERT INTO profiles VALUES(?,?,?,?,?,?,?,?,?) ON CONFLICT(ad_id) DO UPDATE SET format=excluded.format,angle=excluded.angle,hook=excluded.hook,voice=excluded.voice,visual=excluded.visual,audience=excluded.audience,duration=excluded.duration,transcript=excluded.transcript').run(id,...keys.map(k=>txt(k)))}
  else if(a==='decision'){const c=f.get('campaign_id'),h=txt('hypothesis'),d=txt('decision_action');if(!validID(c)||!h||!d||!db.prepare('SELECT 1 FROM campaigns WHERE id=?').get(c))throw Error('Preencha campanha, hipótese e decisão');db.prepare('INSERT INTO decisions(at,campaign_id,hypothesis,action,updated_at) VALUES(?,?,?,?,?)').run(now(),c,h,d,now())}
  else if(a==='outcome'){const status=f.get('status');if(!/^\d+$/.test(id||'')||!['planned','applied','validated','rejected','inconclusive'].includes(status))throw Error('Status inválido');db.prepare('UPDATE decisions SET status=?,outcome=?,updated_at=? WHERE id=?').run(status,txt('outcome'),now(),Number(id))}
+ else if(a==='learning_trial'){
+ const c=f.get('campaign_id'),rule=f.get('rule'),h=txt('hypothesis'),target=Number(f.get('trial_target')),days=Number(f.get('trial_days'));
+ if(!validID(c)||!db.prepare("SELECT 1 FROM campaigns WHERE id=? AND scope='tracked'").get(c)||!['observe','creative','offer','budget'].includes(rule)||!h||!Number.isFinite(target)||target<.01||target>1000000||!Number.isInteger(days)||days<3||days>30)throw Error('Hipótese ou meta inválida');
+ const d=today(),baseTo=dayShift(d,-1),baseFrom=dayShift(d,-7),evalFrom=dayShift(d,1),evalTo=dayShift(d,days);
+ const baseline=evidenceSnapshot(learningRows(c,baseFrom,baseTo),baseFrom,baseTo);
+ const overlap=db.prepare("SELECT 1 FROM learning_trials WHERE campaign_id=? AND status='pending' AND eval_from<=? AND eval_to>=?").get(c,evalTo,evalFrom);
+ if(overlap)throw Error('Já existe uma hipótese pendente com janela sobreposta nesta campanha.');
+ db.prepare('INSERT INTO learning_trials(campaign_id,created_at,rule,hypothesis,baseline_from,baseline_to,baseline_json,eval_from,eval_to,target_cpa) VALUES(?,?,?,?,?,?,?,?,?,?)').run(c,now(),rule,h,baseFrom,baseTo,JSON.stringify(baseline),evalFrom,evalTo,target);
+ }
+ else if(a==='learning_review'){if(!/^\d+$/.test(id||'')||!db.prepare("SELECT 1 FROM learning_trials WHERE id=? AND status<>'pending'").get(Number(id)))throw Error('Avaliação inexistente ou pendente');db.prepare('UPDATE learning_trials SET review=?,reviewed_at=? WHERE id=?').run(txt('review'),now(),Number(id))}
  else if(a==='target_cpa'){if(!validID(id)||!db.prepare('SELECT 1 FROM campaigns WHERE id=?').get(id))throw Error('Campanha inválida');const raw=f.get('target_cpa');if(raw===null||raw===''){db.prepare('DELETE FROM settings WHERE key=?').run('target_cpa:'+id)}else{const v=Number(raw);if(!Number.isFinite(v)||v<.01||v>1000000)throw Error('CPA alvo inválido');setSetting('target_cpa:'+id,v)}}
  else if(a==='finance'){const d=f.get('date');if(!dateOK(d)||d>today())throw Error('Data inválida');const keys=['gross','fees','refunds','taxes','infra','other'];const vals=keys.map(k=>{const v=f.get(k);if(v!==null&&v!==''&&num(v)===null)throw Error('Valor financeiro inválido');return num(v)});db.prepare('INSERT INTO finance VALUES(?,?,?,?,?,?,?,?) ON CONFLICT(date) DO UPDATE SET gross=excluded.gross,fees=excluded.fees,refunds=excluded.refunds,taxes=excluded.taxes,infra=excluded.infra,other=excluded.other,updated_at=excluded.updated_at').run(d,...vals,now())}
  else if(a==='import'){const p=JSON.parse(f.get('payload')||'');for(const v of Array.isArray(p)?p:[p])ingest(v)}
  else throw Error('Operação inválida');
 }
-function history(){return {campaigns:campaigns(),ads:allAds(),daily:db.prepare('SELECT * FROM daily ORDER BY date,ad_id').all(),runs:db.prepare('SELECT * FROM runs ORDER BY at').all(),observations:db.prepare('SELECT * FROM observations ORDER BY run_id,date,ad_id').all(),decisions:db.prepare('SELECT * FROM decisions').all(),finance:db.prepare('SELECT * FROM finance').all()}}
+function history(){return {campaigns:campaigns(),ads:allAds(),daily:db.prepare('SELECT * FROM daily ORDER BY date,ad_id').all(),runs:db.prepare('SELECT * FROM runs ORDER BY at').all(),observations:db.prepare('SELECT * FROM observations ORDER BY run_id,date,ad_id').all(),decisions:db.prepare('SELECT * FROM decisions').all(),finance:db.prepare('SELECT * FROM finance').all(),learning_trials:db.prepare('SELECT * FROM learning_trials').all(),learning_daily:db.prepare('SELECT * FROM learning_daily').all()}}
 db.exec('CREATE TABLE IF NOT EXISTS dashboard_sessions(token_hash TEXT PRIMARY KEY,expires_at INTEGER NOT NULL); CREATE INDEX IF NOT EXISTS dashboard_sessions_expiry ON dashboard_sessions(expires_at)');
 const TTL=30*24*60*60*1000;
 const hash=x=>createHash('sha256').update(x).digest();
@@ -564,3 +631,5 @@ http.createServer(async(req,res)=>{
  res.writeHead(404);res.end('Not found');
 }).listen(Number(process.env.PORT||3000),'0.0.0.0');
 if(ready()){sync();setInterval(sync,60*1000).unref()}
+function learningTick(){try{refreshLearning()}catch(e){console.warn('LEARNING_ERROR',clean(e.message,200))}}
+learningTick();setInterval(learningTick,15*60*1000).unref();
