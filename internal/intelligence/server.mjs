@@ -128,7 +128,7 @@ async function checkMeta(){
  const d=today();
  const test=await metaGet(metaUrl('insights',{fields:'ad_id,spend,impressions',level:'ad',time_range:JSON.stringify({since:d,until:d}),limit:'1'}));
  if(!Array.isArray(test.data))throw Error('Acesso a Insights não confirmado');
- setSetting('meta_account_name',clean(a.name));setSetting('meta_checked_at',now());setSetting('meta_check_result','ok');setSetting('meta_check_error','');
+ console.info('META_CHECK_OK '+JSON.stringify({account:process.env.META_AD_ACCOUNT_ID,at:now()}));setSetting('meta_account_name',clean(a.name));setSetting('meta_checked_at',now());setSetting('meta_check_result','ok');setSetting('meta_check_error','');
  return a;
 }
 async function discover(){
@@ -143,7 +143,7 @@ async function discover(){
 }
 async function insights(since,until,kind){
  const rows=await graph('insights',{level:'ad',fields:'campaign_id,campaign_name,adset_id,adset_name,ad_id,ad_name,account_currency,spend,impressions,inline_link_clicks,actions,action_values,date_start,date_stop',time_increment:'1',time_range:JSON.stringify({since,until})});
- const stamp=now();ingest({id:'meta-'+kind+'-'+since+'-'+stamp,at:stamp,source:'meta',rows:rows.map(metaRow)});
+ const stamp=now();if(!rows.length){console.info('META_INSIGHTS_EMPTY '+JSON.stringify({kind,since,until,at:stamp}));return}const result=ingest({id:'meta-'+kind+'-'+since+'-'+stamp,at:stamp,source:'meta',rows:rows.map(metaRow)});console.info('META_INSIGHTS_OK '+JSON.stringify({kind,since,until,at:stamp,count:result.count}));
 }
 const elapsed=(k,minutes)=>!setting(k)||Date.now()-Date.parse(setting(k))>=minutes*60000;
 async function sync(force=false){
@@ -159,7 +159,7 @@ async function sync(force=false){
    setSetting('reconcile_at',now());
   }
   setSetting('meta_sync_result','ok');setSetting('meta_sync_error','');return {ok:true};
- }catch(e){setSetting('meta_sync_result','error');setSetting('meta_sync_error',clean(e.message,200));runStmt.run('sync-error-'+now(),now(),'meta','insights','failed',0,clean(e.message,200));return {ok:false}}finally{busy=false}
+ }catch(e){console.warn('META_SYNC_ERROR '+JSON.stringify({at:now(),error:clean(e.message,200)}));setSetting('meta_sync_result','error');setSetting('meta_sync_error',clean(e.message,200));runStmt.run('sync-error-'+now(),now(),'meta','insights','failed',0,clean(e.message,200));return {ok:false}}finally{busy=false}
 }
 const esc=s=>String(s??'—').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const money=n=>n===null||n===undefined?'—':Number(n).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
@@ -280,6 +280,40 @@ function simulationPanel(p,campaign,from,to,m){
  const result='<div class="grid">'+card('CPA máximo de equilíbrio',money(q.breakEvenCpa))+card('CPA máximo para margem alvo',money(q.targetCpa))+card('ROAS bruto de equilíbrio',multiple(q.breakEvenRoas))+card('ROAS bruto para margem alvo',multiple(q.targetRoas))+card('Contribuição por venda antes da mídia',money(q.contribution))+card('Lucro projetado',money(q.profit))+card('Margem projetada',q.margin===null?'—':pct(q.margin))+card('Vendas esperadas',integer(q.orders))+card('Investimento projetado',money(q.spend))+card('Receita bruta projetada',money(q.gross))+card('Receita retida projetada',money(q.netRevenue))+card('ROAS bruto projetado',multiple(q.roas))+'</div>';
  return block('Simulador de lucratividade e escala',note('Projeção hipotética, não resultado real. Ticket inicial de R$ 49,90 e orçamento de R$ 35,22 são exemplos editáveis. Preencha as taxas, reembolsos, custos, ticket médio (incluindo bump quando aplicável) e CPA estimado. Nenhuma taxa real é presumida.')+(error?'<div class="notice">'+esc(error)+'</div>':'')+note('CPA atribuído no filtro Meta: '+money(m.cpa)+' · use apenas se houver amostra representativa.')+form+result+note(q.contribution<=0?'A contribuição antes da mídia é negativa ou nula: não existe CPA positivo rentável nestas condições.':q.targetCpa===null?'Não existe CPA positivo para a margem alvo com estas premissas, ou o orçamento é zero.':'CPA máximo inclui os custos fixos do período projetado.')+note('Modelo conservador: taxas e custos variáveis são cobrados sobre todas as vendas aprovadas, inclusive reembolsadas; impostos sobre receita retida. Margem = lucro / receita após reembolsos. ROAS = receita bruta / mídia. Vendas esperadas são estimativas fracionárias, não promessas.'))+block('Cenários de orçamento',table(['Orçamento','Diário','Mídia total','Vendas esperadas','Receita bruta','Lucro','Margem'],scenarios)+note('Mantém o CPA constante para comparar cenários. A escala real pode elevar o CPA; não altera campanhas.'))+block('Sensibilidade à piora ou melhora do CPA',table(['CPA','Vendas esperadas','Lucro','Margem','ROAS bruto'],sensitivity)+note('Mesmo orçamento; CPA varia de 80% a 150% da premissa. Use esta tabela antes de decidir uma escala.'));
 }
+// Conservative screening rules, not a trained predictive model.
+function diagnoseCampaign(q,context){
+ const alerts=[],add=(level,title,why,next)=>alerts.push({level,title,why,next});
+ if(!context.rowCount){add('neutral','Sem observações','Não há linhas de anúncio no filtro.','Aguardar coleta válida.');return alerts}
+ if(context.stale)add('warning','Coleta desatualizada','A última observação do filtro é antiga para o dia atual.','Verificar integrações antes de interpretar desempenho.');
+ if(!q.purchases.complete||!q.clicks.complete||!q.spend.complete||!q.impressions.complete||!q.currencyOK)add('warning','Cobertura incompleta','Métricas ausentes ou moeda não validada impedem conclusões financeiras.','Conferir origem e rastreamento; não converter ausências em zero.');
+ if(!q.clicks.complete||q.clicks.value<100)add('neutral','Fase de observação','Menos de 100 cliques completos, ou cobertura desconhecida.','Manter coleta e não declarar vencedor por CTR isolado.');
+ if(q.clicks.complete&&q.visits.complete&&q.clicks.value>=30&&ratio(q.visits.value,q.clicks.value)<.6)add('warning','Possível gargalo entre clique e página','Menos de 60% dos cliques aparecem como visitas atribuídas.','Testar carregamento, consentimento e rastreamento; não assumir causalidade.');
+ if(q.visits.complete&&q.checkouts.complete&&q.visits.value>=50&&ratio(q.checkouts.value,q.visits.value)<.05)add('warning','Investigar oferta ou CTA','Menos de 5% das visitas aparecem como checkouts atribuídos.','Auditar clareza da oferta, botão e passagem ao checkout.');
+ if(q.checkouts.complete&&q.purchases.complete&&q.checkouts.value>=20&&ratio(q.purchases.value,q.checkouts.value)<.2)add('warning','Investigar checkout','Menos de 20% dos checkouts aparecem como compras atribuídas.','Verificar pagamentos, preço e atribuição com a Kiwify.');
+ if(q.purchases.complete&&q.spend.complete&&q.currencyOK&&q.purchases.value===0&&context.target>0&&q.spend.value>=3*context.target)add('warning','Investimento sem conversão atribuída','Gasto atingiu três vezes o CPA alvo informado e a fonte retornou zero compras.','Confirmar eventos e vendas reais; revisar manualmente o teste.');
+ const stable=context.closedDays>=3&&context.closedPurchases>=10&&context.closedComplete&&context.closedCpa!==null&&context.target>0&&context.closedCpa<=context.target*.85;
+ if(q.purchases.complete&&q.purchases.value>=10&&q.cpa!==null){
+  if(!context.target)add('neutral','Definir CPA alvo','Há compras atribuídas, mas não existe meta financeira validada.','Calcular a margem e registrar o CPA alvo no painel.');
+  else if(q.cpa>context.target)add('warning','CPA acima do alvo','CPA atribuído supera a meta financeira informada.','Conferir vendas reais e investigar criativos e funil antes de ampliar orçamento.');
+  else if(stable&&!context.stale&&q.clicks.complete&&q.clicks.value>=100&&q.cpa<=context.target*.85)add('positive','Elegível para estudar escala','CPA atribuído com folga de 15% e ao menos três dias encerrados com dez compras completas.','Conciliar receita real e estabilidade diária; simular piora do CPA antes de decidir.');
+  else add('neutral','Conversões observadas','Existe sinal de conversão, mas ainda falta maturidade ou folga financeira para estudar escala.','Acompanhar dias completos e validar pagamentos.');
+ }
+ if(!alerts.length)add('neutral','Monitoramento ativo','Não houve disparo das regras nesta seleção.','Continuar monitorando sem alteração automática.');
+ return alerts;
+}
+function diagnoseContext(rows,target){
+ const closed=rows.filter(r=>r.date<today()),cq=metrics(closed),lastAt=rows.reduce((a,r)=>r.at&&r.at>a?r.at:a,'');
+ return {rowCount:rows.length,target,stale:rows.some(r=>r.date===today())&&(!lastAt||Date.now()-Date.parse(lastAt)>4*3600000),closedDays:new Set(closed.map(r=>r.date)).size,closedPurchases:cq.purchases.complete?cq.purchases.value:0,closedComplete:cq.purchases.complete&&cq.spend.complete&&cq.currencyOK,closedCpa:cq.cpa};
+}
+function diagnosticPanel(rows,byAd,adBy,byCampaign,list,campaign,m,form){
+ const exact=list.some(c=>c.id===campaign),target=exact?num(setting('target_cpa:'+campaign)):null;
+ const targetForm=exact?form('target_cpa','<input type="hidden" name="id" value="'+esc(campaign)+'">'+input('target_cpa','CPA alvo validado (R$)',target??'','number','min="0.01" max="1000000" step="0.01"')+note('Deixe vazio para remover a meta. Use o simulador financeiro com seus custos reais antes de definir.')):note('Selecione uma campanha específica para configurar sua meta financeira.');
+ const render=alerts=>alerts.map(a=>'<article class="signal"><small>'+esc(a.level==='warning'?'ATENÇÃO':a.level==='positive'?'EVIDÊNCIA PARA REVISÃO':'OBSERVAÇÃO')+'</small><b>'+esc(a.title)+'</b>'+note(a.why)+note('Próximo passo: '+a.next)+'</article>').join('');
+ const campaignsHtml=exact?'':list.filter(c=>byCampaign.has(c.id)&&(campaign==='excluded'?c.scope==='excluded':c.scope!=='excluded')).map(c=>{const rs=byCampaign.get(c.id),q=metrics(rs),t=num(setting('target_cpa:'+c.id));return fold(c.name||c.id,render(diagnoseCampaign(q,diagnoseContext(rs,t))))}).join('');
+ const ads=[...byAd].map(([id,rs])=>{const q=metrics(rs);const evidence=!q.impressions.complete||!q.clicks.complete?'Dados incompletos':q.clicks.value<30||q.impressions.value<1000?'Amostra inicial':!q.purchases.complete?'Conversão incompleta':q.purchases.value<5?'Poucas compras atribuídas':'Sinal exploratório, não vencedor';return cells([adBy.get(id)?.name||id,rs[0].campaign_name,displayMoney(q,'spend'),display(q.clicks),pct(q.ctr),money(q.cpc),display(q.purchases),money(q.cpa),evidence])});
+ const alerts=diagnoseCampaign(m,diagnoseContext(rows,target));
+ return block('Diagnóstico assistido · regras v1',note('Regras conservadoras de triagem; limites são hipóteses operacionais, não benchmarks universais. Não inferem causalidade nem são machine learning treinado.')+render(alerts)+targetForm)+(!exact&&campaignsHtml?block('Diagnóstico por campanha',campaignsHtml):'')+block('Evidência por criativo',table(['Criativo','Campanha','Gasto','Cliques','CTR','CPC','Compras','CPA','Maturidade'],ads)+note('Não classificar vencedores entre campanhas com públicos, objetivos ou ofertas diferentes. Compras da Meta são atribuídas, não pagamentos confirmados.'));
+}
 function page(csrf,url){
  const p=url.searchParams,view=Object.hasOwn(names,p.get('view'))?p.get('view'):'overview',list=campaigns(),ids=new Set(list.map(c=>c.id));
  const chosen=p.get('campaign'),campaign=chosen==='all'||chosen==='excluded'||ids.has(chosen)?chosen:(ids.has(original)?original:'all');
@@ -318,16 +352,7 @@ function page(csrf,url){
   function filterDecision(d){return campaign==='all'?list.find(c=>c.id===d.campaign_id)?.scope!=='excluded':campaign==='excluded'?list.find(c=>c.id===d.campaign_id)?.scope==='excluded':d.campaign_id===campaign}
   content=block(view==='tests'?'Registrar hipótese de teste':'Registrar decisão',form('decision',select('campaign_id','Campanha',options,ids.has(campaign)?campaign:options[0]?.[0])+area('hypothesis','Hipótese / motivo')+area('decision_action','Decisão / alteração planejada'))+note('Nenhuma ação é enviada à Meta. O registro serve para lembrar a hipótese e verificar o resultado.'))+block('Decisões e resultados',decisions.map(d=>'<details><summary>'+esc(d.action)+' · '+esc(d.status)+'<small>'+esc(d.campaign_name)+' · '+esc(timeFmt(d.at))+'</small></summary>'+note(d.hypothesis)+form('outcome','<input type="hidden" name="id" value="'+d.id+'">'+select('status','Status',[['planned','Planejado'],['applied','Aplicado manualmente'],['validated','Validado'],['rejected','Reprovado'],['inconclusive','Inconclusivo']],d.status)+area('outcome','Resultado observado',d.outcome))+'</details>').join('')+(decisions.length?'':note('Nenhuma decisão registrada.')));
  }else if(view==='insights'){
-  const suggestions=[];
-  if(!rows.length)suggestions.push(['Sem dados','Aguarde uma coleta ou importe dados reais.']);
-  else{
-   if(!m.purchases.complete)suggestions.push(['Dados de compras incompletos','Não trate a ausência de registros como zero. Verifique atribuição e rastreamento.']);
-   if((m.clicks.value||0)<100)suggestions.push(['Amostra inicial','Menos de 100 cliques conhecidos neste filtro. Não classifique vencedores nem escale com base apenas em CTR.']);
-   if(m.clicks.complete&&m.visits.complete&&m.clicks.value>=30&&ratio(m.visits.value,m.clicks.value)<.6)suggestions.push(['Verificar passagem para a página','Menos de 60% dos cliques aparecem como visitas. Investigue carregamento, consentimento e atribuição; não conclua causalidade.']);
-   if(m.purchases.complete&&m.purchases.value>=10)suggestions.push(['Conversões observadas','Compare CPA com a margem real e estabilidade em diferentes dias antes de considerar escala.']);
-   suggestions.push(['Modo de decisão assistida','Recomendações são regras iniciais auditáveis, não um modelo treinado. Nenhuma mudança automática é executada.']);
-  }
-  content=block('Diagnóstico por regras',suggestions.map(([a,b])=>'<article class="signal"><b>'+esc(a)+'</b>'+note(b)+'</article>').join(''))+block('Indicadores do período','<div class="grid">'+kpis.map(([k,v])=>card(k,v)).join('')+'</div>');
+  content=diagnosticPanel(rows,byAd,adBy,byCampaign,list,campaign,m,form)+block('Indicadores do período','<div class="grid">'+kpis.map(([k,v])=>card(k,v)).join('')+'</div>');
  }else if(view==='learning'){
   const historical=db.prepare("SELECT d.*,c.scope FROM daily d JOIN campaigns c ON c.id=d.campaign_id WHERE c.scope='tracked' ORDER BY date").all();
   const summary=[];for(const key of ['format','angle','voice','visual','audience','duration']){const groups=new Map();for(const row of historical){const label=adBy.get(row.ad_id)?.[key];if(!label)continue;if(!groups.has(label))groups.set(label,[]);groups.get(label).push(row)}for(const [label,rs] of groups){const q=metrics(rs),n=new Set(rs.map(r=>r.campaign_id)).size;summary.push(cells([key,label,n,new Set(rs.map(r=>r.ad_id)).size,displayMoney(q,'spend'),display(q.purchases),money(q.cpa),n>=2&&q.purchases.complete&&q.purchases.value>=10?'Comparação exploratória':'Amostra insuficiente']))}}
@@ -353,6 +378,7 @@ function manage(f){
  else if(a==='profile'){if(!validID(id)||!db.prepare('SELECT 1 FROM ads WHERE id=?').get(id))throw Error('Criativo inexistente');const keys=['format','angle','hook','voice','visual','audience','duration','transcript'];db.prepare('INSERT INTO profiles VALUES(?,?,?,?,?,?,?,?,?) ON CONFLICT(ad_id) DO UPDATE SET format=excluded.format,angle=excluded.angle,hook=excluded.hook,voice=excluded.voice,visual=excluded.visual,audience=excluded.audience,duration=excluded.duration,transcript=excluded.transcript').run(id,...keys.map(k=>txt(k)))}
  else if(a==='decision'){const c=f.get('campaign_id'),h=txt('hypothesis'),d=txt('decision_action');if(!validID(c)||!h||!d||!db.prepare('SELECT 1 FROM campaigns WHERE id=?').get(c))throw Error('Preencha campanha, hipótese e decisão');db.prepare('INSERT INTO decisions(at,campaign_id,hypothesis,action,updated_at) VALUES(?,?,?,?,?)').run(now(),c,h,d,now())}
  else if(a==='outcome'){const status=f.get('status');if(!/^\d+$/.test(id||'')||!['planned','applied','validated','rejected','inconclusive'].includes(status))throw Error('Status inválido');db.prepare('UPDATE decisions SET status=?,outcome=?,updated_at=? WHERE id=?').run(status,txt('outcome'),now(),Number(id))}
+ else if(a==='target_cpa'){if(!validID(id)||!db.prepare('SELECT 1 FROM campaigns WHERE id=?').get(id))throw Error('Campanha inválida');const raw=f.get('target_cpa');if(raw===null||raw===''){db.prepare('DELETE FROM settings WHERE key=?').run('target_cpa:'+id)}else{const v=Number(raw);if(!Number.isFinite(v)||v<.01||v>1000000)throw Error('CPA alvo inválido');setSetting('target_cpa:'+id,v)}}
  else if(a==='finance'){const d=f.get('date');if(!dateOK(d)||d>today())throw Error('Data inválida');const keys=['gross','fees','refunds','taxes','infra','other'];const vals=keys.map(k=>{const v=f.get(k);if(v!==null&&v!==''&&num(v)===null)throw Error('Valor financeiro inválido');return num(v)});db.prepare('INSERT INTO finance VALUES(?,?,?,?,?,?,?,?) ON CONFLICT(date) DO UPDATE SET gross=excluded.gross,fees=excluded.fees,refunds=excluded.refunds,taxes=excluded.taxes,infra=excluded.infra,other=excluded.other,updated_at=excluded.updated_at').run(d,...vals,now())}
  else if(a==='import'){const p=JSON.parse(f.get('payload')||'');for(const v of Array.isArray(p)?p:[p])ingest(v)}
  else throw Error('Operação inválida');
