@@ -389,6 +389,53 @@ function learningPanel(campaign,list,form,options){
  const evidence=snapshots.slice(0,30).map(t=>{const q=JSON.parse(t.metrics_json),alerts=JSON.parse(t.alerts_json);return cells([t.date,list.find(c=>c.id===t.campaign_id)?.name||t.campaign_id,money(q.spend),integer(q.purchases),money(q.cpa),q.days+'/'+q.expectedDays,alerts.map(a=>a.title).join(' · ')])});
  return block('Memória estratégica · validação prospectiva','<div class="grid">'+card('Hipóteses registradas',integer(trials.length))+card('Aguardando avaliação',integer(trials.filter(t=>t.status==='pending').length))+card('Resultados avaliáveis',integer(eligible.length))+card('Metas observadas atingidas',eligible.length?pct(met/eligible.length):'—')+'</div>'+note('A taxa mede metas atingidas entre avaliações conclusivas, não precisão de uma IA nem efeito causal. Sem pagamentos conciliados, CPA é o atribuído pela Meta.'))+block('Registrar hipótese e previsão',create)+block('Histórico de hipóteses',items||note('Ainda não há hipóteses registradas.'))+block('Memória automática das campanhas',note('Uma fotografia imutável por campanha e dia encerrado, com janela retrospectiva de sete dias. Não soma coletas acumuladas.')+table(['Dia de referência','Campanha','Gasto','Compras','CPA','Dias cobertos','Diagnósticos'],evidence));
 }
+// Statistical estimates are conditional on the observed reporting source and spend.
+function closedEvidence(rows){
+ const q=metrics(rows),days=new Set(rows.map(r=>r.date)).size,sources=[...new Set(rows.map(r=>r.source))];
+ const valid=rows.length>0&&q.currencyOK&&q.spend.complete&&q.purchases.complete&&q.spend.value>0&&sources.length===1&&typeof sources[0]==='string';
+ return {days,source:sources.length===1?sources[0]:null,spend:valid?q.spend.value:null,purchases:valid?q.purchases.value:null,valid};
+}
+function rateEstimate(e,minDays=3,minEvents=20){
+ if(!e.valid||e.days<minDays||e.purchases<minEvents)return null;
+ const rate=e.purchases/e.spend,cpa=1/rate,delta=1.96/Math.sqrt(e.purchases);
+ return {rate,cpa,low:cpa*Math.exp(-delta),high:cpa*Math.exp(delta)};
+}
+function historicalModel(own,hold,peers){
+ if(!own.valid||own.days<14||own.purchases<30||!hold.valid||hold.days!==7||own.source!==hold.source)return null;
+ const base=own.purchases/own.spend,eligible=peers.filter(e=>e.valid&&e.days>=7&&e.purchases>=10&&e.source===own.source);
+ const sum=eligible.reduce((a,e)=>({spend:a.spend+e.spend,purchases:a.purchases+e.purchases}),{spend:0,purchases:0});
+ // Limit borrowed evidence to 20% of own observed spend, never more.
+ const borrowed=eligible.length>=2&&sum.purchases>=30?Math.min(own.spend*.2,sum.spend):0;
+ const transferred=borrowed>0?(own.purchases+borrowed*(sum.purchases/sum.spend))/(own.spend+borrowed):null;
+ const predicted=base*hold.spend,peerPredicted=transferred===null?null:transferred*hold.spend;
+ return {base,transferred,predicted,peerPredicted,actual:hold.purchases,error:Math.abs(predicted-hold.purchases),peerError:peerPredicted===null?null:Math.abs(peerPredicted-hold.purchases),peerCount:eligible.length,borrowed};
+}
+function statisticalPanel(campaign,list,adBy,form){
+ const eligible=list.filter(c=>c.scope==='tracked');
+ const end=dayShift(today(),-3),holdStart=dayShift(end,-6),trainEnd=dayShift(holdStart,-1),trainStart=dayShift(trainEnd,-27);
+ const current=eligible.find(c=>c.id===campaign);
+ const cohort=c=>clean(setting('learning_cohort:'+c.id),80).trim().toLowerCase();
+ const trainRows=db.prepare("SELECT d.* FROM daily d JOIN campaigns c ON c.id=d.campaign_id WHERE c.scope='tracked' AND d.date BETWEEN ? AND ? ORDER BY d.date,d.ad_id").all(trainStart,trainEnd);
+ const testRows=db.prepare("SELECT d.* FROM daily d JOIN campaigns c ON c.id=d.campaign_id WHERE c.scope='tracked' AND d.date BETWEEN ? AND ? ORDER BY d.date,d.ad_id").all(holdStart,end);
+ const selected=eligible.filter(c=>campaign==='all'||c.id===campaign);
+ const evalRows=[],readiness=[];
+ for(const c of selected){
+  const own=closedEvidence(trainRows.filter(r=>r.campaign_id===c.id)),hold=closedEvidence(testRows.filter(r=>r.campaign_id===c.id));
+  const peerCandidates=cohort(c)&&c.objective?eligible.filter(p=>p.id!==c.id&&cohort(p)===cohort(c)&&p.objective===c.objective):[];
+  const peers=peerCandidates.map(p=>closedEvidence(trainRows.filter(r=>r.campaign_id===p.id)));
+  const x=historicalModel(own,hold,peers);
+  readiness.push(cells([c.name,own.days+'/28',integer(own.purchases),hold.days+'/7',own.source||'—',x?'Avaliação disponível':'Dados insuficientes ou incompatíveis']));
+  if(x)evalRows.push(cells([c.name,integer(x.actual),integer(x.predicted),integer(x.error),integer(x.peerPredicted),integer(x.peerError),x.borrowed>0?x.peerCount+' pares; '+money(x.borrowed)+' de peso':'Não habilitada']));
+ }
+ const adGroups=new Map();
+ for(const row of [...trainRows,...testRows]){if(!selected.some(c=>c.id===row.campaign_id))continue;if(!adGroups.has(row.ad_id))adGroups.set(row.ad_id,[]);adGroups.get(row.ad_id).push(row)}
+ const ads=[...adGroups].map(([id,rs])=>{
+  const e=closedEvidence(rs),q=metrics(rs),x=rateEstimate(e),ad=adBy.get(id);
+  return cells([ad?.name||id,ad?.campaign_name||rs[0].campaign_id,e.days,display(q.impressions),pct(q.ctr),display(q.purchases),money(q.cpa),x?money(x.low)+' – '+money(x.high):'—',x?'Estimativa exploratória':'Amostra insuficiente']);
+ });
+ const cohortForm=current?form('learning_cohort','<input type="hidden" name="id" value="'+esc(current.id)+'">'+input('cohort','Grupo de campanhas comparáveis',setting('learning_cohort:'+current.id)||'','text','maxlength="80"')+note('Use o mesmo grupo apenas para campanhas com produto, preço, público, posicionamentos e atribuição comparáveis. Objetivo Meta e fonte de métricas também devem coincidir. Deixe vazio para desativar transferência.')):note('Selecione uma campanha monitorada para classificar seu grupo.');
+ return block('Motor estatístico · beta',note('Janela de treinamento: '+trainStart+' a '+trainEnd+'; janela de teste temporal: '+holdStart+' a '+end+'. Os dois dias completos mais recentes são excluídos por atraso de atribuição.')+note('Modelo inicial: taxa histórica de compras atribuídas por real investido, ajustada apenas quando há pares explicitamente comparáveis. Não utiliza dados da janela de teste para estimar a taxa. Requer pelo menos 14 dias com observações, 30 compras no treino e sete dias cobertos no teste; não comprova cobertura de todos os anúncios.')+table(['Campanha','Dias treino','Compras treino','Dias teste','Fonte','Maturidade'],readiness)+cohortForm)+block('Validação temporal fora do treino',table(['Campanha','Compras observadas','Estimativa própria','Erro absoluto','Com transferência','Erro com transferência','Pares / peso'],evalRows)+note('Usa o gasto efetivamente observado na janela de teste. É uma avaliação retrospectiva condicional ao gasto, não previsão de vendas futuras. Um único período não demonstra superioridade. A transferência exige dois pares com pelo menos dez compras cada e 30 no total, com peso limitado a 20% do gasto próprio. Não altera anúncios.'))+block('Incerteza por criativo',table(['Criativo','Campanha','Dias','Impressões','CTR','Compras','CPA observado','Intervalo CPA 95% aprox.','Evidência'],ads)+note('Intervalo aproximado no modelo de Poisson com taxa estável, pelo menos 20 compras completas, três dias e uma única fonte. Não incorpora mudanças de público, atribuição ou leilão; não é garantia de confiança nem teste causal entre criativos.'));
+}
 function page(csrf,url){
  const p=url.searchParams,view=Object.hasOwn(names,p.get('view'))?p.get('view'):'overview',list=campaigns(),ids=new Set(list.map(c=>c.id));
  const chosen=p.get('campaign'),campaign=chosen==='all'||chosen==='excluded'||ids.has(chosen)?chosen:(ids.has(original)?original:'all');
@@ -431,7 +478,7 @@ function page(csrf,url){
  }else if(view==='learning'){
   const historical=db.prepare("SELECT d.*,c.scope FROM daily d JOIN campaigns c ON c.id=d.campaign_id WHERE c.scope='tracked' ORDER BY date").all();
   const summary=[];for(const key of ['format','angle','voice','visual','audience','duration']){const groups=new Map();for(const row of historical){const label=adBy.get(row.ad_id)?.[key];if(!label)continue;if(!groups.has(label))groups.set(label,[]);groups.get(label).push(row)}for(const [label,rs] of groups){const q=metrics(rs),n=new Set(rs.map(r=>r.campaign_id)).size;summary.push(cells([key,label,n,new Set(rs.map(r=>r.ad_id)).size,displayMoney(q,'spend'),display(q.purchases),money(q.cpa),n>=2&&q.purchases.complete&&q.purchases.value>=10?'Comparação exploratória':'Amostra insuficiente']))}}
-  content=learningPanel(campaign,list,form,options)+block('Memória comparativa entre campanhas',note('O histórico considera campanhas monitoradas e os atributos preenchidos na biblioteca. Um grupo precisa de pelo menos duas campanhas e dez compras registradas com cobertura completa para iniciar uma comparação exploratória. Isso não demonstra causalidade.')+table(['Atributo','Valor','Campanhas','Criativos','Gasto','Compras','CPA','Evidência'],summary))+block('Maturidade do aprendizado',note('Estágio atual: memória automática, hipóteses prospectivas e avaliação de metas observadas. Treinamento estatístico e validação de previsões fora da amostra dependem de histórico suficiente; nenhum modelo treinado está ativo.'));
+  content=statisticalPanel(campaign,list,adBy,form)+learningPanel(campaign,list,form,options)+block('Memória comparativa entre campanhas',note('O histórico considera campanhas monitoradas e os atributos preenchidos na biblioteca. Um grupo precisa de pelo menos duas campanhas e dez compras registradas com cobertura completa para iniciar uma comparação exploratória. Isso não demonstra causalidade.')+table(['Atributo','Valor','Campanhas','Criativos','Gasto','Compras','CPA','Evidência'],summary))+block('Maturidade do aprendizado',note('Estágio atual: memória automática, hipóteses prospectivas e estimador estatístico de taxa de compras com avaliação temporal. Estimativas ficam indisponíveis quando os dados não atendem aos critérios. Não há modelo preditivo complexo treinado nem decisões automáticas.'));
  }else if(view==='finance'){
   const financial=db.prepare('SELECT * FROM finance WHERE date BETWEEN ? AND ? ORDER BY date DESC').all(from,to), excludedM=metrics(all.filter(r=>r.scope==='excluded'));
   content=block('Investimento e atribuição Meta','<div class="grid">'+[['Gasto selecionado',displayMoney(m,'spend')],['Gasto excluído da análise (conta)',displayMoney(excludedM,'spend')],['Receita atribuída Meta',displayMoney(m,'revenue')],['ROAS Meta',m.roas===null?'—':m.roas.toFixed(2)+'x']].map(([k,v])=>card(k,v)).join('')+'</div>'+note('A receita atribuída não comprova pagamento. Os registros financeiros manuais abaixo são totais da operação por dia, não atribuídos à campanha.'))+kiwifySummary(from,to,campaign)+simulationPanel(p,campaign,from,to,m)+block('Conciliação financeira manual',form('finance',input('date','Dia',today(),'date','required')+'<div class="fields">'+[['gross','Receita confirmada'],['fees','Taxas'],['refunds','Reembolsos'],['taxes','Impostos'],['infra','Infraestrutura'],['other','Outros custos']].map(([k,v])=>input(k,v,'','number','min="0" step="0.01"')).join('')+'</div>')+table(['Dia','Receita','Taxas','Reembolsos','Impostos','Infra','Outros'],financial.map(f=>cells([f.date,money(f.gross),money(f.fees),money(f.refunds),money(f.taxes),money(f.infra),money(f.other)])))+note('Valores em branco permanecem desconhecidos. Margem líquida conciliada ainda pendente. Não duplique registros manuais com os da Kiwify.'));
@@ -453,6 +500,7 @@ function manage(f){
  else if(a==='profile'){if(!validID(id)||!db.prepare('SELECT 1 FROM ads WHERE id=?').get(id))throw Error('Criativo inexistente');const keys=['format','angle','hook','voice','visual','audience','duration','transcript'];db.prepare('INSERT INTO profiles VALUES(?,?,?,?,?,?,?,?,?) ON CONFLICT(ad_id) DO UPDATE SET format=excluded.format,angle=excluded.angle,hook=excluded.hook,voice=excluded.voice,visual=excluded.visual,audience=excluded.audience,duration=excluded.duration,transcript=excluded.transcript').run(id,...keys.map(k=>txt(k)))}
  else if(a==='decision'){const c=f.get('campaign_id'),h=txt('hypothesis'),d=txt('decision_action');if(!validID(c)||!h||!d||!db.prepare('SELECT 1 FROM campaigns WHERE id=?').get(c))throw Error('Preencha campanha, hipótese e decisão');db.prepare('INSERT INTO decisions(at,campaign_id,hypothesis,action,updated_at) VALUES(?,?,?,?,?)').run(now(),c,h,d,now())}
  else if(a==='outcome'){const status=f.get('status');if(!/^\d+$/.test(id||'')||!['planned','applied','validated','rejected','inconclusive'].includes(status))throw Error('Status inválido');db.prepare('UPDATE decisions SET status=?,outcome=?,updated_at=? WHERE id=?').run(status,txt('outcome'),now(),Number(id))}
+ else if(a==='learning_cohort'){if(!validID(id)||!db.prepare("SELECT 1 FROM campaigns WHERE id=? AND scope='tracked'").get(id))throw Error('Campanha inválida');const value=txt('cohort',80);if(value)setSetting('learning_cohort:'+id,value);else db.prepare('DELETE FROM settings WHERE key=?').run('learning_cohort:'+id)}
  else if(a==='learning_trial'){
  const c=f.get('campaign_id'),rule=f.get('rule'),h=txt('hypothesis'),target=Number(f.get('trial_target')),days=Number(f.get('trial_days'));
  if(!validID(c)||!db.prepare("SELECT 1 FROM campaigns WHERE id=? AND scope='tracked'").get(c)||!['observe','creative','offer','budget'].includes(rule)||!h||!Number.isFinite(target)||target<.01||target>1000000||!Number.isInteger(days)||days<3||days>30)throw Error('Hipótese ou meta inválida');
