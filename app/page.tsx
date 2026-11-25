@@ -21,7 +21,7 @@ export default function Landing(){
    <div className="lp-container lp-header-inner">
     <Link href="/" className="lp-logo" aria-label="Eduverso — início"><span className="lp-mark" aria-hidden="true">✦</span><strong>Eduverso<span>.</span></strong></Link>
     <nav className="lp-nav" aria-label="Navegação principal">
-     <a href="#produto">Conheça por dentro</a><a href="#planos">Planos</a>
+     <a href="#produto">Conheça por dentro</a><a href="#planos">Planos</a><Link href="/blog">Blog</Link><Link href="/ferramentas">Ferramentas grátis</Link>
     </nav>
     <div className="lp-header-actions"><Link href="/entrar" className="lp-login">Entrar</Link><Link href="/cadastro" className="lp-button lp-button-small">Criar conta <span aria-hidden="true">↗</span></Link></div>
    </div>
@@ -109,6 +109,8 @@ export default function Landing(){
       <a href="#produto">Como é a plataforma</a>
       <a href="#planos">Planos e preços</a>
       <Link href="/plataforma">Demonstração</Link>
+      <Link href="/blog">Blog educacional</Link>
+      <Link href="/ferramentas">Ferramentas gratuitas</Link>
      </nav>
      <nav className="lp-footer-newcol" aria-label="Sua conta no Eduverso">
       <h3>Sua conta</h3>
