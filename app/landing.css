@@ -917,3 +917,44 @@
 .lp-whatsapp-floating:hover .lp-whatsapp-floating-icon{background:#16b957}
 @media(max-width:680px){.lp-footer-contact{max-width:none;margin-top:19px}.lp-footer-legal{flex-basis:100%}.lp-footer-legal strong{font-size:12px}.edu-lp .lp-whatsapp-floating{right:calc(15px + env(safe-area-inset-right,0px));bottom:calc(15px + env(safe-area-inset-bottom,0px))}.lp-whatsapp-floating-icon{width:56px;height:56px}.lp-whatsapp-floating-icon svg{width:30px;height:30px}.lp-whatsapp-floating-label{display:none}.edu-lp .lp-footer-newbottom{padding-bottom:90px}}
 @media(prefers-reduced-motion:reduce){.lp-whatsapp-floating-icon:before{animation:none;opacity:0}}
+
+/* Consistent centered footer: matching social rows, balanced navigation and legal area. */
+.edu-lp .lp-footer-redesign .lp-footer-newtop{align-items:start;gap:48px;padding:48px 0 32px}
+.edu-lp .lp-footer-redesign .lp-footer-newbrand{width:100%;max-width:470px;margin:0 auto;display:flex;flex-direction:column;align-items:center;text-align:center}
+.edu-lp .lp-footer-redesign .lp-footer-newbrand h2{margin:20px auto 10px;text-wrap:balance}
+.edu-lp .lp-footer-redesign .lp-footer-newbrand>p{margin:0 auto 19px;text-align:center;text-wrap:pretty}
+.edu-lp .lp-footer-redesign .lp-footer-newcta{width:min(100%,365px);justify-content:center;gap:14px;min-height:46px}
+.edu-lp .lp-footer-redesign .lp-footer-contact{width:min(100%,365px);margin:22px auto 0;gap:10px}
+.lp-footer-redesign .lp-footer-contact-label{text-align:center}
+.edu-lp .lp-footer-redesign .lp-footer-instagram,.edu-lp .lp-footer-redesign .lp-footer-whatsapp{display:grid;grid-template-columns:41px minmax(0,1fr) 16px;align-items:center;gap:10px;min-height:65px;padding:11px 13px;border:1px solid #a779df60;border-radius:13px;text-align:center}
+.edu-lp .lp-footer-redesign .lp-footer-whatsapp{background:linear-gradient(115deg,#17352d,#161525);border-color:#25d36640;color:#ebfff3}
+.lp-footer-redesign .lp-footer-whatsapp>svg{width:26px;height:26px;justify-self:center;color:#25d366}
+.lp-footer-redesign .lp-footer-whatsapp>span:last-child{color:#94deb0;font-size:17px}
+.lp-footer-redesign .lp-footer-instagram>span:nth-child(2){align-items:center;text-align:center}
+.lp-footer-redesign .lp-contact-arrow{font-size:17px}
+.edu-lp .lp-footer-redesign .lp-footer-newlinks{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;align-items:start;justify-items:stretch;padding-top:12px;text-align:center}
+.edu-lp .lp-footer-redesign .lp-footer-newcol{margin:0;align-items:center;gap:14px;min-width:0;text-align:center}
+.lp-footer-redesign .lp-footer-newcol h3{margin:0 0 5px}
+.lp-footer-redesign .lp-footer-newcol a{display:block;line-height:1.45;text-align:center}
+.edu-lp .lp-footer-redesign .eduverso-privacy-footer{text-align:center;padding:0 0 15px}
+.lp-footer-redesign .eduverso-privacy-settings{margin:0 auto;text-align:center}
+.lp-footer-redesign .eduverso-privacy-settings>summary{width:fit-content;max-width:100%;margin:0 auto;cursor:pointer}
+.lp-footer-redesign .eduverso-privacy-panel{text-align:left;margin-inline:auto}
+.edu-lp .lp-footer-redesign .lp-footer-newbottom{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:9px;padding:20px 0 36px}
+.lp-footer-redesign .lp-footer-legal{width:100%;align-items:center;text-align:center;gap:7px}
+.lp-footer-redesign .lp-footer-newbottom>span{order:0;flex-basis:auto}
+.lp-footer-redesign .lp-footer-newbottom>a{margin-top:5px;display:inline-flex;align-items:center;gap:5px}
+@media(max-width:680px){
+ .edu-lp .lp-footer-redesign .lp-footer-newtop{grid-template-columns:1fr;gap:28px;padding:30px 0 24px}
+ .edu-lp .lp-footer-redesign .lp-footer-newbrand h2{font-size:clamp(23px,6.5vw,28px);margin:16px auto 9px}
+ .edu-lp .lp-footer-redesign .lp-footer-newbrand>p{font-size:12px;margin-bottom:16px}
+ .edu-lp .lp-footer-redesign .lp-footer-newcta{width:100%}
+ .edu-lp .lp-footer-redesign .lp-footer-contact{width:100%;margin-top:19px}
+ .edu-lp .lp-footer-redesign .lp-footer-instagram,.edu-lp .lp-footer-redesign .lp-footer-whatsapp{padding:9px 10px;min-height:60px;gap:7px}
+ .edu-lp .lp-footer-redesign .lp-footer-newlinks{padding-top:0;gap:10px}
+ .edu-lp .lp-footer-redesign .lp-footer-newcol{gap:12px}
+ .edu-lp .lp-footer-redesign .lp-footer-newbottom{padding:18px 0 85px}
+ .lp-footer-redesign .lp-footer-legal{flex-basis:auto}
+ .lp-footer-redesign .lp-footer-newbottom small{flex-basis:auto;font-size:10px}
+ .lp-footer-redesign .lp-footer-newbottom>span{font-size:10px}
+}
