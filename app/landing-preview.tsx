@@ -1,5 +1,5 @@
 "use client";
-import Link from "next/link";
+
 import Image from "next/image";
 import {useState} from "react";
 
@@ -27,7 +27,7 @@ export default function LandingPreview(){
     <span className="lp-demo-selector-arrow" aria-hidden="true">↗</span>
    </button>)}
    <div className="lp-demo-detail"><span className="lp-eyebrow">EXPERIMENTE NA PRÁTICA</span><h3>{demo.heading}</h3><p>{demo.description}</p>
-    <Link className="lp-button lp-demo-open" href={demo.href}>Abrir na plataforma <span aria-hidden="true">↗</span></Link>
+    <a className="lp-button lp-demo-open" href={demo.href}>Abrir na plataforma <span aria-hidden="true">↗</span></a>
    </div>
   </div>
   <div className="lp-demo-device">
@@ -55,7 +55,7 @@ export default function LandingPreview(){
      </div>
     </div>}
    </div>
-   <div className="lp-demo-device-footer"><span>{opened?"Navegação pela plataforma":"Experimente uma questão sem cadastro"}</span><Link href={demo.href}>Abrir na plataforma ↗</Link></div>
+   <div className="lp-demo-device-footer"><span>{opened?"Navegação pela plataforma":"Experimente uma questão sem cadastro"}</span><a href={demo.href}>Abrir na plataforma ↗</a></div>
   </div>
  </div>;
 }

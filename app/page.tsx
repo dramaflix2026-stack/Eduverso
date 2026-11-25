@@ -1,4 +1,4 @@
-import Link from "next/link";
+import ClarityTracking from "./clarity-tracking";
 import LandingPreview from "./landing-preview";
 import LandingDemoCarousel from "./landing-demo-carousel";
 import LandingCarousel from "./landing-carousel";
@@ -19,11 +19,11 @@ export default function Landing(){
   </div>}
   <header className="lp-header" id="topo">
    <div className="lp-container lp-header-inner">
-    <Link href="/" className="lp-logo" aria-label="Eduverso — início"><span className="lp-mark" aria-hidden="true">✦</span><strong>Eduverso<span>.</span></strong></Link>
+    <a href="/" className="lp-logo" aria-label="Eduverso — início"><span className="lp-mark" aria-hidden="true">✦</span><strong>Eduverso<span>.</span></strong></a>
     <nav className="lp-nav" aria-label="Navegação principal">
-     <a href="#produto">Conheça por dentro</a><a href="#planos">Planos</a><Link href="/blog">Blog</Link><Link href="/ferramentas">Ferramentas grátis</Link>
+     <a href="#produto">Conheça por dentro</a><a href="#planos">Planos</a><a href="/blog">Blog</a><a href="/ferramentas">Ferramentas grátis</a>
     </nav>
-    <div className="lp-header-actions"><Link href="/entrar" className="lp-login">Entrar</Link><Link href="/cadastro" className="lp-button lp-button-small">Criar conta <span aria-hidden="true">↗</span></Link></div>
+    <div className="lp-header-actions"><a href="/entrar" className="lp-login">Entrar</a><a href="/cadastro" className="lp-button lp-button-small">Criar conta <span aria-hidden="true">↗</span></a></div>
    </div>
   </header>
   <main>
@@ -91,9 +91,9 @@ export default function Landing(){
    <div className="lp-footer-highlight" aria-hidden="true"/>
    <div className="lp-container lp-footer-newtop">
     <div className="lp-footer-newbrand">
-     <Link href="/" className="lp-logo" aria-label="Eduverso — início">
+     <a href="/" className="lp-logo" aria-label="Eduverso — início">
       <span className="lp-mark" aria-hidden="true">✦</span><strong>Eduverso<span>.</span></strong>
-     </Link>
+     </a>
      <h2>Seu universo de <em>possibilidades.</em></h2>
      <p>Explore o conhecimento, encontre seu ritmo e siga aprendendo. Tudo em um só lugar.</p>
      
@@ -108,19 +108,19 @@ export default function Landing(){
       <h3>Descubra</h3>
       <a href="#produto">Como é a plataforma</a>
       <a href="#planos">Planos e preços</a>
-      <Link href="/plataforma">Demonstração</Link>
-      <Link href="/blog">Blog educacional</Link>
-      <Link href="/ferramentas">Ferramentas gratuitas</Link>
+      <a href="/plataforma">Demonstração</a>
+      <a href="/blog">Blog educacional</a>
+      <a href="/ferramentas">Ferramentas gratuitas</a>
      </nav>
      <nav className="lp-footer-newcol" aria-label="Sua conta no Eduverso">
       <h3>Sua conta</h3>
-      <Link href="/cadastro">Criar conta</Link>
-      <Link href="/entrar">Fazer login</Link>
-      <Link href="/plataforma">Área de estudos</Link>
+      <a href="/cadastro">Criar conta</a>
+      <a href="/entrar">Fazer login</a>
+      <a href="/plataforma">Área de estudos</a>
      </nav>
     </div>
    </div>
-   <div className="lp-container eduverso-privacy-footer"><MetaPixelTracking/></div>
+   <div className="lp-container eduverso-privacy-footer"><MetaPixelTracking/><ClarityTracking/></div>
    <div className="lp-container lp-footer-newbottom">
     <div className="lp-footer-legal"><strong>CNPJ: 65.879.205/0001-34</strong><small>© {new Date().getFullYear()} Eduverso · Todos os direitos reservados.</small></div>
     <span>Aprender abre novos caminhos.</span>
