@@ -97,6 +97,11 @@ export default function Landing(){
      <h2>Seu universo de <em>possibilidades.</em></h2>
      <p>Explore o conhecimento, encontre seu ritmo e siga aprendendo. Tudo em um só lugar.</p>
      <a href="#produto" className="lp-footer-newcta">Explorar a plataforma <span aria-hidden="true">↗</span></a>
+     <div className="lp-footer-contact">
+      <span className="lp-footer-contact-label">ACOMPANHE O EDUVERSO</span>
+      <a className="lp-footer-instagram" href="https://www.instagram.com/eduverso.ai/" target="_blank" rel="noopener noreferrer" aria-label="Instagram do Eduverso, @eduverso.ai (abre em nova aba)"><span className="lp-footer-instagram-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg></span><span><strong>@eduverso.ai</strong><small>Siga nosso Instagram</small></span><span className="lp-contact-arrow" aria-hidden="true">↗</span></a>
+      <a className="lp-footer-whatsapp" href="https://wa.me/5511984216363?text=Ol%C3%A1%21%20Gostaria%20de%20saber%20mais%20sobre%20o%20Eduverso." target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.669.149-.198.297-.767.967-.94 1.165-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.447-.52.149-.174.198-.298.297-.497.1-.198.05-.372-.025-.521-.074-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.095 3.2 5.076 4.487.709.306 1.262.489 1.693.626.712.227 1.36.195 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347M12.004 0a11.9 11.9 0 0 0-10.29 17.89L0 24l6.29-1.65a11.9 11.9 0 0 0 5.71 1.46h.005C18.58 23.81 24 18.47 24 11.9c0-3.18-1.24-6.17-3.49-8.42A11.86 11.86 0 0 0 12.004 0zm0 21.79a9.87 9.87 0 0 1-5.034-1.38l-.36-.214-3.73.98.996-3.638-.235-.373a9.88 9.88 0 0 1-1.52-5.27c0-5.45 4.44-9.89 9.9-9.89 2.64 0 5.12 1.03 6.99 2.9a9.83 9.83 0 0 1 2.9 6.99c0 5.46-4.44 9.9-9.9 9.9z"/></svg><span>Fale conosco pelo WhatsApp</span><span aria-hidden="true">↗</span></a>
+     </div>
     </div>
     <div className="lp-footer-newlinks">
      <nav className="lp-footer-newcol" aria-label="Conhecer o Eduverso">
@@ -115,10 +120,11 @@ export default function Landing(){
    </div>
    <div className="lp-container eduverso-privacy-footer"><MetaPixelTracking/></div>
    <div className="lp-container lp-footer-newbottom">
-    <small>© {new Date().getFullYear()} Eduverso · Todos os direitos reservados.</small>
+    <div className="lp-footer-legal"><strong>CNPJ: 65.879.205/0001-34</strong><small>© {new Date().getFullYear()} Eduverso · Todos os direitos reservados.</small></div>
     <span>Aprender abre novos caminhos.</span>
     <a href="#topo">Voltar ao topo <span aria-hidden="true">↑</span></a>
    </div>
   </footer>
+  <a className="lp-whatsapp-floating" href="https://wa.me/5511984216363?text=Ol%C3%A1%21%20Gostaria%20de%20saber%20mais%20sobre%20o%20Eduverso." target="_blank" rel="noopener noreferrer" aria-label="Fale com o Eduverso pelo WhatsApp (abre em nova aba)" title="Fale conosco pelo WhatsApp"><span className="lp-whatsapp-floating-label">Fale conosco</span><span className="lp-whatsapp-floating-icon"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.669.149-.198.297-.767.967-.94 1.165-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.447-.52.149-.174.198-.298.297-.497.1-.198.05-.372-.025-.521-.074-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.095 3.2 5.076 4.487.709.306 1.262.489 1.693.626.712.227 1.36.195 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347M12.004 0a11.9 11.9 0 0 0-10.29 17.89L0 24l6.29-1.65a11.9 11.9 0 0 0 5.71 1.46h.005C18.58 23.81 24 18.47 24 11.9c0-3.18-1.24-6.17-3.49-8.42A11.86 11.86 0 0 0 12.004 0zm0 21.79a9.87 9.87 0 0 1-5.034-1.38l-.36-.214-3.73.98.996-3.638-.235-.373a9.88 9.88 0 0 1-1.52-5.27c0-5.45 4.44-9.89 9.9-9.89 2.64 0 5.12 1.03 6.99 2.9a9.83 9.83 0 0 1 2.9 6.99c0 5.46-4.44 9.9-9.9 9.9z"/></svg></span></a>
  </div>;
 }

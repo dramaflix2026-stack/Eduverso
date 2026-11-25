@@ -891,3 +891,29 @@
 .edu-lp .lp-guarantee-integrated .lp-guarantee-button{width:min(100%,340px);justify-content:center}
 .edu-lp .lp-guarantee-integrated .lp-guarantee-content>small{margin-top:12px;text-align:center;max-width:480px}
 @media(max-width:680px){.edu-lp .lp-guarantee-integrated{padding:4px 19px 38px;background:radial-gradient(ellipse 80% 50% at 50% 24%,#5a26962b,transparent 100%)}.lp-guarantee-integrated-shield{width:min(235px,72vw);margin-bottom:-7px}.edu-lp .lp-guarantee-integrated .lp-guarantee-kicker{font-size:9px;letter-spacing:1px}.edu-lp .lp-guarantee-integrated .lp-guarantee-content h2{font-size:clamp(26px,7.2vw,35px);margin:11px auto}.edu-lp .lp-guarantee-integrated .lp-guarantee-content p{font-size:13px;line-height:1.55;margin-bottom:13px}.edu-lp .lp-guarantee-integrated .lp-guarantee-benefits{font-size:10px;margin-bottom:17px}.edu-lp .lp-guarantee-integrated .lp-guarantee-content>small{font-size:10px}}
+
+/* Prominent social contact and company identification; fixed WhatsApp contact. */
+.lp-footer-contact{display:flex;flex-direction:column;align-items:stretch;gap:9px;margin:22px 0 0;max-width:365px}
+.lp-footer-contact-label{font-size:10px;font-weight:800;letter-spacing:1.35px;color:#c7a6fa}
+.edu-lp .lp-footer-instagram{display:flex;align-items:center;text-align:left;gap:11px;padding:11px 13px;border:1px solid #aa76e86b;border-radius:13px;background:linear-gradient(115deg,#3d235a,#1c132d);transition:border-color .2s,background .2s}
+.lp-footer-instagram-icon{display:grid;place-items:center;flex:none;width:41px;height:41px;border-radius:12px;background:linear-gradient(140deg,#7c43da 10%,#cf38a3 53%,#ff9b59 100%);color:#fff}
+.lp-footer-instagram-icon svg{width:25px;height:25px}
+.lp-footer-instagram>span:nth-child(2){display:flex;flex:1;flex-direction:column;gap:4px}
+.lp-footer-instagram strong{font-size:15px;color:#f9f3ff}
+.edu-lp .lp-footer-instagram small{font-size:11px;color:#d2bde7}
+.lp-contact-arrow{font-size:19px;color:#ceadff}
+.edu-lp .lp-footer-instagram:hover{border-color:#d4b1ff;background:#462762}
+.edu-lp .lp-footer-whatsapp{display:flex;align-items:center;gap:8px;padding:9px 3px;color:#e3d9ef;font-size:12px;font-weight:700}
+.lp-footer-whatsapp svg{flex:none;width:19px;height:19px;color:#25d366}
+.lp-footer-whatsapp>span:nth-child(2){flex:1}
+.lp-footer-legal{display:flex;flex-direction:column;gap:6px;min-width:0}
+.lp-footer-legal strong{font-size:12px;color:#d5baf5;font-weight:800;letter-spacing:.15px}
+.edu-lp .lp-whatsapp-floating{position:fixed;z-index:100;right:calc(18px + env(safe-area-inset-right,0px));bottom:calc(18px + env(safe-area-inset-bottom,0px));display:flex;align-items:center;gap:10px;isolation:isolate;color:#fff}
+.lp-whatsapp-floating-icon{position:relative;display:grid;place-items:center;width:60px;height:60px;border-radius:50%;background:#25d366;color:#073b22;border:2px solid #9af1b8;box-shadow:0 5px 22px #0008,0 0 18px #25d36666}
+.lp-whatsapp-floating-icon svg{width:33px;height:33px;color:#fff}
+.lp-whatsapp-floating-icon:before{content:"";position:absolute;inset:-3px;border:2px solid #25d366;border-radius:50%;pointer-events:none;animation:lp-wa-pulse 2.1s ease-out infinite;z-index:-1}
+@keyframes lp-wa-pulse{0%{transform:scale(1);opacity:.8}80%,100%{transform:scale(1.38);opacity:0}}
+.lp-whatsapp-floating-label{font-size:12px;font-weight:800;background:#132b21;color:#eafff0;border:1px solid #25d3666b;border-radius:999px;padding:9px 13px;box-shadow:0 3px 13px #0006;white-space:nowrap}
+.lp-whatsapp-floating:hover .lp-whatsapp-floating-icon{background:#16b957}
+@media(max-width:680px){.lp-footer-contact{max-width:none;margin-top:19px}.lp-footer-legal{flex-basis:100%}.lp-footer-legal strong{font-size:12px}.edu-lp .lp-whatsapp-floating{right:calc(15px + env(safe-area-inset-right,0px));bottom:calc(15px + env(safe-area-inset-bottom,0px))}.lp-whatsapp-floating-icon{width:56px;height:56px}.lp-whatsapp-floating-icon svg{width:30px;height:30px}.lp-whatsapp-floating-label{display:none}.edu-lp .lp-footer-newbottom{padding-bottom:90px}}
+@media(prefers-reduced-motion:reduce){.lp-whatsapp-floating-icon:before{animation:none;opacity:0}}
