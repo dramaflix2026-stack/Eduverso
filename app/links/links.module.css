@@ -19,3 +19,14 @@
 .footer small{font-size:11px;color:#9285ab}
 @media(max-width:360px){.page{padding-inline:14px}.link{padding-inline:11px;gap:10px}.copy strong{font-size:14px}.icon{width:40px;height:40px}}
 @media(prefers-reduced-motion:reduce){.link{transition:none}.link:hover{transform:none}}
+
+/* Compact branded link hub */
+.page{align-items:flex-start;padding:clamp(32px,7vh,72px) 20px max(28px,env(safe-area-inset-bottom));background:radial-gradient(ellipse at 50% 5%,#4c297966,transparent 45%),#0c0a16}
+.content{max-width:460px}.header{margin-bottom:25px}.mark{width:66px;height:66px;border-radius:19px;background:linear-gradient(145deg,#a074f5,#6140ba);border-color:#bc9cfb70;box-shadow:0 8px 28px #7c4ce43b;margin-bottom:15px}.mark img{display:block;border-radius:14px;width:54px;height:54px}
+.header h1{font-size:34px;letter-spacing:-1.3px}.header h1 span{color:#ba9bff;font-size:.72em;letter-spacing:-.5px}.header p{font-size:14px;max-width:290px;margin:10px auto 0;line-height:1.45}
+.links{gap:10px}.navLabel{font-size:10px;letter-spacing:.15em;font-weight:700;color:#b9a6e1;margin:0 0 2px}
+.link{min-height:76px;border-radius:15px;padding:13px 14px;gap:12px;background:linear-gradient(125deg,#221932,#151323);border-color:#8262bb55}
+.icon{width:42px;height:42px;border-radius:12px;background:#382653;color:#d0b5ff}.copy{gap:4px}.copy strong{font-size:15px}.copy small{font-size:12px}
+.featured{background:linear-gradient(135deg,#35204f,#1a142c);border-color:#b28aef8c}.tag{font-size:10px;color:#d2b6ff;font-weight:700;margin-top:3px}
+.footer{margin-top:24px}.footer p{font-size:12px}.footer small{font-size:10px}
+@media(max-width:360px){.page{padding-inline:14px}.link{gap:9px;padding:11px}.copy strong{font-size:14px}.copy small{font-size:11px}}
