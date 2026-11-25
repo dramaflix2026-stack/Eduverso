@@ -744,3 +744,33 @@
 
 /* Keep the promotional strip readable without a visible pause control. */
 .lp-bf-banner:hover .lp-bf-track{animation-play-state:paused}
+
+/* Eduverso hero coverflow — seven optimized portrait artworks, no horizontal page overflow. */
+.edu-lp .lp-carousel-stage{width:min(100%,900px);text-align:center;overflow:visible}
+.lp-coverflow{--card-width:clamp(175px,55vw,310px);position:relative;width:100%;min-width:0;isolation:isolate}
+.lp-coverflow-viewport{position:relative;width:100%;height:calc(var(--card-width) * 16 / 9 + 30px);overflow:hidden;perspective:1100px;touch-action:pan-y;user-select:none}
+.lp-coverflow-card{position:absolute;top:15px;left:50%;width:var(--card-width);aspect-ratio:9/16;border:1px solid #9c74ee9e;border-radius:15px;overflow:hidden;background:#160b28;box-shadow:0 10px 28px #0009;transform-origin:center;transition:transform .65s cubic-bezier(.22,.75,.2,1),opacity .55s,filter .55s,box-shadow .55s;will-change:transform;backface-visibility:hidden}
+.lp-coverflow-card>img{object-fit:contain;pointer-events:none}
+.lp-coverflow-card[data-offset="0"]{transform:translateX(-50%) translateZ(0);opacity:1;z-index:5;box-shadow:0 0 0 2px #b88aff6b,0 0 24px #995aff6b,0 10px 25px #0009;border-color:#d2b5ff}
+.lp-coverflow-card[data-offset="-1"]{transform:translateX(calc(-50% - var(--card-width) * .68)) rotateY(13deg) scale(.83);z-index:4;opacity:.78;filter:brightness(.8)}
+.lp-coverflow-card[data-offset="1"]{transform:translateX(calc(-50% + var(--card-width) * .68)) rotateY(-13deg) scale(.83);z-index:4;opacity:.78;filter:brightness(.8)}
+.lp-coverflow-card[data-offset="-2"]{transform:translateX(calc(-50% - var(--card-width) * 1.23)) rotateY(17deg) scale(.65);z-index:2;opacity:.42;filter:brightness(.65)}
+.lp-coverflow-card[data-offset="2"]{transform:translateX(calc(-50% + var(--card-width) * 1.23)) rotateY(-17deg) scale(.65);z-index:2;opacity:.42;filter:brightness(.65)}
+.lp-coverflow-card[data-offset="-3"]{transform:translateX(calc(-50% - var(--card-width) * 1.6)) scale(.55);opacity:0;z-index:0;pointer-events:none}
+.lp-coverflow-card[data-offset="3"]{transform:translateX(calc(-50% + var(--card-width) * 1.6)) scale(.55);opacity:0;z-index:0;pointer-events:none}
+.lp-coverflow-side-hit{position:absolute;inset:0;width:100%;height:100%;border:0;background:transparent;cursor:pointer}
+.lp-coverflow-art-footer{position:absolute;inset:82.8% 0 0;display:flex;align-items:center;justify-content:center;gap:7px;padding:12px;background:radial-gradient(ellipse at 50% 100%,#49206c,#10071f 75%);border-top:1px solid #b28bff55;color:#f1e5ff;font-size:clamp(10px,2.7vw,16px);font-weight:800;line-height:1.25;text-align:center}
+.lp-coverflow-art-footer>span{color:#c19aff}
+.lp-coverflow-caption{display:flex;flex-direction:column;align-items:center;gap:4px;min-height:44px;padding:4px 0 7px;text-align:center}
+.lp-coverflow-caption strong{font-size:15px;color:#f6efff}
+.lp-coverflow-caption>span{font-size:12px;color:#bdb0d2}
+.lp-coverflow-controls{display:flex;align-items:center;justify-content:center;gap:13px}
+.lp-coverflow-arrow{width:36px;height:36px;border-radius:50%;border:1px solid #9c74ed80;background:#27183e;color:#e2ceff;font-size:26px!important;line-height:1;cursor:pointer;display:grid;place-items:center}
+.lp-coverflow-dots{display:flex;gap:0;align-items:center;justify-content:center}
+.lp-coverflow-dot{display:grid;place-items:center;width:22px;height:36px;padding:0;background:none;border:0;cursor:pointer}
+.lp-coverflow-dot>span{width:7px;height:7px;border-radius:50%;background:#604a80;transition:width .25s,background .25s}
+.lp-coverflow-dot[aria-current="true"]>span{width:17px;border-radius:99px;background:#bd95ff;box-shadow:0 0 10px #a66eff80}
+.lp-coverflow-motion{display:block;margin:6px auto 0;padding:5px 10px;min-height:28px;font-size:10px!important;color:#b3a2cc;background:transparent;border:0;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.edu-lp .lp-carousel-stage .lp-illustration-note{max-width:550px;margin:5px auto 0;line-height:1.5}
+@media(max-width:680px){.edu-lp .lp-carousel-stage{width:100%}.lp-coverflow{--card-width:clamp(150px,55vw,290px)}.lp-coverflow-card{border-radius:12px}.lp-coverflow-caption strong{font-size:14px}.lp-coverflow-caption>span{font-size:11px}.lp-coverflow-controls{gap:8px}.lp-coverflow-dot{width:19px}.lp-coverflow-arrow{width:32px;height:32px}.lp-coverflow-viewport{height:calc(var(--card-width) * 16 / 9 + 26px)}}
+@media(prefers-reduced-motion:reduce){.lp-coverflow-card,.lp-coverflow-dot>span{transition:none}}

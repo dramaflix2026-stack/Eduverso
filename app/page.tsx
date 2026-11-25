@@ -1,6 +1,6 @@
-import Image from "next/image";
 import Link from "next/link";
 import LandingPreview from "./landing-preview";
+import LandingCarousel from "./landing-carousel";
 import LandingPricing from "./landing-pricing";
 import MetaPixelTracking from "./meta-pixel";
 import "./landing.css";
@@ -8,7 +8,6 @@ import "./landing.css";
 // Revalidate the public landing page so expired campaign copy is removed automatically.
 export const revalidate = 60;
 const BLACK_FRIDAY_END = Date.parse("2026-11-28T00:00:00-03:00");
-const go=(name:string)=>"/plataforma?disciplina="+encodeURIComponent(name);
 export default function Landing(){
  const blackFriday = Date.now() < BLACK_FRIDAY_END;
  const promo = "Oferta Black Friday válida até 27/11";
@@ -39,37 +38,11 @@ export default function Landing(){
      </div>
      <div className="lp-hero-points"><span><b aria-hidden="true">✓</b> Aulas e questões</span><span><b aria-hidden="true">✓</b> Revisão por assunto</span><span><b aria-hidden="true">✓</b> Estude no celular</span></div>
     </div>
-    <div className="lp-hero-stage" aria-label="Prévia ilustrativa da plataforma Eduverso">
+    <div className="lp-hero-stage lp-carousel-stage">
      <div className="lp-stage-glow" aria-hidden="true"/>
      <div className="lp-hero-preview-label"><span aria-hidden="true">✦</span> CONHEÇA O EDUVERSO POR DENTRO</div>
-     <div className="lp-app-window">
-      <div className="lp-app-topbar">
-       <span className="lp-app-minimark">✦</span><strong>Eduverso<span>.</span></strong><span className="lp-window-title">ÁREA DE ESTUDOS</span><span className="lp-app-avatar" aria-hidden="true">E</span>
-      </div>
-      <div className="lp-app-body">
-       <aside className="lp-app-sidebar" aria-hidden="true"><span className="lp-app-side-active">▦</span><span>◫</span><span>⌁</span><span>⚙</span></aside>
-       <div className="lp-app-content">
-        <span className="lp-app-kicker">SEU UNIVERSO DE APRENDIZADO</span>
-        <h2>O que vamos aprender hoje?</h2>
-        <p>Escolha uma matéria e avance no seu ritmo.</p>
-        <div className="lp-app-courses">
-         <Link href={go("Matemática")} className="lp-app-course">
-          <Image src="/images/home/matematica.webp" alt="" fill sizes="(max-width: 680px) 40vw, 180px"/>
-          <span className="lp-app-course-shade"/><span>Matemática <small>Explorar →</small></span>
-         </Link>
-         <Link href={go("Biologia")} className="lp-app-course">
-          <Image src="/images/home/biologia.webp" alt="" fill sizes="(max-width: 680px) 40vw, 180px"/>
-          <span className="lp-app-course-shade"/><span>Biologia <small>Explorar →</small></span>
-         </Link>
-        </div>
-        <Link href={go("Matemática")} className="lp-app-lesson">
-         <span className="lp-app-lesson-icon" aria-hidden="true">▤</span><span><small>EXEMPLO DE TRILHA</small><strong>Matemática · Frações</strong><em>Aula explicada → prática → revisão</em></span><span aria-hidden="true">↗</span>
-        </Link>
-       </div>
-      </div>
-     </div>
-     <div className="lp-hero-preview-footer"><span>✓ Aulas, prática e revisão</span><a href="#planos">{blackFriday ? "Oferta até 27/11" : "Conhecer planos"} <span aria-hidden="true">↗</span></a></div>
-     <p className="lp-illustration-note">Prévia ilustrativa da interface · veja as experiências reais abaixo</p>
+     <LandingCarousel/>
+     <p className="lp-illustration-note">Artes ilustrativas dos recursos. Consulte as condições de cada plano e complemento.</p>
     </div>
    </section>
 
