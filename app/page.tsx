@@ -74,15 +74,10 @@ export default function Landing(){
 
    
 
-   <section className="lp-guarantee-integrated" aria-labelledby="lp-guarantee-title">
-    <div className="lp-guarantee-integrated-shield" aria-hidden="true"><img src="/images/eduverso-garantia-escudo.svg" alt="" width="540" height="480" loading="lazy" decoding="async"/></div>
-    <div className="lp-guarantee-content">
-     <span className="lp-guarantee-kicker"><span aria-hidden="true">✦</span> COMPRA COM TRANQUILIDADE</span>
-     <h2 id="lp-guarantee-title">Sua escolha tem <em>7 dias de garantia.</em></h2>
-     <p>Se mudar de ideia, você pode solicitar o cancelamento e o reembolso em até 7 dias após a compra, pelos canais informados na contratação.</p>
-     <div className="lp-guarantee-benefits"><span>✓ 7 dias para decidir</span><span>✓ Solicitação de reembolso</span></div>
-     <a className="lp-button lp-guarantee-button" href="#planos">Conhecer os planos <span aria-hidden="true">↗</span></a>
-     <small>Válida para compras realizadas. O cadastro não gera cobrança.</small>
+   <section aria-label="Garantia de 7 dias" style={{padding:"24px 0",background:"#0b0915"}}>
+    <div style={{position:"relative",width:"100%",maxWidth:720,margin:"0 auto"}}>
+     <img src="/images/file_00000000a324820ea37a2b187162972a.webp" alt="Sua escolha tem 7 dias de garantia. Se mudar de ideia, solicite o cancelamento e o reembolso em até 7 dias após a compra pelos canais informados na contratação. Válida para compras realizadas. O cadastro não gera cobrança." style={{display:"block",width:"100%",height:"auto"}} loading="lazy" decoding="async"/>
+     <a href="#planos" aria-label="Conhecer os planos" style={{position:"absolute",left:"15%",top:"74%",width:"70%",height:"9%",borderRadius:40}}/>
     </div>
    </section>
   </main>
