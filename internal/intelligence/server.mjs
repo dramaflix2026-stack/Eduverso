@@ -212,7 +212,7 @@ const roasText=m=>m.roas===null?'—':m.roas.toFixed(2)+'x';
 const spendShare=(m,base)=>m.currencyOK&&base.currencyOK&&m.spend.complete&&base.spend.complete?pct(ratio(m.spend.value,base.spend.value)):'—';
 const campaigns=()=>db.prepare('SELECT * FROM campaigns ORDER BY scope DESC,seen_at DESC,name').all();
 const allAds=()=>db.prepare('SELECT a.*,p.format,p.angle,p.hook,p.voice,p.visual,p.audience,p.duration,p.transcript,c.name campaign_name,c.scope FROM ads a LEFT JOIN profiles p ON p.ad_id=a.id LEFT JOIN campaigns c ON c.id=a.campaign_id ORDER BY c.name,a.name,a.id').all();
-const names=Object.freeze({overview:'Visão geral',campaigns:'Campanhas',creatives:'Criativos',funnel:'Funil de conversão',builder:'Construtor de funis',tests:'Experimentos avançados',insights:'Gestor inteligente',decisions:'Histórico de decisões',learning:'Memória e aprendizado',finance:'Financeiro',settings:'Integrações'});
+const names=Object.freeze({overview:'Visão geral',campaigns:'Campanhas',creatives:'Criativos',funnel:'Funil de conversão',builder:'Construtor de funis',tests:'Experimentos avançados',insights:'Gestor inteligente',decisions:'Histórico de decisões',learning:'Memória e aprendizado',seo:'SEO & tráfego orgânico',finance:'Financeiro',settings:'Integrações'});
 const mainNav=Object.entries(names).filter(([v])=>!['tests','decisions'].includes(v));
 function table(head,rows){return '<div class="scroll"><table><thead><tr>'+head.map(x=>'<th>'+esc(x)+'</th>').join('')+'</tr></thead><tbody>'+(rows.length?rows.map(row=>'<tr>'+row.map((v,i)=>'<td data-label="'+esc(head[i])+'"><div class="cellvalue">'+v+'</div></td>').join('')+'</tr>').join(''):'<tr><td colspan="'+head.length+'" class="muted empty">Sem dados para este filtro.</td></tr>')+'</tbody></table></div>'}
 const cells=xs=>xs.map(esc);
@@ -867,7 +867,7 @@ function validatePlan(p){
  return {id:p.id,name:p.name.trim(),revision:p.revision,nodes,edges};
 }
 
-const navIcons={overview:'M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h7v7h-7z',campaigns:'M3 12h4l12-5v10L7 12M7 12l2 7H6l-2-7',creatives:'M3 5h18v14H3zM10 9l5 3-5 3z',funnel:'M3 4h18l-7 8v6l-4 2v-8z',builder:'M3 3h7v6H3zM14 15h7v6h-7zM14 3h7v6h-7zM6.5 9v9H14M10 6h4',insights:'M12 2l2.5 6.5L21 11l-6.5 2.5L12 20l-2.5-6.5L3 11l6.5-2.5z',learning:'M4 5h6a2 2 0 0 1 2 2v13a3 3 0 0 0-3-2H4zM20 5h-6a2 2 0 0 0-2 2v13a3 3 0 0 1 3-2h5z',finance:'M12 2v20M17 6H9a3 3 0 0 0 0 6h6a3 3 0 0 1 0 6H7',settings:'M4 7h16M4 17h16M8 4v6M16 14v6'};
+const navIcons={overview:'M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h7v7h-7z',campaigns:'M3 12h4l12-5v10L7 12M7 12l2 7H6l-2-7',creatives:'M3 5h18v14H3zM10 9l5 3-5 3z',funnel:'M3 4h18l-7 8v6l-4 2v-8z',builder:'M3 3h7v6H3zM14 15h7v6h-7zM14 3h7v6h-7zM6.5 9v9H14M10 6h4',insights:'M12 2l2.5 6.5L21 11l-6.5 2.5L12 20l-2.5-6.5L3 11l6.5-2.5z',learning:'M4 5h6a2 2 0 0 1 2 2v13a3 3 0 0 0-3-2H4zM20 5h-6a2 2 0 0 0-2 2v13a3 3 0 0 1 3-2h5z',seo:'M3 18l6-6 4 4 7-10M15 6h5v5',finance:'M12 2v20M17 6H9a3 3 0 0 0 0 6h6a3 3 0 0 1 0 6H7',settings:'M4 7h16M4 17h16M8 4v6M16 14v6'};
 function intelNav(view,csrf,urlFor=v=>'/?view='+encodeURIComponent(v)){
  const links=mainNav.map(([v,n])=>'<a '+(view===v?'class="active" aria-current="page" ':'')+'href="'+esc(urlFor(v))+'"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="'+navIcons[v]+'"/></svg><span>'+esc(n)+'</span></a>').join('');
  return '<div class="intel-top"><header class="intel-header"><a class="intel-brand" href="'+esc(urlFor('overview'))+'"><span class="intel-logo"><svg viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4v16h16M8 15l4-5 4 3 4-7m-5 0h5v5"/></svg></span><span><strong>Eduverso <em>Intelligence</em></strong><small>Central de inteligência comercial</small></span></a><div class="intel-account"><span class="intel-private">● Ambiente interno</span><form method="post" action="/logout"><input type="hidden" name="csrf" value="'+esc(csrf)+'"><button type="submit">Sair</button></form></div></header><nav class="intel-desktop" aria-label="Menu principal">'+links+'</nav><details class="intel-mobile"><summary><span>☰ &nbsp; Menu</span><strong>'+esc(names[view])+'</strong></summary><nav aria-label="Menu principal mobile">'+links+'</nav></details></div>';
@@ -912,10 +912,66 @@ function builderClient(){
  window.addEventListener('beforeunload',e=>{if(dirty){e.preventDefault();e.returnValue=''}});render();fetch('/api/funnel-plans').then(r=>{if(!r.ok)throw Error('Sessão ou conexão indisponível.');return r.json()}).then(d=>{list=d.plans;if(list.length&&!dirty&&!p.revision)reset(JSON.parse(JSON.stringify(list[0])));else{updateList();if(!dirty)status('Pronto para criar.')}}).catch(e=>status(e.message));
 }
 
+
+const seoReports=Object.freeze({
+ ga_daily:{source:'GAWA',account:'565809893',fields:['date','activeUsers','sessions','engagedSessions','screenPageViews'],label:'GA4 · Visitas diárias'},
+ ga_channel:{source:'GAWA',account:'565809893',fields:['date','sessionDefaultChannelGrouping','sessions','engagedSessions'],label:'GA4 · Canais'},
+ ga_pages:{source:'GAWA',account:'565809893',fields:['date','pagePath','screenPageViews'],label:'GA4 · Páginas'},
+ ga_events:{source:'GAWA',account:'565809893',fields:['date','eventName','pagePath','eventCount'],label:'GA4 · Eventos'},
+ gsc_daily:{source:'GW',account:'sc-domain:eduversoai.com.br',fields:['Date','clicks','impressions','position'],label:'Search Console · Busca'},
+ gsc_pages:{source:'GW',account:'sc-domain:eduversoai.com.br',fields:['Date','pagepath','clicks','impressions','position'],label:'Search Console · Páginas'},
+ gsc_queries:{source:'GW',account:'sc-domain:eduversoai.com.br',fields:['Date','query','clicks','impressions','position'],label:'Search Console · Consultas'}
+});
+db.exec('CREATE TABLE IF NOT EXISTS seo_snapshots(report TEXT NOT NULL, id TEXT NOT NULL, at TEXT NOT NULL, date_from TEXT NOT NULL,date_to TEXT NOT NULL, rows_json TEXT NOT NULL, PRIMARY KEY(report,id)); CREATE INDEX IF NOT EXISTS seo_latest ON seo_snapshots(report,at DESC)');
+function seoIngest(p){
+ const cfg=seoReports[p?.report];if(!cfg||p.source!==cfg.source||p.account!==cfg.account||p.cache_used!==false||p.status!=='completed'||!Array.isArray(p.fields)||JSON.stringify(p.fields)!==JSON.stringify(cfg.fields)||!Array.isArray(p.rows)||p.rows.length>2000||typeof p.id!=='string'||!/^[a-zA-Z0-9_-]{8,200}$/.test(p.id)||!dateOK(p.from)||!dateOK(p.to)||p.from>p.to||p.to>today()||typeof p.at!=='string'||!Number.isFinite(Date.parse(p.at)))throw Error('Snapshot SEO inválido');
+ const dimensions=cfg.fields.map((f,i)=>i===0||['sessionDefaultChannelGrouping','pagePath','eventName','pagepath','query'].includes(f));
+ const rows=[];
+ for(const row of p.rows){
+  if(!Array.isArray(row)||row.length!==cfg.fields.length||!dateOK(row[0])||row[0]<p.from||row[0]>p.to)throw Error('Linha SEO inválida');
+  const cleanRow=row.map((v,i)=>dimensions[i]?typeof v==='string'?v.slice(0,250):'':v===null||v===''?null:typeof v==='number'&&Number.isFinite(v)&&v>=0?v:null);
+  const pathIndex=cfg.fields.findIndex(f=>f==='pagePath'||f==='pagepath');if(pathIndex>=0&&!/^\/(?:blog(?:\/[a-z0-9-]+)?|ferramentas(?:\/[a-z0-9-]+)?)?\/?$/.test(cleanRow[pathIndex]))continue;
+  if(p.report==='ga_events'&&!['tool_used','checkout_click','plans_click','article_tool_click','content_scroll_90'].includes(cleanRow[1]))continue;
+  if(p.report==='gsc_queries'&&(!cleanRow[1]||/@|\d{6,}|https?:|[<>]/i.test(cleanRow[1])||!(cleanRow[3]>=5)))continue;
+  rows.push(cleanRow);
+ }
+ const result=db.prepare('INSERT OR IGNORE INTO seo_snapshots VALUES(?,?,?,?,?,?)').run(p.report,p.id,new Date(p.at).toISOString(),p.from,p.to,JSON.stringify(rows));
+ console.info('SEO_IMPORT '+JSON.stringify({report:p.report,id:p.id,count:rows.length,duplicate:!result.changes}));return rows.length;
+}
+function seoBootstrap(){try{const raw=process.env.SEO_BOOTSTRAP_JSON;if(!raw)return;const data=JSON.parse(raw);if(!Array.isArray(data)||data.length>7)throw Error('Pacote SEO inválido');for(const p of data){try{seoIngest(p)}catch(e){console.warn('SEO_IMPORT_ERROR',String(e.message).slice(0,120))}}}catch(e){console.warn('SEO_BOOTSTRAP_ERROR',String(e.message).slice(0,120))}}
+function seoPanel(from,to){
+ const all=Object.entries(seoReports).map(([key,cfg])=>{
+  const x=db.prepare('SELECT * FROM seo_snapshots WHERE report=? AND date_from<=? AND date_to>=? ORDER BY at DESC LIMIT 1').get(key,to,from);
+  return [key,{cfg,x,rows:x?JSON.parse(x.rows_json).filter(r=>r[0]>=from&&r[0]<=to):[]}];
+ });
+ const by=Object.fromEntries(all),n=v=>v==null?'—':Number(v).toLocaleString('pt-BR',{maximumFractionDigits:2});
+ const sum=(rows,i)=>rows.length&&rows.every(r=>r[i]!=null)?rows.reduce((a,r)=>a+r[i],0):null;
+ const g=by.ga_daily.rows,c=by.gsc_daily.rows,click=sum(c,1),imp=sum(c,2),pos=imp>0&&c.every(r=>r[3]!=null&&r[2]!=null)?c.reduce((a,r)=>a+r[2]*r[3],0)/imp:null;
+ const active=from===to?sum(g,1):null;
+ const cards=(xs)=>'<div class="grid">'+xs.map(([k,v])=>card(k,v)).join('')+'</div>';
+ const reportTable=(key,head)=>{const x=by[key];return table(head,x.rows.slice(0,100).map(r=>cells(r.map((v,i)=>i===0||typeof v==='string'?v:n(v)))))+note(x.x?'Consulta em '+timeFmt(x.x.at)+' · período de origem '+x.x.date_from+' a '+x.x.date_to+(x.rows.length?'':' · sem linhas no filtro.'):'Aguardando primeira coleta.')};
+ const rec=[];
+ if(!g.length||!c.length)rec.push('Aguardar os relatórios processados pelo Google. Não interpretar ausência de linhas como zero nem tomar decisões de escala com essa amostra.');
+ if(imp>=100&&click!==null&&click/imp<.02)rec.push('Revisar títulos e descrições das páginas com impressões e poucos cliques; considerar a posição e a intenção de busca antes de alterar.');
+ if(g.length&&sum(g,2)>=50&&!by.ga_events.rows.some(r=>r[1]==='checkout_click'))rec.push('Verificar a instrumentação de checkout e testar CTAs em páginas públicas. Ausência de evento não prova ausência de vendas.');
+ if(!rec.length)rec.push('Acompanhar mais dias comparáveis antes de recomendar alterações.');
+ return block('Aquisição · Google Analytics 4',cards([['Usuários ativos (dia)',n(active)],['Sessões',n(sum(g,2))],['Sessões engajadas',n(sum(g,3))],['Visualizações',n(sum(g,4))]])+note('Usuários ativos de vários dias não são somados, pois podem se repetir. Sessões e visualizações consideram somente linhas disponíveis.'))+
+ block('Desempenho na busca · Search Console',cards([['Cliques orgânicos',n(click)],['Impressões',n(imp)],['CTR orgânico',imp>0&&click!==null?n(click/imp*100)+'%':'—'],['Posição média ponderada',n(pos)]])+note('Cliques do Google não equivalem a sessões GA4. Dados recentes podem estar incompletos.'))+
+ block('Diagnóstico estratégico',rec.map(x=>note(x)).join(''))+
+ block('Evolução diária · GA4',reportTable('ga_daily',['Data','Usuários ativos','Sessões','Engajadas','Visualizações']))+
+ block('Evolução diária · Search Console',reportTable('gsc_daily',['Data','Cliques','Impressões','Posição']))+
+ block('Canais de aquisição',reportTable('ga_channel',['Data','Canal','Sessões','Engajadas']))+
+ block('Páginas públicas mais acessadas',reportTable('ga_pages',['Data','Página','Visualizações']))+
+ block('Uso de ferramentas e intenção de compra',reportTable('ga_events',['Data','Evento','Página','Quantidade'])+note('Cliques para checkout não são pagamentos aprovados.'))+
+ block('Páginas na busca',reportTable('gsc_pages',['Data','Página','Cliques','Impressões','Posição']))+
+ block('Consultas de pesquisa',reportTable('gsc_queries',['Data','Termo','Cliques','Impressões','Posição'])+note('Somente termos agregados com pelo menos 5 impressões e filtragem de identificadores evidentes.'))+
+ block('Conexões e atualização',table(['Fonte','Status da coleta','Última consulta'],all.map(([k,{cfg,x,rows}])=>cells([cfg.label,x?(rows.length?'Dados disponíveis':'Sem linhas'):'Aguardando coleta',x?timeFmt(x.at):'—'])))+note('Coleta externa somente leitura, separada da Meta. O painel não consulta o Google ao atualizar a página.'));
+}
+
 function page(csrf,url){
  const p=url.searchParams,view=Object.hasOwn(names,p.get('view'))?p.get('view'):'overview',list=campaigns(),ids=new Set(list.map(c=>c.id));
  const chosen=p.get('campaign'),campaign=chosen==='all'||chosen==='excluded'||ids.has(chosen)?chosen:(ids.has(original)?original:'all');
- let from=dateOK(p.get('from'))?p.get('from'):today(),to=dateOK(p.get('to'))?p.get('to'):today();if(to>today())to=today();if(from>to)from=to;if(from<dayShift(to,-365))from=dayShift(to,-365);
+ let from=dateOK(p.get('from'))?p.get('from'):(view==='seo'?dayShift(today(),-6):today()),to=dateOK(p.get('to'))?p.get('to'):today();if(to>today())to=today();if(from>to)from=to;if(from<dayShift(to,-365))from=dayShift(to,-365);
  const all=db.prepare('SELECT d.*,c.scope,c.name campaign_name,a.name ad_name FROM daily d JOIN campaigns c ON c.id=d.campaign_id LEFT JOIN ads a ON a.id=d.ad_id WHERE d.date BETWEEN ? AND ? ORDER BY d.date,d.ad_id').all(from,to);
  const filter=r=>campaign==='all'?r.scope!=='excluded':campaign==='excluded'?r.scope==='excluded':r.campaign_id===campaign;
  const rows=all.filter(filter),m=metrics(rows),adList=allAds(),adBy=new Map(adList.map(a=>[a.id,a]));
@@ -957,6 +1013,8 @@ function page(csrf,url){
   const historical=db.prepare("SELECT d.*,c.scope FROM daily d JOIN campaigns c ON c.id=d.campaign_id WHERE c.scope='tracked' ORDER BY date").all();
   const summary=[];for(const key of ['format','angle','voice','visual','audience','duration']){const groups=new Map();for(const row of historical){const label=adBy.get(row.ad_id)?.[key];if(!label)continue;if(!groups.has(label))groups.set(label,[]);groups.get(label).push(row)}for(const [label,rs] of groups){const q=metrics(rs),n=new Set(rs.map(r=>r.campaign_id)).size;summary.push(cells([({format:'Formato',angle:'Argumento',voice:'Narração',visual:'Visual',audience:'Público',duration:'Duração'})[key]||key,label,n,new Set(rs.map(r=>r.ad_id)).size,displayMoney(q,'spend'),display(q.purchases),money(q.cpa),n>=2&&q.purchases.complete&&q.purchases.value>=10?'Comparação exploratória':'Amostra insuficiente']))}}
   content=managerMemory(campaign,list)+workflowHistory(campaign,list)+experimentPanel(campaign,list,form,true)+fold('Motor estatístico e memória técnica',statisticalPanel(campaign,list,adBy,form)+learningPanel(campaign,list,form,options))+block('Memória comparativa entre campanhas',note('O histórico considera campanhas monitoradas e os atributos preenchidos na biblioteca. Um grupo precisa de pelo menos duas campanhas e dez compras registradas com cobertura completa para iniciar uma comparação exploratória. Isso não demonstra causalidade.')+table(['Atributo','Valor','Campanhas','Criativos','Gasto','Compras','CPA','Evidência'],summary))+block('Maturidade do aprendizado',note('Estágio atual: memória automática, hipóteses prospectivas e estimador estatístico de taxa de compras com avaliação temporal. Estimativas ficam indisponíveis quando os dados não atendem aos critérios. Não há modelo preditivo complexo treinado nem decisões automáticas.'));
+ }else if(view==='seo'){
+  content=seoPanel(from,to);
  }else if(view==='finance'){
   const financial=db.prepare('SELECT * FROM finance WHERE date BETWEEN ? AND ? ORDER BY date DESC').all(from,to), excludedM=metrics(all.filter(r=>r.scope==='excluded'));
   content=block('Investimento e atribuição Meta','<div class="grid">'+[['Gasto selecionado',displayMoney(m,'spend')],['Gasto excluído da análise (conta)',displayMoney(excludedM,'spend')],['Receita atribuída Meta',displayMoney(m,'revenue')],['ROAS Meta',m.roas===null?'—':m.roas.toFixed(2)+'x']].map(([k,v])=>card(k,v)).join('')+'</div>'+note('A receita atribuída não comprova pagamento. Os registros financeiros manuais abaixo são totais da operação por dia, não atribuídos à campanha.'))+kiwifySummary(from,to,campaign)+pixPanel(from,to)+reconciledFinancePanel(from,to)+simulationPanel(p,campaign,from,to,m,form)+block('Conciliação financeira manual',form('finance',input('date','Dia',today(),'date','required')+'<div class="fields">'+[['gross','Receita confirmada'],['fees','Taxas'],['refunds','Reembolsos'],['taxes','Impostos'],['infra','Infraestrutura'],['other','Outros custos']].map(([k,v])=>input(k,v,'','number','min="0" step="0.01"')).join('')+'</div>')+table(['Dia','Receita','Taxas','Reembolsos','Impostos','Infra','Outros'],financial.map(f=>cells([f.date,money(f.gross),money(f.fees),money(f.refunds),money(f.taxes),money(f.infra),money(f.other)])))+note('Valores em branco permanecem desconhecidos. A margem conciliada é calculada acima somente com cobertura suficiente. Não duplique registros manuais com os da Kiwify.'));
@@ -1218,6 +1276,7 @@ http.createServer(async(req,res)=>{
 }).listen(Number(process.env.PORT||3000),'0.0.0.0');
 if(ready()){sync();setInterval(sync,60*1000).unref()}
 function learningTick(){try{refreshLearning()}catch(e){console.warn('LEARNING_ERROR',clean(e.message,200))}try{refreshExperiments()}catch(e){console.warn('EXPERIMENT_ERROR',clean(e.message,200))}}
+seoBootstrap();
 learningTick();setInterval(learningTick,15*60*1000).unref();
 function strategyTick(){try{refreshStrategy()}catch(e){console.warn('STRATEGY_ERROR',clean(e.message,200))}try{refreshManager()}catch(e){console.warn('MANAGER_ERROR',clean(e.message,200))}}
 strategyTick();setInterval(strategyTick,15*60*1000).unref();
