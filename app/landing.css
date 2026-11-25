@@ -878,3 +878,16 @@
  .lp-pricing-redesign .lp-price-card li{font-size:12px}
  .lp-pricing-redesign .lp-price-card ul{gap:9px}
 }
+
+/* Guarantee as part of the page canvas, with a transparent original shield. */
+.edu-lp .lp-guarantee-integrated{position:relative;isolation:isolate;width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:0;padding:8px 24px 56px;margin:0;background:radial-gradient(ellipse 45% 55% at 50% 31%,#5a26962b,transparent 100%);border:0;border-radius:0;box-shadow:none}
+.lp-guarantee-integrated-shield{width:min(270px,74vw);margin:0 auto -8px;pointer-events:none}
+.lp-guarantee-integrated-shield img{display:block;width:100%;height:auto}
+.edu-lp .lp-guarantee-integrated .lp-guarantee-content{width:100%;max-width:620px;align-items:center;text-align:center}
+.edu-lp .lp-guarantee-integrated .lp-guarantee-kicker{align-self:center;background:none;border:0;border-radius:0;padding:0;justify-content:center;font-size:11px;letter-spacing:1.4px}
+.edu-lp .lp-guarantee-integrated .lp-guarantee-content h2{font-size:clamp(28px,4vw,46px);line-height:1.13;letter-spacing:-1.15px;margin:13px auto 12px;text-wrap:balance}
+.edu-lp .lp-guarantee-integrated .lp-guarantee-content p{font-size:14px;line-height:1.65;color:#c8bed8;margin:0 auto 16px;max-width:530px}
+.edu-lp .lp-guarantee-integrated .lp-guarantee-benefits{justify-content:center;gap:8px 16px;margin:0 auto 21px}
+.edu-lp .lp-guarantee-integrated .lp-guarantee-button{width:min(100%,340px);justify-content:center}
+.edu-lp .lp-guarantee-integrated .lp-guarantee-content>small{margin-top:12px;text-align:center;max-width:480px}
+@media(max-width:680px){.edu-lp .lp-guarantee-integrated{padding:4px 19px 38px;background:radial-gradient(ellipse 80% 50% at 50% 24%,#5a26962b,transparent 100%)}.lp-guarantee-integrated-shield{width:min(235px,72vw);margin-bottom:-7px}.edu-lp .lp-guarantee-integrated .lp-guarantee-kicker{font-size:9px;letter-spacing:1px}.edu-lp .lp-guarantee-integrated .lp-guarantee-content h2{font-size:clamp(26px,7.2vw,35px);margin:11px auto}.edu-lp .lp-guarantee-integrated .lp-guarantee-content p{font-size:13px;line-height:1.55;margin-bottom:13px}.edu-lp .lp-guarantee-integrated .lp-guarantee-benefits{font-size:10px;margin-bottom:17px}.edu-lp .lp-guarantee-integrated .lp-guarantee-content>small{font-size:10px}}

@@ -74,12 +74,8 @@ export default function Landing(){
 
    
 
-   <section className="lp-container lp-guarantee lp-guarantee-art" aria-labelledby="lp-guarantee-title">
-    <picture className="lp-guarantee-picture" aria-hidden="true">
-     <source media="(max-width: 680px)" srcSet="/images/eduverso-garantia-mobile.svg"/>
-     <img src="/images/eduverso-garantia-desktop.svg" alt="" loading="lazy" decoding="async"/>
-    </picture>
-    <div className="lp-guarantee-overlay" aria-hidden="true"/>
+   <section className="lp-guarantee-integrated" aria-labelledby="lp-guarantee-title">
+    <div className="lp-guarantee-integrated-shield" aria-hidden="true"><img src="/images/eduverso-garantia-escudo.svg" alt="" width="540" height="480" loading="lazy" decoding="async"/></div>
     <div className="lp-guarantee-content">
      <span className="lp-guarantee-kicker"><span aria-hidden="true">✦</span> COMPRA COM TRANQUILIDADE</span>
      <h2 id="lp-guarantee-title">Sua escolha tem <em>7 dias de garantia.</em></h2>
