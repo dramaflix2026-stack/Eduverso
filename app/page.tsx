@@ -96,7 +96,7 @@ export default function Landing(){
      </Link>
      <h2>Seu universo de <em>possibilidades.</em></h2>
      <p>Explore o conhecimento, encontre seu ritmo e siga aprendendo. Tudo em um só lugar.</p>
-     <a href="#produto" className="lp-footer-newcta">Explorar a plataforma <span aria-hidden="true">↗</span></a>
+     
      <div className="lp-footer-contact">
       <span className="lp-footer-contact-label">ACOMPANHE O EDUVERSO</span>
       <a className="lp-footer-instagram" href="https://www.instagram.com/eduverso.ai/" target="_blank" rel="noopener noreferrer" aria-label="Instagram do Eduverso, @eduverso.ai (abre em nova aba)"><span className="lp-footer-instagram-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg></span><span><strong>@eduverso.ai</strong><small>Siga nosso Instagram</small></span><span className="lp-contact-arrow" aria-hidden="true">↗</span></a>
