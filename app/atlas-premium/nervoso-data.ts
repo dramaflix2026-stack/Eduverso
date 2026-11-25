@@ -1,4 +1,4 @@
-export const nervosoLabs:Record<string,{title:string;intro:string;scenes:{file:string;label:string;description:string;ready:boolean;points:{name:string;x:number;y:number;description:string}[]}[];quiz:{q:string;answers:string[];correct:number;explain:string}[]}> = {
+export const nervosoLabs:Record<string,{title:string;intro:string;scenes:{file:string;label:string;description:string;ready:boolean;points:{name:string;x:number|null;y:number|null;description:string}[]}[];quiz:{q:string;answers:string[];correct:number;explain:string}[]}> = {
   "cerebro": {
     "title": "Cérebro",
     "intro": "Explore a organização externa e interna dos hemisférios cerebrais e suas relações com outras estruturas do encéfalo.",
@@ -886,6 +886,540 @@ export const nervosoLabs:Record<string,{title:string;intro:string;scenes:{file:s
         ],
         "correct": 2,
         "explain": "O facial inerva os músculos da expressão facial."
+      }
+    ]
+  },
+  "nervos-perifericos": {
+    "title": "Nervos periféricos",
+    "intro": "Estude os plexos e as principais vias nervosas dos membros. As imagens esquemáticas não individualizam todos os fascículos.",
+    "scenes": [
+      {
+        "file": "plexo-braquial.webp",
+        "label": "Plexo braquial",
+        "description": "Vista anterior da região cervicoaxilar. As raízes e os fascículos estão representados de forma simplificada.",
+        "points": [
+          {
+            "name": "Região das raízes",
+            "x": 79,
+            "y": 23,
+            "description": "O plexo braquial é formado principalmente pelos ramos anteriores de C5 a T1."
+          },
+          {
+            "name": "Região dos troncos",
+            "x": 63,
+            "y": 31,
+            "description": "Os troncos superior, médio e inferior organizam as fibras antes das divisões."
+          },
+          {
+            "name": "Região dos ramos terminais",
+            "x": 28,
+            "y": 57,
+            "description": "O plexo origina os nervos axilar, musculocutâneo, mediano, radial e ulnar."
+          }
+        ],
+        "ready": true
+      },
+      {
+        "file": "membro-superior.webp",
+        "label": "Nervos do membro superior",
+        "description": "Vista anterior ilustrativa. Os trajetos dos nervos individuais não são completamente separáveis nesta representação.",
+        "points": [
+          {
+            "name": "Feixes nervosos do braço",
+            "x": 33,
+            "y": 29,
+            "description": "Os ramos do plexo braquial distribuem fibras motoras e sensitivas pelo braço."
+          },
+          {
+            "name": "Trajeto nervoso no antebraço",
+            "x": 52,
+            "y": 57,
+            "description": "Mediano, ulnar e radial contribuem para a inervação do antebraço e da mão."
+          },
+          {
+            "name": "Ramos digitais",
+            "x": 78,
+            "y": 85,
+            "description": "Os nervos digitais conduzem a sensibilidade e participam da distribuição nervosa da mão."
+          }
+        ],
+        "ready": true
+      },
+      {
+        "file": "plexo-lombossacral.webp",
+        "label": "Plexo lombossacral",
+        "description": "Ilustração em preparação.",
+        "points": [
+          {
+            "name": "Plexo lombar",
+            "x": null,
+            "y": null,
+            "description": "Formado principalmente por ramos anteriores de L1 a L4; contribui para a inervação abdominal e do membro inferior."
+          },
+          {
+            "name": "Plexo sacral",
+            "x": null,
+            "y": null,
+            "description": "Formado principalmente por L4 a S4; distribui fibras à pelve e aos membros inferiores."
+          },
+          {
+            "name": "Nervo femoral",
+            "x": null,
+            "y": null,
+            "description": "Origina-se de L2 a L4 e inerva, entre outras estruturas, o quadríceps."
+          }
+        ],
+        "ready": false
+      },
+      {
+        "file": "ciatico.webp",
+        "label": "Nervo ciático",
+        "description": "Ilustração em preparação.",
+        "points": [
+          {
+            "name": "Nervo ciático",
+            "x": null,
+            "y": null,
+            "description": "Origina-se de L4 a S3 e percorre habitualmente a região posterior da coxa."
+          },
+          {
+            "name": "Nervo tibial",
+            "x": null,
+            "y": null,
+            "description": "Inerva músculos da região posterior da perna e estruturas plantares."
+          },
+          {
+            "name": "Nervo fibular comum",
+            "x": null,
+            "y": null,
+            "description": "Segue lateralmente próximo à cabeça da fíbula e origina os ramos superficial e profundo."
+          }
+        ],
+        "ready": false
+      }
+    ],
+    "quiz": [
+      {
+        "q": "Quais raízes contribuem principalmente para o plexo braquial?",
+        "answers": [
+          "C5–T1",
+          "T2–T6",
+          "L2–L4",
+          "S2–S4"
+        ],
+        "correct": 0,
+        "explain": "Os ramos anteriores de C5 a T1 constituem tipicamente o plexo braquial."
+      },
+      {
+        "q": "Qual nervo é especialmente associado ao túnel do carpo?",
+        "answers": [
+          "Radial",
+          "Mediano",
+          "Femoral",
+          "Tibial"
+        ],
+        "correct": 1,
+        "explain": "O nervo mediano atravessa o túnel do carpo."
+      },
+      {
+        "q": "Qual nervo inerva o quadríceps?",
+        "answers": [
+          "Ulnar",
+          "Vago",
+          "Femoral",
+          "Tibial"
+        ],
+        "correct": 2,
+        "explain": "O nervo femoral fornece inervação motora ao quadríceps."
+      },
+      {
+        "q": "Quais são as duas divisões principais do nervo ciático?",
+        "answers": [
+          "Mediano e ulnar",
+          "Femoral e obturatório",
+          "Axilar e radial",
+          "Tibial e fibular comum"
+        ],
+        "correct": 3,
+        "explain": "O ciático divide-se nos nervos tibial e fibular comum."
+      },
+      {
+        "q": "Qual nervo passa próximo ao colo da fíbula?",
+        "answers": [
+          "Fibular comum",
+          "Mediano",
+          "Facial",
+          "Hipoglosso"
+        ],
+        "correct": 0,
+        "explain": "O fibular comum contorna o colo da fíbula, onde é superficial."
+      },
+      {
+        "q": "Qual tipo de fibra leva informações sensitivas ao sistema nervoso central?",
+        "answers": [
+          "Eferente",
+          "Aferente",
+          "Exclusivamente motora",
+          "Exclusivamente glandular"
+        ],
+        "correct": 1,
+        "explain": "Fibras aferentes conduzem sinais em direção ao sistema nervoso central."
+      }
+    ]
+  },
+  "sinapses": {
+    "title": "Sinapses",
+    "intro": "Explore a transmissão química e elétrica entre células excitáveis. Cores, distâncias e partículas das imagens são recursos esquemáticos, não representações moleculares em escala.",
+    "scenes": [
+      {
+        "file": "quimica.webp",
+        "label": "Sinapse química",
+        "description": "Visão ampliada do terminal pré-sináptico e da membrana pós-sináptica.",
+        "points": [
+          {
+            "name": "Vesículas sinápticas",
+            "x": 42,
+            "y": 32,
+            "description": "Armazenam neurotransmissores que podem ser liberados por exocitose."
+          },
+          {
+            "name": "Fenda sináptica",
+            "x": 55,
+            "y": 56,
+            "description": "Espaço extracelular pelo qual os neurotransmissores difundem."
+          },
+          {
+            "name": "Receptores pós-sinápticos",
+            "x": 61,
+            "y": 64,
+            "description": "Proteínas que respondem à ligação do neurotransmissor."
+          }
+        ],
+        "ready": true
+      },
+      {
+        "file": "exocitose.webp",
+        "label": "Liberação de neurotransmissores",
+        "description": "Representação da fusão vesicular e liberação química.",
+        "points": [
+          {
+            "name": "Terminal pré-sináptico",
+            "x": 35,
+            "y": 38,
+            "description": "A chegada de um potencial de ação pode abrir canais de cálcio dependentes de voltagem."
+          },
+          {
+            "name": "Vesícula em fusão",
+            "x": 52,
+            "y": 53,
+            "description": "A entrada de cálcio favorece a fusão das vesículas com a membrana."
+          },
+          {
+            "name": "Neurotransmissores",
+            "x": 58,
+            "y": 62,
+            "description": "Moléculas liberadas na fenda que podem alcançar receptores."
+          }
+        ],
+        "ready": true
+      },
+      {
+        "file": "receptores.webp",
+        "label": "Receptores pós-sinápticos",
+        "description": "Ilustração de receptores e resposta celular. O brilho representa atividade, não corrente elétrica visível.",
+        "points": [
+          {
+            "name": "Neurotransmissores",
+            "x": 59,
+            "y": 50,
+            "description": "Moléculas que podem ligar-se a receptores específicos."
+          },
+          {
+            "name": "Receptor ionotrópico ilustrativo",
+            "x": 58,
+            "y": 62,
+            "description": "A ligação do neurotransmissor pode alterar a abertura de um canal iônico."
+          },
+          {
+            "name": "Membrana pós-sináptica",
+            "x": 49,
+            "y": 72,
+            "description": "Mudanças de condutância podem alterar o potencial de membrana; nem toda sinapse gera um potencial de ação."
+          }
+        ],
+        "ready": true
+      },
+      {
+        "file": "eletrica.webp",
+        "label": "Sinapse elétrica",
+        "description": "Esquema de junções comunicantes; dimensões e brilho não são literais.",
+        "points": [
+          {
+            "name": "Membrana da primeira célula",
+            "x": 45,
+            "y": 43,
+            "description": "A membrana contém conexons que se alinham aos da célula adjacente."
+          },
+          {
+            "name": "Junção comunicante",
+            "x": 51,
+            "y": 50,
+            "description": "Canais intercelulares permitem passagem direta de íons e pequenas moléculas."
+          },
+          {
+            "name": "Membrana da segunda célula",
+            "x": 51,
+            "y": 59,
+            "description": "A transmissão elétrica é frequentemente rápida e pode ser bidirecional."
+          }
+        ],
+        "ready": true
+      }
+    ],
+    "quiz": [
+      {
+        "q": "Qual íon desencadeia tipicamente a liberação vesicular?",
+        "answers": [
+          "Cloreto",
+          "Cálcio",
+          "Ferro",
+          "Magnésio"
+        ],
+        "correct": 1,
+        "explain": "A entrada de cálcio no terminal promove a fusão vesicular."
+      },
+      {
+        "q": "Como neurotransmissores atravessam a fenda química?",
+        "answers": [
+          "Difusão",
+          "Fluxo sanguíneo",
+          "Transporte ósseo",
+          "Contração muscular"
+        ],
+        "correct": 0,
+        "explain": "As moléculas liberadas difundem pela fenda."
+      },
+      {
+        "q": "O que permite comunicação direta em sinapses elétricas?",
+        "answers": [
+          "Vesículas",
+          "Mielina",
+          "Junções comunicantes",
+          "Hormônios circulantes"
+        ],
+        "correct": 2,
+        "explain": "As junções comunicantes conectam os citoplasmas por canais."
+      },
+      {
+        "q": "Qual receptor funciona diretamente como canal iônico regulado por ligante?",
+        "answers": [
+          "Receptor nuclear",
+          "Receptor metabotrópico",
+          "Transportador de glicose",
+          "Receptor ionotrópico"
+        ],
+        "correct": 3,
+        "explain": "O ionotrópico modifica a condutância iônica diretamente."
+      },
+      {
+        "q": "Toda ligação a receptor pós-sináptico gera potencial de ação?",
+        "answers": [
+          "Não, depende da integração dos sinais",
+          "Sim, sempre",
+          "Somente no cerebelo",
+          "Apenas em sinapses elétricas"
+        ],
+        "correct": 0,
+        "explain": "Os efeitos pós-sinápticos podem ser excitatórios ou inibitórios e são integrados pela célula."
+      },
+      {
+        "q": "Qual mecanismo pode terminar a ação de um neurotransmissor?",
+        "answers": [
+          "Ossificação",
+          "Recaptação ou degradação",
+          "Produção de hemácias",
+          "Contração do axônio"
+        ],
+        "correct": 1,
+        "explain": "Recaptação, degradação e difusão podem limitar o sinal."
+      }
+    ]
+  },
+  "reflexos": {
+    "title": "Reflexos",
+    "intro": "Estude respostas reflexas medulares e do tronco encefálico. As ilustrações de IA são esquemáticas; algumas setas e trajetos estão inconsistentes e não devem ser usados para inferir o sentido anatômico da condução. Use as explicações e a revisão especializada.",
+    "scenes": [
+      {
+        "file": "arco-medular.webp",
+        "label": "Arco reflexo medular",
+        "description": "Circuito de estiramento simplificado. As setas ilustradas não são uma referência confiável de direção.",
+        "points": [
+          {
+            "name": "Fuso neuromuscular",
+            "x": 20,
+            "y": 22,
+            "description": "Detecta o estiramento muscular e envia informação pelas fibras sensitivas."
+          },
+          {
+            "name": "Gânglio da raiz dorsal",
+            "x": 49,
+            "y": 19,
+            "description": "Abriga os corpos celulares dos neurônios sensitivos espinhais."
+          },
+          {
+            "name": "Região da substância cinzenta",
+            "x": 76,
+            "y": 29,
+            "description": "A aferência Ia pode excitar diretamente o motoneurônio alfa no reflexo de estiramento; outros circuitos usam interneurônios."
+          }
+        ],
+        "ready": true
+      },
+      {
+        "file": "patelar.webp",
+        "label": "Reflexo patelar",
+        "description": "Ilustração em preparação. O reflexo é apresentado por meio das explicações abaixo.",
+        "points": [
+          {
+            "name": "Região do quadríceps",
+            "x": null,
+            "y": null,
+            "description": "A percussão adequada do ligamento patelar estira o quadríceps."
+          },
+          {
+            "name": "Região do joelho",
+            "x": null,
+            "y": null,
+            "description": "O estímulo do ligamento patelar desencadeia a resposta reflexa."
+          },
+          {
+            "name": "Região medular",
+            "x": null,
+            "y": null,
+            "description": "O reflexo envolve principalmente L2–L4, com predomínio de L4, e o nervo femoral."
+          }
+        ],
+        "ready": false
+      },
+      {
+        "file": "retirada.webp",
+        "label": "Reflexo de retirada",
+        "description": "Resposta protetora a estímulo nocivo; a ilustração simplifica as conexões e apresenta inconsistências nas setas.",
+        "points": [
+          {
+            "name": "Receptor nociceptivo",
+            "x": 17,
+            "y": 22,
+            "description": "Terminações nervosas livres detectam estímulos potencialmente lesivos."
+          },
+          {
+            "name": "Região de integração medular",
+            "x": 76,
+            "y": 18,
+            "description": "Interneurônios medulares coordenam o reflexo polissináptico."
+          },
+          {
+            "name": "Membro em retirada",
+            "x": 22,
+            "y": 71,
+            "description": "A ativação de músculos flexores e a inibição de antagonistas ajudam a afastar o membro do estímulo."
+          }
+        ],
+        "ready": true
+      },
+      {
+        "file": "pupilar.webp",
+        "label": "Reflexo fotomotor pupilar",
+        "description": "Resposta à luz. Os trajetos e setas são esquemáticos e não representam fielmente as conexões bilaterais.",
+        "points": [
+          {
+            "name": "Retina ilustrada",
+            "x": 45,
+            "y": 38,
+            "description": "Detecta luz e inicia a via aferente pelo nervo óptico."
+          },
+          {
+            "name": "Região mesencefálica",
+            "x": 78,
+            "y": 29,
+            "description": "A via pré-tectal projeta-se bilateralmente aos núcleos de Edinger–Westphal."
+          },
+          {
+            "name": "Região da íris",
+            "x": 42,
+            "y": 74,
+            "description": "O esfíncter da pupila contrai-se por ação parassimpática conduzida pelo nervo oculomotor e pelo gânglio ciliar."
+          }
+        ],
+        "ready": true
+      }
+    ],
+    "quiz": [
+      {
+        "q": "Qual receptor detecta o estiramento no reflexo miotático?",
+        "answers": [
+          "Fuso neuromuscular",
+          "Retina",
+          "Corpúsculo gustativo",
+          "Órgão vestibular"
+        ],
+        "correct": 0,
+        "explain": "O fuso detecta mudanças no comprimento muscular."
+      },
+      {
+        "q": "Qual nervo participa do reflexo patelar?",
+        "answers": [
+          "Tibial",
+          "Femoral",
+          "Mediano",
+          "Facial"
+        ],
+        "correct": 1,
+        "explain": "O nervo femoral conduz as fibras aferentes e eferentes do reflexo."
+      },
+      {
+        "q": "Qual é uma característica do reflexo de retirada?",
+        "answers": [
+          "É exclusivamente cortical",
+          "Depende de um único neurônio",
+          "É polissináptico",
+          "É sempre voluntário"
+        ],
+        "correct": 2,
+        "explain": "Interneurônios espinhais coordenam a resposta protetora."
+      },
+      {
+        "q": "Qual nervo constitui a via aferente do reflexo fotomotor?",
+        "answers": [
+          "Vago",
+          "Troclear",
+          "Oculomotor",
+          "Óptico"
+        ],
+        "correct": 3,
+        "explain": "O nervo óptico conduz a informação luminosa à via pré-tectal."
+      },
+      {
+        "q": "Qual nervo conduz a via parassimpática eferente do reflexo fotomotor?",
+        "answers": [
+          "Oculomotor",
+          "Facial",
+          "Trigêmeo",
+          "Abducente"
+        ],
+        "correct": 0,
+        "explain": "O III par conduz fibras pré-ganglionares até o gânglio ciliar."
+      },
+      {
+        "q": "Qual resposta é esperada no reflexo patelar?",
+        "answers": [
+          "Flexão dos dedos",
+          "Extensão do joelho",
+          "Dilatação pupilar",
+          "Abdução do ombro"
+        ],
+        "correct": 1,
+        "explain": "A contração reflexa do quadríceps promove extensão do joelho."
       }
     ]
   }

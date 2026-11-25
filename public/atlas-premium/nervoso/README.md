@@ -1,3 +1,3 @@
 # Sistema Nervoso
 
-20 cenas ilustrativas, 60 marcadores aproximados, 30 questões comentadas. As imagens geradas por IA têm simplificações; não estão validadas por especialista. Uma vista anterior alternativa foi preservada sem uso na interface. Os laboratórios 06–08 continuam pendentes. Os arquivos originais enviados com extensão .webp correspondem a imagens PNG geradas; preservamos seus blobs sem recompressão.
+8 laboratórios com 4 cenas planejadas e 6 questões comentadas cada. 29 imagens ativas; 3 cenas pendentes (plexo lombossacral, nervo ciático e reflexo patelar). Duas alternativas preservadas sem uso na interface. Imagens de IA esquemáticas e marcadores aproximados, pendentes de revisão especializada. A quarta cena de reflexos é fotomotora, não aquileana. As setas de algumas cenas de reflexos não representam fielmente o sentido de condução; os avisos estão presentes no laboratório. O bloqueio e a demonstração existentes foram preservados.
