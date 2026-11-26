@@ -19,7 +19,17 @@ const palettes:Record<ToolSlug,[string,string,string]>={"cronograma-de-estudos":
 "gerador-de-rubricas":["#b9a3ff","#39266c","#f1eaff"],
 "gerador-de-referencias":["#f0aa91","#502d33","#fff0e9"],
 "organizador-de-trabalhos-academicos":["#76d5ff","#123c59","#e0f7ff"],
-"planejador-de-provas":["#b8a0ff","#352260","#f0e9ff"]
+"planejador-de-provas":["#b8a0ff","#352260","#f0e9ff"],
+"calculadora-de-pitagoras":["#b8a0ff","#352260","#f0e9ff"],
+"calculadora-de-progressao-aritmetica":["#6fe5be","#123f39","#ddfff1"],
+"calculadora-de-progressao-geometrica":["#76d5ff","#123c59","#e0f7ff"],
+"calculadora-de-lei-de-ohm":["#f6c66b","#4d3021","#fff0d4"],
+"calculadora-de-energia-cinetica":["#7ddbd4","#16454b","#e4ffff"],
+"calculadora-de-ph":["#efa3dd","#48234f","#ffebf9"],
+"calculadora-de-probabilidade":["#b9a3ff","#39266c","#f1eaff"],
+"quiz-de-genetica":["#f0aa91","#502d33","#fff0e9"],
+"quiz-de-ecologia":["#6fe5be","#123f39","#ddfff1"],
+"gerador-de-questoes-de-matematica":["#b8a0ff","#352260","#f0e9ff"]
 };
 const additionalArt:Partial<Record<ToolSlug,[string,string]>>={"calculadora-de-porcentagem":["%","200 × 15% = 30"],"calculadora-de-fracoes":["½ + ⅓","= ⅚"],"regra-de-tres-online":["3 → 18","5 → 30"],"calculadora-equacao-primeiro-grau":["2x + 3 = 11","x = 4"],"conversor-de-unidades":["1 km","= 1000 m"],"calendario-de-revisao-espacada":["1 · 3 · 7","14 · 30 dias"],"planejador-de-leitura":["120 páginas","12 por dia"],
 "calculadora-de-bhaskara":["Δ = b² − 4ac","x = 2 ou 3"],
@@ -39,7 +49,17 @@ const additionalArt:Partial<Record<ToolSlug,[string,string]>>={"calculadora-de-p
 "gerador-de-rubricas":["Critérios","Níveis de desempenho"],
 "gerador-de-referencias":["Autor · título","Fontes e referências"],
 "organizador-de-trabalhos-academicos":["Introdução","Desenvolvimento"],
-"planejador-de-provas":["Dias × minutos","Prática e revisão"]
+"planejador-de-provas":["Dias × minutos","Prática e revisão"],
+"calculadora-de-pitagoras":["a² + b² = c²","3 · 4 · 5"],
+"calculadora-de-progressao-aritmetica":["aₙ = a₁+(n−1)r","Sₙ = n(a₁+aₙ)/2"],
+"calculadora-de-progressao-geometrica":["aₙ = a₁qⁿ⁻¹","Soma finita"],
+"calculadora-de-lei-de-ohm":["V = R · I","V · A · Ω"],
+"calculadora-de-energia-cinetica":["Eₖ = mv²/2","Energia em joules"],
+"calculadora-de-ph":["pH = −log₁₀[H⁺]","Modelo ideal"],
+"calculadora-de-probabilidade":["P(A) = favoráveis/total","Fração · porcentagem"],
+"quiz-de-genetica":["Aa × Aa","Genótipo e fenótipo"],
+"quiz-de-ecologia":["Produtores → consumidores","Energia e matéria"],
+"gerador-de-questoes-de-matematica":["Exercícios autorais","Gabarito conferível"]
 };
 export function Illustration({kind,compact=false}:{kind:ToolSlug,compact?:boolean}){
  const id=useId().replace(/[^a-zA-Z0-9_-]/g,""),[accent,bg,light]=palettes[kind],ref=(n:string)=>"url(#"+id+n+")";
