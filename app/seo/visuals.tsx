@@ -1,8 +1,26 @@
 
 import {useId} from "react";
 import type {ToolSlug} from "./catalog";
-const palettes:Record<ToolSlug,[string,string,string]>={"cronograma-de-estudos":["#b8a0ff","#352260","#f0e9ff"],"calculadora-de-media-escolar":["#76d5ff","#123c59","#e0f7ff"],"flashcards-online":["#efa3dd","#48234f","#ffebf9"],"simulado-enem-gratuito":["#6fe5be","#123f39","#ddfff1"],"temporizador-pomodoro":["#f6c66b","#4d3021","#fff0d4"],"calculadora-de-porcentagem":["#8fdcff","#163d52","#e1faff"],"calculadora-de-fracoes":["#f3b6d9","#502544","#fff0fa"],"regra-de-tres-online":["#a8e4ab","#25462d","#edffed"],"calculadora-equacao-primeiro-grau":["#b9a3ff","#39266c","#f1eaff"],"conversor-de-unidades":["#7ddbd4","#16454b","#e4ffff"],"calendario-de-revisao-espacada":["#f6cb87","#523c24","#fff5dc"],"planejador-de-leitura":["#f0aa91","#502d33","#fff0e9"]};
-const additionalArt:Partial<Record<ToolSlug,[string,string]>>={"calculadora-de-porcentagem":["%","200 × 15% = 30"],"calculadora-de-fracoes":["½ + ⅓","= ⅚"],"regra-de-tres-online":["3 → 18","5 → 30"],"calculadora-equacao-primeiro-grau":["2x + 3 = 11","x = 4"],"conversor-de-unidades":["1 km","= 1000 m"],"calendario-de-revisao-espacada":["1 · 3 · 7","14 · 30 dias"],"planejador-de-leitura":["120 páginas","12 por dia"]};
+const palettes:Record<ToolSlug,[string,string,string]>={"cronograma-de-estudos":["#b8a0ff","#352260","#f0e9ff"],"calculadora-de-media-escolar":["#76d5ff","#123c59","#e0f7ff"],"flashcards-online":["#efa3dd","#48234f","#ffebf9"],"simulado-enem-gratuito":["#6fe5be","#123f39","#ddfff1"],"temporizador-pomodoro":["#f6c66b","#4d3021","#fff0d4"],"calculadora-de-porcentagem":["#8fdcff","#163d52","#e1faff"],"calculadora-de-fracoes":["#f3b6d9","#502544","#fff0fa"],"regra-de-tres-online":["#a8e4ab","#25462d","#edffed"],"calculadora-equacao-primeiro-grau":["#b9a3ff","#39266c","#f1eaff"],"conversor-de-unidades":["#7ddbd4","#16454b","#e4ffff"],"calendario-de-revisao-espacada":["#f6cb87","#523c24","#fff5dc"],"planejador-de-leitura":["#f0aa91","#502d33","#fff0e9"],
+"calculadora-de-bhaskara":["#b8a0ff","#352260","#f0e9ff"],
+"calculadora-de-juros":["#6fe5be","#123f39","#ddfff1"],
+"calculadora-de-estatistica":["#76d5ff","#123c59","#e0f7ff"],
+"calculadora-de-velocidade-media":["#f6c66b","#4d3021","#fff0d4"],
+"calculadora-de-densidade":["#7ddbd4","#16454b","#e4ffff"],
+"calculadora-de-concentracao-molar":["#efa3dd","#48234f","#ffebf9"],
+"calculadora-de-areas":["#b9a3ff","#39266c","#f1eaff"],
+"contador-de-palavras":["#f0aa91","#502d33","#fff0e9"]
+};
+const additionalArt:Partial<Record<ToolSlug,[string,string]>>={"calculadora-de-porcentagem":["%","200 × 15% = 30"],"calculadora-de-fracoes":["½ + ⅓","= ⅚"],"regra-de-tres-online":["3 → 18","5 → 30"],"calculadora-equacao-primeiro-grau":["2x + 3 = 11","x = 4"],"conversor-de-unidades":["1 km","= 1000 m"],"calendario-de-revisao-espacada":["1 · 3 · 7","14 · 30 dias"],"planejador-de-leitura":["120 páginas","12 por dia"],
+"calculadora-de-bhaskara":["Δ = b² − 4ac","x = 2 ou 3"],
+"calculadora-de-juros":["J = C · i · t","M = C(1+i)ᵗ"],
+"calculadora-de-estatistica":["2 · 4 · 4 · 6","Mediana = 4"],
+"calculadora-de-velocidade-media":["v = d/t","km/h → m/s"],
+"calculadora-de-densidade":["ρ = m/V","g/cm³"],
+"calculadora-de-concentracao-molar":["n = m/M","C = n/V"],
+"calculadora-de-areas":["A = b·h/2","A = πr²"],
+"contador-de-palavras":["Aa · 123","Palavras e texto"]
+};
 export function Illustration({kind,compact=false}:{kind:ToolSlug,compact?:boolean}){
  const id=useId().replace(/[^a-zA-Z0-9_-]/g,""),[accent,bg,light]=palettes[kind],ref=(n:string)=>"url(#"+id+n+")";
  return <svg aria-hidden="true" viewBox="0 0 480 240" width="480" height="240" preserveAspectRatio="xMidYMid slice" style={{display:"block",width:"100%",height:"100%",borderRadius:compact?12:0}}><defs>
