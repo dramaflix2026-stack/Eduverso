@@ -17,7 +17,7 @@ export function calculate(slug:GrowthSlug,values:string[]):string[]{
  case "calculadora-de-bhaskara":{check(a!==0);const d=b*b-4*a*c;if(d<0)return ["Δ = "+fmt(d),"Não há raízes reais."];if(d===0)return ["Δ = "+fmt(d),"Raiz dupla: "+fmt(-b/(2*a))];const q=-0.5*(b+(b>=0?1:-1)*Math.sqrt(d)),r1=q/a,r2=c/q;return ["Δ = "+fmt(d),"x₁ = "+fmt(Math.min(r1,r2)),"x₂ = "+fmt(Math.max(r1,r2))];}
  case "calculadora-de-juros":{check(a>=0&&b>=0&&c>=0&&c<=1200);const x=a*(1+b/100*c),y=a*Math.pow(1+b/100,c);check(Number.isFinite(x)&&Number.isFinite(y));const money=(n:number)=>n.toLocaleString("pt-BR",{style:"currency",currency:"BRL"});return ["Montante simples: "+money(x),"Juros simples: "+money(x-a),"Montante composto: "+money(y),"Juros compostos: "+money(y-a)];}
  case "calculadora-de-velocidade-media":check(a>=0&&b>0);return ["Rapidez média: "+fmt(a/b)+" km/h","Em m/s: "+fmt(a/b/3.6)+" m/s"];
- case "calculadora-de-densidade":check(a>=0&&b>0);return ["Densidade: "+fmt(a/b)+" g/cm³","Em kg/m³: "+fmt(a/b*1000)];
+ case "calculadora-de-densidade":check(a>=0&&b>0);return ["Densidade: "+fmt(a/b)+" g/cm³","Em kg/m³: "+fmt(a/b*1000)+" kg/m³"];
  case "calculadora-de-concentracao-molar":check(a>=0&&b>0&&c>0);return ["Quantidade de matéria: "+fmt(a/b)+" mol","Concentração: "+fmt(a/b/c)+" mol/L"];
  case "calculadora-de-areas":check(a>0&&b>0);return ["Retângulo: "+fmt(a*b)+" unidades²","Triângulo (base a, altura b): "+fmt(a*b/2)+" unidades²","Círculo (raio a): "+fmt(Math.PI*a*a)+" unidades²"];
  }throw Error("Ferramenta desconhecida.");}
