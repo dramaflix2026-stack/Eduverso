@@ -9,12 +9,7 @@ export const revalidate = 60;
 const BLACK_FRIDAY_END = Date.parse("2026-11-28T00:00:00-03:00");
 export default function Landing(){
  const blackFriday = Date.now() < BLACK_FRIDAY_END;
- const promo = "Oferta Black Friday válida até 27/11";
  return <div className="edu-lp">
-  {blackFriday && <div className="lp-bf-banner" aria-label={promo}>
-   <div className="lp-bf-viewport" aria-hidden="true"><div className="lp-bf-track">{[0,1].map(group=><div className="lp-bf-group" key={group}>{[0,1,2,3].map(item=><span key={item}>✦ {promo} <b>•</b> Condição por tempo limitado <b>•</b></span>)}</div>)}</div></div>
-   <span className="lp-bf-static" aria-hidden="true">{promo}</span>
-  </div>}
   <header className="lp-header" id="topo">
    <div className="lp-container lp-header-inner">
     <a href="/" className="lp-logo" aria-label="Eduverso — início"><span className="lp-mark" aria-hidden="true">✦</span><strong>Eduverso<span>.</span></strong></a>
