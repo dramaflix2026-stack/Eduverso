@@ -52,14 +52,14 @@ function isMarketingEnabled() {
 /**
  * Called only from the offer cards on the public landing page.
  * Never send names, emails, study topics, account data, or health information.
- * A checkout click is NOT a Purchase conversion.
+ * A checkout click is NOT InitiateCheckout or Purchase. Kiwify owns those events.
  */
 export function trackEduversoCheckout(
   event: MouseEvent<HTMLAnchorElement>,
   details: { productId: string; productName: string; value: number; checkoutUrl: string },
 ) {
   if (!isMarketingEnabled() || !window.fbq) return;
-  window.fbq("track", "InitiateCheckout", {
+  window.fbq("trackCustom", "CheckoutClick", {
     content_name: details.productName,
     content_ids: [details.productId],
     content_type: "product",
@@ -81,6 +81,7 @@ export function trackEduversoCheckout(
 export default function MetaPixelTracking() {
   const [preference, setPreference] = useState<Preference>("loading");
   const pageViewSent = useRef(false);
+  const offerViewSent = useRef(false);
   const loadCountSent = useRef(false);
 
   useEffect(() => {
@@ -124,6 +125,31 @@ export default function MetaPixelTracking() {
     } else if (preference === "disabled") {
       window.fbq?.("consent", "revoke");
     }
+  }, [preference]);
+
+  // Measure the offer only when its heading becomes visible, not just on page load.
+  useEffect(() => {
+    if (preference !== "enabled" || offerViewSent.current) return;
+    const heading = document.getElementById("lp-pricing-title");
+    if (!heading || typeof IntersectionObserver === "undefined") return;
+    let inView = false;
+    function sendOfferView() {
+      if (!inView || document.visibilityState !== "visible" ||
+          !isMarketingEnabled() || !window.fbq || offerViewSent.current) return;
+      offerViewSent.current = true;
+      window.fbq("track", "ViewContent", { content_name: "Eduverso - Planos", content_category: "Oferta" });
+      observer.disconnect();
+    }
+    const observer = new IntersectionObserver((entries) => {
+      inView = entries.some(entry => entry.isIntersecting && entry.intersectionRatio >= 0.5);
+      sendOfferView();
+    }, { threshold: 0.5 });
+    observer.observe(heading);
+    document.addEventListener("visibilitychange", sendOfferView);
+    return () => {
+      observer.disconnect();
+      document.removeEventListener("visibilitychange", sendOfferView);
+    };
   }, [preference]);
 
   function decide(next: "accepted" | "declined") {
