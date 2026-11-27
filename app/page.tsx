@@ -26,11 +26,44 @@ export default function Landing(){
   </header>
   <main><style>{` .edu-lp .lp-benefits-shell{border:0;box-shadow:none;background:transparent}.edu-lp .lp-whatsapp-floating-icon{width:46px;height:46px}.edu-lp .lp-whatsapp-floating-icon svg{width:25px;height:25px}.edu-lp .lp-whatsapp-floating-label{display:none}.edu-cookie-float{position:fixed;bottom:16px;left:12px;z-index:101;color:#e8def5}.edu-cookie-float>summary{list-style:none;cursor:pointer;background:#21152f;border:1px solid #67547c;border-radius:50%;width:36px;height:36px;display:grid;place-items:center}.edu-cookie-float>summary::-webkit-details-marker{display:none}.edu-cookie-panel{position:absolute;bottom:44px;left:0;width:min(320px,85vw);max-height:65vh;overflow:auto;background:#160e22;padding:14px;border:1px solid #67547c;border-radius:12px}.edu-footer-end{margin-top:24px}@media(max-width:767px){.edu-lp .lp-pricing-redesign{padding-bottom:0;background:#0b0915}.edu-lp .lp-pricing-redesign .lp-pricing-grid{gap:0;margin-bottom:0}.edu-lp .lp-pricing-redesign .lp-pricing-grid article{margin:0}.edu-lp .lp-pricing-redesign .lp-container{padding-bottom:0}}`}</style>
    <section className="lp-hero lp-container lp-hero-redesign edu-hero-clean" aria-labelledby="lp-heading">
-<style>{`.edu-lp .edu-hero-clean{padding-top:40px;padding-bottom:24px;gap:24px;align-items:center}.edu-lp .edu-hero-clean .lp-hero-copy{max-width:540px}.edu-lp .edu-hero-clean h1{font-size:clamp(38px,5vw,64px);line-height:1.06;letter-spacing:-.045em;margin:12px 0 16px}.edu-lp .edu-hero-clean h1 em{display:block}.edu-lp .edu-hero-clean .lp-hero-subtitle{font-size:clamp(15px,1.5vw,19px);line-height:1.55;margin:0 0 20px}.edu-lp .edu-hero-clean .lp-hero-actions{gap:10px;margin:0}.edu-lp .edu-hero-clean .lp-hero-actions .lp-button{min-height:50px}.edu-hero-demo{display:inline-block;color:#c8aff5;font-size:13px;text-decoration:underline;text-underline-offset:4px;padding:10px 0}.edu-lp .edu-hero-clean .lp-hero-stage{margin:0;padding:0;min-width:0}.edu-lp .edu-hero-clean .lp-coverflow-caption{display:none}.edu-lp .edu-hero-clean .lp-coverflow-controls{margin:8px auto 0}.edu-lp .edu-hero-clean .lp-coverflow-motion{font-size:10px;margin:4px auto}.edu-lp .edu-hero-clean .lp-illustration-note{font-size:10px;margin:5px auto 0;max-width:340px}@media(max-width:680px){.edu-lp .edu-hero-clean{padding-top:25px;padding-bottom:18px;gap:12px}.edu-lp .edu-hero-clean .lp-hero-copy{text-align:center;margin:auto}.edu-lp .edu-hero-clean h1{font-size:clamp(32px,8.5vw,42px);margin:0 0 12px}.edu-lp .edu-hero-clean .lp-hero-subtitle{font-size:14px;margin:0 auto 16px;max-width:340px}.edu-lp .edu-hero-clean .lp-hero-actions{display:flex;flex-direction:column;align-items:center}.edu-lp .edu-hero-clean .lp-hero-actions .lp-button{width:100%;max-width:340px}.edu-lp .edu-hero-clean .lp-hero-stage{width:100%}}`}</style>
+<style>{`.edu-lp .edu-hero-clean{padding-top:40px;padding-bottom:24px;gap:24px;align-items:center}.edu-lp .edu-hero-clean .lp-hero-copy{max-width:540px}.edu-lp .edu-hero-clean h1{font-size:clamp(38px,5vw,64px);line-height:1.06;letter-spacing:-.045em;margin:12px 0 16px}.edu-lp .edu-hero-clean h1 em{display:block}.edu-lp .edu-hero-clean .lp-hero-subtitle{font-size:clamp(15px,1.5vw,19px);line-height:1.55;margin:0 0 20px}.edu-lp .edu-hero-clean .lp-hero-actions{gap:10px;margin:0}.edu-lp .edu-hero-clean .lp-hero-actions .lp-button{min-height:50px}.edu-hero-demo{display:inline-block;color:#c8aff5;font-size:13px;text-decoration:underline;text-underline-offset:4px;padding:10px 0}.edu-lp .edu-hero-clean .lp-hero-stage{margin:0;padding:0;min-width:0}.edu-lp .edu-hero-clean .lp-coverflow-caption{display:none}.edu-lp .edu-hero-clean .lp-coverflow-controls{margin:8px auto 0}.edu-lp .edu-hero-clean .lp-coverflow-motion{font-size:10px;margin:4px auto}.edu-lp .edu-hero-clean .lp-illustration-note{font-size:10px;margin:5px auto 0;max-width:340px}@media(max-width:680px){.edu-lp .edu-hero-clean{padding-top:25px;padding-bottom:18px;gap:12px}.edu-lp .edu-hero-clean .lp-hero-copy{text-align:center;margin:auto}.edu-lp .edu-hero-clean h1{font-size:clamp(32px,8.5vw,42px);margin:0 0 12px}.edu-lp .edu-hero-clean .lp-hero-subtitle{font-size:14px;margin:0 auto 16px;max-width:340px}.edu-lp .edu-hero-clean .lp-hero-actions{display:flex;flex-direction:column;align-items:center}.edu-lp .edu-hero-clean .lp-hero-actions .lp-button{width:100%;max-width:340px}.edu-lp .edu-hero-clean .lp-hero-stage{width:100%}}
+.edu-hero-desktop-kicker,.edu-hero-desktop-trust{display:none}
+@media(min-width:981px){
+.edu-lp .edu-hero-clean{width:min(1400px,calc(100% - 96px));max-width:none;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:clamp(24px,3vw,64px);min-height: min(650px,calc(100svh - 115px));padding:40px 0 46px;box-sizing:border-box;justify-items:stretch;text-align:left}
+.edu-lp .edu-hero-clean:before{left:auto;right:-10%;top:0;transform:none;width:75%;height:100%;background:radial-gradient(ellipse at center,#672ba52b,transparent 67%);pointer-events:none}
+.edu-lp .edu-hero-clean .lp-hero-copy{max-width:640px;width:100%;align-items:flex-start;text-align:left;position:relative;z-index:2}
+.edu-hero-desktop-kicker{display:block;font-size:11px;letter-spacing:2px;font-weight:750;color:#c6a3ff;margin-bottom:16px}
+.edu-lp .edu-hero-clean h1{font-size:clamp(38px,4.1vw,68px);line-height:1.055;margin:0 0 20px;max-width:none;text-wrap:initial;letter-spacing:-.045em}
+.edu-lp .edu-hero-clean h1 em{display:block}
+.edu-lp .edu-hero-clean .lp-hero-subtitle{max-width:495px;font-size:clamp(15px,1.25vw,19px);margin:0 0 25px;text-wrap:pretty}
+.edu-lp .edu-hero-clean .lp-hero-actions{justify-content:flex-start;width:auto;max-width:100%}
+.edu-lp .edu-hero-clean .lp-hero-actions .lp-button{flex:none;min-width:260px;padding-inline:26px;min-height:54px}
+.edu-hero-desktop-trust{display:flex;flex-wrap:wrap;gap:10px 20px;font-size:12px;color:#d2c4e5;margin-top:19px}
+.edu-lp .edu-hero-clean .lp-carousel-stage{position:relative;width:100%;max-width:none;align-self:center;isolation:isolate}
+.edu-lp .edu-hero-clean .lp-carousel-stage:before{content:"";position:absolute;inset:8% 4% 17%;border-radius:50%;background:radial-gradient(ellipse,#843ce94a,transparent 68%);filter:blur(15px);z-index:-1;animation:eduHeroGlow 7s ease-in-out infinite alternate;pointer-events:none}
+.edu-lp .edu-hero-clean .lp-coverflow{--card-width:clamp(190px,18vw,275px)}
+.edu-lp .edu-hero-clean .lp-coverflow-viewport{perspective:1300px;height:calc(var(--card-width)*16/9 + 48px)}
+.edu-lp .edu-hero-clean .lp-coverflow-card{top:24px}
+.edu-lp .edu-hero-clean .lp-coverflow-card[data-offset="0"]{animation:eduHeroFloat 5s ease-in-out infinite;box-shadow:0 0 0 2px #c89bff80,0 0 38px #995aff70,0 18px 42px #0009}
+.edu-lp .edu-hero-clean .lp-coverflow-card[data-offset="-1"]{transform:translateX(calc(-50% - var(--card-width)*.76)) rotateY(15deg) rotate(-3deg) scale(.83)}
+.edu-lp .edu-hero-clean .lp-coverflow-card[data-offset="1"]{transform:translateX(calc(-50% + var(--card-width)*.76)) rotateY(-15deg) rotate(3deg) scale(.83)}
+.edu-lp .edu-hero-clean .lp-coverflow-card[data-offset="-2"]{transform:translateX(calc(-50% - var(--card-width)*1.25)) rotateY(20deg) scale(.61)}
+.edu-lp .edu-hero-clean .lp-coverflow-card[data-offset="2"]{transform:translateX(calc(-50% + var(--card-width)*1.25)) rotateY(-20deg) scale(.61)}
+.edu-lp .edu-hero-clean .lp-coverflow-art-footer{font-size:12px}
+.edu-lp .edu-hero-clean .lp-coverflow-caption{display:flex;min-height:40px}
+.edu-lp .edu-hero-clean .lp-coverflow-controls{margin:4px auto 0}
+.edu-lp .edu-hero-clean .lp-illustration-note{text-align:center;max-width:100%}
+@keyframes eduHeroFloat{0%,100%{translate:0 0}50%{translate:0 -9px}}
+@keyframes eduHeroGlow{from{opacity:.7;scale:.96}to{opacity:1;scale:1.04}}
+}
+@media(prefers-reduced-motion:reduce){.edu-lp .edu-hero-clean .lp-coverflow-card,.edu-lp .edu-hero-clean .lp-carousel-stage:before{animation:none!important}}
+`}</style>
 <div className="lp-hero-copy">
+<span className="edu-hero-desktop-kicker">O FUTURO DA EDUCAÇÃO COMEÇA AQUI</span>
 <h1 id="lp-heading">Seu universo de estudos. <em>Potencializado por IA.</em></h1>
 <p className="lp-hero-subtitle">Aulas, exercícios e revisões da escola à Medicina. Tudo em um só lugar.</p>
 <div className="lp-hero-actions"><a href="#planos" className="lp-button lp-button-large">{blackFriday?"Garantir minha oferta":"Conhecer os planos"} <span aria-hidden="true">→</span></a></div>
+<div className="edu-hero-desktop-trust"><span>✓ Pagamento único</span><span>✓ 7 dias de garantia</span></div>
 </div>
 <div id="produto" className="lp-hero-stage lp-carousel-stage"><div className="lp-stage-glow" aria-hidden="true"/><LandingCarousel/><p className="lp-illustration-note">Imagens ilustrativas. Recursos variam por plano e complemento.</p></div>
 </section>
